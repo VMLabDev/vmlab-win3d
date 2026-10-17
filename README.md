@@ -79,6 +79,41 @@ lab and destroys it afterwards.
 | [docs/nvidia.md](docs/nvidia.md) | Venus on the NVIDIA RTX 5090 |
 | [docs/zeus.md](docs/zeus.md) | Venus on an Intel Iris Xe and a laptop RTX 4060 |
 
+## Credits
+
+This package is mostly other people's work, assembled, patched and tested.
+The exact version of each project is pinned in a `PINS` file, and our changes
+to it are in `patches/` (see [docs/stack.md](docs/stack.md)).
+
+### Shipped in the guest package
+
+| Project | What it provides here | Licence |
+| --- | --- | --- |
+| [Yttrium virtio-gpu driver](https://github.com/arehnman/yttrium-virtio-gpu) by Åke Rehnman | The WDDM kernel-mode driver (`viogpu3d.sys`) with Venus and blob support | BSD-3-Clause, MPL-2.0 |
+| [virtio-win kvm-guest-drivers-windows](https://github.com/virtio-win/kvm-guest-drivers-windows), and its PR #943 "Virtio GPU 3D acceleration for windows" by max8rr8 | The VirtIO driver base that Yttrium's driver is forked from, and the 3D work this project started from | BSD-3-Clause |
+| [Mesa](https://mesa3d.org/), through Yttrium's fork [virtio-win-mesa](https://github.com/arehnman/virtio-win-mesa) | The Venus Vulkan driver, the Direct3D 9/10/11 user-mode driver (Gallium d3d10umd with Yttrium's winsys), and OpenGL through WGL and Zink | MIT, MPL-2.0 (Yttrium files) |
+| [vkd3d-proton](https://github.com/HansKristian-Work/vkd3d-proton) and [dxil-spirv](https://github.com/HansKristian-Work/dxil-spirv) | Direct3D 12 on Vulkan, and DXIL-to-SPIR-V shader translation | LGPL-2.1-or-later; MIT |
+| [DXVK](https://github.com/doitsujin/dxvk) by Philip Rebohle | The DXGI implementation behind the Direct3D 12 bridge | zlib |
+| Khronos [Vulkan-Loader](https://github.com/KhronosGroup/Vulkan-Loader), [Vulkan-Tools](https://github.com/KhronosGroup/Vulkan-Tools) and [Vulkan-Headers](https://github.com/KhronosGroup/Vulkan-Headers) | `vulkan-1.dll` and `vulkaninfo.exe` | Apache-2.0 (Headers: Apache-2.0 or MIT) |
+
+### Used to build and sign
+
+| Project | Use |
+| --- | --- |
+| [llvm-mingw](https://github.com/mstorsjo/llvm-mingw) by Martin Storsjö | The clang/LLVM Windows cross toolchain for every component, the kernel driver included |
+| [Microsoft DirectX-Headers](https://github.com/microsoft/DirectX-Headers), and the Windows SDK and WDK NuGet packages | Direct3D, DDI and kernel headers for cross builds |
+| [Meson](https://mesonbuild.com/), CMake and Ninja | Build systems |
+| [osslsigncode](https://github.com/mtrojnar/osslsigncode) and OpenSSL | Test-signing the driver on Linux |
+| [generate-cat-file](https://github.com/LINBIT/generate-cat-file) by LINBIT | Creating the driver catalog (`.cat`) on Linux |
+
+### Used on the host and for testing
+
+| Project | Use |
+| --- | --- |
+| [QEMU](https://www.qemu.org/) and [virglrenderer](https://gitlab.freedesktop.org/virgl/virglrenderer) | The virtio-gpu device and the host side of Venus. Our egl-headless fix for NVIDIA is on [VMLabDev/qemu](https://github.com/VMLabDev/qemu/tree/vmlab/egl-headless-external-dmabuf). |
+| [vmlab](https://github.com/VMLabDev/vmlab) | The labs every test runs in |
+| Microsoft DirectX SDK (June 2010) samples, [Blender](https://www.blender.org/), the LunarG Vulkan Runtime and the Visual C++ 2010 runtime | Unmodified third-party applications for the acceptance tests. They are downloaded at test time from their official sources and are not redistributed. |
+
 ## Licence
 
 This repository's own scripts and documents have no licence statement yet.
