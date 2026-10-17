@@ -126,7 +126,7 @@ key, and `polygonMode` uses it when the host device has `fillModeNonSolid`
 
 ### The tessellation probe
 
-`probes/d3d11-tess/tess_probe.exe` builds a 4-patch hull/domain pipeline from
+`tess_probe.exe` (source `probes/d3d11-tess/`) builds a 4-patch hull/domain pipeline from
 HLSL compiled at run time. Its patch-constant function uses each construct
 above: indexed fork-phase outputs, relative `vicp` reads, `SV_PrimitiveID`,
 and a constant buffer indexed by the primitive ID. It also runs the `icb`

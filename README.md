@@ -13,7 +13,9 @@ reaches it through virtio-gpu Venus, vmlab's `gpu { mode = "vulkan" }`:
 - Direct3D 9 to 11 through the Yttrium Mesa UMD, OpenGL through Mesa Zink,
   and Direct3D 12 through vkd3d-proton behind a system `d3d12.dll` bridge.
 
-Everything is built from pinned upstream sources by scripts in this
+The host side is the host's own QEMU, virglrenderer and Vulkan driver.
+
+The guest package is built from pinned upstream sources by scripts in this
 repository, in Docker on Linux. [docs/stack.md](docs/stack.md) follows a
 frame through every layer.
 
@@ -22,20 +24,27 @@ frame through every layer.
 Alpha, for lab VMs only. The package is test-signed and needs Secure Boot
 off.
 
-- Builds from a fresh clone with one command, reproducibly.
-- On a fresh vmlab `windows-11` VM it installs, passes the D3D9, D3D11,
-  D3D12, OpenGL and Vulkan probes on the GPU (x64 and x86), and uninstalls
-  back to the original state ([evidence](docs/evidence/package/README.md)).
-- The end-to-end acceptance run, including dxdiag and Windows 10, is being
-  recorded.
-- The host GPU must be AMD (RADV). Venus on NVIDIA does not work yet.
+- **Done criteria met on AMD.** On fresh vmlab `windows-11` and `windows-10`
+  labs on an AMD host (RADV), one script builds the package, one command
+  installs it, `vulkaninfo` lists the Venus device, the D3D9, D3D11, D3D12,
+  OpenGL and Vulkan probes (x64 and x86) render on the GPU and show on the
+  console, and dxdiag reports hardware acceleration
+  ([acceptance](docs/acceptance.md)).
+- **Also verified on Intel.** The same checks pass on an Intel Iris Xe host
+  (ANV) with `patches/mesa/0021` ([zeus](docs/zeus.md)).
+- **NVIDIA partial.** On an RTX 5090 the probes pass, but only with a patched
+  QEMU that vmlab cannot run yet ([nvidia](docs/nvidia.md)). On a laptop RTX
+  4060 the GPU fell off the bus during a run ([zeus](docs/zeus.md)).
+- Uninstall returns the guest to its state before the install
+  ([evidence](docs/evidence/package/README.md)).
 
-[docs/known-limits.md](docs/known-limits.md) lists everything else.
+[docs/known-limits.md](docs/known-limits.md) lists everything else,
+including the full host GPU matrix.
 
 ## Quick start
 
 You need Docker without sudo, vmlab 0.24.0-alpha or later, the local
-`windows-11` template, and an AMD GPU on the host.
+`windows-11` template, and an AMD or Intel GPU on the host.
 
 ```sh
 scripts/build.sh                               # writes out/package/
@@ -44,9 +53,11 @@ scripts/install-into-vm.sh <lab-dir> <vm>      # install, with the reboots
 ```
 
 The lab needs `secure_boot = false` and
-`gpu { mode = "vulkan" address = "<PCI address of the AMD GPU>" }`.
-[docs/install.md](docs/install.md) has the full steps, including installing
-from inside the guest with `Install.cmd`.
+`gpu { mode = "vulkan" address = "<PCI address of the GPU>" }`, as in
+`labs/probe/vmlab.wcl`. [docs/install.md](docs/install.md) has the full
+steps, including installing from inside the guest with `Install.cmd`.
+`tests/e2e/run.sh --template windows-11` checks every Done item on a fresh
+lab and destroys it afterwards.
 
 ## Documentation
 
@@ -56,9 +67,14 @@ from inside the guest with `Install.cmd`.
 | [docs/install.md](docs/install.md) | Build, lab setup, install, what the installer changes |
 | [docs/uninstall.md](docs/uninstall.md) | Removal back to the baseline |
 | [docs/stack.md](docs/stack.md) | Components, guest files, registration, pins, patches, licences |
-| [docs/known-limits.md](docs/known-limits.md) | What does not work or is untested |
+| [docs/known-limits.md](docs/known-limits.md) | What does not work or is untested, and which host GPUs work |
 | [docs/decisions/0001-signing.md](docs/decisions/0001-signing.md) | Why test signing with Secure Boot off |
+| [docs/acceptance.md](docs/acceptance.md) | The Done criteria checked on Windows 11 and 10, and the evidence index |
 | [docs/host.md](docs/host.md) | What the host and vmlab need for Venus |
+| [docs/dxdiag.md](docs/dxdiag.md) | The DirectDraw HAL fix behind dxdiag's hardware acceleration |
+| [docs/d3d11-apps.md](docs/d3d11-apps.md) | The DirectX SDK D3D11 samples: UMD fixes and a DXUT bug |
+| [docs/nvidia.md](docs/nvidia.md) | Venus on the NVIDIA RTX 5090 |
+| [docs/zeus.md](docs/zeus.md) | Venus on an Intel Iris Xe and a laptop RTX 4060 |
 
 ## Licence
 

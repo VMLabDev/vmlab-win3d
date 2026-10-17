@@ -14,9 +14,11 @@ On the host:
 - vmlab 0.24.0-alpha or later, and the local `windows-11` (or `windows-10`)
   template. Earlier vmlab versions do not give the guest a working Venus
   device; `docs/host.md` records why.
-- An AMD GPU with RADV for Venus. On this host that is the iGPU at PCI
-  address `0000:72:00.0` (`/dev/dri/renderD129`); Venus on the NVIDIA RTX
-  5090 does not work yet (`docs/known-limits.md`).
+- A host GPU whose Vulkan driver Venus works on: AMD with RADV (the
+  reference; on helios the iGPU at PCI address `0000:72:00.0`,
+  `/dev/dri/renderD129`) or Intel with ANV. NVIDIA needs a patched QEMU and
+  is only partly working, and a laptop RTX 4060 failed outright
+  ([known limits](known-limits.md#host-gpu-support)).
 
 The VM needs two settings, as in `labs/probe/vmlab.wcl`:
 
@@ -25,7 +27,7 @@ The VM needs two settings, as in `labs/probe/vmlab.wcl`:
 | `secure_boot = false` | The package is test-signed (decision 0001). Windows ignores `testsigning` while Secure Boot is on, so `Install.cmd` refuses to run. This cannot be changed from inside the guest. |
 | `gpu { mode = "vulkan" address = "0000:72:00.0" }` | vmlab's Venus mode. vmlab 0.24 emits one `virtio-vga-gl,venus=true,blob=true,hostmem=4G` adapter. `address` names the host GPU: vmlab puts egl-headless on its render node and sets `VK_LOADER_DRIVERS_SELECT` in QEMU's environment, so virglrenderer uses RADV. The KMD needs the device's `VIRTIO_GPU_F_VIRGL` feature; the INF matches its hardware ID, `PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01`. |
 
-Find the address of an AMD GPU with `lspci -D | grep -i vga`, or from
+Find the address of the GPU with `lspci -D | grep -i vga`, or from
 `/sys/class/drm/renderD*/device`. `gpu.vulkan_icd = "<path to ICD JSON>"`
 overrides the ICD choice when the driver name is not enough.
 
