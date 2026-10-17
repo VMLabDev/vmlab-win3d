@@ -230,15 +230,19 @@ Windows. See `build/kmd/README.md`.
 
 Windows 10 passes. On a fresh lab from the local `windows-10` template
 (`x86_64/windows-10@19045.2006.8`) on the AMD host, every Done check in
-`docs/brief.md` item 2 passed, 12 of 12, with the same package as the
-Windows 11 run (`docs/acceptance.md`, commit `cb4d53c`;
-`docs/evidence/acceptance/windows-10/`). The DirectX SDK D3D9 samples and
-Blender also rendered there.
+`docs/brief.md` item 2 passed, 12 of 12. It ran the same package as the
+Windows 11 run: commit `6105889`, with every Mesa patch including 0015 to
+0017 and 0021 (`docs/acceptance.md`; `docs/evidence/acceptance/windows-10/`).
+The DirectX SDK D3D9 and D3D11 samples and Blender also rendered there.
+
+Blender's window is translucent on Windows 10: the wallpaper shows through
+its viewport and panels (`docs/evidence/acceptance/windows-10/apps/console-opengl-x64-Blender.png`).
+The same build is opaque on Windows 11, and the OpenGL probe is opaque on
+both. The cause is not confirmed. A likely one is that Windows 10's
+compositor honours the alpha Blender leaves in its framebuffer.
 
 What was not run on Windows 10:
 
-- the D3D11 sample fixes (`patches/mesa/0015` to `0017`, `docs/d3d11-apps.md`)
-  and the Intel fix (`patches/mesa/0021`, `docs/zeus.md`), which came later;
 - any host other than AMD;
 - the uninstall and reinstall cycle, which ran on Windows 11 only
   (`docs/evidence/package/README.md`).

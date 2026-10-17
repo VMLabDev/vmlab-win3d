@@ -5,13 +5,14 @@
 #
 # From nothing: builds the package (or reuses out/package/ when it was built
 # from a tree identical to HEAD), brings up a fresh lab from
-# labs/acceptance/vmlab.wcl (vmlab >= 0.24: gpu { mode = "vulkan" address
-# = AMD iGPU }, docs/host.md), records the guest baseline, installs with the
-# documented command (scripts/install-into-vm.sh, docs/install.md), then in
-# the autologon user's desktop session runs vulkaninfo, the D3D9, D3D11,
-# D3D12, OpenGL and Vulkan probes (x64 and x86) with `vmlab vm screenshot`
-# console captures of each, and dxdiag. The evidence goes to
-# docs/evidence/acceptance/<template>/; tests/e2e/check.py judges it.
+# labs/acceptance/vmlab.wcl (vmlab >= 0.25: gpu { mode = "vulkan" host_gpu
+# = "AMD1" }, the host config's AMD iGPU; docs/host.md), records the guest
+# baseline, installs with the documented command (scripts/install-into-vm.sh,
+# docs/install.md), then in the autologon user's desktop session runs
+# vulkaninfo, the D3D9, D3D11, D3D12, OpenGL and Vulkan probes (x64 and
+# x86) with `vmlab vm screenshot` console captures of each, and dxdiag. The
+# evidence goes to docs/evidence/acceptance/<template>/; tests/e2e/check.py
+# judges it.
 # The lab is destroyed unless --keep. --apps also runs the stretch
 # applications (tests/e2e/apps.sh) into <evidence>/apps/; they do not
 # count towards the exit status.
@@ -133,7 +134,9 @@ lab_up() {
     cp "$LABDIR/vmlab.wcl" "$EV/lab-vmlab.wcl"
     in_lab vmlab validate || return 1
     in_lab vmlab up || return 1
-    # vmlab 0.24 starts qemu.log with the argv and environment it gave QEMU.
+    # The host GPU the lab daemon picked (host_gpu=...).
+    in_lab vmlab status -v >"$EV/status-v.txt" 2>&1 || true
+    # vmlab (>= 0.24) starts qemu.log with the argv and environment it gave QEMU.
     local qlog=${XDG_STATE_HOME:-$HOME/.local/state}/vmlab/labs/$LAB/vms/$VM/qemu.log
     [ -f "$qlog" ] && grep -E '^vmlab: (argv|env):' "$qlog" >"$EV/qemu-argv-env.txt"
     wait_agent || return 1

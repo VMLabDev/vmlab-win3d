@@ -1,3 +1,3 @@
 created user win3d
-autologon set for VMLABVM-JA06T5S\win3d
+autologon set for VMLABVM-241P7ES\win3d
 rebooting in 5 s

@@ -6,10 +6,10 @@
   "result": "pass",
   "exit_code": 0,
   "exe": "C:\\win3d\\probes\\x86\\opengl_probe.exe",
-  "pid": 1280,
+  "pid": 1840,
   "session_id": 1,
   "os_version": "10.0.26100",
-  "finished_utc": "2026-10-17T14:14:07Z",
+  "finished_utc": "2026-10-17T18:47:21Z",
   "args": {"seconds": 20, "warp": false, "width": 1024, "height": 640},
   "adapter": {
     "name": "zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV))",
@@ -30,9 +30,9 @@
     "wgl_arb_create_context": true,
     "swap_interval_1": true
   },
-  "frames_presented": 1329,
-  "elapsed_seconds": 20.030,
-  "avg_fps": 66.35,
+  "frames_presented": 1271,
+  "elapsed_seconds": 20.014,
+  "avg_fps": 63.50,
   "window_closed_early": false,
   "readback": {
     "ok": true,

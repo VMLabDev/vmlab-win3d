@@ -1,7 +1,7 @@
 import <vmlab.wcl>
 
 // Acceptance lab for tests/e2e/run.sh: the labs/probe/vmlab.wcl shape
-// (vmlab >= 0.24.0-alpha; docs/host.md, docs/install.md). run.sh copies this
+// (vmlab >= 0.25.0-alpha; docs/host.md, docs/install.md). run.sh copies this
 // file into .scratch/e2e/<template>/lab/ and rewrites the lab name and the
 // template line for --template; as committed it is the windows-11 lab.
 lab "win3d-e2e-windows-10" {
@@ -13,11 +13,12 @@ lab "win3d-e2e-windows-10" {
     // restart onto it), and a late restart dropped the agent channel mid-exec
     // on windows-10. Keep the template's agent.
     agent_update = false
-    // 0000:72:00.0 is the AMD iGPU (RADV, renderD129); Venus on the RTX 5090s
-    // does not work yet (docs/known-limits.md).
+    // AMD1 is the host config's AMD iGPU (0000:72:00.0, RADV, renderD129). The
+    // host's default GPU on helios is an RTX 5090, whose console is black
+    // with stock QEMU (docs/known-limits.md).
     gpu {
-      mode    = "vulkan"
-      address = "0000:72:00.0"
+      mode     = "vulkan"
+      host_gpu = "AMD1"
     }
   }
 }

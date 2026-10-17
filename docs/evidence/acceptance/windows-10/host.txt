@@ -1,9 +1,9 @@
-date: 2026-10-17T17:25:18+10:00
-commit: cb4d53c67556805416790be6cf6246781a003d29
+date: 2026-10-17T21:54:27+10:00
+commit: 61058896dca41d5a2f6378eb66131de2a0c266c5
 worktree changes: 0
 template: x86_64/windows-10@19045.2006.8
 kernel: 7.2.3-1-cachyos
 qemu: QEMU emulator version 11.1.1
 packages: qemu-full 11.1.1-1 virglrenderer 1.3.0-2.1 mesa 3:26.2.2-2 vulkan-radeon 3:26.2.2-2 
-vmlab: vmlab 0.24.0-alpha
+vmlab: vmlab 0.25.0-alpha
 venus gpu: /dev/dri/renderD129 0000:72:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI] Granite Ridge [Radeon Graphics] (rev c1)
