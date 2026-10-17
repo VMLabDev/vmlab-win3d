@@ -1,0 +1,84 @@
+[14:44:17] waiting for the guest agent
+[14:44:18] running C:\ProgramData\vmlab-win3d\bundle\Uninstall.cmd
+2026-10-17T04:44:15.632-07:00 [Uninstall] Uninstall (state: Installed)
+2026-10-17T04:44:18.184-07:00 [Uninstall] removed task vmlab-win3d-repair
+2026-10-17T04:44:18.646-07:00 [Uninstall] takeown.exe /F C:\WINDOWS\System32\d3d12.dll /A -> 0
+2026-10-17T04:44:18.660-07:00 [Uninstall]   SUCCESS: The file (or folder): "C:\WINDOWS\System32\d3d12.dll" now owned by the administrators group.
+2026-10-17T04:44:18.678-07:00 [Uninstall] icacls.exe C:\WINDOWS\System32\d3d12.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-17T04:44:18.681-07:00 [Uninstall]   processed file: C:\WINDOWS\System32\d3d12.dll
+2026-10-17T04:44:18.683-07:00 [Uninstall]   Successfully processed 1 files; Failed processing 0 files
+2026-10-17T04:44:18.820-07:00 [Uninstall] installed C:\WINDOWS\System32\d3d12.dll (6B32181599D4D6373F0B49905236B122ED5545C5D061AB4350A80CC095DC15E4)
+2026-10-17T04:44:18.858-07:00 [Uninstall] removed C:\WINDOWS\System32\vmlab-win3d
+2026-10-17T04:44:18.885-07:00 [Uninstall] takeown.exe /F C:\WINDOWS\SysWOW64\d3d12.dll /A -> 0
+2026-10-17T04:44:18.888-07:00 [Uninstall]   SUCCESS: The file (or folder): "C:\WINDOWS\SysWOW64\d3d12.dll" now owned by the administrators group.
+2026-10-17T04:44:18.903-07:00 [Uninstall] icacls.exe C:\WINDOWS\SysWOW64\d3d12.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-17T04:44:18.930-07:00 [Uninstall]   processed file: C:\WINDOWS\SysWOW64\d3d12.dll
+2026-10-17T04:44:18.932-07:00 [Uninstall]   Successfully processed 1 files; Failed processing 0 files
+2026-10-17T04:44:18.951-07:00 [Uninstall] installed C:\WINDOWS\SysWOW64\d3d12.dll (A43885B075B8043D9FE99F03B26B056B426E1B7D73FAB8D420F4E4FFCB5100AF)
+2026-10-17T04:44:18.966-07:00 [Uninstall] removed C:\WINDOWS\SysWOW64\vmlab-win3d
+2026-10-17T04:44:18.996-07:00 [Uninstall] takeown.exe /F C:\WINDOWS\System32\vulkan-1.dll /A -> 0
+2026-10-17T04:44:18.999-07:00 [Uninstall]   SUCCESS: The file (or folder): "C:\WINDOWS\System32\vulkan-1.dll" now owned by the administrators group.
+2026-10-17T04:44:19.013-07:00 [Uninstall] icacls.exe C:\WINDOWS\System32\vulkan-1.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-17T04:44:19.016-07:00 [Uninstall]   processed file: C:\WINDOWS\System32\vulkan-1.dll
+2026-10-17T04:44:19.019-07:00 [Uninstall]   Successfully processed 1 files; Failed processing 0 files
+2026-10-17T04:44:19.049-07:00 [Uninstall] installed C:\WINDOWS\System32\vulkan-1.dll (591D4C316A0A39F96792979CE5EBB1BB380F0015C30707BA7AC611B35AE01CFC)
+2026-10-17T04:44:19.073-07:00 [Uninstall] takeown.exe /F C:\WINDOWS\System32\vulkaninfo.exe /A -> 0
+2026-10-17T04:44:19.075-07:00 [Uninstall]   SUCCESS: The file (or folder): "C:\WINDOWS\System32\vulkaninfo.exe" now owned by the administrators group.
+2026-10-17T04:44:19.091-07:00 [Uninstall] icacls.exe C:\WINDOWS\System32\vulkaninfo.exe /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-17T04:44:19.094-07:00 [Uninstall]   processed file: C:\WINDOWS\System32\vulkaninfo.exe
+2026-10-17T04:44:19.096-07:00 [Uninstall]   Successfully processed 1 files; Failed processing 0 files
+2026-10-17T04:44:19.102-07:00 [Uninstall] removed C:\WINDOWS\System32\vulkaninfo.exe
+2026-10-17T04:44:19.121-07:00 [Uninstall] takeown.exe /F C:\WINDOWS\SysWOW64\vulkan-1.dll /A -> 0
+2026-10-17T04:44:19.124-07:00 [Uninstall]   SUCCESS: The file (or folder): "C:\WINDOWS\SysWOW64\vulkan-1.dll" now owned by the administrators group.
+2026-10-17T04:44:19.138-07:00 [Uninstall] icacls.exe C:\WINDOWS\SysWOW64\vulkan-1.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-17T04:44:19.141-07:00 [Uninstall]   processed file: C:\WINDOWS\SysWOW64\vulkan-1.dll
+2026-10-17T04:44:19.145-07:00 [Uninstall]   Successfully processed 1 files; Failed processing 0 files
+2026-10-17T04:44:19.172-07:00 [Uninstall] installed C:\WINDOWS\SysWOW64\vulkan-1.dll (411A6F91D4E925DBD380CC3C4FA5810B9895A87B6D3072E16707551A2EAC311E)
+2026-10-17T04:44:19.194-07:00 [Uninstall] takeown.exe /F C:\WINDOWS\SysWOW64\vulkaninfo.exe /A -> 0
+2026-10-17T04:44:19.198-07:00 [Uninstall]   SUCCESS: The file (or folder): "C:\WINDOWS\SysWOW64\vulkaninfo.exe" now owned by the administrators group.
+2026-10-17T04:44:19.213-07:00 [Uninstall] icacls.exe C:\WINDOWS\SysWOW64\vulkaninfo.exe /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-17T04:44:19.215-07:00 [Uninstall]   processed file: C:\WINDOWS\SysWOW64\vulkaninfo.exe
+2026-10-17T04:44:19.219-07:00 [Uninstall]   Successfully processed 1 files; Failed processing 0 files
+2026-10-17T04:44:19.224-07:00 [Uninstall] removed C:\WINDOWS\SysWOW64\vulkaninfo.exe
+2026-10-17T04:44:20.604-07:00 [Uninstall] pnputil.exe /delete-driver oem15.inf /uninstall /force -> 0
+2026-10-17T04:44:20.608-07:00 [Uninstall]   Microsoft PnP Utility
+2026-10-17T04:44:20.610-07:00 [Uninstall]   Ignoring /force when used with /uninstall to delete driver package.
+2026-10-17T04:44:20.615-07:00 [Uninstall]   Driver package uninstalled.
+2026-10-17T04:44:20.617-07:00 [Uninstall]   Driver package deleted successfully.
+2026-10-17T04:44:21.234-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\UserModeDriverName
+2026-10-17T04:44:21.239-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\UserModeDriverNameWow
+2026-10-17T04:44:21.245-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\OpenGLDriverName
+2026-10-17T04:44:21.249-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\OpenGLDriverNameWow
+2026-10-17T04:44:21.258-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\OpenGLFlags
+2026-10-17T04:44:21.262-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\OpenGLFlagsWow
+2026-10-17T04:44:21.266-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\OpenGLVersion
+2026-10-17T04:44:21.273-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\OpenGLVersionWow
+2026-10-17T04:44:21.279-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\InstalledDisplayDrivers
+2026-10-17T04:44:21.350-07:00 [Uninstall] sc.exe stop VioGpu3D -> 1062
+2026-10-17T04:44:21.352-07:00 [Uninstall]   [SC] ControlService FAILED 1062:
+2026-10-17T04:44:21.356-07:00 [Uninstall]   The service has not been started.
+2026-10-17T04:44:21.375-07:00 [Uninstall] could not stop VioGpu3D: sc.exe stop VioGpu3D failed with exit code 1062
+2026-10-17T04:44:21.393-07:00 [Uninstall] sc.exe delete VioGpu3D -> 0
+2026-10-17T04:44:21.398-07:00 [Uninstall]   [SC] DeleteService SUCCESS
+2026-10-17T04:44:21.420-07:00 [Uninstall] sc.exe stop vgpusrv -> 1062
+2026-10-17T04:44:21.422-07:00 [Uninstall]   [SC] ControlService FAILED 1062:
+2026-10-17T04:44:21.426-07:00 [Uninstall]   The service has not been started.
+2026-10-17T04:44:21.431-07:00 [Uninstall] could not stop vgpusrv: sc.exe stop vgpusrv failed with exit code 1062
+2026-10-17T04:44:21.446-07:00 [Uninstall] sc.exe delete vgpusrv -> 0
+2026-10-17T04:44:21.448-07:00 [Uninstall]   [SC] DeleteService SUCCESS
+2026-10-17T04:44:21.574-07:00 [Uninstall] certutil.exe -delstore Root 05ED0AC6E2DB2C7465641CAF68936B3A2B22B71A -> 0
+2026-10-17T04:44:21.578-07:00 [Uninstall]   Root "Trusted Root Certification Authorities"
+2026-10-17T04:44:21.580-07:00 [Uninstall]   Deleting Certificate 11: O=vmlab-win3d local test (not for distribution), CN=vmlab-win3d Test Driver Signing:05ed0ac6e2db2c7465641caf68936b3a2b22b71a
+2026-10-17T04:44:21.582-07:00 [Uninstall]   CertUtil: -delstore command completed successfully.
+2026-10-17T04:44:21.625-07:00 [Uninstall] certutil.exe -delstore TrustedPublisher 05ED0AC6E2DB2C7465641CAF68936B3A2B22B71A -> 0
+2026-10-17T04:44:21.630-07:00 [Uninstall]   TrustedPublisher "Trusted Publishers"
+2026-10-17T04:44:21.633-07:00 [Uninstall]   Deleting Certificate 0: O=vmlab-win3d local test (not for distribution), CN=vmlab-win3d Test Driver Signing:05ed0ac6e2db2c7465641caf68936b3a2b22b71a
+2026-10-17T04:44:21.636-07:00 [Uninstall]   CertUtil: -delstore command completed successfully.
+2026-10-17T04:44:21.709-07:00 [Uninstall] bcdedit.exe /deletevalue {current} testsigning -> 0
+2026-10-17T04:44:21.711-07:00 [Uninstall]   The operation completed successfully.
+2026-10-17T04:44:21.929-07:00 [Uninstall] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-17T04:44:22.056-07:00 [Uninstall] rebooting; step VerifyRemoval resumes after the restart
+[14:44:27] Uninstall.cmd exited 0
+[14:44:28] state: Uninstalling|VerifyRemoval|
+[14:45:54] state: Removed||
+[14:45:54] done: Removed
