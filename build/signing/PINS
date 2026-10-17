@@ -1,0 +1,5 @@
+# Upstream pins for build/signing (same format as build/kmd/PINS).
+generate-cat-file  git    https://github.com/LINBIT/generate-cat-file  65ebf4de79a42b0a1104fbef37b1c207ff13e1e9  -  # GPL-2.0; .cat creation without wintrust.dll
+debian             image  docker.io/library/debian  sha256:2c037a04925515fdd6ea85ea14a682d0e79931f5e9f5d07b6dbfc6ba12f9e858  -  # debian:12
+# apt (Debian 12), pinned in the Dockerfile:
+#   osslsigncode 2.5-4, openssl 3.0.22-1~deb12u1, gcc 4:12.2.0-3, make 4.3-4.1, libc6-dev 2.36-9+deb12u14
