@@ -1,0 +1,27 @@
+﻿{
+    "name":  "x86-vulkan_probe",
+    "exe":  "C:\\win3d\\probes\\x86\\vulkan_probe.exe",
+    "arguments":  "--seconds 5 --out C:\\win3d\\results\\x86-vulkan_probe.json",
+    "user":  "VMLABVM-RGRGGM3\\win3d",
+    "session_id":  1,
+    "pid":  8040,
+    "wow64":  true,
+    "started":  "2026-10-17T03:16:58.7182539-07:00",
+    "ended":  "2026-10-17T03:17:00.5266415-07:00",
+    "duration_s":  1.8,
+    "timed_out":  false,
+    "exit_code":  1,
+    "task_result":  1,
+    "probe_json":  "C:\\win3d\\results\\x86-vulkan_probe.json",
+    "probe_result":  "api_failure",
+    "adapter":  null,
+    "software":  null,
+    "readback_ok":  false,
+    "module_count":  0,
+    "graphics_modules":  [
+
+                         ],
+    "app_local_modules":  [
+
+                          ]
+}

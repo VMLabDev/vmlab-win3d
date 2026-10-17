@@ -1,0 +1,273 @@
+﻿[
+    {
+        "name":  "x64-d3d11_probe",
+        "exit_code":  0,
+        "result":  "pass",
+        "adapter":  "Microsoft Basic Render Driver",
+        "software":  true,
+        "readback_ok":  true,
+        "avg_fps":  46.50,
+        "frames":  701,
+        "session_id":  1,
+        "first_error":  null,
+        "graphics_modules":  [
+                                 "C:\\WINDOWS\\SYSTEM32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\d3d10warp.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\d3dcompiler_47.dll [system32] 10.0.26100.9457 (WinBuild.160101.0800)"
+                             ]
+    },
+    {
+        "name":  "x64-d3d11_probe-warp",
+        "exit_code":  0,
+        "result":  "pass",
+        "adapter":  "Microsoft Basic Render Driver",
+        "software":  true,
+        "readback_ok":  true,
+        "avg_fps":  47.83,
+        "frames":  721,
+        "session_id":  1,
+        "first_error":  null,
+        "graphics_modules":  [
+                                 "C:\\WINDOWS\\SYSTEM32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\D3D10Warp.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\d3dcompiler_47.dll [system32] 10.0.26100.9457 (WinBuild.160101.0800)"
+                             ]
+    },
+    {
+        "name":  "x64-d3d12_probe",
+        "exit_code":  0,
+        "result":  "pass",
+        "adapter":  "Microsoft Basic Render Driver",
+        "software":  true,
+        "readback_ok":  true,
+        "avg_fps":  44.52,
+        "frames":  668,
+        "session_id":  1,
+        "first_error":  null,
+        "graphics_modules":  [
+                                 "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\d3d12.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\D3D12Core.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\d3d10warp.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\D3DSCache.dll [system32] 10.0.26100.8117 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\d3dcompiler_47.dll [system32] 10.0.26100.9457 (WinBuild.160101.0800)"
+                             ]
+    },
+    {
+        "name":  "x64-d3d12_probe-warp",
+        "exit_code":  0,
+        "result":  "pass",
+        "adapter":  "Microsoft Basic Render Driver",
+        "software":  true,
+        "readback_ok":  true,
+        "avg_fps":  48.39,
+        "frames":  726,
+        "session_id":  1,
+        "first_error":  null,
+        "graphics_modules":  [
+                                 "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\d3d12.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\D3D12Core.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\d3d10warp.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\D3DSCache.dll [system32] 10.0.26100.8117 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\d3dcompiler_47.dll [system32] 10.0.26100.9457 (WinBuild.160101.0800)"
+                             ]
+    },
+    {
+        "name":  "x64-d3d9_probe",
+        "exit_code":  0,
+        "result":  "pass",
+        "adapter":  "Microsoft Basic Render Driver",
+        "software":  true,
+        "readback_ok":  true,
+        "avg_fps":  55.74,
+        "frames":  837,
+        "session_id":  1,
+        "first_error":  null,
+        "graphics_modules":  [
+                                 "C:\\WINDOWS\\SYSTEM32\\d3d9.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\d3d10warp.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\d3dcompiler_47.dll [system32] 10.0.26100.9457 (WinBuild.160101.0800)"
+                             ]
+    },
+    {
+        "name":  "x64-opengl_probe",
+        "exit_code":  0,
+        "result":  "pass",
+        "adapter":  "GDI Generic",
+        "software":  true,
+        "readback_ok":  true,
+        "avg_fps":  1785.00,
+        "frames":  26779,
+        "session_id":  1,
+        "first_error":  null,
+        "graphics_modules":  [
+                                 "C:\\WINDOWS\\SYSTEM32\\OPENGL32.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\GLU32.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)"
+                             ]
+    },
+    {
+        "name":  "x64-vulkan_probe",
+        "exit_code":  1,
+        "result":  "api_failure",
+        "adapter":  null,
+        "software":  null,
+        "readback_ok":  false,
+        "avg_fps":  0.00,
+        "frames":  0,
+        "session_id":  1,
+        "first_error":  "instance lacks VK_KHR_surface (no Vulkan ICD with Win32 WSI is registered)",
+        "graphics_modules":  [
+
+                             ]
+    },
+    {
+        "name":  "x86-d3d11_probe",
+        "exit_code":  0,
+        "result":  "pass",
+        "adapter":  "Microsoft Basic Render Driver",
+        "software":  true,
+        "readback_ok":  true,
+        "avg_fps":  44.97,
+        "frames":  678,
+        "session_id":  1,
+        "first_error":  null,
+        "graphics_modules":  [
+                                 "C:\\WINDOWS\\SysWOW64\\d3d11.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\dxgi.dll [syswow64] 10.0.26100.9444 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\d3d10warp.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\d3dcompiler_47.dll [syswow64] 10.0.26100.9168 (WinBuild.160101.0800)"
+                             ]
+    },
+    {
+        "name":  "x86-d3d11_probe-warp",
+        "exit_code":  0,
+        "result":  "pass",
+        "adapter":  "Microsoft Basic Render Driver",
+        "software":  true,
+        "readback_ok":  true,
+        "avg_fps":  47.92,
+        "frames":  722,
+        "session_id":  1,
+        "first_error":  null,
+        "graphics_modules":  [
+                                 "C:\\WINDOWS\\SysWOW64\\d3d11.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\dxgi.dll [syswow64] 10.0.26100.9444 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\D3D10Warp.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\d3dcompiler_47.dll [syswow64] 10.0.26100.9168 (WinBuild.160101.0800)"
+                             ]
+    },
+    {
+        "name":  "x86-d3d12_probe",
+        "exit_code":  0,
+        "result":  "pass",
+        "adapter":  "Microsoft Basic Render Driver",
+        "software":  true,
+        "readback_ok":  true,
+        "avg_fps":  47.19,
+        "frames":  708,
+        "session_id":  1,
+        "first_error":  null,
+        "graphics_modules":  [
+                                 "C:\\WINDOWS\\SysWOW64\\dxgi.dll [syswow64] 10.0.26100.9444 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\d3d12.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\D3D12Core.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\d3d10warp.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\D3DSCache.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\d3dcompiler_47.dll [syswow64] 10.0.26100.9168 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\dxilconv.dll [syswow64] 101.9.2602.1349"
+                             ]
+    },
+    {
+        "name":  "x86-d3d12_probe-warp",
+        "exit_code":  0,
+        "result":  "pass",
+        "adapter":  "Microsoft Basic Render Driver",
+        "software":  true,
+        "readback_ok":  true,
+        "avg_fps":  45.24,
+        "frames":  679,
+        "session_id":  1,
+        "first_error":  null,
+        "graphics_modules":  [
+                                 "C:\\WINDOWS\\SysWOW64\\dxgi.dll [syswow64] 10.0.26100.9444 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\d3d12.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\D3D12Core.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\d3d10warp.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\D3DSCache.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\d3dcompiler_47.dll [syswow64] 10.0.26100.9168 (WinBuild.160101.0800)"
+                             ]
+    },
+    {
+        "name":  "x86-d3d9_probe",
+        "exit_code":  0,
+        "result":  "pass",
+        "adapter":  "Microsoft Basic Render Driver",
+        "software":  true,
+        "readback_ok":  true,
+        "avg_fps":  56.89,
+        "frames":  855,
+        "session_id":  1,
+        "first_error":  null,
+        "graphics_modules":  [
+                                 "C:\\WINDOWS\\SysWOW64\\d3d9.dll [syswow64] 10.0.26100.8972 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\d3d10warp.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\d3dcompiler_47.dll [syswow64] 10.0.26100.9168 (WinBuild.160101.0800)"
+                             ]
+    },
+    {
+        "name":  "x86-opengl_probe",
+        "exit_code":  0,
+        "result":  "pass",
+        "adapter":  "GDI Generic",
+        "software":  true,
+        "readback_ok":  true,
+        "avg_fps":  1530.91,
+        "frames":  22970,
+        "session_id":  1,
+        "first_error":  null,
+        "graphics_modules":  [
+                                 "C:\\WINDOWS\\SysWOW64\\OPENGL32.DLL [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\GLU32.dll [syswow64] 10.0.26100.1 (WinBuild.160101.0800)",
+                                 "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)"
+                             ]
+    },
+    {
+        "name":  "x86-vulkan_probe",
+        "exit_code":  1,
+        "result":  "api_failure",
+        "adapter":  null,
+        "software":  null,
+        "readback_ok":  false,
+        "avg_fps":  0.00,
+        "frames":  0,
+        "session_id":  null,
+        "first_error":  "instance lacks VK_KHR_surface (no Vulkan ICD with Win32 WSI is registered)",
+        "graphics_modules":  [
+
+                             ]
+    }
+]
