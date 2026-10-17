@@ -11,8 +11,11 @@
 #   08 install after the uninstall, 09 state after it
 #
 # Needs tests/guest/ and out/probes/ (build/probes/build.sh). Set VMLAB to
-# use another vmlab command. Each step's output goes to <evidence-dir>; a
-# failing step stops the run.
+# use another vmlab command. SHOT_CMD, when set, is run as `$SHOT_CMD <png>`
+# every 4 s while the probes run, to capture the console into
+# <evidence-dir>/shots/ (`vmlab vm screenshot` fails with "no surface" under
+# egl-headless). Each step's output goes to <evidence-dir>; a failing step
+# stops the run.
 set -euo pipefail
 REPO=$(cd "$(dirname "$0")/.." && pwd)
 VMLAB=${VMLAB:-vmlab}
@@ -64,8 +67,15 @@ gpu_state 02-installed
 ps 'Get-Content C:\ProgramData\vmlab-win3d\journal.log' >"$EVID/02-journal.log"
 
 say "03 probes"
+shooter=
+if [ -n "${SHOT_CMD:-}" ]; then
+    mkdir -p "$EVID/shots"
+    ( while :; do $SHOT_CMD "$EVID/shots/$(date +%H%M%S).png" >/dev/null 2>&1; sleep 4; done ) &
+    shooter=$!
+fi
 "$VMLAB" exec --timeout 1800 "$VM" -- powershell.exe -NoProfile -ExecutionPolicy Bypass -File 'C:\win3d\guest\Run-AllProbes.ps1' \
     -ProbeDir 'C:\win3d\probes' -OutDir 'C:\win3d\results\probes' -Seconds 15 >"$EVID/03-probes.txt" 2>&1 || echo "(Run-AllProbes exit $?)" >>"$EVID/03-probes.txt"
+[ -z "$shooter" ] || kill "$shooter"
 ps 'Get-Content C:\win3d\results\probes\summary.json -Raw' >"$EVID/03-probes-summary.json" || true
 
 say "04 install again (idempotence)"
