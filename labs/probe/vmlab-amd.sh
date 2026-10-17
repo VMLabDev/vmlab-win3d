@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# DEPRECATED with vmlab >= 0.24.0-alpha: use plain `vmlab` with gpu.address
+# (labs/probe/vmlab.wcl). Kept only to reproduce the v0.23 probe evidence.
 # Run vmlab against an isolated supervisor whose environment selects the AMD
 # Vulkan ICD, so QEMU's virglrenderer Venus contexts use RADV on renderD129
 # instead of the RTX 5090s. A running supervisor keeps the environment it was
