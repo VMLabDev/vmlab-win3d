@@ -105,8 +105,11 @@ function Get-BootId {
 }
 
 function Invoke-Native([string]$File, [string[]]$Arguments, [int[]]$Ok = @(0)) {
-    $out = & $File @Arguments 2>&1 | Out-String
+    # Native stderr must not become a terminating error under 'Stop'.
+    $ErrorActionPreference = 'Continue'
+    $out = & $File @Arguments 2>&1 | ForEach-Object { "$_" } | Out-String
     $code = $LASTEXITCODE
+    $ErrorActionPreference = 'Stop'
     Write-Journal ("{0} {1} -> {2}" -f $File, ($Arguments -join ' '), $code)
     foreach ($l in ($out -split "`r?`n")) { if ($l.Trim()) { Write-Journal ('  ' + $l.TrimEnd()) } }
     if ($Ok -notcontains $code) { throw ("{0} {1} failed with exit code {2}" -f $File, ($Arguments -join ' '), $code) }
@@ -140,24 +143,40 @@ function Unlock-SystemFile([string]$Path) {
     Invoke-Native 'icacls.exe' @($Path, '/grant', '*S-1-5-32-544:F', '*S-1-5-18:F') | Out-Null
 }
 
-# Put back an owner and ACL recorded with Get-Sddl. Setting the owner to
-# TrustedInstaller needs SeRestorePrivilege; icacls enables it itself.
+# The DACL part of an SDDL string without the auto-inherit control flags (AI,
+# AR), which Set-Acl adds and which change no access.
+function Get-AccessKey([string]$Access) {
+    $m = [regex]::Match($Access, '^D:([A-Z]*)(.*)$')
+    if (-not $m.Success) { return $Access }
+    return 'D:' + ($m.Groups[1].Value -replace 'AI|AR', '') + $m.Groups[2].Value
+}
+
+function Test-SddlMatch([string]$Path, [string]$Sddl) {
+    $a = New-Object Security.AccessControl.FileSecurity
+    $a.SetSecurityDescriptorSddlForm($Sddl)
+    $b = New-Object Security.AccessControl.FileSecurity
+    $b.SetSecurityDescriptorSddlForm((Get-Sddl $Path))
+    return ($a.GetSecurityDescriptorSddlForm('Owner') -eq $b.GetSecurityDescriptorSddlForm('Owner')) -and
+        ((Get-AccessKey $a.GetSecurityDescriptorSddlForm('Access')) -eq (Get-AccessKey $b.GetSecurityDescriptorSddlForm('Access')))
+}
+
+# Put back an owner and ACL recorded with Get-Sddl, in one Set-Acl call:
+# Windows PowerShell enables SeRestorePrivilege to set an owner such as
+# TrustedInstaller. Setting the DACL first would drop our own WRITE_OWNER.
 function Restore-Sddl([string]$Path, [string]$Sddl) {
     $want = New-Object Security.AccessControl.FileSecurity
     $want.SetSecurityDescriptorSddlForm($Sddl)
-    $acl = Get-Acl -LiteralPath $Path
-    $acl.SetSecurityDescriptorSddlForm($Sddl, 'Access')
-    Set-Acl -LiteralPath $Path -AclObject $acl
     $owner = $want.GetOwner([Security.Principal.SecurityIdentifier]).Value
-    if ((Get-Acl -LiteralPath $Path).GetOwner([Security.Principal.SecurityIdentifier]).Value -ne $owner) {
-        Invoke-Native 'icacls.exe' @($Path, '/setowner', ('*' + $owner)) | Out-Null
-    }
+    $wantAccess = $want.GetSecurityDescriptorSddlForm('Access')
+    $acl = Get-Acl -LiteralPath $Path
+    $acl.SetSecurityDescriptorSddlForm($Sddl, 'Owner, Group, Access')
+    Set-Acl -LiteralPath $Path -AclObject $acl
     $got = New-Object Security.AccessControl.FileSecurity
     $got.SetSecurityDescriptorSddlForm((Get-Sddl $Path))
     $gotOwner = $got.GetOwner([Security.Principal.SecurityIdentifier]).Value
     $gotAccess = $got.GetSecurityDescriptorSddlForm('Access')
-    if ($gotOwner -ne $owner -or $gotAccess -ne $want.GetSecurityDescriptorSddlForm('Access')) {
-        throw "Could not restore the owner and ACL of $Path (owner $gotOwner, want $owner)"
+    if ($gotOwner -ne $owner -or (Get-AccessKey $gotAccess) -ne (Get-AccessKey $wantAccess)) {
+        throw "Could not restore the owner and ACL of $Path (owner $gotOwner, want $owner; ACL $gotAccess, want $wantAccess)"
     }
 }
 
@@ -364,6 +383,8 @@ function New-Baseline($Bundle, $Device) {
             trusted_publisher = Test-CertInStore 'TrustedPublisher' $Bundle.Thumbprint
         }
         device = [ordered]@{ instance_id = $Device.InstanceId; driver = Get-DeviceDriver $Device.InstanceId }
+        class_values = @(Get-RegValues (Get-DeviceKeys $Device.InstanceId).class $ClassValues)
+        msi_values = @(Get-RegValues (Get-DeviceKeys $Device.InstanceId).msi $MsiValues)
         files = @($files)
         vulkan_registry = @($vulkan)
         services = @($services)
@@ -376,6 +397,66 @@ function New-Baseline($Bundle, $Device) {
 
 function Get-BaselineFile($Baseline, [string]$Arch, [string]$Name) {
     return @($Baseline.files | Where-Object { $_.arch -eq $Arch -and $_.name -eq $Name })[0]
+}
+
+# Registry values the INF writes into keys that outlive the driver: the
+# display class key (PnP keeps it for the next driver of the device) and the
+# device's hardware key. Uninstall puts each back as it was.
+$ClassValues = @('UserModeDriverName', 'UserModeDriverNameWow', 'OpenGLDriverName', 'OpenGLDriverNameWow',
+    'OpenGLFlags', 'OpenGLFlagsWow', 'OpenGLVersion', 'OpenGLVersionWow', 'InstalledDisplayDrivers',
+    'HWCursor', 'FlexResolution', 'UsePhysicalMemory')
+$MsiValues = @('MSISupported', 'MessageNumberLimit')
+
+function Get-DeviceKeys([string]$InstanceId) {
+    $drv = (Get-PnpDeviceProperty -InstanceId $InstanceId -KeyName DEVPKEY_Device_Driver).Data
+    return [ordered]@{
+        class = "HKLM:\SYSTEM\CurrentControlSet\Control\Class\$drv"
+        msi = "HKLM:\SYSTEM\CurrentControlSet\Enum\$InstanceId\Device Parameters\Interrupt Management\MessageSignaledInterruptProperties"
+    }
+}
+
+function Get-RegValues([string]$Key, [string[]]$Names) {
+    $item = Get-Item -LiteralPath $Key -ErrorAction SilentlyContinue
+    foreach ($n in $Names) {
+        $exists = [bool]($item -and ($item.GetValueNames() -contains $n))
+        [ordered]@{
+            name = $n; exists = $exists
+            kind = $(if ($exists) { $item.GetValueKind($n).ToString() } else { $null })
+            value = $(if ($exists) { $item.GetValue($n, $null, 'DoNotExpandEnvironmentNames') } else { $null })
+        }
+    }
+}
+
+function Restore-RegValues([string]$Key, $Saved) {
+    if (-not (Test-Path -LiteralPath $Key)) { return }
+    $item = Get-Item -LiteralPath $Key
+    foreach ($v in $Saved) {
+        $has = $item.GetValueNames() -contains $v.name
+        if ($v.exists) {
+            $cur = $(if ($has) { ConvertTo-Json -Compress -InputObject $item.GetValue($v.name, $null, 'DoNotExpandEnvironmentNames') } else { $null })
+            if (-not $has -or $cur -ne (ConvertTo-Json -Compress -InputObject $v.value) -or $item.GetValueKind($v.name).ToString() -ne $v.kind) {
+                $data = $v.value
+                if ($v.kind -eq 'MultiString') { $data = [string[]]@($v.value) }
+                New-ItemProperty -LiteralPath $Key -Name $v.name -PropertyType $v.kind -Value $data -Force | Out-Null
+                Write-Journal "restored $Key\$($v.name)"
+            }
+        } elseif ($has) {
+            Remove-ItemProperty -LiteralPath $Key -Name $v.name
+            Write-Journal "removed $Key\$($v.name)"
+        }
+    }
+}
+
+function Test-RegValues([string]$Key, $Saved) {
+    $now = @(Get-RegValues $Key @($Saved | ForEach-Object { $_.name }))
+    $bad = @()
+    for ($i = 0; $i -lt $now.Count; $i++) {
+        if ((ConvertTo-Json -Compress -InputObject $now[$i]) -ne (ConvertTo-Json -Compress -InputObject ([ordered]@{
+            name = $Saved[$i].name; exists = $Saved[$i].exists; kind = $Saved[$i].kind; value = $Saved[$i].value }))) {
+            $bad += "$Key\$($Saved[$i].name)"
+        }
+    }
+    return $bad
 }
 
 # ----------------------------------------------------------- startup tasks
@@ -502,17 +583,32 @@ function Install-Bridge($Bundle, $Baseline, $Arch) {
     }
     if (-not (Test-Path -LiteralPath $native)) { throw "$native is missing and $sys is already a bridge" }
     $bridge = Join-Path $src 'd3d12.dll'
+    $s = Get-State
+    $sddl = $(if ($s[("native_d3d12_" + $Arch.Name)]) { $s[("native_d3d12_" + $Arch.Name)].sddl } else { $null })
     if ((Get-Sha256 $sys) -ne (Get-Sha256 $bridge)) {
-        $s = Get-State
-        $sddl = $s[("native_d3d12_" + $Arch.Name)].sddl
         Set-SystemFile $sys $bridge $sddl
         $changed = $true
+    } elseif ($sddl -and -not (Test-SddlMatch $sys $sddl)) {
+        Write-Journal "$sys has the wrong owner or ACL; restoring"
+        Restore-Sddl $sys $sddl
     }
     $hashes = @(Get-KnownBridgeHashes $Bundle)
     Set-State @{ bridge_hashes = $hashes }
     return $changed
 }
 
+# The file version from the binary VS_FIXEDFILEINFO, or $null when the file
+# has none.
+function Get-FileVersion([string]$Path) {
+    $vi = [Diagnostics.FileVersionInfo]::GetVersionInfo($Path)
+    $v = New-Object Version($vi.FileMajorPart, $vi.FileMinorPart, $vi.FileBuildPart, $vi.FilePrivatePart)
+    if ($v -eq (New-Object Version(0, 0, 0, 0))) { return $null }
+    return $v
+}
+
+# vulkan-1.dll goes in when the machine has none, or an older one, or the one
+# a previous run of this package installed. vulkaninfo.exe follows the
+# loader's decision, and is also installed where none exists.
 function Install-Loader($Bundle, $Baseline, $Arch) {
     $changed = $false
     $s = Get-State
@@ -520,25 +616,30 @@ function Install-Loader($Bundle, $Baseline, $Arch) {
     if ($s.Contains('loader_installed') -and $s['loader_installed']) {
         foreach ($p in $s['loader_installed'].PSObject.Properties) { $installed[$p.Name] = $p.Value }
     }
+    $src = Join-Path $Bundle.Dir "runtime\$($Arch.Name)"
+    $loader = Join-Path $Arch.Dir 'vulkan-1.dll'
+    $cur = Get-Sha256 $loader
+    $key = "$($Arch.Name)/vulkan-1.dll"
+    $take = $true
+    if ($cur -and $cur -ne (Get-Sha256 (Join-Path $src 'vulkan-1.dll')) -and -not ($installed.ContainsKey($key) -and $installed[$key] -eq $cur)) {
+        $have = Get-FileVersion $loader
+        $want = Get-FileVersion (Join-Path $src 'vulkan-1.dll')
+        if ($null -eq $want) { throw "The bundle's $($Arch.Name) vulkan-1.dll has no file version" }
+        if ($null -ne $have -and $have -ge $want) {
+            Write-Journal "keeping $loader $have (not older than the package's $want)"
+            $take = $false
+        }
+    }
     foreach ($n in $LoaderFiles) {
         $dst = Join-Path $Arch.Dir $n
-        $src = Join-Path $Bundle.Dir "runtime\$($Arch.Name)\$n"
-        $key = "$($Arch.Name)/$n"
-        $cur = Get-Sha256 $dst
-        $new = Get-Sha256 $src
-        if ($cur -eq $new) { $installed[$key] = $new; continue }
-        $ours = $installed.ContainsKey($key) -and $installed[$key] -eq $cur
-        if ($cur -and -not $ours) {
-            $have = [version]([Diagnostics.FileVersionInfo]::GetVersionInfo($dst).FileVersion -replace '[^0-9.].*$', '')
-            $want = [version]([Diagnostics.FileVersionInfo]::GetVersionInfo($src).FileVersion -replace '[^0-9.].*$', '')
-            if ($have -ge $want) {
-                Write-Journal "keeping $dst $have (not older than the package's $want)"
-                continue
-            }
-        }
+        $new = Get-Sha256 (Join-Path $src $n)
+        $k = "$($Arch.Name)/$n"
+        $now = Get-Sha256 $dst
+        if ($now -eq $new) { $installed[$k] = $new; continue }
+        if (-not $take -and $now) { continue }
         $bf = Get-BaselineFile $Baseline $Arch.Name $n
-        Set-SystemFile $dst $src $(if ($bf -and $bf.sddl) { $bf.sddl } else { $null })
-        $installed[$key] = $new
+        Set-SystemFile $dst (Join-Path $src $n) $(if ($bf -and $bf.sddl) { $bf.sddl } else { $null })
+        $installed[$k] = $new
         $changed = $true
     }
     Set-State @{ loader_installed = $installed }
@@ -695,10 +796,17 @@ function Invoke-Remove($Baseline) {
         if ($store.Count) { $prev = $store[0].OriginalFileName }
         Invoke-Native 'pnputil.exe' @('/add-driver', $prev, '/install') @(0, 259, 3010) | Out-Null
     }
+    # Values the INF wrote into the class and hardware keys, which the
+    # restored driver reuses.
+    if ($device) {
+        $keys = Get-DeviceKeys $device.InstanceId
+        Restore-RegValues $keys.class @($Baseline.class_values)
+        Restore-RegValues $keys.msi @($Baseline.msi_values)
+    }
     # The services the INF added and pnputil leaves behind.
     foreach ($svc in $Baseline.services) {
         if (-not $svc.existed -and (Get-Service -Name $svc.name -ErrorAction SilentlyContinue)) {
-            & sc.exe stop $svc.name 2>&1 | Out-Null
+            try { Invoke-Native 'sc.exe' @('stop', $svc.name) | Out-Null } catch { Write-Journal "could not stop $($svc.name): $($_.Exception.Message)" }
             Invoke-Native 'sc.exe' @('delete', $svc.name) @(0, 1072) | Out-Null
         }
     }
@@ -750,6 +858,10 @@ function Test-Removed($Baseline) {
     foreach ($f in $Baseline.files) {
         $h = Get-Sha256 $f.path
         if ($h -ne $f.sha256) { $problems += "$($f.path) is $h, baseline $($f.sha256)" }
+    }
+    $keys = Get-DeviceKeys $Baseline.device.instance_id
+    foreach ($b in (Test-RegValues $keys.class @($Baseline.class_values)) + (Test-RegValues $keys.msi @($Baseline.msi_values))) {
+        $problems += "$b differs from the baseline"
     }
     if ((Get-TestSigningSetting) -ne $Baseline.testsigning) { $problems += "testsigning is $(Get-TestSigningSetting), baseline $($Baseline.testsigning)" }
     if ((Test-CertInStore 'Root' $Baseline.certificates.thumbprint) -ne $Baseline.certificates.root) { $problems += 'Root certificate not restored' }
