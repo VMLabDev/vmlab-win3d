@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# Run vmlab (>= 0.24) on Zeus against an isolated supervisor (state and
+# Run vmlab (>= 0.25.0-alpha) on Zeus against an isolated supervisor (state and
 # sockets under ~/win3d-zeus/), so QEMU can get a patched QEMU binary, a
 # diagnostic render server or debug variables, as labs/nvidia/vmlab-nv.sh
 # does on helios. Run it from the lab directory, like vmlab. The user's
-# supervisor (/run/user/<uid>/vmlab) is never used.
+# supervisor (/run/user/<uid>/vmlab) is never used. The host config
+# (~/.config/vmlab/config.wcl, which names the lab's host_gpu) is shared.
 #   labs/zeus/vmlab-iso.sh <vmlab args...>
 #   labs/zeus/vmlab-iso.sh --stop-supervisor | --state-home | --which-qemu
 # Environment read when the supervisor starts (stop it to change them):

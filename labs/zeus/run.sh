@@ -4,7 +4,7 @@
 #
 #   labs/zeus/run.sh --gpu intel|nvidia|amd [--keep]
 #
-# --gpu amd is the regression run on helios (AMD iGPU 0000:72:00.0), from
+# --gpu amd is the regression run on helios (AMD iGPU AMD1, 0000:72:00.0), from
 # this worktree: WIN3D_WORK=$PWD/.scratch/work WIN3D_E2E=<main's tests/e2e>.
 #
 # Run it from the staging tree labs/zeus/stage.sh writes to ~/win3d-zeus/repo
@@ -12,7 +12,8 @@
 # scripts/install-into-vm.sh, installer/VERSION and labs/zeus. It does not
 # build: the package comes from helios (scripts/build.sh at the commit in
 # out/package/*/manifest.json). It brings up a fresh lab from
-# labs/zeus/<gpu>/vmlab.wcl (vmlab >= 0.24, gpu.address names the GPU),
+# labs/zeus/<gpu>/vmlab.wcl (vmlab >= 0.25.0-alpha: gpu.host_gpu names a GPU
+# the host config declares; labs/zeus/README.md has Zeus's config.wcl),
 # records the guest baseline, installs with scripts/install-into-vm.sh, then
 # in the autologon user's desktop session runs vulkaninfo, the D3D9, D3D11,
 # D3D12, OpenGL and Vulkan probes (x64 and x86) with `vmlab vm screenshot`
@@ -42,6 +43,7 @@ while [ $# -gt 0 ]; do
         *) sed -n '2,/^set -uo/p' "$0" | sed '$d' >&2; exit 2 ;;
     esac
 done
+# PCI is for the host.txt record only; the lab names the GPU with host_gpu.
 case $GPU in
     intel) PCI=0000:00:02.0 ;;
     nvidia) PCI=0000:01:00.0 ;;
@@ -131,7 +133,7 @@ lab_up() {
     cp "$LABDIR/vmlab.wcl" "$EV/lab-vmlab.wcl"
     in_lab vmlab validate || return 1
     in_lab vmlab up || return 1
-    # vmlab 0.24 starts qemu.log with the argv and environment it gave QEMU.
+    # vmlab >= 0.24 starts qemu.log with the argv and environment it gave QEMU.
     local qlog; qlog=$(vmlab_state)/vmlab/labs/$LAB/vms/$VM/qemu.log
     [ -f "$qlog" ] && grep -E '^vmlab: (argv|env):' "$qlog" >"$EV/qemu-argv-env.txt"
     wait_agent || return 1
