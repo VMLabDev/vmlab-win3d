@@ -1,0 +1,261 @@
+diff -ruN a/src/gallium/frontends/d3d10umd/Adapter.cpp b/src/gallium/frontends/d3d10umd/Adapter.cpp
+--- a/src/gallium/frontends/d3d10umd/Adapter.cpp	2026-10-17 18:58:00.609579508 +1000
++++ b/src/gallium/frontends/d3d10umd/Adapter.cpp	2026-10-17 18:58:39.695169655 +1000
+@@ -292,7 +292,11 @@
+          caps->Caps =
+             D3D11DDICAPS_SHADER_COMPUTE_PLUS_RAW_AND_STRUCTURED_BUFFERS_IN_SHADER_4_X;
+ #if SUPPORT_D3D_WDDM2_0
+-         caps->Caps |= D3D11DDICAPS_SHADER_TYPED_UAV_LOAD_ADDITIONAL_FORMATS;
++         /* GetCaps has no screen.  The answer comes from the last device
++          * this process created; before the first one it stays optimistic,
++          * as before.  CheckFormatSupport is per device and always exact. */
++         if (g_TypedUavLoadAdditionalFormats != 0)
++            caps->Caps |= D3D11DDICAPS_SHADER_TYPED_UAV_LOAD_ADDITIONAL_FORMATS;
+ #endif
+       }
+       break;
+diff -ruN a/src/gallium/frontends/d3d10umd/Device.cpp b/src/gallium/frontends/d3d10umd/Device.cpp
+--- a/src/gallium/frontends/d3d10umd/Device.cpp	2026-10-17 18:58:00.607579488 +1000
++++ b/src/gallium/frontends/d3d10umd/Device.cpp	2026-10-17 18:58:39.693587250 +1000
+@@ -869,6 +869,13 @@
+    return true;
+ }
+ 
++/* -1 until a device in this process has a screen, then whether that device
++ * can load the D3D11 "additional" typed UAV formats (GetCaps reads it). */
++volatile LONG g_TypedUavLoadAdditionalFormats = -1;
++
++/* The typed UAV load formats beyond R32_FLOAT/UINT/SINT
++ * (D3D11_FEATURE_DATA_D3D11_OPTIONS2::TypedUAVLoadAdditionalFormats).  They
++ * need Vulkan's shaderStorageImageReadWithoutFormat; R32 loads do not. */
+ static bool
+ SupportsTypedLoadsWDDM2_0(struct pipe_screen *screen)
+ {
+@@ -1308,13 +1315,17 @@
+    }
+ 
+ #if SUPPORT_D3D_WDDM2_0
+-   if (pCreateData->Interface == D3DWDDM2_0_DDI_INTERFACE_VERSION &&
+-       !SupportsTypedLoadsWDDM2_0(screen)) {
+-      yttrium_gdi_user_logf("d3d10umd: WDDM 2.0 requires typed image loads\n");
+-      screen->destroy(screen);
+-      pDevice->device.base.destroy(&pDevice->device.base);
+-      mtx_destroy(&pDevice->CreateResourceMtx);
+-      return E_FAIL;
++   if (pCreateData->Interface == D3DWDDM2_0_DDI_INTERFACE_VERSION) {
++      /* Without the additional formats the device still has the R32 typed
++       * UAV loads that feature level 11_0 requires (CheckFormatSupport
++       * reports them; the shader declares such images as R32), so it is
++       * created with TypedUAVLoadAdditionalFormats off rather than failed. */
++      const LONG additional = SupportsTypedLoadsWDDM2_0(screen) ? 1 : 0;
++      if (InterlockedExchange(&g_TypedUavLoadAdditionalFormats, additional) !=
++             additional && !additional)
++         yttrium_gdi_user_logf("d3d10umd: typed UAV loads limited to R32 formats "
++                               "(no shaderStorageImageReadWithoutFormat); "
++                               "TypedUAVLoadAdditionalFormats off\n");
+    }
+ #endif
+ 
+diff -ruN a/src/gallium/frontends/d3d10umd/State.h b/src/gallium/frontends/d3d10umd/State.h
+--- a/src/gallium/frontends/d3d10umd/State.h	2026-10-17 18:58:00.610579517 +1000
++++ b/src/gallium/frontends/d3d10umd/State.h	2026-10-17 18:58:39.694852910 +1000
+@@ -59,6 +59,10 @@
+ #endif
+ 
+ 
++#if SUPPORT_D3D_WDDM2_0
++extern volatile LONG g_TypedUavLoadAdditionalFormats;
++#endif
++
+ struct Adapter
+ {
+    struct pipe_screen *screen;
+diff -ruN a/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.c b/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.c
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.c	2026-10-17 18:58:00.617579586 +1000
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.c	2026-10-17 18:58:39.702153775 +1000
+@@ -5956,6 +5956,20 @@
+                             uint_type, sint_type);
+                return false;
+             }
++         } else if (shader->r32_image_mask & slot_mask) {
++            const enum pipe_format format = view->format != PIPE_FORMAT_NONE ?
++               view->format : src->base.format;
++            const enum pipe_format want =
++               (shader->formatless_image_uint_mask & slot_mask) ?
++                  PIPE_FORMAT_R32_UINT :
++               (shader->formatless_image_sint_mask & slot_mask) ?
++                  PIPE_FORMAT_R32_SINT : PIPE_FORMAT_R32_FLOAT;
++            if (src->base.target == PIPE_BUFFER || format != want) {
++               YTTRIUM_WARN("yttrium: storage image rejected owner=yttrium-pipeline stage=%s slot=%u format=%s want=%s reason=r32-declared-image-view-mismatch\n",
++                            yttrium_shader_stage_name(candidate), slot,
++                            util_format_name(format), util_format_name(want));
++               return false;
++            }
+          }
+       }
+       if (!src)
+diff -ruN a/src/gallium/winsys/yttrium/gdi/yttrium_screen.c b/src/gallium/winsys/yttrium/gdi/yttrium_screen.c
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_screen.c	2026-10-17 18:58:00.612579537 +1000
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_screen.c	2026-10-17 18:58:39.695399487 +1000
+@@ -125,8 +125,16 @@
+       return false;
+ 
+    struct yttrium_screen *screen = yttrium_screen(pscreen);
+-   return yttrium_venus_storage_image_formatless_format_supported(
+-      screen->venus, format, true, true);
++   if (yttrium_venus_storage_image_formatless_format_supported(
++          screen->venus, format, true, true))
++      return true;
++   /* Without shaderStorageImageReadWithoutFormat, a loaded R32 image is
++    * declared with its format (yttrium_shader_lower_formatless_images). */
++   return (format == PIPE_FORMAT_R32_FLOAT ||
++           format == PIPE_FORMAT_R32_UINT ||
++           format == PIPE_FORMAT_R32_SINT) &&
++          pscreen->is_format_supported(pscreen, format, PIPE_TEXTURE_2D, 0, 0,
++                                       PIPE_BIND_SHADER_IMAGE);
+ }
+ 
+ void
+diff -ruN a/src/gallium/winsys/yttrium/gdi/yttrium_shader.c b/src/gallium/winsys/yttrium/gdi/yttrium_shader.c
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_shader.c	2026-10-17 18:58:00.613579547 +1000
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_shader.c	2026-10-17 18:58:54.778746668 +1000
+@@ -4777,6 +4777,84 @@
+    }
+ }
+ 
++/* The r32_image_mask bit of an image variable, or 0. */
++static uint64_t
++yttrium_shader_r32_image_slot(const struct yttrium_shader_state *shader,
++                              const nir_variable *var)
++{
++   const unsigned binding = var->data.binding;
++   if (binding < YTTRIUM_SHADER_STORAGE_IMAGE_BINDING_BASE ||
++       binding >= YTTRIUM_SHADER_STORAGE_IMAGE_BINDING_BASE +
++                  PIPE_MAX_SHADER_IMAGES)
++      return 0;
++   return shader->r32_image_mask &
++          (1ull << (binding - YTTRIUM_SHADER_STORAGE_IMAGE_BINDING_BASE));
++}
++
++static void
++yttrium_shader_mark_r32_image(struct yttrium_shader_state *shader,
++                              unsigned binding, enum pipe_format format)
++{
++   const uint64_t bit =
++      1ull << (binding - YTTRIUM_SHADER_STORAGE_IMAGE_BINDING_BASE);
++   shader->r32_image_mask |= bit;
++   if (format == PIPE_FORMAT_R32_UINT)
++      shader->formatless_image_uint_mask |= bit;
++   if (format == PIPE_FORMAT_R32_SINT)
++      shader->formatless_image_sint_mask |= bit;
++}
++
++/* A generated variant keeps the R32 declaration of its parent; restore the
++ * mask the pipeline checks views against.  Only called on devices without
++ * formatless reads.  Typed atomic images are R32 as well, so marking them
++ * asks nothing D3D does not already require. */
++static void
++yttrium_shader_note_r32_image(struct yttrium_shader_state *shader,
++                              const nir_variable *var)
++{
++   const unsigned binding = var->data.binding;
++   const enum pipe_format format = var->data.image.format;
++   if (glsl_type_is_array(var->type) ||
++       binding < YTTRIUM_SHADER_STORAGE_IMAGE_BINDING_BASE ||
++       binding >= YTTRIUM_SHADER_STORAGE_IMAGE_BINDING_BASE +
++                  PIPE_MAX_SHADER_IMAGES ||
++       (format != PIPE_FORMAT_R32_FLOAT && format != PIPE_FORMAT_R32_UINT &&
++        format != PIPE_FORMAT_R32_SINT))
++      return;
++   yttrium_shader_mark_r32_image(shader, binding, format);
++}
++
++/* The device cannot read formatless storage images.  D3D11 then allows
++ * typed UAV loads only from R32_FLOAT, R32_UINT and R32_SINT views (the
++ * additional formats are reported unsupported), so declare the image with
++ * the R32 format of its numeric type: that needs no Vulkan feature, and
++ * stores through it stay correct because the view must be R32 to be loaded
++ * from at all.  The pipeline rejects any other view. */
++static bool
++yttrium_shader_declare_r32_image(struct yttrium_shader_state *shader,
++                                 nir_variable *var, bool read, bool write)
++{
++   const struct glsl_type *type = glsl_without_array(var->type);
++   enum pipe_format format;
++   switch (glsl_get_sampler_result_type(type)) {
++   case GLSL_TYPE_FLOAT: format = PIPE_FORMAT_R32_FLOAT; break;
++   case GLSL_TYPE_UINT: format = PIPE_FORMAT_R32_UINT; break;
++   case GLSL_TYPE_INT: format = PIPE_FORMAT_R32_SINT; break;
++   default: return false;
++   }
++   var->data.image.format = format;
++   var->data.access &= ~(ACCESS_NON_READABLE | ACCESS_NON_WRITEABLE);
++   if (!read)
++      var->data.access |= ACCESS_NON_READABLE;
++   if (!write)
++      var->data.access |= ACCESS_NON_WRITEABLE;
++   yttrium_shader_mark_r32_image(shader, var->data.binding, format);
++   YTTRIUM_WARN("yttrium: shader image declared %s owner=yttrium-shader stage=%s id=%u binding=%u read=%u write=%u reason=no-formatless-image-read\n",
++                util_format_name(format), yttrium_shader_stage_name(shader->stage),
++                shader->id, var->data.binding, read, write);
++   return true;
++}
++
+ static bool
+ yttrium_shader_lower_formatless_images(struct pipe_context *ctx,
+                                        struct yttrium_shader_state *shader)
+@@ -4787,6 +4865,7 @@
+    shader->formatless_image_write_mask = 0;
+    shader->formatless_image_uint_mask = 0;
+    shader->formatless_image_sint_mask = 0;
++   shader->r32_image_mask = 0;
+ 
+    nir_foreach_variable_with_modes(var, shader->nir, nir_var_image) {
+       const struct glsl_type *type = glsl_without_array(var->type);
+@@ -4795,8 +4874,12 @@
+          continue;
+       /* Generated graphics variants clone the already lowered NIR.  Scan
+        * their Unknown images again, without changing new typed helpers. */
+-      if (!shader->tokens && var->data.image.format != PIPE_FORMAT_NONE)
++      if (!shader->tokens && var->data.image.format != PIPE_FORMAT_NONE) {
++         if (!yttrium_venus_storage_image_without_format_supported(
++                screen->venus, true, false))
++            yttrium_shader_note_r32_image(shader, var);
+          continue;
++      }
+ 
+       const unsigned binding = var->data.binding;
+       if (glsl_type_is_array(var->type) ||
+@@ -4843,6 +4926,10 @@
+                       binding);
+          return false;
+       }
++      if (read && !yttrium_venus_storage_image_without_format_supported(
++                     screen->venus, true, false) &&
++          yttrium_shader_declare_r32_image(shader, var, read, write))
++         continue;
+       if (!yttrium_venus_storage_image_without_format_supported(
+              screen->venus, read, write)) {
+          YTTRIUM_WARN("yttrium: shader formatless image rejected owner=yttrium-shader stage=%s id=%u binding=%u read=%u write=%u reason=missing-vulkan-feature\n",
+@@ -4893,6 +4980,8 @@
+                 glsl_get_sampler_dim(glsl_without_array(var->type)) !=
+                    GLSL_SAMPLER_DIM_BUF)
+                nir_intrinsic_set_format(intr, PIPE_FORMAT_NONE);
++            else if (var && yttrium_shader_r32_image_slot(shader, var))
++               nir_intrinsic_set_format(intr, var->data.image.format);
+          }
+       }
+    }
+diff -ruN a/src/gallium/winsys/yttrium/gdi/yttrium_shader.h b/src/gallium/winsys/yttrium/gdi/yttrium_shader.h
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_shader.h	2026-10-17 18:58:00.615579566 +1000
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_shader.h	2026-10-17 18:58:39.696606777 +1000
+@@ -95,6 +95,9 @@
+    uint64_t formatless_image_write_mask;
+    uint64_t formatless_image_uint_mask;
+    uint64_t formatless_image_sint_mask;
++   /* Loaded images declared R32_FLOAT/UINT/SINT because the device cannot
++    * read formatless images; the bound view must have that format. */
++   uint64_t r32_image_mask;
+ };
+ 
+ const char *
