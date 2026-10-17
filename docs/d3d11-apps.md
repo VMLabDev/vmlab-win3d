@@ -201,7 +201,8 @@ To see these samples on the console, `tests/e2e/apps.sh` has two options:
   `D3D11Ref.dll` in `System32`);
 - move the window after start-up.
 
-That decision belongs to the e2e owner.
+`tests/e2e/apps.sh` now takes the first option and installs `D3D11Ref.dll`
+from the pinned SDK (commit `3bf8e4c`). It has not been re-run since.
 
 ## Not covered
 
