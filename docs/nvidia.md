@@ -200,6 +200,16 @@ been black either way.
 
 ### The fix: `patches/host/qemu/0001`
 
+The same change is a commit on the fork
+[VMLabDev/qemu](https://github.com/VMLabDev/qemu/tree/vmlab/egl-headless-external-dmabuf),
+branch `vmlab/egl-headless-external-dmabuf` (commit `f5832b34dd`, on tag
+`v11.1.1`), ready to rebase onto QEMU master and send upstream. As of
+2026-10-18, neither QEMU master nor v11.1.2 handles external-only dma-bufs
+(`egl_dmabuf_import_texture()` binds only `GL_TEXTURE_2D`), and no upstream
+issue reports it. Upstream submission still needs a `Signed-off-by:` from the
+author.
+
+
 The patch changes QEMU 11.1.1 in two places:
 
 - `egl_dmabuf_import_texture()`: if the `GL_TEXTURE_2D` import fails, import

@@ -9,3 +9,9 @@ qemu           https://download.qemu.org/qemu-11.1.1.tar.xz  version 11.1.1  sha
 # script for why), so its other inputs are the host packages of decision D3:
 # glib2 2.88.3, pixman 0.46.4, libepoxy 1.5.10, mesa 26.2.2 (gbm),
 # virglrenderer 1.3.0, libdrm 2.4.134, libslirp 4.9.4.
+# The QEMU patch is also kept as a commit on a fork, for upstreaming:
+# https://github.com/VMLabDev/qemu  branch vmlab/egl-headless-external-dmabuf
+# commit f5832b34dd09a1be669af55e0c4c81b4a8d52a5f = v11.1.1 (c3d48b7d1e89604920e5b81b91140c2ad39a1943)
+# + qemu/0001-ui-egl-headless-external-only-dmabuf-scanouts.patch. build-qemu.sh builds
+# the release tarball plus the patch, which gives the same tree.
+qemu-fork      https://github.com/VMLabDev/qemu  branch vmlab/egl-headless-external-dmabuf  commit f5832b34dd09a1be669af55e0c4c81b4a8d52a5f
