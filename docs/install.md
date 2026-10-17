@@ -14,42 +14,42 @@ On the host:
 - vmlab 0.23 or later, and the local `windows-11` (or `windows-10`) template.
 - An AMD GPU with RADV for Venus. On this host that is the iGPU,
   `/dev/dri/renderD129`; Venus on the NVIDIA RTX 5090 does not work yet
-  (prior-art §8.1).
+  (prior-art §8.1, `docs/host.md`).
 
-For the lab, the VM needs:
+For the lab, the VM needs what `labs/probe/vmlab.wcl` sets up (measured in
+`docs/host.md`):
 
 | Setting | Why |
 | --- | --- |
 | `secure_boot = false` | The package is test-signed (decision 0001). Windows ignores `testsigning` while Secure Boot is on, so `Install.cmd` refuses to run. This cannot be changed from inside the guest. |
-| A virtio-gpu **GL** device with Venus and blob resources | The KMD needs `VIRTIO_GPU_F_VIRGL`, and Venus needs blob memory. The INF matches `PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01`. |
-| A shared memfd RAM backend, the same size as `memory` | Venus maps guest memory into the host renderer. |
-| `egl-headless,rendernode=/dev/dri/renderD129` | Renders on the AMD iGPU. |
-| `VK_DRIVER_FILES=/usr/share/vulkan/icd.d/radeon_icd.json` in the vmlab **supervisor's** environment | QEMU's virglrenderer must pick RADV. A running supervisor keeps the environment it started with. |
+| `gpu { mode = "vulkan" }` | vmlab's Venus mode: a `virtio-gpu-gl` device with `venus=true`. The KMD needs its `VIRTIO_GPU_F_VIRGL` feature. The INF matches its hardware ID, `PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01`. |
+| `-global virtio-gpu-gl-device.blob=true` | QEMU 11.1.1 refuses `venus=true` without blob resources. |
+| `-vga none` | Without it q35 adds a second, standard VGA adapter, and Venus then enumerates no device. |
+| `-display egl-headless,rendernode=/dev/dri/renderD129` | Renders on the AMD iGPU; the console must use the same render node as Venus. |
+| `VK_DRIVER_FILES=/usr/share/vulkan/icd.d/radeon_icd.json` in the vmlab **supervisor's** environment | QEMU's virglrenderer must pick RADV. A running supervisor keeps the environment it started with, so `labs/probe/vmlab-amd.sh` runs vmlab against its own isolated supervisor. |
 
-vmlab's own `gpu { mode = "vulkan" }` lacks blob, the memfd backend and the
-render node (prior-art §8.1), so the lab uses `display` and `qemu_args`.
-This lab file was used for the evidence in `docs/evidence/package/`:
+The lab used for the evidence in `docs/evidence/package/` is that file with
+another lab name:
 
 ```wcl
 import <vmlab.wcl>
 
-lab "win3d-package-a" {
+lab "win3d-package-b" {
   vm "win11" {
-    template = "x86_64/windows-11"
-    cpus = 4
-    memory = 8GiB
+    template = "x86_64/windows-11@26100.1742.5"
     secure_boot = false
-    prevent_sleep = true
-    display = "virtio-vga-gl,hostmem=4G,blob=on,venus=on"
-    qemu_args = ["-object", "memory-backend-memfd,id=venusmem,size=8G,share=on",
-                 "-machine", "memory-backend=venusmem",
-                 "-display", "egl-headless,rendernode=/dev/dri/renderD129"]
+    gpu { mode = "vulkan" }
+    qemu_args = [
+      "-global", "virtio-gpu-gl-device.blob=true",
+      "-vga", "none",
+      "-display", "egl-headless,rendernode=/dev/dri/renderD129",
+    ]
   }
 }
 ```
 
-To give QEMU the RADV ICD without touching your own supervisor, run vmlab for
-this lab with its own runtime and state directories:
+Bring it up with an isolated supervisor that has the RADV ICD, as
+`labs/probe/vmlab-amd.sh` does:
 
 ```sh
 export XDG_RUNTIME_DIR=/tmp/win3d-run XDG_STATE_HOME=$PWD/.scratch/state
@@ -206,7 +206,7 @@ the newest backup, and the bridge goes back in place. The journal records it.
 | Symptom | Cause |
 | --- | --- |
 | `Secure Boot is on` | The lab needs `secure_boot = false`. |
-| `No display device with hardware ID …` | The VM has no `virtio-vga-gl` device (for example plain `virtio-vga`). |
+| `No display device with hardware ID …` | The VM has no virtio-gpu GL device: no `gpu { mode = "vulkan" }` (or `virgl`). |
 | Device problem code 52 | The signature was rejected: test signing is not active, or the certificate is not trusted. Check `bcdedit /enum {current}`. |
 | Device problem code 43 | The KMD started but failed, for example without Venus or blob on the host side. |
 | `The display device uses oemNN.inf …, not this package's` | A better-ranked driver for the same hardware ID is in the driver store. Remove it with the `pnputil` command in the message and run `Install.cmd` again. |
