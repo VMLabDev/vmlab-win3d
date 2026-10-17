@@ -9,6 +9,46 @@ The NVIDIA failures this probe recorded have since been explained and fixed
 in `docs/nvidia.md` (`patches/mesa/0020` and `patches/host/qemu/0001`). Read
 the NVIDIA results below as the state before those fixes.
 
+## Update: vmlab 0.25 (2026-10-17)
+
+vmlab 0.25.0-alpha moves every host-specific GPU detail out of the lab file
+and into the host config, `~/.config/vmlab/config.wcl` (vmlab handoff
+`20261017-210821`, vmlab PR #161). A lab file no longer carries a PCI
+address:
+
+| vmlab 0.24 (lab file) | vmlab 0.25 |
+| --- | --- |
+| `gpu { mode = "vulkan" address = "0000:72:00.0" }` | `gpu { mode = "vulkan" host_gpu = "AMD1" }` in the lab, and `gpu "AMD1" { address = "0000:72:00.0" }` in the host config |
+| `gpu.vulkan_icd = "<json>"` | `vulkan_icd` on the host config's `gpu "<name>" {}` block |
+| `gpu_address` in the host config | removed; declare a named `gpu "<name>" {}` block |
+
+0.25 rejects `address` and `vulkan_icd` inside a lab's `gpu {}`, so
+`vmlab validate` fails on a 0.24 lab file. What the resolved GPU drives is
+unchanged from 0.24: the render node for egl-headless and
+`VK_LOADER_DRIVERS_SELECT` from its kernel driver.
+
+Helios's host config names three GPUs:
+
+```wcl
+import <vmlab-host.wcl>
+
+gpu "AMD1"    { address = "0000:72:00.0" }                  // Ryzen 9 9950X iGPU (amdgpu, renderD129)
+gpu "Nvidia1" { address = "0000:01:00.0"  default = true }  // RTX 5090 (nvidia, renderD128)
+gpu "Nvidia2" { address = "0000:05:00.0" }                  // RTX 5090 (nvidia, renderD130)
+```
+
+A lab without `host_gpu` takes the default, `Nvidia1`, an RTX 5090. Venus on
+the RTX 5090 needs the patched QEMU (`docs/nvidia.md`), so every lab here
+that is meant for the AMD iGPU names `host_gpu = "AMD1"`. A name the host
+does not declare makes `vmlab validate` and `vmlab up` warn and fall back to
+the default. `vmlab status -v` shows `host_gpu=<name>`.
+
+All the lab files under `labs/` use the 0.25 form; `vmlab validate` passes on
+each with 0.25.0-alpha on helios. The results on this page were produced on
+vmlab 0.23. The evidence the other pages cite was produced on 0.23 or 0.24,
+with the lab form that version took, unless the page says otherwise; the
+copy of the lab file next to the evidence shows which.
+
 ## Update: vmlab 0.24 (2026-10-17)
 
 vmlab 0.24.0-alpha supersedes the workaround this page describes. It came
@@ -25,21 +65,23 @@ from handoff `20261017-142905`, which carried these findings to vmlab
 
 `secure_boot = false` is still required, for test signing.
 
-`labs/probe/vmlab.wcl` is now the plain form: `secure_boot = false` and
-`gpu { mode = "vulkan" address = "0000:72:00.0" }`, with no `qemu_args`.
+On 0.24, `labs/probe/vmlab.wcl` became the plain form: `secure_boot = false`
+and `gpu { mode = "vulkan" address = "0000:72:00.0" }`, with no `qemu_args`.
+On 0.25 the address became `host_gpu = "AMD1"` (above).
 `labs/probe/vmlab-amd.sh` was removed, because it ran the isolated supervisor
 on whatever vmlab binary is installed, and only the 0.23 binary needed it.
 
 The measurements below were made on vmlab 0.23 and were not repeated on
 0.24. They still explain why each setting matters, and the evidence
 directories stay as they were. To repeat one of the environment variants
-now, set `gpu.vulkan_icd` or leave out `gpu.address`, and read QEMU's
-environment from `qemu.log`.
+now (vmlab 0.25), set `vulkan_icd` on the host GPU's block in
+`~/.config/vmlab/config.wcl`, or leave out `host_gpu` to get the default
+GPU, and read QEMU's environment from `qemu.log`.
 
 ## Result
 
-vmlab's plain `gpu { mode = "vulkan" }` does not work on this host. Five
-changes make it work:
+On vmlab 0.23, plain `gpu { mode = "vulkan" }` did not work on this host. Five
+changes made it work:
 
 | Change | Why | Evidence |
 | --- | --- | --- |
@@ -56,7 +98,7 @@ On vmlab 0.23 the minimal working lab was `labs/probe/vmlab.wcl` with the
 `min-amd` line in `qemu_args`, run through `labs/probe/vmlab-amd.sh`. That
 script started an isolated supervisor with the ICD variable set, because a
 0.23 lab file could not set QEMU's environment. See the update above for
-the 0.24 form.
+the 0.24 and 0.25 forms.
 
 Screenshots: `vmlab vm screenshot`, `vmlab vm ocr`, `vmlab vm find-image` and
 the wscript `screenshot()`/`ocr()` all fail with `no surface` once the console

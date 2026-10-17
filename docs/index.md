@@ -16,7 +16,7 @@ before you rely on it.
 
 ## Quick start
 
-On a Linux host with Docker (no sudo), vmlab 0.24.0-alpha or later, the
+On a Linux host with Docker (no sudo), vmlab 0.25.0-alpha or later, the
 local `windows-11` template, and an AMD or Intel GPU:
 
 ```sh
@@ -26,8 +26,10 @@ scripts/install-into-vm.sh <lab-dir> <vm>      # install, with the reboots
 ```
 
 The lab needs `secure_boot = false` and
-`gpu { mode = "vulkan" address = "<PCI address of the GPU>" }`
-(`labs/probe/vmlab.wcl`). To check every Done item on a fresh lab, run
+`gpu { mode = "vulkan" host_gpu = "<name>" }`, where `<name>` is the AMD
+or Intel GPU as declared in the host config, `~/.config/vmlab/config.wcl`
+(for example `gpu "AMD1" { address = "0000:72:00.0" }`), as in
+`labs/probe/vmlab.wcl`. To check every Done item on a fresh lab, run
 `tests/e2e/run.sh --template windows-11`.
 
 ## Using the package

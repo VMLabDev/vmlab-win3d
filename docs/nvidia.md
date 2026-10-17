@@ -26,13 +26,19 @@ host (decision D3).
 ## Reproduction
 
 The host stack is frozen: QEMU 11.1.1, virglrenderer 1.3.0, Mesa 26.2.2, and
-NVIDIA 610.57.04. vmlab is 0.24.0-alpha.
+NVIDIA 610.57.04. The runs recorded here used vmlab 0.24.0-alpha, with the
+lab naming the GPU as `gpu { mode = "vulkan" address = "0000:01:00.0" }`
+(`04-guest-fix/qemu-argv-env.txt` records what vmlab gave QEMU). vmlab
+0.25.0-alpha moved the address into the host config; the steps below are
+for 0.25.
 
 1. Build the package with `scripts/build.sh`. A bundle built before
    `patches/mesa/0020` reproduces fault 1.
-2. Use the lab `labs/nvidia/vmlab.wcl`. It is the plain vmlab 0.24 form, with
-   `gpu { mode = "vulkan" address = "0000:01:00.0" }` and
-   `secure_boot = false`. vmlab then passes
+2. Use the lab `labs/nvidia/vmlab.wcl`. It is the plain vmlab 0.25 form, with
+   `gpu { mode = "vulkan" host_gpu = "Nvidia1" }` and
+   `secure_boot = false`. The host config, `~/.config/vmlab/config.wcl`,
+   declares `gpu "Nvidia1" { address = "0000:01:00.0" default = true }`
+   (`docs/host.md`, "Update: vmlab 0.25"). vmlab then passes
    `-display egl-headless,rendernode=/dev/dri/renderD128` and puts
    `VK_LOADER_DRIVERS_SELECT=*nvidia*` in QEMU's environment.
 3. `labs/nvidia/vmlab-nv.sh up` brings the lab up under an isolated
@@ -145,7 +151,7 @@ changes.
 | Run | Host components | Result | Evidence |
 | --- | --- | --- | --- |
 | NVIDIA, guest fix | **stock** `/usr/lib/virgl_render_server`, patched QEMU (fault 2) | all 10 probes pass; vulkaninfo lists Venus (NVIDIA); console shows the desktop and every probe, also after a guest reboot; no `vkr:` errors | `04-guest-fix/` |
-| AMD iGPU, guest fix (regression) | plain vmlab 0.24, host QEMU and render server, lab `win3d-nvidia-amdreg` on `0000:72:00.0` | all 10 probes pass; vulkaninfo lists Venus (RADV); console shows every probe | `05-amd-regression/` |
+| AMD iGPU, guest fix (regression) | plain vmlab 0.24, host QEMU and render server, lab `win3d-nvidia-amdreg` on `0000:72:00.0` (now `labs/nvidia/vmlab-amd-regression.wcl`, `host_gpu = "AMD1"` on 0.25) | all 10 probes pass; vulkaninfo lists Venus (RADV); console shows every probe | `05-amd-regression/` |
 
 `04-guest-fix/qemu-argv-env.txt` records the QEMU binary, its environment
 (no `RENDER_SERVER_EXEC_PATH`) and the render server it spawned. The dxdiag
@@ -221,9 +227,13 @@ build/mesa/build.sh && scripts/build.sh --package-only  # package with patches/m
 patches/host/build-qemu.sh                              # out/host/qemu/bin/qemu-system-x86_64
 WIN3D_QEMU_DIR=$PWD/out/host/qemu/bin labs/nvidia/vmlab-nv.sh up
 VMLAB=$PWD/labs/nvidia/vmlab-nv.sh scripts/install-into-vm.sh .scratch/labs/nvidia-a win11
-labs/nvidia/vmlab-nv.sh vm screenshot win11 shot.png      # vmlab 0.24 captures GL consoles over VNC
+labs/nvidia/vmlab-nv.sh vm screenshot win11 shot.png      # vmlab >= 0.24 captures GL consoles over VNC
 labs/nvidia/vmlab-nv.sh down && labs/nvidia/vmlab-nv.sh --stop-supervisor
 ```
+
+`vmlab-nv.sh` copies `labs/nvidia/vmlab.wcl` into the lab directory once.
+It refuses a copy made before vmlab 0.25, which still carries
+`gpu.address`; copy the current file over it.
 
 `vmlab-nv.sh` also accepts:
 
@@ -257,7 +267,8 @@ package, unpacked under `.scratch/` (sha256
   identical cards apart. vulkaninfo lists two Venus devices with the same
   UUID (`04-guest-fix/vulkaninfo-summary.txt`). Applications pick GPU0, and
   `nvidia-smi` showed every render worker on `0000:01:00.0`, the GPU that
-  `gpu.address` names. A guest that picks GPU1 would render on
+  the lab named (`gpu.address` on vmlab 0.24; `host_gpu = "Nvidia1"` on
+  0.25). A guest that picks GPU1 would render on
   `0000:05:00.0` while egl-headless reads from `0000:01:00.0`. This is a
   vmlab item (below).
 - **vmlab cannot use the patched QEMU itself.** The lab needs its own

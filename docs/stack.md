@@ -197,7 +197,7 @@ resource support and a 60 Hz VidPN timer. It needs the
 | | |
 | --- | --- |
 | What | `virtio-vga-gl,venus=true,blob=true,hostmem=4G`, the only display adapter; `-display egl-headless` on the render node of the host GPU |
-| Set by | vmlab 0.24 or later: `gpu { mode = "vulkan" address = "0000:72:00.0" }` (`labs/probe/vmlab.wcl`) |
+| Set by | vmlab 0.25 or later: `gpu { mode = "vulkan" host_gpu = "AMD1" }` (`labs/probe/vmlab.wcl`), with `AMD1` declared in the host config `~/.config/vmlab/config.wcl` as `gpu "AMD1" { address = "0000:72:00.0" }`. vmlab 0.24 took the address in the lab file, as `gpu.address`; the evidence from before 0.25 used that form |
 | Upstream | QEMU 11.1.1 (Arch `qemu-full 11.1.1-1`), not built here |
 
 `docs/host.md` shows why each of these settings is required. It measured
@@ -208,7 +208,7 @@ them on vmlab 0.23, with `qemu_args`, before vmlab emitted them itself.
 | | |
 | --- | --- |
 | What | `/usr/lib/virgl_render_server` forks one `virgl-N-gpu_render` process per guest Venus context; each replays the commands on the host Vulkan driver |
-| Selected by | vmlab sets `VK_LOADER_DRIVERS_SELECT` in QEMU's environment from the driver of `gpu.address` (`*radeon*` here), so the render workers open only `renderD129`. `gpu.vulkan_icd` sets `VK_DRIVER_FILES` instead. |
+| Selected by | vmlab sets `VK_LOADER_DRIVERS_SELECT` in QEMU's environment from the kernel driver of the host GPU that `gpu.host_gpu` names (`*radeon*` for `AMD1`), so the render workers open only `renderD129`. `vulkan_icd` on that GPU's host config block sets `VK_DRIVER_FILES` instead. |
 | Upstream | virglrenderer 1.3.0 (Arch `1.3.0-2.1`), Mesa RADV 26.2.2 (Arch `vulkan-radeon 3:26.2.2-2`), not built here |
 
 ### Tested hosts
