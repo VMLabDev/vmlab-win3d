@@ -38,10 +38,33 @@ The build is set up to be reproducible. It uses a Release build at `-O2`,
 `PINS` records each input: its tag, the commit the tag pointed to, the tarball
 sha256 and the URL. All three repositories use the tag `vulkan-sdk-1.4.363.0`.
 To change the version, update all three `src` lines and the `epoch` line.
-The loader is built with `USE_GAS=ON`, so clang assembles its trampolines for
-unknown device functions. vulkaninfo is built with cube, the mock ICD and the
+The loader is built with `BUILD_DLL_VERSIONINFO`, and vulkaninfo with
+`VULKANINFO_BUILD_DLL_VERSIONINFO`, set to the version in the tag
+(`vulkan-sdk-1.4.363.0` gives `1.4.363.0`), as the LunarG Vulkan Runtime
+build does. Without them both version resources say "Dev Build". The loader
+is built with `USE_GAS=ON`, so clang assembles its trampolines for unknown
+device functions. vulkaninfo is built with cube, the mock ICD and the
 tests turned off, so it needs no other dependencies. The build never runs
 `update_deps.py`.
+
+## Version resource
+
+Both binaries carry the SDK version, so the installer's version check, its
+journal and the Windows file properties show it. Read from the x64 and x86
+builds with `strings -el` and `llvm-readobj --coff-resources`:
+
+| Field | `vulkan-1.dll` | `vulkaninfo.exe` |
+| --- | --- | --- |
+| `FILEVERSION`, `PRODUCTVERSION` (binary) | 1.4.363.0 (`00040001 016B0000`) | 1.4.363.0 |
+| `FileDescription` | Vulkan Loader | vulkaninfo |
+| `FileVersion`, `ProductVersion` | 1.4.363.0 | 1.4.363.0 |
+| `ProductName` | Vulkan Runtime | Vulkaninfo |
+| `LegalCopyright` | Copyright (C) 2015-2026 | Copyright (C) 2015-2026 |
+
+Before this, both said "Dev Build" (`Vulkan Loader - Dev Build`,
+`1.4.363.Dev Build`). The numeric version was already 1.4.363.0. The
+copyright year comes from CMake's `string(TIMESTAMP)`, which follows
+`SOURCE_DATE_EPOCH`, so it does not depend on the build date.
 
 ## Reproducibility
 
@@ -51,8 +74,8 @@ No other machine was tried. Toolchain image
 `vmlab-win3d/toolchain:ab524e07f89c`, 2026-10-17:
 
 ```
-eae9c602ce4705acda71dd74d3dec1636ea4dceba3a86c8e2f9f2bdefff6bc05  vulkan-sdk/x64/vulkan-1.dll
-db91a68b47786ee4fad4de0c24c6eee0fe568d1ec0dd49a1103e8e4c0ce5034c  vulkan-sdk/x64/vulkaninfo.exe
-1b8122e8f09a5d4e6c70e100537742dd6049c26ee3261fe17188fb39b03491a9  vulkan-sdk/x86/vulkan-1.dll
-de07ea7a6d344937cb1c0767b0b954b6b044f22d685e76fe6e28b71ea205e1fa  vulkan-sdk/x86/vulkaninfo.exe
+0871d16d06f2c7c2f60c9b68e5ed3a61a069bf525d8f7cad2d3c88f3ce71e219  vulkan-sdk/x64/vulkan-1.dll
+f3c7ee6c42538394f9e5b8c5cb8568982b300fd20f86d8e1f09d89a9b894e923  vulkan-sdk/x64/vulkaninfo.exe
+36edc9f67cbec1c5fb8c510ab08efea18afffbd40d77b829d39f1e76236416cd  vulkan-sdk/x86/vulkan-1.dll
+446fdd03f4d23c686f2e89fb3551f874ac4fce9620f885abf7a37cc692e37ad7  vulkan-sdk/x86/vulkaninfo.exe
 ```
