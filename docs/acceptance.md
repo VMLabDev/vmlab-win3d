@@ -309,8 +309,10 @@ that is `Nvidia1`, the RTX 5090 at `0000:01:00.0` (NVIDIA 610.57.04). One
 `windows-11` boot checked what such a lab does with the package at
 `7d5317d` (the same package sources as the runs above). It used the
 acceptance lab with `host_gpu` removed, the host's own QEMU 11.1.1, and the
-documented install command. It was a manual run, not `tests/e2e/run.sh`.
-Evidence: `docs/evidence/acceptance/windows-11-nvidia1/`.
+documented install command. It was not a `tests/e2e/run.sh` run. The
+script is `docs/evidence/acceptance/windows-11-nvidia1/run-nv1.sh`, which
+writes to `.scratch/nv1/` and to that evidence directory, and `run.log` is
+its output.
 
 | What | Result | Evidence |
 | --- | --- | --- |
