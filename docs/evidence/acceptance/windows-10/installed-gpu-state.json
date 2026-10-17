@@ -1,7 +1,7 @@
 {
-    "computer":  "VMLABVM-UMQARB7",
+    "computer":  "VMLABVM-JA06T5S",
     "os":  "Microsoft Windows 10 Enterprise Evaluation 10.0.19045",
-    "collected":  "2026-10-17T06:18:56.6414586-07:00",
+    "collected":  "2026-10-17T07:32:36.4229499-07:00",
     "display_devices":  [
                             {
                                 "name":  "Hardsoft VirtIO GPU 3D controller",

@@ -1,4 +1,4 @@
-mode: built (sources changed since 06a96fd8c4a3030f0d22c945e80500fb879ec1ad)
+mode: reused (out/package built at b3e179837e76ff7ebf013ce90e60a586af5138a2; no change to build installer probes patches scripts/build.sh since)
 exit: 0
 command: scripts/build.sh
 ## stages
@@ -15,7 +15,7 @@ command: scripts/build.sh
   "schema": 1,
   "name": "vmlab-win3d",
   "version": "0.1.0",
-  "commit": "1edf4bded3669eb2437c9c69bcfedeb798aa3791",
+  "commit": "b3e179837e76ff7ebf013ce90e60a586af5138a2",
   "driver_date": "09/27/2026",
   "driver_version": "100.6.101.58100",
   "hardware_id": "PCI\\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01",
@@ -43,7 +43,7 @@ command: scripts/build.sh
     },
     {
       "path": "driver/viogpu3d.cat",
-      "sha256": "757343daae38d7a29b70236cf04740ff5772fb80f17b0dbe7ffd64ee20468f21",
+      "sha256": "b602b7e519940129de8d26d6d5b1f4be1db5b42a49b1a63c8d7fe451ec6c66d5",
       "size": 7310
     },
     {
@@ -68,8 +68,8 @@ command: scripts/build.sh
     },
     {
       "path": "driver/x64/viogpu_d3d10_x64.dll",
-      "sha256": "73f1ebab1f2924ccdde1d8eb2d906e1bb6c52dc34308b4fc5f824cc82843ae02",
-      "size": 12861960
+      "sha256": "0bb79dde20c5b5e56072a095f37ad1a95962b4fe48ac3a31ce56506a2308dfdb",
+      "size": 12865032
     },
     {
       "path": "driver/x64/viogpu_wgl_x64.dll",
@@ -88,8 +88,8 @@ command: scripts/build.sh
     },
     {
       "path": "driver/x86/viogpu_d3d10_x86.dll",
-      "sha256": "d5eeb47326e7255e7885a43e4db5fa8b9e53310639c1241e93e944660455189a",
-      "size": 12578824
+      "sha256": "65a71877e564366d6b0a061b9664185285c76f02f421c56c3cdbef403093c129",
+      "size": 12582408
     },
     {
       "path": "driver/x86/viogpu_wgl_x86.dll",
@@ -164,5 +164,5 @@ command: scripts/build.sh
   ]
 }
 ## SHA256SUMS
-350738d77f0441e8de011969be1f3ae5e42771cc72b57245cf877cf6b4990da9  vmlab-win3d-0.1.0.zip
-144e4527a54a1fbb5a109f818261e765d13ddd74da3db168bd3afb4eb955cb0a  vmlab-win3d-0.1.0/manifest.json
+3d863f9f0928f0e3068b8df68bc63ae3c8d34f67fa84b81e7c4703ac70cb1f1c  vmlab-win3d-0.1.0.zip
+5346baa4c216cdc1260c9e54fba6cf14decb9a2fc717af0d08185a528361098b  vmlab-win3d-0.1.0/manifest.json
