@@ -16,7 +16,7 @@ result depends on the host GPU. Four were tried:
 | --- | --- | --- | --- | --- |
 | AMD Radeon iGPU (Granite Ridge), RADV, Mesa 26.2.2 | helios | **Full pass**: every Done check in `docs/brief.md` item 2, on `windows-11` and `windows-10` | A plain vmlab lab that names the AMD GPU (`host_gpu = "AMD1"`; the final runs used vmlab 0.25.0-alpha at commit `6105889`) | [`acceptance.md`](acceptance.md) |
 | Intel Iris Xe (Raptor Lake-P), ANV, Mesa 26.2.2 | Zeus | **Full pass** on `windows-11`, 12 of 12 Done checks. Without `patches/mesa/0021`, dwm crash-loops and the console is black | `patches/mesa/0021` (in the package) | [`zeus.md`](zeus.md) |
-| NVIDIA RTX 5090, 610.57.04 | helios | **Partial**: all ten probes pass, vulkaninfo lists Venus, and the console shows the desktop and every probe. Not run through `tests/e2e/run.sh` | `patches/mesa/0020` (in the package) **and** the patched QEMU `patches/host/qemu/0001`, run through an isolated supervisor, until vmlab can name a QEMU binary (handoff `20261017-163910`, pending). The identical-GPU gap below applies | [`nvidia.md`](nvidia.md); with the stock QEMU (`Nvidia1`, vmlab 0.25) all ten probes pass but the console is black after the driver loads ([`acceptance.md`](acceptance.md), `docs/evidence/acceptance/windows-11-nvidia1/`) |
+| NVIDIA RTX 5090, 610.57.04 | helios | **Partial**: all ten probes pass, vulkaninfo lists Venus, and the console shows the desktop and every probe. Not run through `tests/e2e/run.sh` | `patches/mesa/0020` (in the package) **and** the patched QEMU `patches/host/qemu/0001`, run through an isolated supervisor, until vmlab can name a QEMU binary (handoff `20261018-003653`, pending). The identical-GPU gap below applies | [`nvidia.md`](nvidia.md); with the stock QEMU (`Nvidia1`, vmlab 0.25) all ten probes pass but the console is black after the driver loads ([`acceptance.md`](acceptance.md), `docs/evidence/acceptance/windows-11-nvidia1/`) |
 | NVIDIA RTX 4060 Max-Q (laptop), 615.71.09 | Zeus | **Unmet**: install, desktop and console worked; then the GPU fell off the bus (Xid 79) during vulkaninfo and QEMU aborted. Cause unknown | Not known | [`zeus.md`](zeus.md) |
 
 All four hosts ran QEMU 11.1.1 and virglrenderer 1.3.0. No other GPU or driver
@@ -34,7 +34,7 @@ but the console and `vmlab vm screenshot` stay black. Without
 two Venus devices with the same UUID. Applications picked GPU0, the one the
 lab names (`gpu.address` on vmlab 0.24, when this was measured;
 `host_gpu = "Nvidia1"` on 0.25). One that picks GPU1 would render on the other card while
-egl-headless reads from the first. Handoff `20261017-163910` asks vmlab for a
+egl-headless reads from the first. Handoff `20261018-003653` asks vmlab for a
 way to pick one; it is pending.
 
 > **Warning: the RTX 4060 failure needed a host reboot.** On Zeus, the NVIDIA
