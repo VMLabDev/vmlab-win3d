@@ -47,6 +47,19 @@ device functions. vulkaninfo is built with cube, the mock ICD and the
 tests turned off, so it needs no other dependencies. The build never runs
 `update_deps.py`.
 
+## Patches
+
+`inner.sh` applies `patches/vulkan-tools/*.patch` in order to the extracted
+Vulkan-Tools tree, with `patch --strip=1 --forward --batch`.
+
+| Patch | Why |
+| --- | --- |
+| `0001-vulkaninfo-Load-user32-on-every-Windows-compiler.patch` | Upstream `main()` loads user32 only under `#if defined(_MSC_VER)`. In an llvm-mingw build, `user32_handles` therefore stays null, and `vulkaninfo` crashes with 0xC0000005 in `AppCreateWin32Window` (`pfnLoadIconA`) as soon as a device enumerates. The patch puts the Windows setup under `_WIN32` and keeps only the MSVC CRT debug calls under `_MSC_VER`. The bug is still on Vulkan-Tools `main`, so the patch can go upstream. |
+
+The e2e run found the crash
+(`docs/evidence/acceptance/windows-11/vulkaninfo/` on branch `work/e2e`).
+`docs/evidence/vulkaninfo/` shows the patched build passing.
+
 ## Version resource
 
 Both binaries carry the SDK version, so the installer's version check, its
@@ -71,11 +84,14 @@ copyright year comes from CMake's `string(TIMESTAMP)`, which follows
 Bit-reproducible on this host. A first run, a second run on its leftovers, and
 a run from a fresh clone with an empty `out/` all gave the same sha256.
 No other machine was tried. Toolchain image
-`vmlab-win3d/toolchain:ab524e07f89c`, 2026-10-17:
+`vmlab-win3d/toolchain:ab524e07f89c`, 2026-10-17, with patch 0001:
 
 ```
 0871d16d06f2c7c2f60c9b68e5ed3a61a069bf525d8f7cad2d3c88f3ce71e219  vulkan-sdk/x64/vulkan-1.dll
-f3c7ee6c42538394f9e5b8c5cb8568982b300fd20f86d8e1f09d89a9b894e923  vulkan-sdk/x64/vulkaninfo.exe
+68266ef104567081f93d00cc347ac3c1849cd3d0e1319f8dc05a576b2e23e83a  vulkan-sdk/x64/vulkaninfo.exe
 36edc9f67cbec1c5fb8c510ab08efea18afffbd40d77b829d39f1e76236416cd  vulkan-sdk/x86/vulkan-1.dll
-446fdd03f4d23c686f2e89fb3551f874ac4fce9620f885abf7a37cc692e37ad7  vulkan-sdk/x86/vulkaninfo.exe
+bb717db3466b5120b08efb4a800ad7d4f15cc1c0d5d479c298804539b89c119d  vulkan-sdk/x86/vulkaninfo.exe
 ```
+
+The patch changes only the two `vulkaninfo.exe` hashes. The loaders are the
+same as before.
