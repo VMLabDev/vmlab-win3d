@@ -2,6 +2,8 @@
 .SYNOPSIS
 Runs vulkaninfo --summary (System32 and SysWOW64) in the logged-on user's
 session and writes vulkaninfo-x64.txt and vulkaninfo-x86.txt to -OutDir.
+When -LunargDir holds x64\vulkaninfo.exe and x86\vulkaninfo.exe (LunarG's,
+without their loader), runs those too, into lunarg-vulkaninfo-<arch>.txt.
 
 .DESCRIPTION
 Vulkan enumerates no device from SYSTEM (session 0), so this goes through
@@ -12,7 +14,8 @@ output redirected to a file.
 [CmdletBinding()]
 param(
     [string]$GuestDir = 'C:\win3d\guest',
-    [string]$OutDir = 'C:\win3d\results\vulkaninfo'
+    [string]$OutDir = 'C:\win3d\results\vulkaninfo',
+    [string]$LunargDir = 'C:\win3d\lunarg'
 )
 $ErrorActionPreference = 'Stop'
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
@@ -23,11 +26,13 @@ $cmd = Join-Path $OutDir 'vulkaninfo.cmd'
 echo exit %ERRORLEVEL% >> "$OutDir\vulkaninfo-x64.txt"
 "%SystemRoot%\SysWOW64\vulkaninfo.exe" --summary > "$OutDir\vulkaninfo-x86.txt" 2>&1
 echo exit %ERRORLEVEL% >> "$OutDir\vulkaninfo-x86.txt"
+if exist "$LunargDir\x64\vulkaninfo.exe" "$LunargDir\x64\vulkaninfo.exe" --summary > "$OutDir\lunarg-vulkaninfo-x64.txt" 2>&1
+if exist "$LunargDir\x86\vulkaninfo.exe" "$LunargDir\x86\vulkaninfo.exe" --summary > "$OutDir\lunarg-vulkaninfo-x86.txt" 2>&1
 "@ | Set-Content -LiteralPath $cmd -Encoding ascii
 & (Join-Path $GuestDir 'Run-Probe.ps1') -Path "$env:SystemRoot\System32\cmd.exe" -ArgumentList '/c', $cmd `
     -Raw -NoModules -Name vulkaninfo -OutDir $OutDir -Seconds 60
-foreach ($a in 'x64', 'x86') {
-    $f = Join-Path $OutDir "vulkaninfo-$a.txt"
+foreach ($a in 'vulkaninfo-x64', 'vulkaninfo-x86', 'lunarg-vulkaninfo-x64', 'lunarg-vulkaninfo-x86') {
+    $f = Join-Path $OutDir "$a.txt"
     "## $f"
     if (Test-Path $f) { Get-Content $f } else { '(missing)' }
 }

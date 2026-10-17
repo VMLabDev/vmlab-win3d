@@ -130,8 +130,8 @@ lab_up() {
     in_lab vmlab validate || return 1
     in_lab vmlab up || return 1
     # vmlab 0.24 starts qemu.log with the argv and environment it gave QEMU.
-    local qlog; qlog=$(find "$LABDIR/.vmlab" -name qemu.log -path "*/$VM/*" 2>/dev/null | head -1)
-    [ -n "$qlog" ] && grep -E '^vmlab: (argv|env):' "$qlog" >"$EV/qemu-argv-env.txt"
+    local qlog=${XDG_STATE_HOME:-$HOME/.local/state}/vmlab/labs/$LAB/vms/$VM/qemu.log
+    [ -f "$qlog" ] && grep -E '^vmlab: (argv|env):' "$qlog" >"$EV/qemu-argv-env.txt"
     wait_agent || return 1
     in_lab vmlab osinfo "$VM" >"$EV/osinfo.json" 2>&1 || true
 }
@@ -143,6 +143,13 @@ prepare_guest() {
     in_lab vmlab cp "$HERE/guest" "$VM:C:/win3d/e2e" || return 1
     in_lab vmlab cp "$REPO/out/probes/x64" "$VM:C:/win3d/probes/x64" || return 1
     in_lab vmlab cp "$REPO/out/probes/x86" "$VM:C:/win3d/probes/x86" || return 1
+    # LunarG's vulkaninfo, without its loader: a cross-check of the installed loader and ICD.
+    local zip; zip=$(fetch_pin lunarg-vulkanrt-components) || return 1
+    rm -rf "$WORK/raw/lunarg"; mkdir -p "$WORK/raw/lunarg/x64" "$WORK/raw/lunarg/x86"
+    for a in x64 x86; do
+        bsdtar -xOf "$zip" "VulkanRT-X64-1.4.363.0-Components/$a/vulkaninfo.exe" >"$WORK/raw/lunarg/$a/vulkaninfo.exe"
+        in_lab vmlab cp "$WORK/raw/lunarg/$a/vulkaninfo.exe" "$VM:C:/win3d/lunarg/$a/vulkaninfo.exe" || return 1
+    done
     gps 'C:\win3d\guest\Get-GpuState.ps1 -OutFile C:\win3d\results\baseline-gpu-state.json | Out-Null; Get-Content C:\win3d\results\baseline-gpu-state.json -Raw' \
         >"$EV/baseline-gpu-state.json" || return 1
     note "baseline: $(python3 -c 'import json,sys; d=json.load(open(sys.argv[1],encoding="utf-8-sig")); print(", ".join("%s (problem %s)" % (x["name"], x["problem_code"]) for x in d["display_devices"]))' "$EV/baseline-gpu-state.json" 2>&1)"
@@ -175,6 +182,16 @@ wait_desktop() {
         sleep 15
     done
     return 1
+}
+
+fetch_pin() { # fetch_pin NAME: download a tests/e2e/PINS entry into the cache, check it, print its path
+    local name=$1 sha url f
+    read -r _ sha url < <(grep "^$name " "$HERE/PINS") || return 1
+    f=$REPO/.scratch/e2e/cache/$(basename "$url")
+    mkdir -p "$(dirname "$f")"
+    [ -f "$f" ] || curl -sSfLo "$f.part" "$url" && { [ -f "$f" ] || mv "$f.part" "$f"; } || return 1
+    echo "$sha  $f" | sha256sum -c --quiet - >&2 || { note "sha256 mismatch for $name"; return 1; }
+    echo "$f"
 }
 
 capture() { # capture NAME: one console frame into shots/, its JSON next to it
@@ -254,7 +271,7 @@ collect() {
     local r=$WORK/results
     (cd "$r" && bsdtar -xf "$WORK/results.zip") || return 1
     mkdir -p "$EV/probes" "$EV/vulkaninfo" "$EV/dxdiag"
-    cp "$r"/vulkaninfo/vulkaninfo-*.txt "$EV/vulkaninfo/" 2>/dev/null
+    cp "$r"/vulkaninfo/*vulkaninfo-*.txt "$EV/vulkaninfo/" 2>/dev/null
     cp "$r"/vulkaninfo/vulkaninfo.run.json "$r"/vulkaninfo/vulkaninfo-crashes.txt "$EV/vulkaninfo/" 2>/dev/null
     cp "$r"/dxdiag/dxdiag.json "$EV/dxdiag/" 2>/dev/null
     for f in "$r"/probes/*_probe.json "$r"/probes/*_probe.run.json; do [ -f "$f" ] && cp "$f" "$EV/probes/"; done

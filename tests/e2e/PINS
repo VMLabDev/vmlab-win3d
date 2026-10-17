@@ -1,0 +1,4 @@
+# Third-party binaries tests/e2e/run.sh downloads and runs unmodified in the
+# guest. Not committed; fetched into .scratch/e2e/cache/ and checked here.
+# name  sha256  url
+lunarg-vulkanrt-components  a25a927aa8b9f0371048f1861cf88ac3b9bc9b1fb332c42d897c8ab32695769a  https://sdk.lunarg.com/sdk/download/1.4.363.0/windows/VulkanRT-X64-1.4.363.0-Components.zip

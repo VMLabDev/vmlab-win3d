@@ -82,6 +82,15 @@ for arch in ('x64', 'x86'):
     row('2', f'vulkaninfo --summary ({arch}) lists the Venus device', ok, f'vulkaninfo/vulkaninfo-{arch}.txt',
         venus[0] if venus else ('no Venus device: ' + (names[0].strip() if names else 'no device')), extra=(arch != 'x64'))
 
+# Cross-check: LunarG's vulkaninfo (tests/e2e/PINS) through the installed loader and ICD.
+for arch in ('x64', 'x86'):
+    v = read('vulkaninfo', f'lunarg-vulkaninfo-{arch}.txt')
+    if v is None:
+        continue
+    venus = [n.strip() for n in re.findall(r'deviceName\s*=\s*(.+)', v) if 'Venus' in n]
+    row('2', f'LunarG vulkaninfo 1.4.363 ({arch}, pinned) lists Venus through the installed loader', bool(venus),
+        f'vulkaninfo/lunarg-vulkaninfo-{arch}.txt', venus[0] if venus else 'no Venus device', extra=True)
+
 # 2. Each API: renders on the GPU, no app-local DLLs, visible on the console.
 shots = load('shots.json') or {}
 for api in ('d3d9', 'd3d11', 'd3d12', 'opengl', 'vulkan'):
@@ -130,6 +139,11 @@ ours = bool(re.search(r'viogpu3d|Hardsoft', f"{s.get('card_name')} {s.get('drive
 row('2', 'dxdiag reports hardware acceleration on our driver', bool(s.get('hardware_acceleration')) and ours,
     'dxdiag/dxdiag.json', f"hardware_acceleration={s.get('hardware_acceleration')}, card {s.get('card_name')!r}, "
     f"D3D {s.get('direct3d_acceleration')}, DDraw {s.get('directdraw_acceleration')}, {s.get('driver_model')}")
+
+if s:
+    row('2', 'dxdiag: Direct3D acceleration on our full WDDM device', s.get('direct3d_acceleration') == 'Enabled' and ours
+        and not s.get('display_only') and not s.get('microsoft_basic_render'), 'dxdiag/dxdiag.json',
+        f"D3D Status {s.get('direct3d_acceleration')}, {s.get('device_type')}, {s.get('driver_model')}", extra=True)
 
 failed = [r for r in rows if r['counts'] and r['result'] != 'pass']
 out = {'evidence_dir': EV, 'passed': not failed, 'rows': rows}
