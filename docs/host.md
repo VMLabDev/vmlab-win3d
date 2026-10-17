@@ -5,6 +5,33 @@ Windows 11 guest from the local `windows-11` template gets a working Venus
 device and a visible console. Every claim cites a file under
 `docs/evidence/host/`. Probe date: 2026-10-17.
 
+## Update: vmlab 0.24 (2026-10-17)
+
+vmlab 0.24.0-alpha supersedes the workaround this page describes. It came
+from handoff `20261017-142905`, which carried these findings to vmlab
+(vmlab commits `147274f` and `cdf4ff9`). With 0.24:
+
+| Workaround on 0.23 | What vmlab 0.24 does instead |
+| --- | --- |
+| `qemu_args`: `-global virtio-gpu-gl-device.blob=true` and `-vga none` | `gpu { mode = "vulkan" }` emits one adapter, `virtio-vga-gl,venus=true,blob=true,hostmem=4G` |
+| `qemu_args`: `-display egl-headless,rendernode=/dev/dri/renderD129` | `gpu.address = "0000:72:00.0"` names the host GPU; vmlab resolves it through sysfs to its render node for egl-headless |
+| An isolated supervisor started with `VK_DRIVER_FILES=…/radeon_icd.json` (`labs/probe/vmlab-amd.sh`) | vmlab clears the Vulkan loader variables for every QEMU and sets `VK_LOADER_DRIVERS_SELECT` from the driver of `gpu.address` in QEMU's own environment. `gpu.vulkan_icd = "<json>"` sets `VK_DRIVER_FILES` instead. Any supervisor works. |
+| VNC capture with `labs/probe/tools/vnccap.py` | `vmlab vm screenshot`, `ocr` and `find-image` capture GL displays over VNC |
+| Reading `/proc/<pid>/cmdline` and `environ` to see QEMU's line | `qemu.log` starts with `vmlab: argv:` and `vmlab: env:` lines |
+
+`secure_boot = false` is still required, for test signing.
+
+`labs/probe/vmlab.wcl` is now the plain form: `secure_boot = false` and
+`gpu { mode = "vulkan" address = "0000:72:00.0" }`, with no `qemu_args`.
+`labs/probe/vmlab-amd.sh` was removed, because it ran the isolated supervisor
+on whatever vmlab binary is installed, and only the 0.23 binary needed it.
+
+The measurements below were made on vmlab 0.23 and were not repeated on
+0.24. They still explain why each setting matters, and the evidence
+directories stay as they were. To repeat one of the environment variants
+now, set `gpu.vulkan_icd` or leave out `gpu.address`, and read QEMU's
+environment from `qemu.log`.
+
 ## Result
 
 vmlab's plain `gpu { mode = "vulkan" }` does not work on this host. Five
@@ -21,9 +48,11 @@ changes make it work:
 The memfd `share=on` RAM backend was **not** needed for vulkaninfo, vkcube or
 the desktop (`no-memfd-amd/`, `min-amd/`).
 
-The minimal working lab is `labs/probe/vmlab.wcl`. Run it through
-`labs/probe/vmlab-amd.sh`, which starts an isolated supervisor with the ICD
-variable set. A lab file cannot set QEMU's environment.
+On vmlab 0.23 the minimal working lab was `labs/probe/vmlab.wcl` with the
+`min-amd` line in `qemu_args`, run through `labs/probe/vmlab-amd.sh`. That
+script started an isolated supervisor with the ICD variable set, because a
+0.23 lab file could not set QEMU's environment. See the update above for
+the 0.24 form.
 
 Screenshots: `vmlab vm screenshot`, `vmlab vm ocr`, `vmlab vm find-image` and
 the wscript `screenshot()`/`ocr()` all fail with `no surface` once the console
@@ -319,6 +348,6 @@ it, per prior-art §3 and F61. Per decision D3, the host stays on 11.1.1.
 The probe lab `win3d-host-probe-a` was destroyed with `vmlab destroy`. Its
 isolated supervisor was stopped and `/tmp/win3d-hp-run` removed. The user's
 supervisor and other labs were not touched. `labs/probe/vmlab.wcl` passes
-`vmlab validate`. Its line is the `min-amd` variant, which was booted and
-probed. The committed lab itself was not booted, because its name and
+`vmlab validate`. At the time, its line was the `min-amd` variant, which
+was booted and probed. The committed lab itself was not booted, because its name and
 directory differ from the probe lab.
