@@ -5,13 +5,14 @@
 #
 # From nothing: builds the package (or reuses out/package/ when it was built
 # from a tree identical to HEAD), brings up a fresh lab from
-# labs/acceptance/vmlab.wcl (vmlab >= 0.24: gpu { mode = "vulkan" address
-# = AMD iGPU }, docs/host.md), records the guest baseline, installs with the
-# documented command (scripts/install-into-vm.sh, docs/install.md), then in
-# the autologon user's desktop session runs vulkaninfo, the D3D9, D3D11,
-# D3D12, OpenGL and Vulkan probes (x64 and x86) with `vmlab vm screenshot`
-# console captures of each, and dxdiag. The evidence goes to
-# docs/evidence/acceptance/<template>/; tests/e2e/check.py judges it.
+# labs/acceptance/vmlab.wcl (vmlab >= 0.25: gpu { mode = "vulkan" host_gpu
+# = "AMD1" }, the host config's AMD iGPU; docs/host.md), records the guest
+# baseline, installs with the documented command (scripts/install-into-vm.sh,
+# docs/install.md), then in the autologon user's desktop session runs
+# vulkaninfo, the D3D9, D3D11, D3D12, OpenGL and Vulkan probes (x64 and
+# x86) with `vmlab vm screenshot` console captures of each, and dxdiag. The
+# evidence goes to docs/evidence/acceptance/<template>/; tests/e2e/check.py
+# judges it.
 # The lab is destroyed unless --keep. --apps also runs the stretch
 # applications (tests/e2e/apps.sh) into <evidence>/apps/; they do not
 # count towards the exit status.
@@ -130,22 +131,12 @@ lab_up() {
     sed -e "s/\"win3d-e2e-windows-11\"/\"$LAB\"/" \
         -e "s#\"x86_64/windows-11@[^\"]*\"#\"x86_64/$TEMPLATE@$VER\"#" \
         "$REPO/labs/acceptance/vmlab.wcl" >"$LABDIR/vmlab.wcl"
-    # vmlab 0.25 moved the GPU address into the host config: the lab names a
-    # host GPU with host_gpu, and without one takes the host's default, which
-    # may be an NVIDIA card Venus does not work on. Name the host config's GPU
-    # at the lab file's address, and refuse to start when there is none.
-    if [ "$(printf '%s\n' 0.25 "$(vmlab --version | awk '{print $2}')" | sort -V | head -1)" = 0.25 ]; then
-        local addr name
-        addr=$(sed -n 's/^ *address *= *"\([^"]*\)".*/\1/p' "$LABDIR/vmlab.wcl")
-        name=$(sed -n "s/^ *gpu *\"\([^\"]*\)\" *{[^}]*address *= *\"$addr\".*/\1/p" "$HOME/.config/vmlab/config.wcl" 2>/dev/null | head -1)
-        [ -n "$name" ] || { note "vmlab >= 0.25: no gpu with address $addr in ~/.config/vmlab/config.wcl"; return 1; }
-        note "vmlab >= 0.25: gpu address $addr is host GPU \"$name\""
-        sed -i "s/^\( *\)address *= *\"$addr\"/\1host_gpu = \"$name\"/" "$LABDIR/vmlab.wcl"
-    fi
     cp "$LABDIR/vmlab.wcl" "$EV/lab-vmlab.wcl"
     in_lab vmlab validate || return 1
     in_lab vmlab up || return 1
-    # vmlab 0.24 starts qemu.log with the argv and environment it gave QEMU.
+    # The host GPU the lab daemon picked (host_gpu=...).
+    in_lab vmlab status -v >"$EV/status-v.txt" 2>&1 || true
+    # vmlab (>= 0.24) starts qemu.log with the argv and environment it gave QEMU.
     local qlog=${XDG_STATE_HOME:-$HOME/.local/state}/vmlab/labs/$LAB/vms/$VM/qemu.log
     [ -f "$qlog" ] && grep -E '^vmlab: (argv|env):' "$qlog" >"$EV/qemu-argv-env.txt"
     wait_agent || return 1
