@@ -1,0 +1,63 @@
+From eb46aff712aabff4e649ae042ad5864a57cd41e2 Mon Sep 17 00:00:00 2001
+From: Wil Taylor <ai@wiltaylor.dev>
+Date: Sat, 17 Oct 2026 12:51:32 +1000
+Subject: [PATCH 3/5] vkd3d: Allow depth-stencil textures in CPU-visible heaps.
+
+D3D12 permits depth-stencil textures in GPU-upload and CPU-visible
+custom heaps; vkd3d-proton rejected them with E_NOTIMPL. Bind the
+depth-stencil image itself to the requested heap instead of the linear
+staging buffer used for CPU texture copies. Opaque depth layouts have no
+CPU representation, so Map is rejected and Write/ReadFromSubresource
+remain unsupported for these formats.
+
+From the vmlab-win3d prior art (virtio driver-integrated-3d, F52).
+---
+ libs/vkd3d/resource.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
+
+diff --git a/libs/vkd3d/resource.c b/libs/vkd3d/resource.c
+index 0fa8fb1e..2665ca77 100644
+--- a/libs/vkd3d/resource.c
++++ b/libs/vkd3d/resource.c
+@@ -754,13 +754,6 @@ static HRESULT vkd3d_get_image_create_info(struct d3d12_device *device,
+         format = resource->format;
+     }
+ 
+-    if (heap_properties && is_cpu_accessible_heap(heap_properties) &&
+-            (format->vk_aspect_mask & (VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT)))
+-    {
+-        FIXME("Creating depth-stencil images in system memory is not supported.\n");
+-        return E_NOTIMPL;
+-    }
+-
+     memset(create_info, 0, sizeof(*create_info));
+     image_info->sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+ 
+@@ -2389,6 +2382,12 @@ static void d3d12_resource_get_map_ptr(struct d3d12_resource *resource, void **d
+ static bool d3d12_resource_texture_validate_map(struct d3d12_resource *resource)
+ {
+     bool invalid_map;
++
++    /* Depth-stencil images in CPU-visible heaps are bound directly and have no
++     * linear CPU layout, so they cannot be mapped. */
++    if (resource->format->vk_aspect_mask & (VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT))
++        return false;
++
+     /* Very special case that is explicitly called out in the D3D12 validation layers. */
+     invalid_map = resource->desc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE3D &&
+             resource->desc.MipLevels > 1;
+@@ -4068,9 +4067,12 @@ static HRESULT d3d12_resource_create(struct d3d12_device *device, uint32_t flags
+     object->heap_flags = heap_flags;
+ 
+     /* Compute subresource layouts for CPU-accessible images. CPU-accessible
+-     * heaps cannot be shared, so we do not need to consider that possibility. */
++     * heaps cannot be shared, so we do not need to consider that possibility.
++     * Opaque depth-stencil images cannot use CPU copies: bind the actual image
++     * to the requested heap instead of allocating linear staging data. */
+     if (!(flags & VKD3D_RESOURCE_RESERVED) && d3d12_resource_is_texture(object) &&
+-            is_cpu_accessible_heap(heap_properties))
++            is_cpu_accessible_heap(heap_properties) &&
++            !(object->format->vk_aspect_mask & (VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT)))
+     {
+         const UINT unsupported_flags = D3D12_RESOURCE_FLAG_ALLOW_SIMULTANEOUS_ACCESS | D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+ 

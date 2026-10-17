@@ -1,0 +1,149 @@
+From 18bbeaf6ee8f8da9b420a21e6d4c04941268d90f Mon Sep 17 00:00:00 2001
+From: Wil Taylor <ai@wiltaylor.dev>
+Date: Sat, 17 Oct 2026 12:51:03 +1000
+Subject: [PATCH 1/5] vkd3d: Reject root signatures with overlapping register
+ bindings.
+
+Two bindings of the same descriptor type in the same register space
+whose register intervals overlap and whose shader visibility intersects
+make the root signature invalid; native D3D12 returns E_INVALIDARG.
+Root constants count as CBVs; unbounded ranges extend to 2^32.
+
+From the vmlab-win3d prior art (virtio driver-integrated-3d, F50).
+---
+ libs/vkd3d/state.c | 117 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 117 insertions(+)
+
+diff --git a/libs/vkd3d/state.c b/libs/vkd3d/state.c
+index ce7f54ec..e667d49f 100644
+--- a/libs/vkd3d/state.c
++++ b/libs/vkd3d/state.c
+@@ -1671,11 +1671,128 @@ HRESULT d3d12_root_signature_create_work_graph_layout(struct d3d12_root_signatur
+     return S_OK;
+ }
+ 
++struct d3d12_root_binding
++{
++    D3D12_DESCRIPTOR_RANGE_TYPE type;
++    D3D12_SHADER_VISIBILITY visibility;
++    unsigned int space;
++    uint64_t begin;
++    uint64_t end;
++};
++
++struct d3d12_root_binding_iterator
++{
++    unsigned int parameter;
++    unsigned int range;
++    unsigned int sampler;
++};
++
++static bool d3d12_root_signature_next_binding(const D3D12_ROOT_SIGNATURE_DESC2 *desc,
++        struct d3d12_root_binding_iterator *iterator, struct d3d12_root_binding *binding)
++{
++    const D3D12_ROOT_PARAMETER1 *parameter;
++    const D3D12_DESCRIPTOR_RANGE1 *range;
++    const D3D12_STATIC_SAMPLER_DESC1 *sampler;
++
++    while (iterator->parameter < desc->NumParameters)
++    {
++        parameter = &desc->pParameters[iterator->parameter];
++        binding->visibility = parameter->ShaderVisibility;
++        if (parameter->ParameterType == D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE)
++        {
++            if (iterator->range == parameter->DescriptorTable.NumDescriptorRanges)
++            {
++                ++iterator->parameter;
++                iterator->range = 0;
++                continue;
++            }
++            range = &parameter->DescriptorTable.pDescriptorRanges[iterator->range++];
++            if (!range->NumDescriptors)
++                continue;
++            binding->type = range->RangeType;
++            binding->space = range->RegisterSpace;
++            binding->begin = range->BaseShaderRegister;
++            binding->end = range->NumDescriptors == UINT_MAX ? (UINT64_C(1) << 32)
++                    : binding->begin + range->NumDescriptors;
++        }
++        else
++        {
++            ++iterator->parameter;
++            if (parameter->ParameterType == D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS)
++            {
++                binding->type = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
++                binding->space = parameter->Constants.RegisterSpace;
++                binding->begin = parameter->Constants.ShaderRegister;
++            }
++            else
++            {
++                switch (parameter->ParameterType)
++                {
++                    case D3D12_ROOT_PARAMETER_TYPE_CBV:
++                        binding->type = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
++                        break;
++                    case D3D12_ROOT_PARAMETER_TYPE_SRV:
++                        binding->type = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
++                        break;
++                    case D3D12_ROOT_PARAMETER_TYPE_UAV:
++                        binding->type = D3D12_DESCRIPTOR_RANGE_TYPE_UAV;
++                        break;
++                    default:
++                        continue;
++                }
++                binding->space = parameter->Descriptor.RegisterSpace;
++                binding->begin = parameter->Descriptor.ShaderRegister;
++            }
++            binding->end = binding->begin + 1;
++        }
++        return true;
++    }
++
++    if (iterator->sampler == desc->NumStaticSamplers)
++        return false;
++    sampler = &desc->pStaticSamplers[iterator->sampler++];
++    binding->type = D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER;
++    binding->visibility = sampler->ShaderVisibility;
++    binding->space = sampler->RegisterSpace;
++    binding->begin = sampler->ShaderRegister;
++    binding->end = binding->begin + 1;
++    return true;
++}
++
++static HRESULT d3d12_root_signature_validate_bindings(const D3D12_ROOT_SIGNATURE_DESC2 *desc)
++{
++    struct d3d12_root_binding_iterator outer = {0}, inner;
++    struct d3d12_root_binding a, b;
++    size_t count = 0, i;
++
++    while (d3d12_root_signature_next_binding(desc, &outer, &a))
++    {
++        memset(&inner, 0, sizeof(inner));
++        for (i = 0; i < count; ++i)
++        {
++            if (!d3d12_root_signature_next_binding(desc, &inner, &b))
++                break;
++            if (a.type == b.type && a.space == b.space && a.begin < b.end && b.begin < a.end
++                    && (a.visibility == b.visibility || a.visibility == D3D12_SHADER_VISIBILITY_ALL
++                    || b.visibility == D3D12_SHADER_VISIBILITY_ALL))
++            {
++                WARN("Overlapping root signature register bindings.\n");
++                return E_INVALIDARG;
++            }
++        }
++        ++count;
++    }
++    return S_OK;
++}
++
+ static HRESULT d3d12_root_signature_init(struct d3d12_root_signature *root_signature,
+         struct d3d12_device *device, const D3D12_ROOT_SIGNATURE_DESC2 *desc)
+ {
+     HRESULT hr;
+ 
++    if (FAILED(hr = d3d12_root_signature_validate_bindings(desc)))
++        return hr;
++
+     memset(root_signature, 0, sizeof(*root_signature));
+     root_signature->ID3D12RootSignature_iface.lpVtbl = &d3d12_root_signature_vtbl;
+     root_signature->refcount = 1;

@@ -1,0 +1,24 @@
+# Export table of the stock d3d12.dll: ordinal, then name (# = ordinal only).
+# Source: C:\Windows\System32\D3D12.dll in the vmlab template windows-10/19045.2006.8
+#   (~/.local/share/vmlab/templates/x86_64/windows-10/19045.2006.8/disk.qcow2, read with guestfish --ro)
+# sha256: 978791504f40e96ae85570c0e45e24a6e79aa003087a45c45a7545f8321a4f8f
+# File version: 10.0.19041.5794 (WinBuild.160101.0800)
+99 #
+100 GetBehaviorValue
+101 D3D12CreateDevice
+102 D3D12GetDebugInterface
+103 SetAppCompatStringPointer
+104 D3D12CoreCreateLayeredDevice
+105 D3D12CoreGetLayeredDeviceSize
+106 D3D12CoreRegisterLayers
+107 D3D12CreateRootSignatureDeserializer
+108 D3D12CreateVersionedRootSignatureDeserializer
+109 D3D12DeviceRemovedExtendedData
+110 D3D12EnableExperimentalFeatures
+111 D3D12GetInterface
+112 D3D12PIXEventsReplaceBlock
+113 D3D12PIXGetThreadInfo
+114 D3D12PIXNotifyWakeFromFenceSignal
+115 D3D12PIXReportCounter
+116 D3D12SerializeRootSignature
+117 D3D12SerializeVersionedRootSignature

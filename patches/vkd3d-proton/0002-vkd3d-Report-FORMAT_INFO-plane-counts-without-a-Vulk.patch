@@ -1,0 +1,57 @@
+From 10b1d5edf3ff72b4b1b76f68c776e89ab858c721 Mon Sep 17 00:00:00 2001
+From: Wil Taylor <ai@wiltaylor.dev>
+Date: Sat, 17 Oct 2026 12:51:13 +1000
+Subject: [PATCH 2/5] vkd3d: Report FORMAT_INFO plane counts without a Vulkan
+ format mapping.
+
+D3D12_FEATURE_FORMAT_INFO describes the DXGI format's plane layout. It
+must succeed for valid DXGI formats that vkd3d-proton cannot create
+resources in, as native D3D12 does. NV11 has two planes; the packed,
+palettized and other single-plane video formats listed have one. Format
+support and resource creation are unchanged, so no new rendering
+capability is advertised.
+
+From the vmlab-win3d prior art (virtio driver-integrated-3d, F51).
+---
+ libs/vkd3d/device.c | 27 ++++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
+
+diff --git a/libs/vkd3d/device.c b/libs/vkd3d/device.c
+index 63a82c33..887e585b 100644
+--- a/libs/vkd3d/device.c
++++ b/libs/vkd3d/device.c
+@@ -5391,10 +5391,31 @@ static HRESULT STDMETHODCALLTYPE d3d12_device_CheckFeatureSupport(d3d12_device_i
+                 return E_INVALIDARG;
+             }
+ 
+-            if (data->Format == DXGI_FORMAT_UNKNOWN)
++            /* Plane layout is API metadata, independent of Vulkan format support. */
++            switch (data->Format)
+             {
+-                data->PlaneCount = 1;
+-                return S_OK;
++                case DXGI_FORMAT_NV11:
++                    data->PlaneCount = 2;
++                    return S_OK;
++                case DXGI_FORMAT_UNKNOWN:
++                case DXGI_FORMAT_R8G8_B8G8_UNORM:
++                case DXGI_FORMAT_G8R8_G8B8_UNORM:
++                case DXGI_FORMAT_R10G10B10_XR_BIAS_A2_UNORM:
++                case DXGI_FORMAT_AYUV:
++                case DXGI_FORMAT_Y410:
++                case DXGI_FORMAT_Y416:
++                case DXGI_FORMAT_420_OPAQUE:
++                case DXGI_FORMAT_YUY2:
++                case DXGI_FORMAT_Y210:
++                case DXGI_FORMAT_Y216:
++                case DXGI_FORMAT_AI44:
++                case DXGI_FORMAT_IA44:
++                case DXGI_FORMAT_P8:
++                case DXGI_FORMAT_A8P8:
++                    data->PlaneCount = 1;
++                    return S_OK;
++                default:
++                    break;
+             }
+ 
+             if (!(format = vkd3d_get_format(device, data->Format, false)))

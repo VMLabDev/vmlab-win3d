@@ -1,0 +1,56 @@
+From: vmlab-win3d <ai@wiltaylor.dev>
+Subject: [PATCH] dxgi: Keep the swap-chain description when a resize fails.
+
+ResizeBuffers wrote the new size, flags, buffer count and format into
+m_desc before asking the presenter to change properties. When the
+presenter rejected the change (for example, vkd3d-proton refuses while
+back buffers are still referenced), the swap chain kept reporting the
+rejected description. Native DXGI leaves the swap chain unchanged on
+failure. Build the new description in a local copy and commit it only
+after the presenter accepts it.
+
+From the vmlab-win3d prior art (virtio driver-integrated-3d,
+dxgi-validation.patch on DXVK v3.1.1).
+---
+diff --git a/src/dxgi/dxgi_swapchain.cpp b/src/dxgi/dxgi_swapchain.cpp
+index 71e69f9..a6647c1 100644
+--- a/src/dxgi/dxgi_swapchain.cpp
++++ b/src/dxgi/dxgi_swapchain.cpp
+@@ -441,27 +441,29 @@ namespace dxvk {
+       return DXGI_ERROR_INVALID_CALL;
+     
+     std::lock_guard<dxvk::mutex> lock(m_lockBuffer);
+-    m_desc.Width  = Width;
+-    m_desc.Height = Height;
+-    m_desc.Flags  = SwapChainFlags;
++    DXGI_SWAP_CHAIN_DESC1 desc = m_desc;
++    desc.Width  = Width;
++    desc.Height = Height;
++    desc.Flags  = SwapChainFlags;
+     
+     if (m_window) {
+       wsi::getWindowSize(m_window,
+-        m_desc.Width  ? nullptr : &m_desc.Width,
+-        m_desc.Height ? nullptr : &m_desc.Height);
++        desc.Width  ? nullptr : &desc.Width,
++        desc.Height ? nullptr : &desc.Height);
+     }
+     
+     if (BufferCount != 0)
+-      m_desc.BufferCount = BufferCount;
++      desc.BufferCount = BufferCount;
+     
+     if (Format != DXGI_FORMAT_UNKNOWN)
+-      m_desc.Format = Format;
++      desc.Format = Format;
+     
+-    HRESULT hr = m_presenter->ChangeProperties(&m_desc, pCreationNodeMask, ppPresentQueue);
++    HRESULT hr = m_presenter->ChangeProperties(&desc, pCreationNodeMask, ppPresentQueue);
+ 
+     if (FAILED(hr))
+       return hr;
+ 
++    m_desc = desc;
+     UpdateSourceSize(m_desc.Width, m_desc.Height);
+     UpdateColorSpace(m_desc.Format, m_colorSpace);
+     return hr;

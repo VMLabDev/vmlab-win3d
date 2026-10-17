@@ -1,0 +1,61 @@
+From e08a191f6047a10d32e2f22d382b1a3d88d10a36 Mon Sep 17 00:00:00 2001
+From: Wil Taylor <ai@wiltaylor.dev>
+Date: Sat, 17 Oct 2026 12:51:47 +1000
+Subject: [PATCH 4/5] vkd3d: Default the Windows shader cache to LocalAppData.
+
+Without VKD3D_SHADER_CACHE_PATH the disk cache is written to the working
+directory. Installed system-wide, applications in Program Files run as
+standard users and fail to write it. Use %LOCALAPPDATA%\vkd3d-proton,
+split per application like an explicit cache path. Setting
+VKD3D_SHADER_CACHE_PATH still overrides it, and 0 still disables it.
+
+The prior art (virtio driver-integrated-3d, F45) proved this location
+with a user-wide environment variable; this makes it the default so no
+configuration is needed.
+---
+ libs/vkd3d/cache.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/libs/vkd3d/cache.c b/libs/vkd3d/cache.c
+index f34cf887..51f350ad 100644
+--- a/libs/vkd3d/cache.c
++++ b/libs/vkd3d/cache.c
+@@ -3207,6 +3207,23 @@ static void vkd3d_pipeline_library_disk_cache_initial_setup(struct vkd3d_pipelin
+     cache->library->disk_cache_listener = cache;
+ }
+ 
++#ifdef _WIN32
++static bool vkd3d_get_default_cache_dir(char *path, size_t size)
++{
++    DWORD len;
++
++    len = GetEnvironmentVariableA("LOCALAPPDATA", path, size);
++    if (!len || len >= size)
++        return false;
++    vkd3d_strlcat(path, size, "\\vkd3d-proton");
++    if (strlen(path) + 1 >= size)
++        return false;
++    if (!CreateDirectoryA(path, NULL) && GetLastError() != ERROR_ALREADY_EXISTS)
++        return false;
++    return true;
++}
++#endif
++
+ HRESULT vkd3d_pipeline_library_init_disk_cache(struct vkd3d_pipeline_library_disk_cache *cache,
+         struct d3d12_device *device)
+ {
+@@ -3230,6 +3247,14 @@ HRESULT vkd3d_pipeline_library_init_disk_cache(struct vkd3d_pipeline_library_dis
+     vkd3d_get_env_var("VKD3D_SHADER_CACHE_PATH", path_buf, sizeof(path_buf));
+     path = *path_buf != '\0' ? path_buf : NULL;
+ 
++#ifdef _WIN32
++    /* A system-wide install cannot assume the working directory is writable
++     * (games under Program Files run as standard users), so default to a
++     * per-user directory, split by application below. */
++    if (!path && vkd3d_get_default_cache_dir(path_buf, sizeof(path_buf)))
++        path = path_buf;
++#endif
++
+     if (path)
+     {
+         separator = &path[strlen(path) - 1];

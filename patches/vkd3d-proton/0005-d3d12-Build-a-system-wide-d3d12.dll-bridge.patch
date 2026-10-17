@@ -1,0 +1,768 @@
+From 273ad7a1fab3ad325edeea734277d86200d321cd Mon Sep 17 00:00:00 2001
+From: Wil Taylor <ai@wiltaylor.dev>
+Date: Sat, 17 Oct 2026 12:55:28 +1000
+Subject: [PATCH 5/5] d3d12: Build a system-wide d3d12.dll bridge.
+
+Turn vkd3d-proton's d3d12.dll into a replacement for the Windows system
+d3d12.dll:
+
+- Load the core only from <bridge directory>\vmlab-win3d\vkd3dcore.dll,
+  never from System32\D3D12Core.dll, which is Microsoft's runtime.
+- Keep the native export table. It is generated from native_exports.txt
+  by gen_exports.py: vkd3d-proton implements the device and root
+  signature exports; the rest are thunks that resolve, on first call,
+  in the preserved native DLL vmlab-win3d\d3d12-native.dll. A missing
+  native export returns a listed fallback value instead of failing the
+  load, so the same bridge serves any Windows 10/11 d3d12.dll.
+- Hook the native DXGI factory's CreateSwapChain* methods. Swap chains
+  for vkd3d-proton queues are created by the private DXVK DXGI,
+  vmlab-win3d\dxgi-vulkan.dll; other devices use native DXGI.
+- If the core cannot be loaded, forward the vkd3d-proton exports to the
+  native DLL, so the bridge degrades to stock behaviour.
+
+Based on the bridge prototyped in the virtio driver-integrated-3d
+experiments (libs/d3d12/main.c and native_dxgi.cpp), without its
+hard-coded C:\Windows forwarder paths.
+---
+ libs/d3d12/bridge.c           | 305 ++++++++++++++++++++++++++++++++++
+ libs/d3d12/bridge.h           |  22 +++
+ libs/d3d12/gen_exports.py     | 145 ++++++++++++++++
+ libs/d3d12/main.c             |  63 ++++---
+ libs/d3d12/meson.build        |  17 +-
+ libs/d3d12/native_exports.txt |  39 +++++
+ 6 files changed, 567 insertions(+), 24 deletions(-)
+ create mode 100644 libs/d3d12/bridge.c
+ create mode 100644 libs/d3d12/bridge.h
+ create mode 100644 libs/d3d12/gen_exports.py
+ create mode 100644 libs/d3d12/native_exports.txt
+
+diff --git a/libs/d3d12/bridge.c b/libs/d3d12/bridge.c
+new file mode 100644
+index 00000000..0b07af1e
+--- /dev/null
++++ b/libs/d3d12/bridge.c
+@@ -0,0 +1,305 @@
++/*
++ * System-wide d3d12.dll bridge for vmlab-win3d.
++ *
++ * This d3d12.dll replaces the one in System32 (and SysWOW64). It keeps the
++ * native export table, implements the device-creating exports with
++ * vkd3d-proton, and forwards everything else to the preserved native DLL.
++ * Its private files live in a directory next to the bridge itself:
++ *
++ *   <directory of this d3d12.dll>\vmlab-win3d\vkd3dcore.dll     vkd3d-proton core
++ *   <directory of this d3d12.dll>\vmlab-win3d\dxgi-vulkan.dll   DXVK DXGI only
++ *   <directory of this d3d12.dll>\vmlab-win3d\d3d12-native.dll  the original d3d12.dll
++ *
++ * Applications load the system dxgi.dll, whose swap chains cannot present a
++ * vkd3d-proton queue. The bridge therefore hooks the native DXGI factory's
++ * CreateSwapChain* methods. Swap chains for vkd3d-proton queues are created
++ * by the private DXVK DXGI; every other device goes to the native method.
++ *
++ * Copyright 2026 the vmlab-win3d contributors, after the bridge prototyped in
++ * the virtio driver-integrated-3d experiments.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ */
++
++#ifdef _WIN32
++
++#define VKD3D_DBG_CHANNEL VKD3D_DBG_CHANNEL_API
++#define VKD3D_DBG_NO_FILE
++
++#define COBJMACROS
++#define VK_NO_PROTOTYPES
++#include "vkd3d_win32.h"
++#include "vkd3d_debug.h"
++#include "bridge.h"
++
++#define BRIDGE_PRIVATE_DIR L"vmlab-win3d"
++#define BRIDGE_PATH_MAX 1024
++
++typedef HRESULT (WINAPI *PFN_create_dxgi_factory2)(UINT flags, REFIID iid, void **factory);
++
++/* Native DRED data. The device is vkd3d-proton's, so the native runtime's
++ * DRED block stays empty; the export exists so the export table matches. */
++D3D12_VERSIONED_DEVICE_REMOVED_EXTENDED_DATA D3D12DeviceRemovedExtendedData;
++
++static bool bridge_private_path(const WCHAR *file, WCHAR *path, size_t size)
++{
++    HMODULE self;
++    WCHAR *slash;
++    DWORD len;
++
++    if (!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
++            (const WCHAR *)bridge_private_path, &self))
++        return false;
++    len = GetModuleFileNameW(self, path, size);
++    if (!len || len >= size)
++        return false;
++    if (!(slash = wcsrchr(path, L'\\')))
++        return false;
++    slash[1] = 0;
++    if (wcslen(path) + wcslen(BRIDGE_PRIVATE_DIR) + 1 + wcslen(file) + 1 > size)
++        return false;
++    wcscat(path, BRIDGE_PRIVATE_DIR);
++    wcscat(path, L"\\");
++    wcscat(path, file);
++    return true;
++}
++
++HMODULE bridge_load_private_module(const WCHAR *file)
++{
++    WCHAR path[BRIDGE_PATH_MAX];
++    HMODULE module;
++
++    if (!bridge_private_path(file, path, ARRAY_SIZE(path)))
++    {
++        ERR("Failed to build the private path for %s.\n", debugstr_w(file));
++        return NULL;
++    }
++    /* Dependencies of the private module resolve from its own directory
++     * first, then from System32. */
++    if (!(module = LoadLibraryExW(path, NULL, LOAD_WITH_ALTERED_SEARCH_PATH)))
++        ERR("Failed to load %s, error %lu.\n", debugstr_w(path), GetLastError());
++    return module;
++}
++
++static INIT_ONCE native_once = INIT_ONCE_STATIC_INIT;
++static HMODULE native_module;
++
++static BOOL CALLBACK bridge_init_native(INIT_ONCE *once, void *param, void **context)
++{
++    native_module = bridge_load_private_module(L"d3d12-native.dll");
++    return TRUE;
++}
++
++void *bridge_get_native_proc(const char *name)
++{
++    InitOnceExecuteOnce(&native_once, bridge_init_native, NULL, NULL);
++    return native_module ? (void *)GetProcAddress(native_module, name) : NULL;
++}
++
++struct bridge_forward_import
++{
++    const char *name;
++    WORD ordinal;
++};
++
++#include "bridge_exports.h"
++
++/* Defined by the generated thunks (bridge_exports.S). */
++extern void *bridge_forward_ptrs[BRIDGE_FORWARD_COUNT];
++extern void *const bridge_forward_fallbacks[BRIDGE_FORWARD_COUNT];
++
++void * __cdecl bridge_forward_resolve(unsigned int index);
++
++/* Called by the thunks on the first call to a forwarded export. */
++void * __cdecl bridge_forward_resolve(unsigned int index)
++{
++    const struct bridge_forward_import *import = &bridge_forward_imports[index];
++    void *proc;
++
++    proc = bridge_get_native_proc(import->name ? import->name : (const char *)(ULONG_PTR)import->ordinal);
++    if (!proc)
++    {
++        if (import->name)
++            WARN("Native d3d12 has no export %s.\n", import->name);
++        else
++            WARN("Native d3d12 has no export #%u.\n", import->ordinal);
++        proc = bridge_forward_fallbacks[index];
++    }
++    InterlockedExchangePointer(&bridge_forward_ptrs[index], proc);
++    return proc;
++}
++
++/* DXGI swap-chain routing. */
++
++typedef HRESULT (STDMETHODCALLTYPE *PFN_create_swapchain)(IDXGIFactory2 *factory,
++        IUnknown *device, DXGI_SWAP_CHAIN_DESC *desc, IDXGISwapChain **swapchain);
++typedef HRESULT (STDMETHODCALLTYPE *PFN_create_swapchain_for_hwnd)(IDXGIFactory2 *factory,
++        IUnknown *device, HWND window, const DXGI_SWAP_CHAIN_DESC1 *desc,
++        const DXGI_SWAP_CHAIN_FULLSCREEN_DESC *fullscreen_desc, IDXGIOutput *output, IDXGISwapChain1 **swapchain);
++typedef HRESULT (STDMETHODCALLTYPE *PFN_create_swapchain_for_core_window)(IDXGIFactory2 *factory,
++        IUnknown *device, IUnknown *window, const DXGI_SWAP_CHAIN_DESC1 *desc,
++        IDXGIOutput *output, IDXGISwapChain1 **swapchain);
++typedef HRESULT (STDMETHODCALLTYPE *PFN_create_swapchain_for_composition)(IDXGIFactory2 *factory,
++        IUnknown *device, const DXGI_SWAP_CHAIN_DESC1 *desc, IDXGIOutput *output, IDXGISwapChain1 **swapchain);
++
++static PFN_create_swapchain native_create_swapchain;
++static PFN_create_swapchain_for_hwnd native_create_swapchain_for_hwnd;
++static PFN_create_swapchain_for_core_window native_create_swapchain_for_core_window;
++static PFN_create_swapchain_for_composition native_create_swapchain_for_composition;
++
++static INIT_ONCE hooks_once = INIT_ONCE_STATIC_INIT;
++static HRESULT hooks_result = E_FAIL;
++static INIT_ONCE vulkan_dxgi_once = INIT_ONCE_STATIC_INIT;
++static HRESULT vulkan_dxgi_result = E_FAIL;
++static IDXGIFactory2 *vulkan_dxgi_factory;
++
++static BOOL CALLBACK bridge_init_vulkan_dxgi(INIT_ONCE *once, void *param, void **context)
++{
++    PFN_create_dxgi_factory2 create_factory;
++    HMODULE module;
++
++    if (!(module = bridge_load_private_module(L"dxgi-vulkan.dll")))
++        return TRUE;
++    if (!(create_factory = (PFN_create_dxgi_factory2)(void *)GetProcAddress(module, "CreateDXGIFactory2")))
++    {
++        ERR("dxgi-vulkan.dll has no CreateDXGIFactory2.\n");
++        return TRUE;
++    }
++    vulkan_dxgi_result = create_factory(0, &IID_IDXGIFactory2, (void **)&vulkan_dxgi_factory);
++    if (FAILED(vulkan_dxgi_result))
++        ERR("Failed to create the DXVK DXGI factory, hr %#x.\n", vulkan_dxgi_result);
++    return TRUE;
++}
++
++/* Swap chains for vkd3d-proton queues go to DXVK, which presents through
++ * IDXGIVkSwapChainFactory. Anything else is a native device. */
++static IDXGIFactory2 *bridge_vulkan_factory_for(IUnknown *device, HRESULT *hr)
++{
++    IUnknown *swapchain_factory;
++
++    if (!device || FAILED(IUnknown_QueryInterface(device, &IID_IDXGIVkSwapChainFactory, (void **)&swapchain_factory)))
++        return NULL;
++    IUnknown_Release(swapchain_factory);
++
++    InitOnceExecuteOnce(&vulkan_dxgi_once, bridge_init_vulkan_dxgi, NULL, NULL);
++    *hr = vulkan_dxgi_result;
++    return vulkan_dxgi_factory;
++}
++
++static HRESULT STDMETHODCALLTYPE bridge_create_swapchain(IDXGIFactory2 *factory,
++        IUnknown *device, DXGI_SWAP_CHAIN_DESC *desc, IDXGISwapChain **swapchain)
++{
++    IDXGIFactory2 *vulkan;
++    HRESULT hr = S_OK;
++
++    if (!(vulkan = bridge_vulkan_factory_for(device, &hr)))
++        return SUCCEEDED(hr) ? native_create_swapchain(factory, device, desc, swapchain) : hr;
++    return IDXGIFactory2_CreateSwapChain(vulkan, device, desc, swapchain);
++}
++
++static HRESULT STDMETHODCALLTYPE bridge_create_swapchain_for_hwnd(IDXGIFactory2 *factory,
++        IUnknown *device, HWND window, const DXGI_SWAP_CHAIN_DESC1 *desc,
++        const DXGI_SWAP_CHAIN_FULLSCREEN_DESC *fullscreen_desc, IDXGIOutput *output, IDXGISwapChain1 **swapchain)
++{
++    IDXGIFactory2 *vulkan;
++    HRESULT hr = S_OK;
++
++    if (!(vulkan = bridge_vulkan_factory_for(device, &hr)))
++        return SUCCEEDED(hr) ? native_create_swapchain_for_hwnd(factory, device, window, desc,
++                fullscreen_desc, output, swapchain) : hr;
++    return IDXGIFactory2_CreateSwapChainForHwnd(vulkan, device, window, desc, fullscreen_desc, output, swapchain);
++}
++
++static HRESULT STDMETHODCALLTYPE bridge_create_swapchain_for_core_window(IDXGIFactory2 *factory,
++        IUnknown *device, IUnknown *window, const DXGI_SWAP_CHAIN_DESC1 *desc,
++        IDXGIOutput *output, IDXGISwapChain1 **swapchain)
++{
++    IDXGIFactory2 *vulkan;
++    HRESULT hr = S_OK;
++
++    if (!(vulkan = bridge_vulkan_factory_for(device, &hr)))
++        return SUCCEEDED(hr) ? native_create_swapchain_for_core_window(factory, device, window, desc,
++                output, swapchain) : hr;
++    return IDXGIFactory2_CreateSwapChainForCoreWindow(vulkan, device, window, desc, output, swapchain);
++}
++
++static HRESULT STDMETHODCALLTYPE bridge_create_swapchain_for_composition(IDXGIFactory2 *factory,
++        IUnknown *device, const DXGI_SWAP_CHAIN_DESC1 *desc, IDXGIOutput *output, IDXGISwapChain1 **swapchain)
++{
++    IDXGIFactory2 *vulkan;
++    HRESULT hr = S_OK;
++
++    if (!(vulkan = bridge_vulkan_factory_for(device, &hr)))
++        return SUCCEEDED(hr) ? native_create_swapchain_for_composition(factory, device, desc, output, swapchain) : hr;
++    return IDXGIFactory2_CreateSwapChainForComposition(vulkan, device, desc, output, swapchain);
++}
++
++static BOOL CALLBACK bridge_init_hooks(INIT_ONCE *once, void *param, void **context)
++{
++    PFN_create_dxgi_factory2 create_factory;
++    IDXGIFactory2Vtbl *vtbl;
++    IDXGIFactory2 *factory;
++    DWORD old_protect;
++    HMODULE module;
++    HRESULT hr;
++
++    if (!(module = LoadLibraryExW(L"dxgi.dll", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32)))
++    {
++        ERR("Failed to load the system dxgi.dll, error %lu.\n", GetLastError());
++        return TRUE;
++    }
++    if (!(create_factory = (PFN_create_dxgi_factory2)(void *)GetProcAddress(module, "CreateDXGIFactory2")))
++        return TRUE;
++    if (FAILED(hr = create_factory(0, &IID_IDXGIFactory2, (void **)&factory)))
++    {
++        ERR("Failed to create a native DXGI factory, hr %#x.\n", hr);
++        return TRUE;
++    }
++
++    /* Every native factory shares this vtable. Patch it once, and keep both
++     * dxgi.dll and this module loaded: hooked factories outlive any caller. */
++    vtbl = (IDXGIFactory2Vtbl *)factory->lpVtbl;
++    if (!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_PIN,
++            (const WCHAR *)bridge_init_hooks, &module)
++            || !GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_PIN,
++            (const WCHAR *)vtbl->CreateSwapChain, &module))
++    {
++        ERR("Failed to pin modules, error %lu.\n", GetLastError());
++        IDXGIFactory2_Release(factory);
++        return TRUE;
++    }
++    if (!VirtualProtect(vtbl, sizeof(*vtbl), PAGE_READWRITE, &old_protect))
++    {
++        ERR("Failed to unprotect the DXGI factory vtable, error %lu.\n", GetLastError());
++        IDXGIFactory2_Release(factory);
++        return TRUE;
++    }
++
++    native_create_swapchain = vtbl->CreateSwapChain;
++    native_create_swapchain_for_hwnd = vtbl->CreateSwapChainForHwnd;
++    native_create_swapchain_for_core_window = vtbl->CreateSwapChainForCoreWindow;
++    native_create_swapchain_for_composition = vtbl->CreateSwapChainForComposition;
++    InterlockedExchangePointer((void **)&vtbl->CreateSwapChain, (void *)bridge_create_swapchain);
++    InterlockedExchangePointer((void **)&vtbl->CreateSwapChainForHwnd, (void *)bridge_create_swapchain_for_hwnd);
++    InterlockedExchangePointer((void **)&vtbl->CreateSwapChainForCoreWindow,
++            (void *)bridge_create_swapchain_for_core_window);
++    InterlockedExchangePointer((void **)&vtbl->CreateSwapChainForComposition,
++            (void *)bridge_create_swapchain_for_composition);
++    VirtualProtect(vtbl, sizeof(*vtbl), old_protect, &old_protect);
++
++    TRACE("Native DXGI swap-chain hooks installed.\n");
++    hooks_result = S_OK;
++    IDXGIFactory2_Release(factory);
++    return TRUE;
++}
++
++HRESULT bridge_install_dxgi_hooks(void)
++{
++    InitOnceExecuteOnce(&hooks_once, bridge_init_hooks, NULL, NULL);
++    return hooks_result;
++}
++
++#endif /* _WIN32 */
+diff --git a/libs/d3d12/bridge.h b/libs/d3d12/bridge.h
+new file mode 100644
+index 00000000..bee49678
+--- /dev/null
++++ b/libs/d3d12/bridge.h
+@@ -0,0 +1,22 @@
++/*
++ * System-wide d3d12.dll bridge for vmlab-win3d; see bridge.c.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ */
++
++#ifndef __VKD3D_D3D12_BRIDGE_H
++#define __VKD3D_D3D12_BRIDGE_H
++
++#ifdef _WIN32
++/* Loads <bridge directory>\vmlab-win3d\<file>. */
++HMODULE bridge_load_private_module(const WCHAR *file);
++/* Looks up an export of the preserved native d3d12.dll. */
++void *bridge_get_native_proc(const char *name);
++/* Routes swap chains for vkd3d-proton queues to the private DXVK DXGI. */
++HRESULT bridge_install_dxgi_hooks(void);
++#endif
++
++#endif
+diff --git a/libs/d3d12/gen_exports.py b/libs/d3d12/gen_exports.py
+new file mode 100644
+index 00000000..e320edf2
+--- /dev/null
++++ b/libs/d3d12/gen_exports.py
+@@ -0,0 +1,145 @@
++#!/usr/bin/env python3
++# Generate the d3d12.dll bridge's module definition and forwarding thunks
++# from native_exports.txt.
++#
++# usage: gen_exports.py <native_exports.txt> <x86|x86_64> <out.def> <out.S> <out.h>
++#
++# Each forwarded export becomes a thunk that jumps through a pointer table.
++# The table starts out pointing at per-export resolver stubs. The first call
++# resolves the export in the preserved native DLL (bridge.c), patches the
++# table and continues into the resolved function with the caller's arguments
++# intact. An export the native DLL lacks resolves to a stub that returns the
++# listed fallback value and, on x86, pops the listed stdcall argument bytes.
++import sys
++
++
++def parse(path):
++    entries = []
++    with open(path) as f:
++        for line in f:
++            line = line.strip()
++            if not line or line.startswith("# ") or line == "#":
++                continue
++            fields = line.split()
++            name, ordinal, kind = fields[0], int(fields[1]), fields[2]
++            entry = {"name": name, "ordinal": ordinal, "kind": kind}
++            if kind == "forward":
++                entry["argbytes"] = int(fields[3])
++                entry["fallback"] = int(fields[4], 0)
++            elif kind not in ("vkd3d", "data"):
++                sys.exit(f"{path}: unknown kind {kind!r}")
++            entries.append(entry)
++    return entries
++
++
++def symbol(entry):
++    if entry["name"].startswith("#"):
++        return "bridge_native_ordinal_" + entry["name"][1:]
++    return entry["name"]
++
++
++def write_def(entries, path):
++    with open(path, "w") as f:
++        f.write("; Generated by gen_exports.py from native_exports.txt.\n")
++        f.write("LIBRARY d3d12.dll\n\nEXPORTS\n")
++        for e in entries:
++            line = f"    {symbol(e)} @{e['ordinal']}"
++            if e["name"].startswith("#"):
++                line += " NONAME"
++            if e["kind"] == "data":
++                line += " DATA"
++            f.write(line + "\n")
++
++
++def write_asm(entries, arch, path):
++    fwd = [e for e in entries if e["kind"] == "forward"]
++    x64 = arch == "x86_64"
++    p = "" if x64 else "_"
++    ptr = ".quad" if x64 else ".long"
++    size = 8 if x64 else 4
++    out = ["/* Generated by gen_exports.py from native_exports.txt. */", "    .text"]
++    for i, e in enumerate(fwd):
++        name = p + symbol(e)
++        out += [f"    .globl {name}", f"    .p2align 4", f"{name}:"]
++        if x64:
++            out.append(f"    jmp *{p}bridge_forward_ptrs+{i * size}(%rip)")
++        else:
++            out.append(f"    jmp *{p}bridge_forward_ptrs+{i * size}")
++    for i, e in enumerate(fwd):
++        out.append(f"bridge_resolve_{i}:")
++        if x64:
++            out += [f"    movl ${i}, %eax", "    jmp bridge_resolve_common"]
++        else:
++            out += [f"    pushl ${i}", "    jmp bridge_resolve_common"]
++    if x64:
++        # Preserve the four argument registers (integer and vector) around
++        # the resolver call; keep the stack 16-byte aligned with shadow space.
++        out += [
++            "bridge_resolve_common:",
++            "    pushq %rcx", "    pushq %rdx", "    pushq %r8", "    pushq %r9",
++            "    subq $0x68, %rsp",
++            "    movdqu %xmm0, 0x20(%rsp)", "    movdqu %xmm1, 0x30(%rsp)",
++            "    movdqu %xmm2, 0x40(%rsp)", "    movdqu %xmm3, 0x50(%rsp)",
++            "    movl %eax, %ecx",
++            "    call bridge_forward_resolve",
++            "    movq %rax, %r11",
++            "    movdqu 0x20(%rsp), %xmm0", "    movdqu 0x30(%rsp), %xmm1",
++            "    movdqu 0x40(%rsp), %xmm2", "    movdqu 0x50(%rsp), %xmm3",
++            "    addq $0x68, %rsp",
++            "    popq %r9", "    popq %r8", "    popq %rdx", "    popq %rcx",
++            "    jmp *%r11",
++        ]
++    else:
++        # Stack arguments stay where they are; ecx and edx are preserved for
++        # thiscall/fastcall-style callers. The index pushed by the stub is
++        # dropped before the jump.
++        out += [
++            "bridge_resolve_common:",
++            "    pushl %ecx", "    pushl %edx",
++            "    pushl 8(%esp)",
++            "    call _bridge_forward_resolve",
++            "    addl $4, %esp",
++            "    popl %edx", "    popl %ecx",
++            "    addl $4, %esp",
++            "    jmp *%eax",
++        ]
++    for i, e in enumerate(fwd):
++        out += [f"bridge_fallback_{i}:", f"    movl ${e['fallback']:#x}, %eax", "    xorl %edx, %edx"]
++        if x64 or not e["argbytes"]:
++            out.append("    ret")
++        else:
++            out.append(f"    ret ${e['argbytes']}")
++    out += ["", "    .data", f"    .p2align {3 if x64 else 2}", f"    .globl {p}bridge_forward_ptrs",
++            f"{p}bridge_forward_ptrs:"]
++    out += [f"    {ptr} bridge_resolve_{i}" for i in range(len(fwd))]
++    out += [f"    .globl {p}bridge_forward_fallbacks", f"{p}bridge_forward_fallbacks:"]
++    out += [f"    {ptr} bridge_fallback_{i}" for i in range(len(fwd))]
++    with open(path, "w") as f:
++        f.write("\n".join(out) + "\n")
++
++
++def write_header(entries, path):
++    fwd = [e for e in entries if e["kind"] == "forward"]
++    with open(path, "w") as f:
++        f.write("/* Generated by gen_exports.py from native_exports.txt. */\n")
++        f.write(f"#define BRIDGE_FORWARD_COUNT {len(fwd)}\n")
++        f.write("static const struct bridge_forward_import bridge_forward_imports[BRIDGE_FORWARD_COUNT] =\n{\n")
++        for e in fwd:
++            if e["name"].startswith("#"):
++                f.write(f"    {{NULL, {e['name'][1:]}}},\n")
++            else:
++                f.write(f"    {{\"{e['name']}\", 0}},\n")
++        f.write("};\n")
++
++
++def main():
++    if len(sys.argv) != 6:
++        sys.exit("usage: gen_exports.py <list> <arch> <def> <S> <h>")
++    entries = parse(sys.argv[1])
++    write_def(entries, sys.argv[3])
++    write_asm(entries, sys.argv[2], sys.argv[4])
++    write_header(entries, sys.argv[5])
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/libs/d3d12/main.c b/libs/d3d12/main.c
+index 5b1d1ca2..29b5fb5b 100644
+--- a/libs/d3d12/main.c
++++ b/libs/d3d12/main.c
+@@ -39,6 +39,7 @@
+ #include "vkd3d_threads.h"
+ #include "vkd3d_string.h"
+ #include "vkd3d_platform.h"
++#include "bridge.h"
+ 
+ #if defined(__WINE__) || !defined(_WIN32)
+ #define DLLEXPORT __attribute__((visibility("default")))
+@@ -72,7 +73,14 @@ static bool load_d3d12core_module(const char *module_name)
+         /* We link directly to d3d12core, however we still need to dlopen + dlsym
+          * as both shared libraries export D3D12GetInterface, so we need to do this
+          * to avoid confusing the linker. */
+-        if ((d3d12core_module = vkd3d_dlopen(module_name)))
++#ifdef _WIN32
++        /* The bridge only ever loads its private core. The upstream fallback
++         * to System32\D3D12Core.dll would find Microsoft's runtime. */
++        d3d12core_module = bridge_load_private_module(L"vkd3dcore.dll");
++#else
++        d3d12core_module = vkd3d_dlopen(module_name);
++#endif
++        if (d3d12core_module)
+             d3d12core_D3D12GetInterface = (PFN_D3D12_GET_INTERFACE)vkd3d_dlsym(d3d12core_module, "D3D12GetInterface");
+ 
+         if (!d3d12core_D3D12GetInterface)
+@@ -112,24 +120,21 @@ static void load_d3d12core_once(void)
+     bool ret;
+ 
+     ret = load_d3d12core_module(SONAME_D3D12CORE);
+-#ifdef _WIN32
+-    if (!ret)
+-    {
+-        /* Fallback to loading directly from the system32 dir, to handle
+-         * the case where a game ships a D3D12Core.dll next to
+-         * their executable. */
+-        char buf[VKD3D_PATH_MAX];
+-        GetSystemDirectoryA(buf, sizeof(buf));
+-        vkd3d_strlcat(buf, sizeof(buf), "\\" SONAME_D3D12CORE);
+-
+-        ret = load_d3d12core_module(buf);
+-    }
+-#endif
+ 
+     if (!ret)
+     {
++#ifdef _WIN32
++        ERR("Failed to load the vkd3d-proton core; forwarding to the native d3d12.dll.\n");
++#else
+         ERR("Failed to find vkd3d-proton d3d12core interfaces. Make sure " SONAME_D3D12CORE " is installed as well.\n");
++#endif
++    }
++#ifdef _WIN32
++    else if (FAILED(bridge_install_dxgi_hooks()))
++    {
++        ERR("Failed to hook native DXGI; vkd3d-proton swap chains will not work.\n");
+     }
++#endif
+ }
+ 
+ static bool load_d3d12core(void)
+@@ -138,6 +143,20 @@ static bool load_d3d12core(void)
+     return core != NULL;
+ }
+ 
++#ifdef _WIN32
++/* Without a usable core the bridge behaves like the native d3d12.dll. */
++#define BRIDGE_CALL_NATIVE(pfn_type, name, args) \
++    do { \
++        pfn_type native_fn = (pfn_type)bridge_get_native_proc(name); \
++        return native_fn ? native_fn args : E_NOINTERFACE; \
++    } while (0)
++#else
++#define BRIDGE_CALL_NATIVE(pfn_type, name, args) return E_NOINTERFACE
++#endif
++
++typedef HRESULT (WINAPI *PFN_bridge_create_root_signature_deserializer)(const void *data, SIZE_T data_size,
++        REFIID iid, void **deserializer);
++
+ HRESULT WINAPI DLLEXPORT D3D12CreateDevice(IUnknown *adapter, D3D_FEATURE_LEVEL minimum_feature_level,
+         REFIID iid, void **device)
+ {
+@@ -145,7 +164,7 @@ HRESULT WINAPI DLLEXPORT D3D12CreateDevice(IUnknown *adapter, D3D_FEATURE_LEVEL
+             adapter, minimum_feature_level, debugstr_guid(iid), device);
+ 
+     if (!load_d3d12core())
+-        return E_NOINTERFACE;
++        BRIDGE_CALL_NATIVE(PFN_D3D12_CREATE_DEVICE, "D3D12CreateDevice", (adapter, minimum_feature_level, iid, device));
+     return IVKD3DCoreInterface_CreateDevice(core, adapter, minimum_feature_level, iid, device);
+ }
+ 
+@@ -156,7 +175,7 @@ HRESULT WINAPI DLLEXPORT D3D12CreateRootSignatureDeserializer(const void *data,
+             data, data_size, debugstr_guid(iid), deserializer);
+ 
+     if (!load_d3d12core())
+-        return E_NOINTERFACE;
++        BRIDGE_CALL_NATIVE(PFN_bridge_create_root_signature_deserializer, "D3D12CreateRootSignatureDeserializer", (data, data_size, iid, deserializer));
+     return IVKD3DCoreInterface_CreateRootSignatureDeserializer(core, data, data_size, iid, deserializer);
+ }
+ 
+@@ -167,7 +186,7 @@ HRESULT WINAPI DLLEXPORT D3D12SerializeRootSignature(const D3D12_ROOT_SIGNATURE_
+             root_signature_desc, version, blob, error_blob);
+ 
+     if (!load_d3d12core())
+-        return E_NOINTERFACE;
++        BRIDGE_CALL_NATIVE(PFN_D3D12_SERIALIZE_ROOT_SIGNATURE, "D3D12SerializeRootSignature", (root_signature_desc, version, blob, error_blob));
+     return IVKD3DCoreInterface_SerializeRootSignature(core, root_signature_desc, version, blob, error_blob);
+ }
+ 
+@@ -178,7 +197,7 @@ HRESULT WINAPI DLLEXPORT D3D12CreateVersionedRootSignatureDeserializer(const voi
+             data, data_size, debugstr_guid(iid), deserializer);
+ 
+     if (!load_d3d12core())
+-        return E_NOINTERFACE;
++        BRIDGE_CALL_NATIVE(PFN_D3D12_CREATE_VERSIONED_ROOT_SIGNATURE_DESERIALIZER, "D3D12CreateVersionedRootSignatureDeserializer", (data, data_size, iid, deserializer));
+     return IVKD3DCoreInterface_CreateVersionedRootSignatureDeserializer(core, data, data_size, iid, deserializer);
+ }
+ 
+@@ -188,7 +207,7 @@ HRESULT WINAPI DLLEXPORT D3D12SerializeVersionedRootSignature(const D3D12_VERSIO
+     TRACE("desc %p, blob %p, error_blob %p.\n", desc, blob, error_blob);
+ 
+     if (!load_d3d12core())
+-        return E_NOINTERFACE;
++        BRIDGE_CALL_NATIVE(PFN_D3D12_SERIALIZE_VERSIONED_ROOT_SIGNATURE, "D3D12SerializeVersionedRootSignature", (desc, blob, error_blob));
+     return IVKD3DCoreInterface_SerializeVersionedRootSignature(core, desc, blob, error_blob);
+ }
+ 
+@@ -197,7 +216,7 @@ HRESULT WINAPI DLLEXPORT D3D12GetDebugInterface(REFIID iid, void **debug)
+     TRACE("iid %s, debug %p.\n", debugstr_guid(iid), debug);
+ 
+     if (!load_d3d12core())
+-        return E_NOINTERFACE;
++        BRIDGE_CALL_NATIVE(PFN_D3D12_GET_DEBUG_INTERFACE, "D3D12GetDebugInterface", (iid, debug));
+     return IVKD3DCoreInterface_GetDebugInterface(core, iid, debug);
+ }
+ 
+@@ -208,7 +227,7 @@ HRESULT WINAPI DLLEXPORT D3D12EnableExperimentalFeatures(UINT feature_count,
+             feature_count, iids, configurations, configurations_sizes);
+ 
+     if (!load_d3d12core())
+-        return E_NOINTERFACE;
++        BRIDGE_CALL_NATIVE(PFN_D3D12_ENABLE_EXPERIMENTAL_FEATURES, "D3D12EnableExperimentalFeatures", (feature_count, iids, configurations, configurations_sizes));
+     return IVKD3DCoreInterface_EnableExperimentalFeatures(core, feature_count, iids, configurations, configurations_sizes);
+ }
+ 
+@@ -334,6 +353,6 @@ HRESULT WINAPI DLLEXPORT D3D12GetInterface(REFCLSID rcslid, REFIID iid, void **d
+     }
+ 
+     if (!load_d3d12core())
+-        return E_NOINTERFACE;
++        BRIDGE_CALL_NATIVE(PFN_D3D12_GET_INTERFACE, "D3D12GetInterface", (rcslid, iid, debug));
+     return IVKD3DCoreInterface_GetInterface(core, rcslid, iid, debug);
+ }
+diff --git a/libs/d3d12/meson.build b/libs/d3d12/meson.build
+index d99da14c..6bb2287c 100644
+--- a/libs/d3d12/meson.build
++++ b/libs/d3d12/meson.build
+@@ -2,6 +2,8 @@ d3d12_src = [
+   'main.c'
+ ]
+ 
++d3d12_def = 'd3d12.def'
++
+ if vkd3d_platform == 'windows'
+   d3d12_name_prefix = ''
+   d3d12_dependencies = [ vkd3d_common_dep, lib_gdi32, lib_dxgi ]
+@@ -19,13 +21,24 @@ endif
+ 
+ d3d12_needs_defs = (not vkd3d_is_msvc) and (vkd3d_platform == 'windows')
+ 
++# vmlab-win3d bridge: the export table, including the forwarders to the
++# preserved native d3d12.dll, is generated from native_exports.txt.
++if d3d12_needs_defs
++  d3d12_bridge_gen = custom_target('d3d12_bridge_exports',
++    input   : [ 'gen_exports.py', 'native_exports.txt' ],
++    output  : [ 'd3d12.def', 'bridge_exports.S', 'bridge_exports.h' ],
++    command : [ import('python').find_installation(), '@INPUT0@', '@INPUT1@',
++                host_machine.cpu_family(), '@OUTPUT0@', '@OUTPUT1@', '@OUTPUT2@' ])
++  d3d12_src += [ 'bridge.c', d3d12_bridge_gen[1], d3d12_bridge_gen[2] ]
++  d3d12_def = d3d12_bridge_gen[0]
++endif
++
+ d3d12_lib = shared_library(d3d12_name_prefix + 'd3d12', d3d12_src,
+   name_prefix         : '',
+   dependencies        : d3d12_dependencies,
+   include_directories : vkd3d_private_includes,
+   install             : true,
+-  objects             : d3d12_needs_defs ? 'd3d12.def' : [],
+-  vs_module_defs      : 'd3d12.def')
++  vs_module_defs      : d3d12_def)
+ 
+ d3d12_dep = declare_dependency(
+   link_with           : d3d12_lib,
+diff --git a/libs/d3d12/native_exports.txt b/libs/d3d12/native_exports.txt
+new file mode 100644
+index 00000000..d9c5fa2b
+--- /dev/null
++++ b/libs/d3d12/native_exports.txt
+@@ -0,0 +1,39 @@
++# Export table of the d3d12.dll bridge.
++#
++# The bridge replaces the system d3d12.dll. Every export of a stock Windows
++# 10/11 d3d12.dll is listed here; gen_exports.py turns this file into the
++# module definition (.def) and the forwarding thunks.
++#
++# Columns:
++#   name      export name, or #N for an export that has only an ordinal
++#   ordinal   export ordinal of the bridge
++#   kind      vkd3d   implemented by vkd3d-proton (main.c)
++#             forward forwarded at run time to the preserved native DLL
++#             data    a data export, defined by the bridge (bridge.c)
++#   argbytes  forward only: stdcall argument bytes on x86 (ret N)
++#   fallback  forward only: value returned if the native DLL lacks the export
++#
++# Ordinals: only 99, 101 and 102 are the same in every Windows build checked
++# (Win10 19045 and Win11 26100), and Windows' own DLLs import d3d12.dll by
++# ordinal only for 101 and 102. Everything else is imported by name, so the
++# remaining ordinals follow the Win11 26100 layout.
++
++#99                                           99  forward  16  0x80004001
++SetAppCompatStringPointer                     100 forward  8   0
++D3D12CreateDevice                             101 vkd3d
++D3D12GetDebugInterface                        102 vkd3d
++D3D12CoreCreateLayeredDevice                  103 forward  20  0x80004001
++D3D12CoreGetLayeredDeviceSize                 104 forward  8   0
++D3D12CoreRegisterLayers                       105 forward  8   0x80004001
++D3D12CreateRootSignatureDeserializer          106 vkd3d
++D3D12CreateVersionedRootSignatureDeserializer 107 vkd3d
++D3D12DeviceRemovedExtendedData                108 data
++D3D12EnableExperimentalFeatures               109 vkd3d
++D3D12GetInterface                             110 vkd3d
++D3D12PIXEventsReplaceBlock                    111 forward  4   0
++D3D12PIXGetThreadInfo                         112 forward  0   0
++D3D12PIXNotifyWakeFromFenceSignal             113 forward  4   0
++D3D12PIXReportCounter                         114 forward  8   0
++D3D12SerializeRootSignature                   115 vkd3d
++D3D12SerializeVersionedRootSignature          116 vkd3d
++GetBehaviorValue                              117 forward  8   0

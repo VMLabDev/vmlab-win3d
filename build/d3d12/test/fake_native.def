@@ -1,0 +1,11 @@
+LIBRARY d3d12-native.dll
+EXPORTS
+    native_ordinal_99 @99 NONAME
+    SetAppCompatStringPointer @100
+    D3D12CreateDevice @101
+    D3D12CoreGetLayeredDeviceSize @104
+    D3D12PIXEventsReplaceBlock @111
+    D3D12PIXGetThreadInfo @112
+    D3D12PIXReportCounter @114
+    last_counter DATA
+    last_counter_name DATA

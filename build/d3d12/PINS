@@ -1,0 +1,12 @@
+# Upstream pins for build/d3d12. One per line:
+#   name  url  ref  commit-or-sha256
+# Git sources are fetched by commit; the commit hash is the content pin
+# (nested submodules are pinned by the superproject's gitlinks).
+# Archives carry their sha256.
+
+vkd3d-proton   https://github.com/HansKristian-Work/vkd3d-proton  v3.0.1    3b10bd7a7ec6a7347e616cf8bea59333afec2255
+dxil-spirv     https://github.com/HansKristian-Work/dxil-spirv    master    8434b0639fb2a48ce13aac08a420ecce5d23df0e
+dxvk           https://github.com/doitsujin/dxvk                  v3.1.1    b1a1c99ab52b687cf950d62c88bc2fa316b41663
+
+# Toolchain: the shared image from build/toolchain (llvm-mingw 20261006,
+# LLVM 23.1.3, ucrt); its inputs are pinned in build/toolchain/PINS.
