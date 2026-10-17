@@ -1,0 +1,34 @@
+﻿{
+    "name":  "x86-d3d12_probe-warp",
+    "exe":  "C:\\win3d\\probes\\x86\\d3d12_probe.exe",
+    "arguments":  "--warp --seconds 15 --out C:\\win3d\\results\\x86-d3d12_probe-warp.json",
+    "user":  "VMLABVM-RGRGGM3\\win3d",
+    "session_id":  1,
+    "pid":  8552,
+    "wow64":  true,
+    "started":  "2026-10-17T03:12:14.2355846-07:00",
+    "ended":  "2026-10-17T03:12:30.9497521-07:00",
+    "duration_s":  16.7,
+    "timed_out":  false,
+    "exit_code":  0,
+    "task_result":  0,
+    "probe_json":  "C:\\win3d\\results\\x86-d3d12_probe-warp.json",
+    "probe_result":  "pass",
+    "adapter":  "Microsoft Basic Render Driver",
+    "software":  true,
+    "readback_ok":  true,
+    "module_count":  47,
+    "graphics_modules":  [
+                             "C:\\WINDOWS\\SysWOW64\\dxgi.dll [syswow64] 10.0.26100.9444 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\d3d12.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\D3D12Core.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\d3d10warp.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\D3DSCache.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\d3dcompiler_47.dll [syswow64] 10.0.26100.9168 (WinBuild.160101.0800)"
+                         ],
+    "app_local_modules":  [
+
+                          ]
+}

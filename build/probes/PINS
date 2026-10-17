@@ -1,6 +1,4 @@
-# Upstream pins for build/probes. One entry per line:
-# name  url  tag-or-commit  sha256
-ubuntu-base          docker.io/library/ubuntu:24.04  -  sha256:ac3a3d13e90c660a1cb3e89ec695533399f7378dc1ae5fbdc28eb5781d561594
-llvm-mingw           https://github.com/mstorsjo/llvm-mingw/releases/download/20261006/llvm-mingw-20261006-ucrt-ubuntu-22.04-x86_64.tar.xz  20261006  5f9c6ed95b2d4bdb2869a488c5fd5857fbdabcf288a0aa3eb1da43f6a08d8ab4
-vulkan-headers       https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/vulkan-sdk-1.4.363.0.tar.gz  vulkan-sdk-1.4.363.0@6802bb4733b63ed5efd3adb308a6c885ef180ea1  4a078be12bef21cfebc09d878b77a63cff9d68f899254a0b00d0e37ef73e7f7e
-glslang              https://github.com/KhronosGroup/glslang/releases/download/16.6.0/glslang-16.6.0-linux-x86_64-release.tar.gz  16.6.0  2c34071f56ecf39d16233294d3739cf43f981fd39080f2fd9dccb782101191ce
+# Upstream pins for build/probes, besides the shared toolchain image
+# (build/toolchain/PINS: llvm-mingw 20261006 and glslang-tools from the
+# Ubuntu snapshot). Format: <name> <version> <sha256> <url>
+vulkan-headers vulkan-sdk-1.4.363.0@6802bb4733b63ed5efd3adb308a6c885ef180ea1 4a078be12bef21cfebc09d878b77a63cff9d68f899254a0b00d0e37ef73e7f7e https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/vulkan-sdk-1.4.363.0.tar.gz

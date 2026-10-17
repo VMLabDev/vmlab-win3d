@@ -53,6 +53,10 @@ pinned glslang.
 | `--warp` | off | D3D11 and D3D12 only: use the WARP software adapter instead of the default adapter. |
 | `--help` | | Print usage to the parent console (the probes are GUI programs) and exit 3. |
 
+Frames are paced by vsync (present interval 1, FIFO, `wglSwapIntervalEXT(1)`
+when the ICD has it). GDI generic OpenGL has no swap control, so that run is
+unthrottled and reports a very high `avg_fps`.
+
 Closing the window or pressing Esc ends the run early. The current frame is
 still read back, and `window_closed_early` is set.
 
@@ -162,11 +166,14 @@ build/probes/build.sh          # all probes, x64 and x86, into out/probes/{x64,x
 build/probes/build.sh clean    # remove them
 ```
 
-The build runs in Docker on llvm-mingw 20261006. Every input is pinned with a
-sha256 in `build/probes/PINS`. The build image is tagged by a hash of the
-Dockerfile and the pins, and `make` rebuilds only what changed. Binaries are
-stripped and linked without a timestamp, so the same sources give the same
-bytes.
+The build runs in the shared toolchain image (`build/toolchain/`: llvm-mingw
+20261006 and glslang from the pinned Ubuntu snapshot). The only extra input is
+Vulkan-Headers, pinned with a sha256 in `build/probes/PINS`. `build.sh` fetches
+it into `out/probes/deps/` once and checks the hash. `make` rebuilds only what
+changed. Binaries are stripped and linked without a timestamp, so a clean
+rebuild gives the same bytes; this was checked on 2026-10-17 (hashes in
+`docs/evidence/probes/README.md`). After every build, `check-imports.sh` fails
+the build if a probe imports a DLL that is not a Windows system DLL.
 
 ## Running in a guest
 

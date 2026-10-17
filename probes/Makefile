@@ -1,6 +1,6 @@
 # Builds every probe for x64 and x86 with llvm-mingw. Run through
 # build/probes/build.sh, which provides the toolchain in Docker.
-#   make OUT=<dir> BUILD=<objdir>
+#   make OUT=<dir> BUILD=<objdir> VULKAN_HEADERS=<Vulkan-Headers>/include
 
 OUT ?= ../out/probes
 BUILD ?= $(OUT)/obj
@@ -12,7 +12,7 @@ triple_x86 := i686-w64-mingw32
 
 CFLAGS := -O2 -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers \
           -municode -DUNICODE -D_UNICODE -D_WIN32_WINNT=0x0A00 -DWINVER=0x0A00 \
-          -I/opt/vulkan-headers/include -I$(BUILD)/gen
+          -I$(VULKAN_HEADERS) -I$(BUILD)/gen
 CXXFLAGS := $(CFLAGS) -std=c++17 -fno-exceptions -fno-rtti
 # Static C++ runtime, GUI subsystem, deterministic output: the only imports
 # left are Windows system DLLs (build/probes/check-imports.sh proves it).
@@ -62,6 +62,6 @@ $(foreach a,$(ARCHES),$(eval $(call common_rules,$(a))))
 $(foreach a,$(ARCHES),$(foreach p,$(PROBES),$(eval $(call probe_rules,$(a),$(p)))))
 
 clean:
-	rm -rf $(BUILD) $(foreach a,$(ARCHES),$(OUT)/$(a))
+	rm -rf $(BUILD) $(OUT)/deps $(foreach a,$(ARCHES),$(OUT)/$(a))
 
 .PHONY: all clean

@@ -152,6 +152,8 @@ Register-ScheduledTask -TaskName $taskName -Action $action -Principal $principal
 
 $started = Get-Date
 $proc = $null
+$sessionId = $null
+$procId = $null
 $modules = @{}
 $order = New-Object System.Collections.ArrayList
 $timedOut = $false
@@ -170,6 +172,8 @@ try {
             try {
                 $proc = [Diagnostics.Process]::GetProcessById([int]$cim.ProcessId)
                 $null = $proc.Handle  # keep a handle so the exit code survives the exit
+                $sessionId = $proc.SessionId
+                $procId = $proc.Id
             } catch { $proc = $null }
         }
         if (-not $proc) {
@@ -246,26 +250,43 @@ $moduleList = foreach ($key in $order) {
         file_version = $(if ($vi) { $vi.FileVersion } else { $null })
         company      = $(if ($vi) { $vi.CompanyName } else { $null })
         location     = $location
-        graphics     = [bool]($file -match $graphicsPattern)
+        graphics     = [bool]($file -match $graphicsPattern -and $m.path -ne $Path)
         first_seen_s = $m.first_seen_s
     }
 }
-$moduleList = @($moduleList)
+$moduleList = @($moduleList | Where-Object { $null -ne $_ })
 $graphics = @($moduleList | Where-Object { $_.graphics } | ForEach-Object { "$($_.path) [$($_.location)] $($_.file_version)" })
 $appLocal = @($moduleList | Where-Object { $_.location -eq 'app_local' -and $_.name -ne [IO.Path]::GetFileName($Path) } | ForEach-Object { $_.path })
+
+# Reads a nested field of a ConvertFrom-Json object, or $null when absent
+# (a probe that failed early leaves "adapter" empty).
+function Get-JsonField($obj, [string[]]$names) {
+    foreach ($n in $names) {
+        if ($null -eq $obj) { return $null }
+        $p = $obj.PSObject.Properties[$n]
+        if (-not $p) { return $null }
+        $obj = $p.Value
+    }
+    return $obj
+}
 
 $probeResult = $null
 if (-not $Raw -and (Test-Path -LiteralPath $probeJson)) {
     $probeResult = Get-Content -LiteralPath $probeJson -Raw | ConvertFrom-Json
 }
 
+# A probe that fails at once can exit before the process is found; its own
+# JSON still names the session and pid.
+if ($null -eq $sessionId) { $sessionId = Get-JsonField $probeResult 'session_id' }
+if ($null -eq $procId) { $procId = Get-JsonField $probeResult 'pid' }
+
 $run = [ordered]@{
     name               = $Name
     exe                = $Path
     arguments          = $argString
     user               = $User
-    session_id         = $(if ($proc) { $proc.SessionId } else { $null })
-    pid                = $(if ($proc) { $proc.Id } else { $null })
+    session_id         = $sessionId
+    pid                = $procId
     wow64              = $(if ($proc) { $wow64 } else { $null })
     started            = $started.ToString('o')
     ended              = $ended.ToString('o')
@@ -275,9 +296,9 @@ $run = [ordered]@{
     task_result        = $taskResult
     probe_json         = $(if ($probeResult) { $probeJson } else { $null })
     probe_result       = $(if ($probeResult) { $probeResult.result } else { $null })
-    adapter            = $(if ($probeResult) { $probeResult.adapter.name } else { $null })
-    software           = $(if ($probeResult) { $probeResult.adapter.software } else { $null })
-    readback_ok        = $(if ($probeResult) { $probeResult.readback.ok } else { $null })
+    adapter            = Get-JsonField $probeResult 'adapter', 'name'
+    software           = Get-JsonField $probeResult 'adapter', 'software'
+    readback_ok        = Get-JsonField $probeResult 'readback', 'ok'
     module_count       = $moduleList.Count
     graphics_modules   = $graphics
     app_local_modules  = $appLocal

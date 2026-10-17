@@ -16,8 +16,11 @@ and prints the extract as JSON. The extract has one entry per display device
 with Card name, Manufacturer, Driver Name, Driver File Version, Driver Version,
 Driver Model, DDI Version, Feature Levels, DirectDraw/Direct3D/AGP Texture
 Acceleration, DirectX 12 Ultimate, Device Problem Code and Driver Problem Code,
-plus a summary: hardware_acceleration is true when Direct3D and DirectDraw
-acceleration are both Enabled on the first device.
+plus a summary of the first device. Newer reports name the acceleration
+fields DDraw Status, D3D Status and AGP Status; both spellings are read.
+hardware_acceleration is true only when Direct3D and DirectDraw are Enabled
+and the device is neither display-only nor the Microsoft Basic Render Driver
+(vendor 0x1414, device 0x008C), because dxdiag reports Enabled for those too.
 
 With -AsUser, dxdiag runs in the interactive user's session through
 Run-Probe.ps1 (beside this script) rather than in the caller's session.
@@ -98,6 +101,8 @@ $keys = @('Card name', 'Manufacturer', 'Chip type', 'Device Type', 'Device Key',
     'DDI Version', 'Feature Levels', 'Driver Model', 'WDDM Version', 'Hardware Scheduling',
     'Driver Attributes', 'Driver Date/Size', 'Vendor ID', 'Device ID', 'SubSys ID', 'Revision ID',
     'DirectDraw Acceleration', 'Direct3D Acceleration', 'AGP Texture Acceleration',
+    'DDraw Status', 'D3D Status', 'AGP Status', 'Driver Strong Name', 'Displayable',
+    'Graphics Preemption', 'Compute Preemption', 'Adapter Attributes',
     'DirectX 12 Ultimate', 'Miracast', 'Hybrid Graphics GPU', 'Power P-states', 'Virtualization',
     'Block List', 'Catalog Attributes', 'D3D9 Overlay', 'User Mode Driver Version')
 
@@ -147,19 +152,38 @@ $notes = @(Get-Content -LiteralPath $txt | Where-Object { $_ -match '^\s*Display
 $first = $null
 if ($devices.Count -gt 0) { $first = $devices[0] }
 function Get-Field($d, [string]$k) { if ($d -and $d.Contains($k)) { return $d[$k] } return $null }
+# Newer dxdiag text reports say "DDraw Status"/"D3D Status"/"AGP Status"
+# where the UI and older reports say "... Acceleration".
+function Get-Status($d, [string]$new, [string]$old) {
+    $v = Get-Field $d $new
+    if (-not $v) { $v = Get-Field $d $old }
+    return $v
+}
+$ddraw = Get-Status $first 'DDraw Status' 'DirectDraw Acceleration'
+$d3d = Get-Status $first 'D3D Status' 'Direct3D Acceleration'
+$agp = Get-Status $first 'AGP Status' 'AGP Texture Acceleration'
+# dxdiag also says Enabled for a display-only driver, whose 3D runs on the
+# Microsoft Basic Render Driver (WARP, vendor 0x1414 device 0x008C). That is
+# not hardware acceleration, so the summary rules it out explicitly.
+$displayOnly = [bool]((Get-Field $first 'Device Type') -match 'Display-Only')
+$basicRender = ((Get-Field $first 'Vendor ID') -eq '0x1414' -and (Get-Field $first 'Device ID') -eq '0x008C')
 $summary = [ordered]@{
-    card_name               = Get-Field $first 'Card name'
-    driver_name             = Get-Field $first 'Driver Name'
-    driver_version          = Get-Field $first 'Driver Version'
-    driver_model            = Get-Field $first 'Driver Model'
-    ddi_version             = Get-Field $first 'DDI Version'
-    feature_levels          = Get-Field $first 'Feature Levels'
-    directdraw_acceleration = Get-Field $first 'DirectDraw Acceleration'
-    direct3d_acceleration   = Get-Field $first 'Direct3D Acceleration'
-    agp_texture_acceleration = Get-Field $first 'AGP Texture Acceleration'
-    hardware_acceleration   = ((Get-Field $first 'Direct3D Acceleration') -eq 'Enabled' -and
-                               (Get-Field $first 'DirectDraw Acceleration') -eq 'Enabled')
-    display_notes           = $notes
+    card_name                = Get-Field $first 'Card name'
+    device_type              = Get-Field $first 'Device Type'
+    vendor_id                = Get-Field $first 'Vendor ID'
+    device_id                = Get-Field $first 'Device ID'
+    driver_name              = Get-Field $first 'Driver Name'
+    driver_version           = Get-Field $first 'Driver Version'
+    driver_model             = Get-Field $first 'Driver Model'
+    ddi_version              = Get-Field $first 'DDI Version'
+    feature_levels           = Get-Field $first 'Feature Levels'
+    directdraw_acceleration  = $ddraw
+    direct3d_acceleration    = $d3d
+    agp_texture_acceleration = $agp
+    display_only             = $displayOnly
+    microsoft_basic_render   = $basicRender
+    hardware_acceleration    = ($d3d -eq 'Enabled' -and $ddraw -eq 'Enabled' -and -not $displayOnly -and -not $basicRender)
+    display_notes            = $notes
 }
 
 $result = [ordered]@{

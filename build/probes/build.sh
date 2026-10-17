@@ -1,30 +1,32 @@
 #!/usr/bin/env bash
-# Build every probe for x64 and x86 in Docker, into out/probes/{x64,x86}/.
-# Idempotent: the image is tagged by the hash of its inputs, and make only
-# rebuilds what changed. Usage: build/probes/build.sh [make args...]
+# Build every probe for x64 and x86 in the shared toolchain image, into
+# out/probes/{x64,x86}/. Idempotent: the image and the pinned Vulkan headers
+# are reused when present, and make rebuilds only what changed.
+# Usage: build/probes/build.sh [make args...]   (for example: clean)
 set -euo pipefail
 
 here=$(cd "$(dirname "$0")" && pwd)
 repo=$(cd "$here/../.." && pwd)
+out=$repo/out/probes
+image=$("$repo/build/toolchain/build.sh")
 
 pin() { awk -v n="$1" '$1 == n { print $'"$2"' }' "$here/PINS"; }
 
-tag=vmlab-win3d-probes-build:$(cat "$here/Dockerfile" "$here/PINS" | sha256sum | cut -c1-16)
-if ! docker image inspect "$tag" >/dev/null 2>&1; then
-  docker build -t "$tag" \
-    --build-arg UBUNTU_DIGEST="$(pin ubuntu-base 4)" \
-    --build-arg LLVM_MINGW_URL="$(pin llvm-mingw 2)" \
-    --build-arg LLVM_MINGW_SHA256="$(pin llvm-mingw 4)" \
-    --build-arg VULKAN_HEADERS_URL="$(pin vulkan-headers 2)" \
-    --build-arg VULKAN_HEADERS_SHA256="$(pin vulkan-headers 4)" \
-    --build-arg GLSLANG_URL="$(pin glslang 2)" \
-    --build-arg GLSLANG_SHA256="$(pin glslang 4)" \
-    "$here"
+# Vulkan-Headers: the toolchain image has none.
+headers_version=$(pin vulkan-headers 2)
+headers=$out/deps/vulkan-headers-${headers_version%%@*}
+if [ ! -f "$headers/include/vulkan/vulkan.h" ]; then
+  mkdir -p "$out/deps"
+  tarball=$out/deps/vulkan-headers.tar.gz
+  curl -fsSL -o "$tarball" "$(pin vulkan-headers 4)"
+  echo "$(pin vulkan-headers 3)  $tarball" | sha256sum -c --quiet -
+  rm -rf "$headers" && mkdir -p "$headers"
+  tar -xzf "$tarball" -C "$headers" --strip-components=1
+  rm -f "$tarball"
 fi
 
-mkdir -p "$repo/out/probes"
 docker run --rm --user "$(id -u):$(id -g)" \
   -v "$repo:/src" -w /src/probes \
-  -e HOME=/tmp \
-  "$tag" bash -c 'make OUT=/src/out/probes BUILD=/src/out/probes/obj "$@" &&
-    /src/build/probes/check-imports.sh /src/out/probes' make "$@"
+  "$image" bash -c 'make OUT=/src/out/probes BUILD=/src/out/probes/obj \
+      VULKAN_HEADERS=/src/out/probes/deps/'"$(basename "$headers")"'/include "$@" &&
+    case " $* " in *" clean "*) ;; *) /src/build/probes/check-imports.sh /src/out/probes ;; esac' make "$@"

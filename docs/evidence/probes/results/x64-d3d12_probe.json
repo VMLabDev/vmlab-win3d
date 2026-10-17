@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "probe": "d3d12",
+  "api": "Direct3D 12",
+  "arch": "x64",
+  "result": "pass",
+  "exit_code": 0,
+  "exe": "C:\\win3d\\probes\\x64\\d3d12_probe.exe",
+  "pid": 8072,
+  "session_id": 1,
+  "os_version": "10.0.26100",
+  "finished_utc": "2026-10-17T10:10:28Z",
+  "args": {"seconds": 15, "warp": false, "width": 1024, "height": 640},
+  "adapter": {
+    "name": "Microsoft Basic Render Driver",
+    "vendor": "Microsoft",
+    "vendor_id": "0x1414",
+    "device_id": "0x008c",
+    "subsys_id": "0x0000",
+    "dedicated_video_memory_mb": 0,
+    "shared_system_memory_mb": 4052,
+    "dxgi_flag_software": false,
+    "driver_version": "10.0.26100.9278",
+    "software": true,
+    "software_reason": "name contains \"Microsoft Basic Render\""
+  },
+  "device": {
+    "adapter_selection": "default (NULL)",
+    "max_feature_level": "12_1",
+    "highest_shader_model": "6.6",
+    "swap_effect": "FLIP_DISCARD"
+  },
+  "frames_presented": 668,
+  "elapsed_seconds": 15.004,
+  "avg_fps": 44.52,
+  "window_closed_early": false,
+  "readback": {
+    "ok": true,
+    "tolerance": 2,
+    "pixels": [
+      {"name": "red_top_left", "x": 48, "y": 48, "expected": [255, 0, 0], "actual": [255, 0, 0], "match": true},
+      {"name": "blue_top_right", "x": 976, "y": 48, "expected": [0, 0, 255], "actual": [0, 0, 255], "match": true},
+      {"name": "green_bottom_left", "x": 48, "y": 592, "expected": [0, 255, 0], "actual": [0, 255, 0], "match": true}
+    ]
+  },
+  "errors": []
+}
