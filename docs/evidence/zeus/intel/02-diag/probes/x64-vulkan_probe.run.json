@@ -1,0 +1,27 @@
+﻿{
+    "name":  "x64-vulkan_probe",
+    "exe":  "C:\\win3d\\probes\\x64\\vulkan_probe.exe",
+    "arguments":  "--seconds 20 --out C:\\win3d\\results\\probes\\x64-vulkan_probe.json",
+    "user":  "VMLABVM-UOGV1LO\\win3d",
+    "session_id":  1,
+    "pid":  5004,
+    "wow64":  null,
+    "started":  "2026-10-17T08:24:00.0965904-07:00",
+    "ended":  "2026-10-17T08:24:07.4465675-07:00",
+    "duration_s":  7.3,
+    "timed_out":  false,
+    "exit_code":  1,
+    "task_result":  1,
+    "probe_json":  "C:\\win3d\\results\\probes\\x64-vulkan_probe.json",
+    "probe_result":  "api_failure",
+    "adapter":  "Virtio-GPU Venus (Intel(R) Iris(R) Xe Graphics (RPL-P))",
+    "software":  false,
+    "readback_ok":  false,
+    "module_count":  0,
+    "graphics_modules":  [
+
+                         ],
+    "app_local_modules":  [
+
+                          ]
+}

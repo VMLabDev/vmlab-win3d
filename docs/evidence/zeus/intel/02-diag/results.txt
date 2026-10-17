@@ -1,0 +1,43 @@
+Item  Result Check
+------------------------------------------------------------------------------
+1     pass   scripts/build.sh builds the package
+             staged; exit 0
+2     pass   documented install command (scripts/install-into-vm.sh)
+             exit 0; Installed
+2+    pass   display device on our driver, problem code 0
+             Hardsoft VirtIO GPU 3D controller
+2     pass   vulkaninfo --summary (x64) lists the Venus device
+             Virtio-GPU Venus (Intel(R) Iris(R) Xe Graphics (RPL-P))
+2+    pass   vulkaninfo --summary (x86) lists the Venus device
+             Virtio-GPU Venus (Intel(R) Iris(R) Xe Graphics (RPL-P))
+2+    pass   LunarG vulkaninfo 1.4.363 (x64, pinned) lists Venus through the installed loader
+             Virtio-GPU Venus (Intel(R) Iris(R) Xe Graphics (RPL-P))
+2+    pass   LunarG vulkaninfo 1.4.363 (x86, pinned) lists Venus through the installed loader
+             Virtio-GPU Venus (Intel(R) Iris(R) Xe Graphics (RPL-P))
+2     FAIL   Direct3D 9 (x64) renders on the GPU and shows on the console
+             probe window not found in any console capture
+2     FAIL   Direct3D 9 (x86) renders on the GPU and shows on the console
+             probe window not found in any console capture
+2     FAIL   Direct3D 11 (x64) renders on the GPU and shows on the console
+             exit 1, api_failure: D3D11CreateDevice(HARDWARE) failed: HRESULT 0x80004005; software renderer: None; adapter None; readback mismatch; did not load \\viogpu_d3d10\.dll$; probe window not found in any console capture
+2     FAIL   Direct3D 11 (x86) renders on the GPU and shows on the console
+             exit 1, api_failure: D3D11CreateDevice(HARDWARE) failed: HRESULT 0x80004005; software renderer: None; adapter None; readback mismatch; did not load \\viogpu_d3d10\.dll$; probe window not found in any console capture
+2     FAIL   Direct3D 12 (x64) renders on the GPU and shows on the console
+             probe window not found in any console capture
+2     FAIL   Direct3D 12 (x86) renders on the GPU and shows on the console
+             probe window not found in any console capture
+2     FAIL   OpenGL (x64) renders on the GPU and shows on the console
+             exit 1, api_failure: SwapBuffers failed: 0; readback mismatch; did not load \\viogpu_wgl\.dll$; did not load \\libvulkan_virtio\.dll$; probe window not found in any console capture
+2     FAIL   OpenGL (x86) renders on the GPU and shows on the console
+             exit 1, api_failure: SwapBuffers failed: 0; readback mismatch; probe window not found in any console capture
+2+    FAIL   Vulkan (x64) renders on the GPU and shows on the console
+             exit 1, api_failure: vkCreateSwapchainKHR failed: VK_ERROR_INITIALIZATION_FAILED (-3); readback mismatch; did not load \\libvulkan_virtio\.dll$; probe window not found in any console capture
+2+    FAIL   Vulkan (x86) renders on the GPU and shows on the console
+             exit 1, api_failure: vkCreateSwapchainKHR failed: VK_ERROR_INITIALIZATION_FAILED (-3); readback mismatch; did not load \\libvulkan_virtio\.dll$; probe window not found in any console capture
+2     pass   dxdiag reports hardware acceleration on our driver
+             hardware_acceleration=True, card 'Hardsoft VirtIO GPU 3D controller', D3D Enabled, DDraw Enabled, WDDM 2.0
+2+    pass   dxdiag: Direct3D acceleration on our full WDDM device
+             D3D Status Enabled, Full Device (POST), WDDM 2.0
+------------------------------------------------------------------------------
+FAIL: 4 of 12 Done checks pass ('+' rows are extra and do not count)
+stage: ok

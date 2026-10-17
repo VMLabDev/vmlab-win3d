@@ -1,0 +1,44 @@
+
+
+TimeCreated : 10/17/2026 8:28:45 AM
+Message     : Faulting application name: dwm.exe, version: 10.0.26100.9278, time stamp: 0x009bcb8a
+              Faulting module name: dwmcore.dll, version: 10.0.26100.9278, time stamp: 0x9a1af3ba
+              Exception code: 0x889800b0
+              Fault offset: 0x00000000001d5a48
+              Faulting process id: 0x310
+              Faulting application start time: 0x1DD5E4C28B9D079
+              Faulting application path: C:\WINDOWS\system32\dwm.exe
+              Faulting module path: C:\WINDOWS\system32\dwmcore.dll
+              Report Id: ca02d360-9cbf-479e-9e04-adc2b4d4bef4
+              Faulting package full name: 
+              Faulting package-relative application ID: 
+
+TimeCreated : 10/17/2026 8:28:27 AM
+Message     : Faulting application name: dwm.exe, version: 10.0.26100.9278, time stamp: 0x009bcb8a
+              Faulting module name: dwmcore.dll, version: 10.0.26100.9278, time stamp: 0x9a1af3ba
+              Exception code: 0x889800b0
+              Fault offset: 0x00000000001d5a48
+              Faulting process id: 0x10D4
+              Faulting application start time: 0x1DD5E4C27861082
+              Faulting application path: C:\WINDOWS\system32\dwm.exe
+              Faulting module path: C:\WINDOWS\system32\dwmcore.dll
+              Report Id: e3785de6-9aea-4b77-b16c-88de1ad2c4e6
+              Faulting package full name: 
+              Faulting package-relative application ID: 
+
+TimeCreated : 10/17/2026 8:28:25 AM
+Message     : Faulting application name: dwm.exe, version: 10.0.26100.9278, time stamp: 0x009bcb8a
+              Faulting module name: dwmcore.dll, version: 10.0.26100.9278, time stamp: 0x9a1af3ba
+              Exception code: 0x889800b0
+              Fault offset: 0x00000000001d5a48
+              Faulting process id: 0x17A4
+              Faulting application start time: 0x1DD5E4C266AF02F
+              Faulting application path: C:\WINDOWS\system32\dwm.exe
+              Faulting module path: C:\WINDOWS\system32\dwmcore.dll
+              Report Id: 1005efb7-6b92-4117-9d15-19f0a6264d59
+              Faulting package full name: 
+              Faulting package-relative application ID: 
+
+
+
+

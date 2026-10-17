@@ -1,0 +1,182 @@
+
+[18:04:57] == vmlab-win3d on zeus: intel, x86_64/windows-11@26100.1742.5
+date: 2026-10-17T18:04:57+10:00
+host: Zeus 7.2.4-3-cachyos, 20 threads, 93 GiB
+staging: repo b6a93a0-dirty
+tests/e2e from main 7634a15
+package db07da3ced64c042d8a6240b1c54bf6e7d539b91
+template: x86_64/windows-11@26100.1742.5
+qemu: /usr/bin/qemu-system-x86_64 QEMU emulator version 11.1.1
+isolated supervisor: qemu /usr/bin/qemu-system-x86_64 QEMU emulator version 11.1.1; render server /home/wil/win3d-zeus/repo/out/host/virglrenderer/virgl_render_server; extra env none
+packages: qemu-full 11.1.1-2 qemu-base 11.1.1-2 virglrenderer 1.3.0-2.1 mesa 3:26.2.2-2 vulkan-intel 3:26.2.2-2 nvidia-utils 615.71.09-1 
+vmlab: vmlab 0.24.0-alpha
+venus gpu: /dev/dri/renderD129 0000:00:02.0 VGA compatible controller: Intel Corporation Raptor Lake-P [Iris Xe Graphics] (rev 04)
+
+[18:04:57] == 1 package (built on helios, staged by labs/zeus/stage.sh)
+
+[18:04:57] == 2 fresh lab win3d-zeus-intel from x86_64/windows-11@26100.1742.5
+[18:04:57] destroying the previous win3d-zeus-intel
+lab "win3d-zeus-intel" destroyed
+ok: lab "win3d-zeus-intel" — 1 vm(s), 0 container(s), 0 segment(s)
+first-boot: provisioning win...
+first-boot: specialize complete; clearing marker
+first-boot: settling staged AppX (LKG) before first logon
+first-boot: appx settle skipped (exec `powershell.exe -NoProfile -NonInteractive -Command $prov = (Get-AppxProvisionedPackage -Online).DisplayName; Get-AppxPackage -AllUsers | Where-Object { -not $_.IsFramework -and -not $_.IsResourcePackage -and $prov -notcontains $_.Name -and -not ($_.PackageUserInformation | Where-Object InstallState -eq 'Installed') } | ForEach-Object { $r = 'removed'; try { Remove-AppxPackage -Package $_.PackageFullName -AllUsers -ErrorAction Stop } catch { $r = 'settled' }; Write-Output ($r + ' ' + $_.PackageFullName) }` timed out after 120s)
+first-boot: rebooting once to settle shell reconciliation
+first-boot: win ready
+lab "win3d-zeus-intel" is up
+
+[18:14:07] == 3 guest scripts, probes and the baseline
+pushed 7 file(s), 40247 bytes to win:C:/win3d/guest
+pushed 1 file(s), 2321 bytes to win:C:/win3d/e2e
+pushed 5 file(s), 174592 bytes to win:C:/win3d/probes/x64
+pushed 5 file(s), 153088 bytes to win:C:/win3d/probes/x86
+pushed 2800056 bytes to win:C:/win3d/lunarg/x64/vulkaninfo.exe
+pushed 2403256 bytes to win:C:/win3d/lunarg/x86/vulkaninfo.exe
+[18:14:15] baseline: Red Hat VirtIO GPU DOD controller (problem 0)
+
+[18:14:15] == 3b test desktop (autologon user win3d)
+[18:15:21] autologon before-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-UOGV1LO AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-UOGV1LO\win3d 
+
+[18:15:21] == 4 install: scripts/install-into-vm.sh /home/wil/win3d-zeus/work/intel/lab win
+[18:15:21] waiting for the guest agent
+[18:15:23] copying vmlab-win3d-0.1.0 to C:\vmlab-win3d
+pushed 29 file(s), 102335351 bytes to win:C:/vmlab-win3d
+[18:15:26] running C:\vmlab-win3d\Install.cmd
+2026-10-17T08:15:26.433-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
+2026-10-17T08:15:33.833-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-17T08:15:39.626-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
+2026-10-17T08:15:39.881-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-17T08:15:39.894-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-17T08:15:39.896-07:00 [Install]   Signature matches Public Key
+2026-10-17T08:15:39.899-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-17T08:15:39.901-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-17T08:15:39.940-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-17T08:15:39.942-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-17T08:15:39.945-07:00 [Install]   Signature matches Public Key
+2026-10-17T08:15:39.947-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-17T08:15:39.949-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-17T08:15:40.013-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-17T08:15:40.015-07:00 [Install]   The operation completed successfully.
+2026-10-17T08:15:40.441-07:00 [Install] test signing is set but not active in this boot
+2026-10-17T08:15:41.538-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-17T08:15:41.589-07:00 [Install] rebooting; step Driver resumes after the restart
+[18:15:43] Install.cmd exited 0
+[18:15:44] state: RebootPending|Driver|
+[18:16:38] state: Installing|Driver|
+[18:17:32] state: RebootPending|Verify|
+[18:17:48] state: Installed||
+[18:17:48] done: Installed
+[18:17:59] autologon after-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-UOGV1LO AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-UOGV1LO\win3d 
+
+[18:17:59] == 5 interactive-session tests
+[18:18:01] desktop: True 64
+[18:18:18] desktop: True 82
+[18:18:35] desktop: True 99
+[18:18:56] desktop: True 120
+
+[18:18:58] == 5a vulkaninfo --summary
+    "exit_code":  0,
+	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
+	deviceName         = Virtio-GPU Venus (Intel(R) Iris(R) Xe Graphics (RPL-P))
+	driverName         = venus
+exit 0 
+	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
+	deviceName         = Virtio-GPU Venus (Intel(R) Iris(R) Xe Graphics (RPL-P))
+	driverName         = venus
+exit 0 
+	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
+	deviceName         = Virtio-GPU Venus (Intel(R) Iris(R) Xe Graphics (RPL-P))
+	driverName         = venus
+	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
+	deviceName         = Virtio-GPU Venus (Intel(R) Iris(R) Xe Graphics (RPL-P))
+	driverName         = venus
+
+[18:20:51] == 5b probes
+[18:20:51] probe x64-d3d9_probe
+[18:21:16]   Run-Probe exit 0
+  console: 0/12 frames show the probe window; animating=False
+[18:21:16] probe x86-d3d9_probe
+[18:21:44]   Run-Probe exit 0
+  console: 0/13 frames show the probe window; animating=False
+[18:21:45] probe x64-d3d11_probe
+[18:21:58]   Run-Probe exit 1
+  console: 0/6 frames show the probe window; animating=False
+[18:21:58] probe x86-d3d11_probe
+[18:22:08]   Run-Probe exit 1
+  console: 0/5 frames show the probe window; animating=False
+[18:22:08] probe x64-d3d12_probe
+[18:22:36]   Run-Probe exit 0
+  console: 0/13 frames show the probe window; animating=False
+[18:22:36] probe x86-d3d12_probe
+[18:23:11]   Run-Probe exit 0
+  console: 0/16 frames show the probe window; animating=False
+[18:23:12] probe x64-opengl_probe
+[18:23:24]   Run-Probe exit 1
+  console: 0/6 frames show the probe window; animating=False
+[18:23:24] probe x86-opengl_probe
+[18:23:58]   Run-Probe exit 1
+  console: 0/15 frames show the probe window; animating=False
+[18:23:58] probe x64-vulkan_probe
+[18:24:11]   Run-Probe exit 1
+  console: 0/6 frames show the probe window; animating=False
+[18:24:11] probe x86-vulkan_probe
+[18:24:29]   Run-Probe exit 1
+  console: 0/8 frames show the probe window; animating=False
+
+[18:24:29] == 5c dxdiag
+                        "D3D Status":  "Enabled",
+                        "AGP Status":  "Enabled"
+                    }
+                ]
+}
+
+[18:25:21] == 6 collect evidence
+pulled 45855 bytes to /home/wil/win3d-zeus/work/intel/results.zip
+
+[18:25:42] == 7 teardown
+[18:25:42] --keep: win3d-zeus-intel left running; destroy with (cd /home/wil/win3d-zeus/work/intel/lab && vmlab destroy)
+
+[18:25:42] == result (ok)
+Item  Result Check
+------------------------------------------------------------------------------
+1     pass   scripts/build.sh builds the package
+             staged; exit 0
+2     pass   documented install command (scripts/install-into-vm.sh)
+             exit 0; Installed
+2+    pass   display device on our driver, problem code 0
+             Hardsoft VirtIO GPU 3D controller
+2     pass   vulkaninfo --summary (x64) lists the Venus device
+             Virtio-GPU Venus (Intel(R) Iris(R) Xe Graphics (RPL-P))
+2+    pass   vulkaninfo --summary (x86) lists the Venus device
+             Virtio-GPU Venus (Intel(R) Iris(R) Xe Graphics (RPL-P))
+2+    pass   LunarG vulkaninfo 1.4.363 (x64, pinned) lists Venus through the installed loader
+             Virtio-GPU Venus (Intel(R) Iris(R) Xe Graphics (RPL-P))
+2+    pass   LunarG vulkaninfo 1.4.363 (x86, pinned) lists Venus through the installed loader
+             Virtio-GPU Venus (Intel(R) Iris(R) Xe Graphics (RPL-P))
+2     FAIL   Direct3D 9 (x64) renders on the GPU and shows on the console
+             probe window not found in any console capture
+2     FAIL   Direct3D 9 (x86) renders on the GPU and shows on the console
+             probe window not found in any console capture
+2     FAIL   Direct3D 11 (x64) renders on the GPU and shows on the console
+             exit 1, api_failure: D3D11CreateDevice(HARDWARE) failed: HRESULT 0x80004005; software renderer: None; adapter None; readback mismatch; did not load \\viogpu_d3d10\.dll$; probe window not found in any console capture
+2     FAIL   Direct3D 11 (x86) renders on the GPU and shows on the console
+             exit 1, api_failure: D3D11CreateDevice(HARDWARE) failed: HRESULT 0x80004005; software renderer: None; adapter None; readback mismatch; did not load \\viogpu_d3d10\.dll$; probe window not found in any console capture
+2     FAIL   Direct3D 12 (x64) renders on the GPU and shows on the console
+             probe window not found in any console capture
+2     FAIL   Direct3D 12 (x86) renders on the GPU and shows on the console
+             probe window not found in any console capture
+2     FAIL   OpenGL (x64) renders on the GPU and shows on the console
+             exit 1, api_failure: SwapBuffers failed: 0; readback mismatch; did not load \\viogpu_wgl\.dll$; did not load \\libvulkan_virtio\.dll$; probe window not found in any console capture
+2     FAIL   OpenGL (x86) renders on the GPU and shows on the console
+             exit 1, api_failure: SwapBuffers failed: 0; readback mismatch; probe window not found in any console capture
+2+    FAIL   Vulkan (x64) renders on the GPU and shows on the console
+             exit 1, api_failure: vkCreateSwapchainKHR failed: VK_ERROR_INITIALIZATION_FAILED (-3); readback mismatch; did not load \\libvulkan_virtio\.dll$; probe window not found in any console capture
+2+    FAIL   Vulkan (x86) renders on the GPU and shows on the console
+             exit 1, api_failure: vkCreateSwapchainKHR failed: VK_ERROR_INITIALIZATION_FAILED (-3); readback mismatch; did not load \\libvulkan_virtio\.dll$; probe window not found in any console capture
+2     pass   dxdiag reports hardware acceleration on our driver
+             hardware_acceleration=True, card 'Hardsoft VirtIO GPU 3D controller', D3D Enabled, DDraw Enabled, WDDM 2.0
+2+    pass   dxdiag: Direct3D acceleration on our full WDDM device
+             D3D Status Enabled, Full Device (POST), WDDM 2.0
+------------------------------------------------------------------------------
+FAIL: 4 of 12 Done checks pass ('+' rows are extra and do not count)

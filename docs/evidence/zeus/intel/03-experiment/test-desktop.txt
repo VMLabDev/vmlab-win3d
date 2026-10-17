@@ -1,0 +1,3 @@
+created user win3d
+autologon set for VMLABVM-UVPAN21\win3d
+rebooting in 5 s

@@ -1,0 +1,27 @@
+﻿{
+    "name":  "x86-d3d11_probe",
+    "exe":  "C:\\win3d\\probes\\x86\\d3d11_probe.exe",
+    "arguments":  "--seconds 20 --out C:\\win3d\\results\\probes\\x86-d3d11_probe.json",
+    "user":  "VMLABVM-UOGV1LO\\win3d",
+    "session_id":  1,
+    "pid":  6040,
+    "wow64":  null,
+    "started":  "2026-10-17T08:21:57.2329374-07:00",
+    "ended":  "2026-10-17T08:22:05.5055604-07:00",
+    "duration_s":  8.3,
+    "timed_out":  false,
+    "exit_code":  1,
+    "task_result":  1,
+    "probe_json":  "C:\\win3d\\results\\probes\\x86-d3d11_probe.json",
+    "probe_result":  "api_failure",
+    "adapter":  null,
+    "software":  null,
+    "readback_ok":  false,
+    "module_count":  0,
+    "graphics_modules":  [
+
+                         ],
+    "app_local_modules":  [
+
+                          ]
+}
