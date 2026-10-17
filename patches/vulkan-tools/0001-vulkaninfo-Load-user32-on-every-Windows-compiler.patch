@@ -1,0 +1,39 @@
+From: vmlab-win3d <ai@wiltaylor.dev>
+Subject: [PATCH] vulkaninfo: Load user32 on every Windows compiler
+
+main() set up the Windows-only state under #if defined(_MSC_VER), so a
+MinGW or clang (GNU driver) build skipped all of it. The skipped code
+includes the User32Handles load, so user32_handles stays null.
+AppCreateWin32Window then calls user32_handles->pfnLoadIconA and
+crashes with an access violation as soon as an instance with
+VK_KHR_win32_surface has a device to query.
+
+Guard the Windows setup with _WIN32. Keep only the MSVC CRT debug calls
+(_set_abort_behavior, _CrtSetReportMode, _CrtSetReportFile) under
+_MSC_VER. SetErrorMode and ConsoleEnlarge are Win32 API calls, so
+they now run in every Windows build, as they already did with MSVC.
+The only other _MSC_VER use in vulkaninfo is a warning pragma
+(vulkaninfo.h), which does not change behaviour.
+
+Upstreamable: the bug is present on Vulkan-Tools main as of
+2026-10-17 (vulkaninfo.cpp, main()), and the change affects only
+non-MSVC Windows builds. Against vulkan-sdk-1.4.363.0.
+---
+diff --git a/vulkaninfo/vulkaninfo.cpp b/vulkaninfo/vulkaninfo.cpp
+--- a/vulkaninfo/vulkaninfo.cpp
++++ b/vulkaninfo/vulkaninfo.cpp
+@@ -1485,11 +1485,13 @@
+     if (!parsing_return) return 1;
+     ParsedResults parse_data = parsing_return.value();
+ 
++#if defined(_WIN32)
+ #if defined(_MSC_VER)
+     _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
+-    SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX);
+     _CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
+     _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
++#endif
++    SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX);
+ 
+     if (ConsoleIsExclusive()) ConsoleEnlarge();
+     User32Handles local_user32_handles;

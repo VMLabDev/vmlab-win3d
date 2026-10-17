@@ -33,6 +33,12 @@ while read -r kind name tag commit sha url; do
   tar -C "${srcdir[$name]}" --strip-components=1 -xzf "$file"
 done < "$pins"
 
+# Local patch series for Vulkan-Tools, applied in order.
+for p in /w/patches/vulkan-tools/*.patch; do
+  echo "apply $(basename "$p")"
+  patch --directory="${srcdir[Vulkan-Tools]}" --strip=1 --forward --batch --quiet < "$p"
+done
+
 # Vulkan-Headers: header-only, installed once and shared by both arches.
 # Its project() still probes a compiler, so give it the x86_64 cross one.
 hdr=$work/headers
