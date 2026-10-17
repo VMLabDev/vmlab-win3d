@@ -1,0 +1,11 @@
+.sympath srv*C:\sym*https://msdl.microsoft.com/download/symbols
+sxe ld:d3d11.dll
+g
+bp user32!SetWindowPos ".printf \"SetWindowPos hwnd=%p after=%p x=%d y=%d cx=%d cy=%d flags=%x\\n\", @rcx, @rdx, @r8d, @r9d, dwo(@rsp+28), dwo(@rsp+30), dwo(@rsp+38); k 12; g"
+bp user32!MoveWindow ".printf \"MoveWindow hwnd=%p x=%d y=%d cx=%d cy=%d\\n\", @rcx, @edx, @r8d, @r9d, dwo(@rsp+28); k 12; g"
+bp user32!SetWindowPlacement ".printf \"SetWindowPlacement hwnd=%p\\n\", @rcx; dd @rdx L0b; k 12; g"
+bp user32!ShowWindow ".printf \"ShowWindow hwnd=%p cmd=%d\\n\", @rcx, @edx; k 6; g"
+bp user32!GetMonitorInfoW ".printf \"GetMonitorInfoW hmon=%p\\n\", @rcx; k 6; g"
+sxd av
+sxd eh
+g

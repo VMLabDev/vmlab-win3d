@@ -1,0 +1,20 @@
+
+name                 exit_code result adapter                                                                                                      software readback_ok avg_fps first_error
+----                 --------- ------ -------                                                                                                      -------- ----------- ------- -----------
+x64-d3d11_probe              0 pass   Hardsoft VirtIO GPU 3D controller                                                                               False        True   59.86            
+x64-d3d11_probe-warp         0 pass   Microsoft Basic Render Driver                                                                                    True        True   57.84            
+x64-d3d12_probe              0 pass   Hardsoft VirtIO GPU 3D controller                                                                               False        True   56.39            
+x64-d3d12_probe-warp         0 pass   Microsoft Basic Render Driver                                                                                    True        True   59.40            
+x64-d3d9_probe               0 pass   Hardsoft VirtIO GPU 3D controller                                                                               False        True   28.12            
+x64-opengl_probe             0 pass   zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV))    False        True   63.78            
+x64-vulkan_probe             0 pass   Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))                                 False        True   59.82            
+x86-d3d11_probe              0 pass   Hardsoft VirtIO GPU 3D controller                                                                               False        True   57.25            
+x86-d3d11_probe-warp         0 pass   Microsoft Basic Render Driver                                                                                    True        True   56.76            
+x86-d3d12_probe              0 pass   Hardsoft VirtIO GPU 3D controller                                                                               False        True   55.34            
+x86-d3d12_probe-warp         0 pass   Microsoft Basic Render Driver                                                                                    True        True   58.96            
+x86-d3d9_probe               0 pass   Hardsoft VirtIO GPU 3D controller                                                                               False        True   30.95            
+x86-opengl_probe             0 pass   zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV))    False        True   61.00            
+x86-vulkan_probe             0 pass   Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))                                 False        True   59.62            
+
+
+

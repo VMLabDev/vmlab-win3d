@@ -1,0 +1,4 @@
+pids: 5344
+hwnd 0xb00b2 title 'SubD11' class 'Direct3DWindowClass' visible True iconic False rect 0,0-200,200 client 184x161 style 0x14cf0000 exstyle 0x100 cloaked 0
+hwnd 0x202d0 title 'MSCTFIME UI' class 'MSCTFIME UI' visible False iconic False rect 0,0-0,0 client 0x0 style 0x8c000000 exstyle 0x0 cloaked 0
+hwnd 0xe02a4 title 'Default IME' class 'IME' visible False iconic False rect 0,0-0,0 client 0x0 style 0x8c000000 exstyle 0x0 cloaked 0

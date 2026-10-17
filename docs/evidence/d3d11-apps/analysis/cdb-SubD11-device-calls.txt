@@ -1,0 +1,200 @@
+Opened log file 'C:\win3d\results\cdb-subd.txt'
+
+************* Preparing the environment for Debugger Extensions Gallery repositories **************
+   ExtensionRepository : Implicit
+   UseExperimentalFeatureForNugetShare : true
+   AllowNugetExeUpdate : true
+   NonInteractiveNuget : true
+   AllowNugetMSCredentialProviderInstall : true
+   AllowParallelInitializationOfLocalRepositories : true
+
+   -- Configuring repositories
+      ----> Repository : LocalInstalled, Enabled: true
+      ----> Repository : UserExtensions, Enabled: true
+
+>>>>>>>>>>>>> Preparing the environment for Debugger Extensions Gallery repositories completed, duration 0.000 seconds
+
+************* Waiting for Debugger Extensions Gallery to Initialize **************
+
+>>>>>>>>>>>>> Waiting for Debugger Extensions Gallery to Initialize completed, duration 0.000 seconds
+   ----> Repository : LocalInstalled, Enabled: true, Packages count: 0
+   ----> Repository : UserExtensions, Enabled: true, Packages count: 0
+
+Microsoft (R) Windows Debugger Version 10.0.29661.1004 AMD64
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+CommandLine: SubD11.exe -windowed
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+Deferred                                       srv*
+Symbol search path is: srv*
+Executable search path is: 
+
++------------------------------------------------------------------------+
+| This target supports Hardware-enforced Stack Protection. A HW based    |
+| "Shadow Stack" may be available to assist in debugging and analysis.   |
+| See aka.ms/userhsp for more info.                                      |
+|                                                                        |
+| dps @ssp                                                               |
+|                                                                        |
++------------------------------------------------------------------------+
+
+(198.eac): Break instruction exception - code 80000003 (first chance)
+ntdll!RtlGetReturnAddressHijackTarget+0x749:
+00007ffa`6c362239 cc              int     3
+0:000> sxd av
+0:000> sxd eh
+0:000> 
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0x79d80 ".printf \"CreateBuffer\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0xc1710 ".printf \"CreateTexture1D\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0xdce0 ".printf \"CreateTexture2D\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0x8ae10 ".printf \"CreateTexture3D\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0x63ba0 ".printf \"CreateSRV\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0x6d200 ".printf \"CreateUAV\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0x607b0 ".printf \"CreateRTV\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0x7b2a0 ".printf \"CreateDSV\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0x72090 ".printf \"CreateInputLayout\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0x84b20 ".printf \"CreateVertexShader\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0x92750 ".printf \"CreateGeometryShader\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0xc10b0 ".printf \"CreateGSWithSO\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0x82cb0 ".printf \"CreatePixelShader\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0x8c640 ".printf \"CreateHullShader\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0x8a100 ".printf \"CreateDomainShader\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0x87100 ".printf \"CreateComputeShader\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0xc0ee0 ".printf \"CreateClassLinkage\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0x84a50 ".printf \"CreateBlendState\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0x8a950 ".printf \"CreateDepthStencilState\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0x8d8a0 ".printf \"CreateRasterizerState\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bu d3d11!D3D11CreateDevice-0x83d80+0x7faf0 ".printf \"CreateSamplerState\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+0:000> bp user32!MessageBoxW "k 8; q"
+0:000> g
+CreateBlendState
+CreateDepthStencilState
+CreateRasterizerState
+CreateSamplerState
+ModLoad: 00007ffa`1c270000 00007ffa`1c820000   C:\WINDOWS\SYSTEM32\D3D10Warp.dll
+CreateBlendState
+CreateDepthStencilState
+CreateRasterizerState
+CreateSamplerState
+ModLoad: 00007ffa`247d0000 00007ffa`248a4000   C:\apps\DXSDK\Samples\C++\Direct3D11\Bin\x64\d3d11ref.dll
+CreateBlendState
+CreateDepthStencilState
+CreateRasterizerState
+CreateSamplerState
+CreateBlendState
+CreateDepthStencilState
+CreateRasterizerState
+CreateSamplerState
+CreateBlendState
+CreateDepthStencilState
+CreateRasterizerState
+CreateSamplerState
+ModLoad: 00007ffa`1c270000 00007ffa`1c820000   C:\WINDOWS\SYSTEM32\D3D10Warp.dll
+CreateBlendState
+CreateDepthStencilState
+CreateRasterizerState
+CreateSamplerState
+ModLoad: 00007ffa`1c270000 00007ffa`1c820000   C:\WINDOWS\SYSTEM32\D3D10Warp.dll
+CreateBlendState
+CreateDepthStencilState
+CreateRasterizerState
+CreateSamplerState
+ModLoad: 00007ffa`247d0000 00007ffa`248a4000   C:\apps\DXSDK\Samples\C++\Direct3D11\Bin\x64\d3d11ref.dll
+CreateBlendState
+CreateDepthStencilState
+CreateRasterizerState
+CreateSamplerState
+ModLoad: 00007ffa`247d0000 00007ffa`248a4000   C:\apps\DXSDK\Samples\C++\Direct3D11\Bin\x64\d3d11ref.dll
+CreateBlendState
+CreateDepthStencilState
+CreateRasterizerState
+CreateSamplerState
+CreateBlendState
+CreateDepthStencilState
+CreateRasterizerState
+CreateSamplerState
+ModLoad: 00007ffa`1c270000 00007ffa`1c820000   C:\WINDOWS\SYSTEM32\D3D10Warp.dll
+CreateBlendState
+CreateDepthStencilState
+CreateRasterizerState
+CreateSamplerState
+ModLoad: 00007ffa`247d0000 00007ffa`248a4000   C:\apps\DXSDK\Samples\C++\Direct3D11\Bin\x64\d3d11ref.dll
+CreateBlendState
+CreateDepthStencilState
+CreateRasterizerState
+CreateSamplerState
+CreateBlendState
+CreateDepthStencilState
+CreateRasterizerState
+CreateSamplerState
+CreateBlendState
+CreateDepthStencilState
+CreateRasterizerState
+CreateSamplerState
+ModLoad: 00007ffa`1c270000 00007ffa`1c820000   C:\WINDOWS\SYSTEM32\D3D10Warp.dll
+CreateBlendState
+CreateDepthStencilState
+CreateRasterizerState
+CreateSamplerState
+ModLoad: 00007ffa`1c270000 00007ffa`1c820000   C:\WINDOWS\SYSTEM32\D3D10Warp.dll
+CreateBlendState
+CreateDepthStencilState
+CreateRasterizerState
+CreateSamplerState
+ModLoad: 00007ffa`247d0000 00007ffa`248a4000   C:\apps\DXSDK\Samples\C++\Direct3D11\Bin\x64\d3d11ref.dll
+CreateBlendState
+CreateDepthStencilState
+CreateRasterizerState
+CreateSamplerState
+ModLoad: 00007ffa`247d0000 00007ffa`248a4000   C:\apps\DXSDK\Samples\C++\Direct3D11\Bin\x64\d3d11ref.dll
+CreateBlendState
+CreateDepthStencilState
+CreateRasterizerState
+CreateSamplerState
+ModLoad: 00007ffa`61b40000 00007ffa`62784000   C:\WINDOWS\system32\viogpu_d3d10.dll
+CreateBlendState
+CreateDepthStencilState
+CreateRasterizerState
+CreateSamplerState
+CreateRasterizerState
+CreateVertexShader
+CreatePixelShader
+CreatePixelShader
+CreateDepthStencilState
+CreateRasterizerState
+CreateBlendState
+CreateSamplerState
+CreateTexture2D
+CreateSRV
+CreateInputLayout
+CreateBuffer
+CreateTexture2D
+CreateSRV
+CreateVertexShader
+CreateVertexShader
+CreateHullShader
+D3D11: Removing Device.
+(198.eac): C++ EH exception - code e06d7363 (first chance)
+(198.eac): C++ EH exception - code e06d7363 (first chance)
+  FAILED 887a0005
+Child-SP          RetAddr               Call Site
+00000000`00ccebc0 00007ff7`17c9461d     SubD11+0x48681
+00000000`00ccf200 00007ff7`17c90cbc     SubD11+0x5461d
+00000000`00ccf2f0 00007ff7`17c8ffeb     SubD11+0x50cbc
+00000000`00ccf590 00007ff7`17c87262     SubD11+0x4ffeb
+00000000`00ccf710 00007ff7`17cb276a     SubD11+0x47262
+00000000`00ccf740 00007ffa`6b3ecd87     SubD11+0x7276a
+00000000`00ccf7f0 00007ffa`6c2ecaec     KERNEL32!BaseThreadInitThunk+0x17
+00000000`00ccf820 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+Child-SP          RetAddr               Call Site
+00000000`00ccee38 00007ff7`17c96c98     USER32!MessageBoxW
+00000000`00ccee40 00007ff7`17c95db3     SubD11+0x56c98
+00000000`00ccf280 00007ff7`17c97aa6     SubD11+0x55db3
+00000000`00ccf2c0 00007ff7`17c90cd9     SubD11+0x57aa6
+00000000`00ccf2f0 00007ff7`17c8ffeb     SubD11+0x50cd9
+00000000`00ccf590 00007ff7`17c87262     SubD11+0x4ffeb
+00000000`00ccf710 00007ff7`17cb276a     SubD11+0x47262
+00000000`00ccf740 00007ffa`6b3ecd87     SubD11+0x7276a
+quit:

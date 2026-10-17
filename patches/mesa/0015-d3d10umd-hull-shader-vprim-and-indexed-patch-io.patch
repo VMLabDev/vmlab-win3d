@@ -1,0 +1,332 @@
+Subject: [PATCH] d3d10umd: hull shader vPrim, indexed patch constants and control points
+
+Three hull-shader constructs that fxc emits for the DirectX SDK (June 2010)
+SubD11 sample were rejected by the TGSI translation. Each rejection made
+CreateHullShader call pfnSetErrorCb(E_INVALIDARG), which the D3D11 runtime
+turns into device removal, so the sample's device-created callback failed
+with DXGI_ERROR_DEVICE_REMOVED ("An error occurred in the device create
+callback function", then DXUT's "non-zero reference count" dialog).
+
+1. SV_PrimitiveID. "dcl_input vPrim" has operand type
+   D3D10_SB_OPERAND_TYPE_INPUT_PRIMITIVEID and no index. dcl_tess_input sent
+   it to the control-point path, which needs a two-dimensional operand
+   ("invalid-control-point-input-declaration"). Declare TGSI_SEMANTIC_PRIMID
+   as a system value once (a hull shader declares vPrim again in every phase
+   that reads it), as dcl_gs_input does for geometry shaders.
+
+2. dcl_indexrange over ordinary patch constants. A fork phase with an
+   instance count writes o[r0.x + 6].x with "dcl_indexrange o6.x 8"; the
+   translation accepted output ranges over tessellation factors only.
+   Ordinary patch constants are separate TGSI PATCH outputs, so the indexed
+   store goes through the same select-and-store sequence as tessellation
+   factors (emit_tcs_indexed_output_stores), with the store's own component
+   mask. A range may cover registers the phase does not declare itself
+   (D3DCompiler_43 emits "dcl_indexrange o14.x 6" with only o14 and o17-o19
+   declared in that phase); those are declared on first use. A range may not
+   mix tessellation factors and ordinary patch constants.
+
+3. dcl_indexrange over input control points, and reads of
+   vicp[r0.y + 0][r0.x + 1]. dcl_input_index_range accepted one-dimensional
+   input ranges only. Accept vicp[n][r] and v[n][r] ranges (the first
+   register is the second index). For a relative register index the reader
+   selects among the inputs of the range; each candidate is now read at the
+   vertex index (translate_indexed_vertex_input). Before, the vertex
+   dimension was applied to the selected temporary, which has none; this
+   also affected geometry shaders reading v[n][r + i].
+
+probes/d3d11-tess/tess_probe.exe checks every construct against values
+computed on the CPU (and against WARP).
+
+Evidence: docs/d3d11-apps.md, docs/evidence/d3d11-apps/.
+Origin: vmlab-win3d fix-d3d11-apps worker.
+---
+diff --git a/src/gallium/frontends/d3d10umd/ShaderTGSI.c b/src/gallium/frontends/d3d10umd/ShaderTGSI.c
+index 0ad98f1..246fc1b 100644
+--- a/src/gallium/frontends/d3d10umd/ShaderTGSI.c
++++ b/src/gallium/frontends/d3d10umd/ShaderTGSI.c
+@@ -928,14 +928,24 @@ dcl_input_index_range(struct Shader_xlate *sx,
+    const struct Shader_dst_operand *dst = &opcode->dst[0];
+    uint first, count;
+ 
+-   if (dst->base.type != D3D10_SB_OPERAND_TYPE_INPUT ||
+-       dst->base.index_dim != 1 ||
+-       dst->base.index[0].index_rep != D3D10_SB_OPERAND_INDEX_IMMEDIATE32) {
++   /* A range over per-vertex inputs (v[n][r] in a geometry shader,
++    * vicp[n][r] in a hull shader) names its first register in the second
++    * index; the vertex index is not part of the range.
++    */
++   const bool per_vertex =
++      dst->base.index_dim == 2 &&
++      (dst->base.type == D3D10_SB_OPERAND_TYPE_INPUT ||
++       dst->base.type == DX11_SM5_OPERAND_TYPE_INPUT_CONTROL_POINT);
++   if ((!per_vertex &&
++        (dst->base.type != D3D10_SB_OPERAND_TYPE_INPUT ||
++         dst->base.index_dim != 1)) ||
++       dst->base.index[dst->base.index_dim - 1].index_rep !=
++          D3D10_SB_OPERAND_INDEX_IMMEDIATE32) {
+       SHADER_TRANSLATION_UNSUPPORTED(sx, true);
+       return;
+    }
+ 
+-   first = dst->base.index[0].imm;
++   first = dst->base.index[dst->base.index_dim - 1].imm;
+    count = opcode->specific.index_range_count;
+    if (!count || first >= SHADER_MAX_INPUTS ||
+        count > SHADER_MAX_INPUTS - first) {
+@@ -968,8 +978,7 @@ dcl_tcs_tess_factor_index_range(struct Shader_xlate *sx,
+    if (!sx->is_tcs || !sx->tcs_patch_phase_active ||
+        dst->base.type != D3D10_SB_OPERAND_TYPE_OUTPUT ||
+        dst->base.index_dim != 1 ||
+-       dst->base.index[0].index_rep != D3D10_SB_OPERAND_INDEX_IMMEDIATE32 ||
+-       dst->mask != D3D10_SB_OPERAND_4_COMPONENT_MASK_X) {
++       dst->base.index[0].index_rep != D3D10_SB_OPERAND_INDEX_IMMEDIATE32) {
+       SHADER_TRANSLATION_UNSUPPORTED(sx, true);
+       return;
+    }
+@@ -984,9 +993,18 @@ dcl_tcs_tess_factor_index_range(struct Shader_xlate *sx,
+ 
+    /* D3D scalar tessellation-factor registers are packed into components
+     * of TGSI TESSOUTER/TESSINNER, not consecutive TGSI output registers.
++    * A range over ordinary patch constants (o6.x..o13.x written as
++    * o[r0.x + 6].x) names separate TGSI PATCH outputs, which are not
++    * consecutive either.  Both are written through
++    * emit_tcs_indexed_output_stores; a range must not mix the two.
+     */
++   const bool tess_factors = sx->tcs_tess_factor_writemask[first] != 0;
++   if (tess_factors && dst->mask != D3D10_SB_OPERAND_4_COMPONENT_MASK_X) {
++      SHADER_TRANSLATION_UNSUPPORTED(sx, true);
++      return;
++   }
+    for (unsigned i = first; i < first + count; ++i) {
+-      if (!sx->tcs_tess_factor_writemask[i]) {
++      if ((sx->tcs_tess_factor_writemask[i] != 0) != tess_factors) {
+          SHADER_TRANSLATION_UNSUPPORTED(sx, true);
+          return;
+       }
+@@ -1110,6 +1128,17 @@ dcl_tess_input(struct Shader_xlate *sx,
+       return;
+    }
+ 
++   /*
++    * SV_PrimitiveID (vPrim) in a hull or domain shader.  A hull shader
++    * declares it again in every phase that reads it, so declare the
++    * system value once.
++    */
++   if (dst->base.type == D3D10_SB_OPERAND_TYPE_INPUT_PRIMITIVEID) {
++      if (!sx->prim_id.File)
++         sx->prim_id = ureg_DECL_system_value(ureg, TGSI_SEMANTIC_PRIMID, 0);
++      return;
++   }
++
+    if (dst->base.type == DX11_SM5_OPERAND_TYPE_INPUT_PATCH_CONSTANT) {
+       if (dst->base.index_dim != 1 ||
+           dst->base.index[0].index_rep !=
+@@ -2009,7 +2038,8 @@ prepare_tcs_indexed_output_stores(struct Shader_xlate *sx,
+          index->index_rep == D3D10_SB_OPERAND_INDEX_RELATIVE ? 0 : index->imm;
+       if (base >= SHADER_MAX_OUTPUTS ||
+           sx->tcs_tess_factor_range_end[base] <= base ||
+-          dst->mask != D3D10_SB_OPERAND_4_COMPONENT_MASK_X) {
++          (sx->tcs_tess_factor_writemask[base] &&
++           dst->mask != D3D10_SB_OPERAND_4_COMPONENT_MASK_X)) {
+          SHADER_TRANSLATION_UNSUPPORTED(sx, true);
+          return;
+       }
+@@ -2036,6 +2066,31 @@ prepare_tcs_indexed_output_stores(struct Shader_xlate *sx,
+    }
+ }
+ 
++/* The TGSI PATCH output for patch constant oN.  An index range may cover
++ * registers that the phase does not declare itself (fxc declares only the
++ * ones it addresses directly), so declare them here.
++ */
++static struct ureg_dst
++tcs_patch_output_reg(struct Shader_xlate *sx, unsigned output,
++                     unsigned writemask)
++{
++   for (unsigned c = 0; c < 4; ++c) {
++      if ((writemask & (1u << c)) && sx->outputs[output].reg[c].File)
++         return sx->outputs[output].reg[c];
++   }
++   for (unsigned c = 0; c < 4; ++c) {
++      if (sx->outputs[output].reg[c].File)
++         return sx->outputs[output].reg[c];
++   }
++
++   struct ureg_dst reg =
++      ureg_DECL_output(sx->ureg, TGSI_SEMANTIC_PATCH, output);
++   for (unsigned c = 0; c < 4; ++c)
++      sx->outputs[output].reg[c] = reg;
++   sx->outputs[output].declared_mask |= TGSI_WRITEMASK_XYZW;
++   return reg;
++}
++
+ static void
+ emit_tcs_indexed_output_stores(struct Shader_xlate *sx)
+ {
+@@ -2051,6 +2106,9 @@ emit_tcs_indexed_output_stores(struct Shader_xlate *sx)
+          ureg_src(sx->tcs_indexed_output_stores[slot].index), TGSI_SWIZZLE_X);
+       const struct ureg_src value = ureg_scalar(
+          ureg_src(sx->tcs_indexed_output_stores[slot].value), TGSI_SWIZZLE_X);
++      const unsigned store_writemask =
++         sx->tcs_indexed_output_stores[slot].operand->mask >>
++            D3D10_SB_OPERAND_4_COMPONENT_MASK_SHIFT;
+ 
+       for (unsigned output = first; output < end; ++output) {
+          unsigned label = 0;
+@@ -2058,10 +2116,19 @@ emit_tcs_indexed_output_stores(struct Shader_xlate *sx)
+                     index, ureg_imm1u(ureg, output));
+          ureg_UIF(ureg, ureg_scalar(ureg_src(predicate), TGSI_SWIZZLE_X),
+                    &label);
+-         ureg_MOV(ureg,
+-                  ureg_writemask(sx->outputs[output].reg[0],
+-                                 sx->tcs_tess_factor_writemask[output]),
+-                  value);
++         if (sx->tcs_tess_factor_writemask[output]) {
++            ureg_MOV(ureg,
++                     ureg_writemask(sx->outputs[output].reg[0],
++                                    sx->tcs_tess_factor_writemask[output]),
++                     value);
++         } else {
++            /* An ordinary patch constant keeps the store's own mask. */
++            ureg_MOV(ureg,
++                     ureg_writemask(tcs_patch_output_reg(sx, output,
++                                                         store_writemask),
++                                    store_writemask),
++                     ureg_src(sx->tcs_indexed_output_stores[slot].value));
++         }
+          ureg_ENDIF(ureg);
+       }
+       ureg_release_temporary(ureg, sx->tcs_indexed_output_stores[slot].index);
+@@ -2110,6 +2177,73 @@ translate_indexed_input(struct Shader_xlate *sx,
+    return ureg_src(selected);
+ }
+ 
++static struct ureg_src
++apply_input_vertex_index(struct Shader_xlate *sx,
++                         struct ureg_src reg,
++                         const struct Shader_index *vertex,
++                         struct ureg_src vertex_addr)
++{
++   switch (vertex->index_rep) {
++   case D3D10_SB_OPERAND_INDEX_IMMEDIATE32:
++      return ureg_src_dimension(reg, vertex->imm);
++   case D3D10_SB_OPERAND_INDEX_RELATIVE:
++      return ureg_src_dimension_indirect(reg, vertex_addr, 0);
++   case D3D10_SB_OPERAND_INDEX_IMMEDIATE32_PLUS_RELATIVE:
++      return ureg_src_dimension_indirect(reg, vertex_addr, vertex->imm);
++   default:
++      SHADER_TRANSLATION_UNSUPPORTED(sx, true);
++      return reg;
++   }
++}
++
++/* vicp[vertex][base + rel] (and v[vertex][base + rel] in a geometry
++ * shader): the inputs of an index range are separate TGSI inputs, so select
++ * among them, each one read at the same vertex.
++ */
++static struct ureg_src
++translate_indexed_vertex_input(struct Shader_xlate *sx,
++                               uint base,
++                               struct ureg_src rel,
++                               const struct Shader_index *vertex,
++                               struct ureg_src vertex_addr)
++{
++   struct ureg_program *ureg = sx->ureg;
++   struct ureg_dst selected, predicate;
++   uint count;
++
++   if (base >= SHADER_MAX_INPUTS || !find_input_index_range(sx, base, &count)) {
++      SHADER_TRANSLATION_UNSUPPORTED(sx, true);
++      return sx->inputs[base < SHADER_MAX_INPUTS ? base : 0].reg;
++   }
++
++   if (count <= 1)
++      return apply_input_vertex_index(sx, sx->inputs[base].reg, vertex,
++                                      vertex_addr);
++
++   selected = ureg_DECL_temporary(ureg);
++   predicate = ureg_DECL_temporary(ureg);
++
++   ureg_MOV(ureg, selected,
++            apply_input_vertex_index(sx, sx->inputs[base].reg, vertex,
++                                     vertex_addr));
++   for (uint i = 1; i < count; i++) {
++      if (!sx->inputs[base + i].declared) {
++         SHADER_TRANSLATION_UNSUPPORTED(sx, true);
++         continue;
++      }
++
++      ureg_USEQ(ureg, predicate, rel, ureg_imm1u(ureg, i));
++      ureg_UCMP(ureg, selected, ureg_src(predicate),
++                apply_input_vertex_index(sx, sx->inputs[base + i].reg,
++                                         vertex, vertex_addr),
++                ureg_src(selected));
++   }
++
++   ureg_release_temporary(ureg, predicate);
++
++   return ureg_src(selected);
++}
++
+ static struct ureg_dst
+ translate_operand(struct Shader_xlate *sx,
+                   const struct Shader_operand *operand,
+@@ -2458,44 +2592,31 @@ translate_src_operand(struct Shader_xlate *sx,
+          assert(operand->base.index_dim == 2);
+          assert(operand->base.index[1].imm < SHADER_MAX_INPUTS);
+ 
++         const struct Shader_index *vertex = &operand->base.index[0];
++         struct ureg_src vertex_addr = ureg_src_undef();
++         if (vertex->index_rep == D3D10_SB_OPERAND_INDEX_RELATIVE ||
++             vertex->index_rep ==
++                D3D10_SB_OPERAND_INDEX_IMMEDIATE32_PLUS_RELATIVE)
++            vertex_addr = translate_relative_operand(sx, &vertex->rel);
++
+          switch (operand->base.index[1].index_rep) {
+          case D3D10_SB_OPERAND_INDEX_IMMEDIATE32:
+-            reg = sx->inputs[operand->base.index[1].imm].reg;
++            reg = apply_input_vertex_index(
++               sx, sx->inputs[operand->base.index[1].imm].reg, vertex,
++               vertex_addr);
+             break;
+          case D3D10_SB_OPERAND_INDEX_RELATIVE: {
+             struct ureg_src rel =
+                translate_relative_operand_src(sx, &operand->base.index[1].rel);
+-            reg = translate_indexed_input(sx, 0, rel);
++            reg = translate_indexed_vertex_input(sx, 0, rel, vertex,
++                                                 vertex_addr);
+          }
+             break;
+          case D3D10_SB_OPERAND_INDEX_IMMEDIATE32_PLUS_RELATIVE: {
+             struct ureg_src rel =
+                translate_relative_operand_src(sx, &operand->base.index[1].rel);
+-            reg = translate_indexed_input(sx, operand->base.index[1].imm, rel);
+-         }
+-            break;
+-        default:
+-           /* XXX: Other index representations.
+-            */
+-            SHADER_TRANSLATION_UNSUPPORTED(sx, true);
+-            /* Ensure reg is initialized even for unsupported index reps. */
+-            reg = ureg_src(ureg_DECL_temporary(sx->ureg));
+-         }
+-
+-         switch (operand->base.index[0].index_rep) {
+-         case D3D10_SB_OPERAND_INDEX_IMMEDIATE32:
+-            reg = ureg_src_dimension(reg, operand->base.index[0].imm);
+-            break;
+-         case D3D10_SB_OPERAND_INDEX_RELATIVE:{
+-            struct ureg_src tmp =
+-               translate_relative_operand(sx, &operand->base.index[0].rel);
+-            reg = ureg_src_dimension_indirect(reg, tmp, 0);
+-         }
+-            break;
+-         case D3D10_SB_OPERAND_INDEX_IMMEDIATE32_PLUS_RELATIVE: {
+-            struct ureg_src tmp =
+-               translate_relative_operand(sx, &operand->base.index[0].rel);
+-            reg = ureg_src_dimension_indirect(reg, tmp, operand->base.index[0].imm);
++            reg = translate_indexed_vertex_input(
++               sx, operand->base.index[1].imm, rel, vertex, vertex_addr);
+          }
+             break;
+         default:

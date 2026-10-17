@@ -1,0 +1,10 @@
+# C:\ProgramData\Yttrium\yttrium-errors.log lines written by SubD11.exe with the
+# package at the base of this branch (patches 0001-0014, 0020), copied from the
+# guest during the investigation. The first run is with no patch; the second with
+# the vPrim part of 0015 only.
+2026-10-17 08:26:11.767 [warning pid=2268 process=SubD11.exe] yttrium: shader TGSI tessellation translation unsupported owner=d3d10umd-shader component=tessellation reason=invalid-control-point-input-declaration action=abort-translation
+2026-10-17 08:26:11.767 [warning pid=2268 process=SubD11.exe] yttrium: d3d10umd hull shader translation failed
+2026-10-17 08:26:11.767 [error pid=2268 process=SubD11.exe] d3d10umd: pfnSetErrorCb hr=0x80070057 caller=InitD3D11TessellationShader:3156 device=0000000000a82880
+2026-10-17 08:28:39.365 [warning pid=5000 process=SubD11.exe] yttrium: WARNING: unsupported behavior owner=d3d10umd function=dcl_tcs_tess_factor_index_range file=..\src\src\gallium\frontends\d3d10umd\ShaderTGSI.c line=990 expression=true
+2026-10-17 08:28:39.365 [warning pid=5000 process=SubD11.exe] yttrium: d3d10umd hull shader translation failed
+2026-10-17 08:28:39.365 [error pid=5000 process=SubD11.exe] d3d10umd: pfnSetErrorCb hr=0x80070057 caller=InitD3D11TessellationShader:3156 device=0000000001413bc0

@@ -1,0 +1,127 @@
+Subject: [PATCH] yttrium: honour D3D11_FILL_WIREFRAME
+
+The venus2 graphics pipeline always used VK_POLYGON_MODE_FILL, and
+fillModeNonSolid was not enabled on the Venus device. A wireframe overlay
+drawn with the same geometry over a solid pass (SubD11's "Toggle Wires",
+DXUT samples' wireframe modes) then rasterised as filled triangles at equal
+depth and failed the depth test, so nothing appeared.
+
+Carry the rasterizer state's fill mode in yttrium_venus_draw_state and in
+the pipeline key (and its hash), enable fillModeNonSolid when the host
+device has it, and use the fill mode for the pipeline's polygonMode. Without
+the feature the pipeline keeps FILL, as before.
+
+Evidence: docs/d3d11-apps.md, docs/evidence/d3d11-apps/.
+Origin: vmlab-win3d fix-d3d11-apps worker.
+---
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_draw.c b/src/gallium/winsys/yttrium/gdi/yttrium_draw.c
+index d5f81f0..81d4181 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_draw.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_draw.c
+@@ -460,6 +460,18 @@ yttrium_make_venus_draw_state(struct yttrium_context *yctx,
+       }
+       state->front_face = yctx->rasterizer->state.front_ccw ?
+          VK_FRONT_FACE_COUNTER_CLOCKWISE : VK_FRONT_FACE_CLOCKWISE;
++      /* D3D10/11 has one FillMode for both faces (fill_front == fill_back). */
++      switch (yctx->rasterizer->state.fill_front) {
++      case PIPE_POLYGON_MODE_LINE:
++         state->polygon_mode = VK_POLYGON_MODE_LINE;
++         break;
++      case PIPE_POLYGON_MODE_POINT:
++         state->polygon_mode = VK_POLYGON_MODE_POINT;
++         break;
++      default:
++         state->polygon_mode = VK_POLYGON_MODE_FILL;
++         break;
++      }
+       state->depth_bias_constant_factor =
+          yctx->rasterizer->state.offset_units;
+       state->depth_bias_unscaled =
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.c b/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.c
+index fbfa73b..197d88d 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.c
+@@ -139,6 +139,7 @@ yttrium_pipeline_key_hash(const struct yttrium_pipeline_key *key)
+       ((uint64_t)key->targetless_stream_output << 2));
+    hash = yttrium_pipeline_hash_mix(hash,
+       (uint64_t)key->cull_mode | ((uint64_t)key->front_face << 32) |
++      ((uint64_t)key->polygon_mode << 36) |
+       ((uint64_t)key->depth_test_enable << 40) |
+       ((uint64_t)key->depth_write_enable << 41) |
+       ((uint64_t)key->depth_read_only << 42) |
+@@ -2370,6 +2371,7 @@ yttrium_pipeline_build_key(struct yttrium_context *yctx,
+       draw_state->targetless_stream_output;
+    key->cull_mode = draw_state->cull_mode;
+    key->front_face = draw_state->front_face;
++   key->polygon_mode = draw_state->polygon_mode;
+    key->depth_bias_enable = draw_state->depth_bias_enable;
+    key->depth_bias_unscaled = draw_state->depth_bias_unscaled;
+    key->depth_clamp_enable = draw_state->depth_clamp_enable;
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.h b/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.h
+index 329941b..a728827 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.h
+@@ -69,6 +69,7 @@ struct yttrium_pipeline_key {
+    VkBool32 targetless_stream_output;
+    VkCullModeFlags cull_mode;
+    VkFrontFace front_face;
++   VkPolygonMode polygon_mode;
+    VkBool32 depth_bias_enable;
+    VkBool32 depth_bias_unscaled;
+    VkBool32 depth_clamp_enable;
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus.h b/src/gallium/winsys/yttrium/gdi/yttrium_venus.h
+index e8d93de..97c5c4d 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus.h
+@@ -415,6 +415,8 @@ struct yttrium_venus_draw_state {
+    VkBool32 targetless_stream_output;
+    VkCullModeFlags cull_mode;
+    VkFrontFace front_face;
++   /* D3D FillMode; FILL (0) unless the rasterizer state asks for lines. */
++   VkPolygonMode polygon_mode;
+    VkBool32 depth_bias_enable;
+    VkBool32 depth_bias_unscaled;
+    VkBool32 depth_clamp_enable;
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c
+index 4e29d6f..97692f9 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c
+@@ -1019,6 +1019,7 @@ yttrium_venus_create_device_objects(struct yttrium_venus *venus)
+       features12.shaderOutputViewportIndex;
+    const bool shader_draw_parameters = features11.shaderDrawParameters;
+    venus->depth_clamp = features2.features.depthClamp;
++   venus->fill_mode_non_solid = features2.features.fillModeNonSolid;
+    venus->dual_src_blend = features2.features.dualSrcBlend;
+    venus->independent_blend = features2.features.independentBlend;
+    venus->logic_op = features2.features.logicOp;
+@@ -1176,6 +1177,7 @@ yttrium_venus_create_device_objects(struct yttrium_venus *venus)
+       .shaderUniformBufferArrayDynamicIndexing =
+          features2.features.shaderUniformBufferArrayDynamicIndexing,
+       .depthClamp = venus->depth_clamp,
++      .fillModeNonSolid = venus->fill_mode_non_solid,
+       .dualSrcBlend = venus->dual_src_blend,
+       .independentBlend = venus->independent_blend,
+       .logicOp = venus->logic_op,
+@@ -3797,7 +3799,9 @@ yttrium_venus2_pipeline_init(struct yttrium_venus *venus,
+          &depth_bias_representation : NULL,
+       .depthClampEnable = draw_state->depth_clamp_enable,
+       .rasterizerDiscardEnable = draw_state->rasterizer_discard_enable,
+-      .polygonMode = VK_POLYGON_MODE_FILL,
++      /* D3D11_FILL_WIREFRAME needs fillModeNonSolid; without it, fill. */
++      .polygonMode = venus->fill_mode_non_solid ?
++         draw_state->polygon_mode : VK_POLYGON_MODE_FILL,
+       .cullMode = draw_state->cull_mode,
+       .frontFace = draw_state->front_face,
+       .depthBiasEnable = draw_state->depth_bias_enable,
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h
+index 3cb57d5..d1759b6 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h
+@@ -717,6 +717,7 @@ struct yttrium_venus {
+    bool depth_bias_control;
+    bool depth_bias_float;
+    bool depth_clamp;
++   bool fill_mode_non_solid;
+    bool dual_src_blend;
+    bool independent_blend;
+    bool logic_op;
