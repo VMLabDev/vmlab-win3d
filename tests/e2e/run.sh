@@ -5,18 +5,17 @@
 #
 # From nothing: builds the package (or reuses out/package/ when it was built
 # from a tree identical to HEAD), brings up a fresh lab from
-# labs/acceptance/vmlab.wcl on an isolated vmlab supervisor whose QEMU uses
-# RADV (docs/host.md), records the guest baseline, installs with the
+# labs/acceptance/vmlab.wcl (vmlab >= 0.24: gpu { mode = "vulkan" address
+# = AMD iGPU }, docs/host.md), records the guest baseline, installs with the
 # documented command (scripts/install-into-vm.sh, docs/install.md), then in
 # the autologon user's desktop session runs vulkaninfo, the D3D9, D3D11,
-# D3D12, OpenGL and Vulkan probes (x64 and x86) with a VNC console capture
-# of each, and dxdiag. The evidence goes to
+# D3D12, OpenGL and Vulkan probes (x64 and x86) with `vmlab vm screenshot`
+# console captures of each, and dxdiag. The evidence goes to
 # docs/evidence/acceptance/<template>/; tests/e2e/check.py judges it.
-# The lab is destroyed and the supervisor stopped unless --keep.
+# The lab is destroyed unless --keep.
 #
 # Exit status: 0 when every Done check passes, 1 otherwise, 2 on usage.
-# Lab state lives in .scratch/e2e/<template>/; the supervisor's sockets in
-# /tmp/win3d-e2e-<template>/ (UNIX socket paths must stay short).
+# Lab state lives in .scratch/e2e/<template>/lab/.vmlab/.
 set -uo pipefail
 REPO=$(cd "$(dirname "$0")/../.." && pwd)
 HERE=$REPO/tests/e2e
@@ -42,15 +41,7 @@ LABDIR=$WORK/lab
 EV=$REPO/docs/evidence/acceptance/$TEMPLATE
 SECONDS_PER_PROBE=20
 
-export XDG_RUNTIME_DIR=/tmp/win3d-e2e-$TEMPLATE
-export XDG_STATE_HOME=$WORK/state
-unset VK_ICD_FILENAMES VK_LOADER_DRIVERS_SELECT MESA_VK_DEVICE_SELECT
-export VK_DRIVER_FILES=/usr/share/vulkan/icd.d/radeon_icd.json
-export VMLAB=vmlab
-SOCK=$XDG_RUNTIME_DIR/vmlab/labs/$LAB/vms/$VM/vnc.sock
-
-mkdir -p -m 700 "$XDG_RUNTIME_DIR"
-mkdir -p "$WORK" "$XDG_STATE_HOME" "$EV"
+mkdir -p "$WORK" "$EV"
 # Fresh evidence and scratch for every run (the lab state is handled by destroy below).
 find "$EV" -mindepth 1 -delete
 for d in raw shots results; do [ -d "$WORK/$d" ] && find "$WORK/$d" -delete; mkdir -p "$WORK/$d"; done
@@ -73,8 +64,6 @@ wait_agent() {
     done
     note "guest agent did not answer"; return 1
 }
-labd_pid() { pgrep -f "vmlab __labd --lab $LAB " | head -1; }
-SUPERVISOR=
 
 host_stack() {
     {
@@ -88,7 +77,6 @@ host_stack() {
         echo "vmlab: $(vmlab --version)"
         local pci; pci=$(basename "$(readlink -f /sys/class/drm/renderD129/device)")
         echo "venus gpu: /dev/dri/renderD129 $pci $(lspci -s "$pci" 2>/dev/null | cut -d' ' -f2-)"
-        echo "VK_DRIVER_FILES: $VK_DRIVER_FILES"
     } | tee "$EV/host.txt"
 }
 
@@ -96,7 +84,8 @@ build() {
     say "1 build"
     local bundle reason=
     bundle=$REPO/out/package/vmlab-win3d-$(cat "$REPO/installer/VERSION")
-    local paths=(build installer scripts probes patches)
+    # Everything that goes into out/package and out/probes.
+    local paths=(build installer probes patches scripts/build.sh)
     if [ -f "$bundle/manifest.json" ] && [ -d "$REPO/out/probes/x64" ]; then
         local c
         c=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["commit"])' "$bundle/manifest.json")
@@ -140,14 +129,9 @@ lab_up() {
     cp "$LABDIR/vmlab.wcl" "$EV/lab-vmlab.wcl"
     in_lab vmlab validate || return 1
     in_lab vmlab up || return 1
-    local labd; labd=$(labd_pid)
-    [ -n "$labd" ] && SUPERVISOR=$(ps -o ppid= -p "$labd" | tr -d ' ')
-    note "isolated supervisor: ${SUPERVISOR:-unknown}"
-    local q; q=$(pgrep -f "^qemu-system-x86_64 -name vmlab:$LAB/$VM" | head -1)
-    if [ -n "$q" ]; then
-        tr '\0' ' ' </proc/"$q"/cmdline >"$EV/qemu-cmdline.txt"; echo >>"$EV/qemu-cmdline.txt"
-        tr '\0' '\n' </proc/"$q"/environ | grep -E '^(VK_|MESA_|XDG_)' >"$EV/qemu-env.txt" || true
-    fi
+    # vmlab 0.24 starts qemu.log with the argv and environment it gave QEMU.
+    local qlog; qlog=$(find "$LABDIR/.vmlab" -name qemu.log -path "*/$VM/*" 2>/dev/null | head -1)
+    [ -n "$qlog" ] && grep -E '^vmlab: (argv|env):' "$qlog" >"$EV/qemu-argv-env.txt"
     wait_agent || return 1
     in_lab vmlab osinfo "$VM" >"$EV/osinfo.json" 2>&1 || true
 }
@@ -169,7 +153,7 @@ prepare_guest() {
 }
 
 install() {
-    say "4 install: scripts/install-into-vm.sh $LABDIR $VM (VMLAB=vmlab on the isolated supervisor)"
+    say "4 install: scripts/install-into-vm.sh $LABDIR $VM"
     local rc=0
     "$REPO/scripts/install-into-vm.sh" "$LABDIR" "$VM" 2>&1 | tee "$EV/install.log"
     rc=${PIPESTATUS[0]}
@@ -195,7 +179,8 @@ wait_desktop() {
 
 capture() { # capture NAME: one console frame into shots/, its JSON next to it
     local f=$WORK/shots/$1.png
-    python3 "$HERE/vnccap.py" "$SOCK" "$f" >"$WORK/shots/$1.json" 2>/dev/null
+    in_lab vmlab vm screenshot "$VM" "$f" >/dev/null 2>&1 &&
+        python3 "$HERE/findprobe.py" "$f" >"$WORK/shots/$1.json"
 }
 
 probe() { # probe ARCH API
@@ -263,12 +248,14 @@ tests() {
 
 collect() {
     say "6 collect evidence"
-    in_lab vmlab cp "$VM:C:/win3d/results" "$WORK/results" || return 1
+    # vmlab cp pulls files, not directories.
+    gps 'Remove-Item C:\win3d\results.zip -ErrorAction SilentlyContinue; Compress-Archive -Path C:\win3d\results\* -DestinationPath C:\win3d\results.zip' || return 1
+    in_lab vmlab cp "$VM:C:/win3d/results.zip" "$WORK/results.zip" || return 1
     local r=$WORK/results
-    [ -d "$r/results" ] && r=$r/results   # cp may nest the directory
+    (cd "$r" && bsdtar -xf "$WORK/results.zip") || return 1
     mkdir -p "$EV/probes" "$EV/vulkaninfo" "$EV/dxdiag"
     cp "$r"/vulkaninfo/vulkaninfo-*.txt "$EV/vulkaninfo/" 2>/dev/null
-    cp "$r"/vulkaninfo/vulkaninfo.run.json "$EV/vulkaninfo/" 2>/dev/null
+    cp "$r"/vulkaninfo/vulkaninfo.run.json "$r"/vulkaninfo/vulkaninfo-crashes.txt "$EV/vulkaninfo/" 2>/dev/null
     cp "$r"/dxdiag/dxdiag.json "$EV/dxdiag/" 2>/dev/null
     for f in "$r"/probes/*_probe.json "$r"/probes/*_probe.run.json; do [ -f "$f" ] && cp "$f" "$EV/probes/"; done
     # The full module lists, one line per module: location, path, version.
@@ -289,17 +276,10 @@ EOF
 teardown() {
     say "7 teardown"
     if [ "$KEEP" = 1 ]; then
-        note "--keep: $LAB left running; vnc at $SOCK"
-        note "  destroy: (cd $LABDIR && XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR XDG_STATE_HOME=$XDG_STATE_HOME vmlab destroy)"
+        note "--keep: $LAB left running; destroy with (cd $LABDIR && vmlab destroy)"
         return 0
     fi
     [ -f "$LABDIR/vmlab.wcl" ] && in_lab vmlab destroy
-    [ -z "$SUPERVISOR" ] && SUPERVISOR=$(cat "$XDG_STATE_HOME/supervisor.pid" 2>/dev/null)
-    if [ -n "$SUPERVISOR" ] && ps -o cmd= -p "$SUPERVISOR" | grep -q __supervisord; then
-        kill "$SUPERVISOR" && note "stopped isolated supervisor $SUPERVISOR"
-    fi
-    sleep 2
-    [ -d "$XDG_RUNTIME_DIR" ] && find "$XDG_RUNTIME_DIR" -delete 2>/dev/null
     find "$WORK/shots" -name '*.png' -delete
 }
 
@@ -309,7 +289,6 @@ STAGE=ok
 if ! build; then STAGE="build failed"
 elif ! lab_up; then STAGE="lab bring-up failed"
 else
-    [ -n "$SUPERVISOR" ] && echo "$SUPERVISOR" >"$XDG_STATE_HOME/supervisor.pid"
     if ! prepare_guest; then STAGE="guest preparation failed"
     elif ! install; then STAGE="install failed"; tests; collect
     else tests; collect || STAGE="collect failed"

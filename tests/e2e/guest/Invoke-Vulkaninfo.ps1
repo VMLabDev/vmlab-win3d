@@ -31,3 +31,8 @@ foreach ($a in 'x64', 'x86') {
     "## $f"
     if (Test-Path $f) { Get-Content $f } else { '(missing)' }
 }
+# A crash leaves an Application Error (event 1000) naming the faulting module.
+"## Application Error events for vulkaninfo.exe"
+Get-WinEvent -FilterHashtable @{ LogName = 'Application'; Id = 1000; StartTime = (Get-Date).AddMinutes(-10) } -ErrorAction SilentlyContinue |
+    Where-Object { $_.Message -match 'vulkaninfo' } | ForEach-Object { $_.TimeCreated.ToString('o'); $_.Message; '' } |
+    Tee-Object -FilePath (Join-Path $OutDir 'vulkaninfo-crashes.txt')
