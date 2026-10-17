@@ -1,0 +1,1 @@
+ok: lab "win3d-e2e-final-nv1" — 1 vm(s), 0 container(s), 0 segment(s)

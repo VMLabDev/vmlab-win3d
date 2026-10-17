@@ -1,0 +1,21 @@
+import <vmlab.wcl>
+
+// Acceptance lab for tests/e2e/run.sh: the labs/probe/vmlab.wcl shape
+// (vmlab >= 0.25.0-alpha; docs/host.md, docs/install.md). run.sh copies this
+// file into .scratch/e2e/<template>/lab/ and rewrites the lab name and the
+// template line for --template; as committed it is the windows-11 lab.
+lab "win3d-e2e-final-nv1" {
+  vm "win" {
+    template = "x86_64/windows-11@26100.1742.5"
+    // The package is test-signed (decision 0001); Secure Boot must be off.
+    secure_boot = false
+    // The templates' agent cannot be updated in place (the service does not
+    // restart onto it), and a late restart dropped the agent channel mid-exec
+    // on windows-10. Keep the template's agent.
+    agent_update = false
+    // No host_gpu: the host default GPU (Nvidia1, RTX 5090, on helios).
+    gpu {
+      mode     = "vulkan"
+    }
+  }
+}
