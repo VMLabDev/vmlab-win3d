@@ -2,7 +2,8 @@
 # Build the Khronos Vulkan loader (vulkan-1.dll) and vulkaninfo.exe for
 # x86_64 and i686 Windows inside the shared toolchain image.
 # Outputs: out/vulkan-sdk/{x64,x86}/{vulkan-1.dll,vulkaninfo.exe}
-# Inputs are pinned in PINS; the in-container steps are in inner.sh.
+# Inputs are pinned in PINS. Patches for Vulkan-Tools are in
+# patches/vulkan-tools/. The in-container steps are in inner.sh.
 set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$here/../.." && pwd)"
