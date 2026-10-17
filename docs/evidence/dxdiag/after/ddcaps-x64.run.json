@@ -1,0 +1,31 @@
+﻿{
+    "name":  "ddcaps-x64",
+    "exe":  "C:\\win3d\\ddcaps\\x64\\ddcaps.exe",
+    "arguments":  "--seconds 10 --out C:\\win3d\\results\\final\\ddcaps-x64.json",
+    "user":  "VMLABVM-GGRUU48\\win3d",
+    "session_id":  1,
+    "pid":  7192,
+    "wow64":  false,
+    "started":  "2026-10-17T06:38:09.5138190-07:00",
+    "ended":  "2026-10-17T06:38:22.3706908-07:00",
+    "duration_s":  12.9,
+    "timed_out":  false,
+    "exit_code":  0,
+    "task_result":  0,
+    "probe_json":  "C:\\win3d\\results\\final\\ddcaps-x64.json",
+    "probe_result":  "pass",
+    "adapter":  null,
+    "software":  null,
+    "readback_ok":  null,
+    "module_count":  34,
+    "graphics_modules":  [
+                             "C:\\WINDOWS\\SYSTEM32\\DDRAW.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] ",
+                             "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)"
+                         ],
+    "app_local_modules":  [
+
+                          ]
+}

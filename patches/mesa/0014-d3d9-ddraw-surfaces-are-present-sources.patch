@@ -1,0 +1,77 @@
+Subject: [PATCH] d3d10umd: make DirectDraw surfaces display targets
+
+A windowed DirectDraw primary Blt reaches the UMD as a Present whose
+source is the application's off-screen plain surface. Those surfaces were
+created without PIPE_BIND_DISPLAY_TARGET, so the present read an image the
+KMD could not show and the window stayed empty while every call returned
+S_OK. For the DirectDraw/D3D7 runtimes (CreateDevice Interface < 9),
+plain colour surfaces in video memory are now created as display targets,
+like a D3D9 swapchain back buffer. The D3D9 runtime is unchanged.
+
+Evidence: docs/dxdiag.md, docs/evidence/dxdiag/ (console screenshots).
+Origin: vmlab-win3d, worker fix-dxdiag.
+---
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Adapter.cpp b/src/gallium/frontends/d3d10umd/D3D9Adapter.cpp
+index 888dbf3..5d9257d 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Adapter.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9Adapter.cpp
+@@ -630,6 +630,7 @@ D3D9CreateDevice(HANDLE hAdapter, D3DDDIARG_CREATEDEVICE *data)
+       return E_OUTOFMEMORY;
+ 
+    device->hRTDevice = data->hDevice;
++   device->runtime_interface = data->Interface;
+    if (data->pCallbacks)
+       device->callbacks = *data->pCallbacks;
+ 
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Private.h b/src/gallium/frontends/d3d10umd/D3D9Private.h
+index b198d3f..63a4f34 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Private.h
++++ b/src/gallium/frontends/d3d10umd/D3D9Private.h
+@@ -74,6 +74,9 @@ struct D3D9Resource;
+ struct D3D9Device
+ {
+    HANDLE hRTDevice;
++   /* D3DDDIARG_CREATEDEVICE::Interface: 9 for the D3D9 runtime, lower for
++    * DirectDraw and Direct3D 7 and earlier. */
++   UINT runtime_interface;
+    D3DDDI_DEVICECALLBACKS callbacks;
+    struct pipe_screen *screen;
+    struct pipe_context *pipe;
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Resource.cpp b/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
+index 6f27d53..ae9ab75 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
+@@ -445,6 +445,23 @@ D3D9ResourceCanBeColorCopyTarget(const D3DDDIARG_CREATERESOURCE *data)
+    }
+ }
+ 
++/* DirectDraw presents straight from its own surfaces: a windowed primary
++ * Blt reaches the driver as a Present whose source is the application's
++ * off-screen plain surface (no RenderTarget or Texture flag).  Like a D3D9
++ * swapchain back buffer, that source has to be a display target, or the
++ * KMD present reads an image it cannot see and the window stays empty. */
++static bool
++D3D9ResourceIsDDrawPresentSource(const D3D9Device *device,
++                                 const D3DDDIARG_CREATERESOURCE *data)
++{
++   return device->runtime_interface < 9 &&
++      D3D9PoolNeedsReadback(data->Pool) && !data->MultisampleType &&
++      !(data->Flags.Texture || data->Flags.CubeMap || data->Flags.Volume ||
++        data->Flags.ZBuffer || data->Flags.VertexBuffer ||
++        data->Flags.IndexBuffer) &&
++      D3D9ResourceCanBeColorCopyTarget(data);
++}
++
+ static unsigned
+ D3D9PipeBind(const D3DDDIARG_CREATERESOURCE *data)
+ {
+@@ -2752,6 +2769,9 @@ D3D9CreateResource(HANDLE hDevice, D3DDDIARG_CREATERESOURCE *data)
+             templ.nr_samples = 1;
+          templ.nr_storage_samples = templ.nr_samples;
+          templ.bind = D3D9PipeBind(data);
++         if (D3D9ResourceIsDDrawPresentSource(device, data))
++            templ.bind |= PIPE_BIND_RENDER_TARGET | PIPE_BIND_DISPLAY_TARGET |
++                          PIPE_BIND_SHARED;
+          templ.usage = D3D9PipeUsage(data->Pool);
+          if (yttrium && data->Flags.DiscardRenderTarget)
+             templ.flags |= YTTRIUM_GDI_RESOURCE_FLAG_CPU_READBACK;
