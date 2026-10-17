@@ -1,0 +1,101 @@
+# Install
+## bcdedit /enum {current} (after reboot)
+
+Windows Boot Loader
+-------------------
+identifier              {current}
+device                  partition=C:
+path                    \WINDOWS\system32\winload.efi
+description             Windows 11
+locale                  en-US
+inherit                 {bootloadersettings}
+recoverysequence        {1662cc41-c194-11f1-a797-b55fe99dc048}
+displaymessageoverride  Recovery
+recoveryenabled         Yes
+testsigning             Yes
+isolatedcontext         Yes
+allowedinmemorysettings 0x15000075
+osdevice                partition=C:
+systemroot              \WINDOWS
+resumeobject            {1662cc3c-c194-11f1-a797-b55fe99dc048}
+nx                      OptIn
+bootmenupolicy          Standard
+(exit 0)
+## Package files as copied
+vgpusrv.exe      379400 79177910890B1B202261876F3A8B9CAD77D3B625E52833B60A675E541EFD300B
+viogpu3d.cat       3852 C32A73AB8EBE992209953E321B2711830FD257BEEE04786457104F938C678479
+viogpu3d.inf       3548 50B20F4493076FDC2B6F2D8920B57E78EB9087AC6BD2D399115278F7513B36F2
+viogpu3d.sys     174088 6BE79F7ED5637A14CCC40B447FC34F63DE5680F1D0427F744BEA86837C991D09
+viogpuap.exe     361480 F84A460E325010BED718DCE1ED98575C8C1560CD2DDAA29E159C05011C727AAD
+## Get-AuthenticodeSignature (package directory)
+vgpusrv.exe    Valid  O=vmlab-win3d local test (not for distribution), CN=vmlab-win3d Test Driver Signing
+viogpu3d.cat   Valid  O=vmlab-win3d local test (not for distribution), CN=vmlab-win3d Test Driver Signing
+viogpu3d.sys   Valid  O=vmlab-win3d local test (not for distribution), CN=vmlab-win3d Test Driver Signing
+viogpuap.exe   Valid  O=vmlab-win3d local test (not for distribution), CN=vmlab-win3d Test Driver Signing
+## pnputil /add-driver C:\win3d\kmd\viogpu3d.inf /install
+Microsoft PnP Utility
+
+Adding driver package:  viogpu3d.inf
+Driver package added successfully.
+Published Name:         oem15.inf
+Driver package installed on device: PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18
+
+Total driver packages:  1
+Added driver packages:  1
+(exit 0)
+## Driver ranking for the device (pnputil /enum-devices /class Display /drivers)
+Microsoft PnP Utility
+
+Instance ID:                PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18
+Device Description:         Hardsoft VirtIO GPU 3D controller
+Class Name:                 Display
+Class GUID:                 {4d36e968-e325-11ce-bfc1-08002be10318}
+Manufacturer Name:          Hardsoft Swed.
+Status:                     Problem
+Problem Code:               43 (0x2B) [CM_PROB_FAILED_POST_START]
+Driver Name:                oem15.inf
+Matching Drivers:
+    Driver Name:            oem15.inf
+    Original Name:          viogpu3d.inf
+    Provider Name:          Hardsoft Swed.
+    Class Name:             Display
+    Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+    Driver Version:         09/27/2026 100.6.101.58100
+    Signer Name:            vmlab-win3d Test Driver Signing
+    Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+    Driver Rank:            00F90000
+    Driver Status:          Best Ranked / Installed
+                            
+    Driver Name:            oem7.inf
+    Original Name:          viogpudo.inf
+    Provider Name:          Red Hat, Inc.
+    Class Name:             Display
+    Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+    Driver Version:         07/09/2025 100.101.104.28500
+    Signer Name:            Microsoft Windows Hardware Compatibility Publisher
+    Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+    Driver Rank:            00F90000
+    Driver Status:          Outranked
+                            
+    Driver Name:            oem7.inf
+    Original Name:          viogpudo.inf
+    Provider Name:          Red Hat, Inc.
+    Class Name:             Display
+    Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+    Driver Version:         07/09/2025 100.101.104.28500
+    Signer Name:            Microsoft Windows Hardware Compatibility Publisher
+    Matching Device ID:     PCI\VEN_1AF4&DEV_1050
+    Driver Rank:            00F93001
+    Driver Status:          Outranked
+                            
+    Driver Name:            display.inf
+    Provider Name:          Microsoft
+    Class Name:             Display
+    Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+    Driver Version:         06/21/2006 10.0.26100.1
+    Signer Name:            Microsoft Windows
+    Matching Device ID:     PCI\CC_0300
+    Driver Rank:            00FB2006
+    Driver Status:          Outranked
+
+(exit 0)

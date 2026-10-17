@@ -1,0 +1,185 @@
+>>>  Section start 2026/10/17 03:38:50.825
+      cmd: "pnputil.exe" /add-driver C:\win3d\kmd\viogpu3d.inf /install
+     dvs: Flags: 0x00000000
+     dvs: {Driver Setup Import Driver Package: C:\win3d\kmd\viogpu3d.inf} 03:38:50.831
+     sto:      {Copy Driver Package: C:\win3d\kmd\viogpu3d.inf} 03:38:50.867
+     sto:           Driver Package = C:\win3d\kmd\viogpu3d.inf
+     sto:           Flags          = 0x00000007
+     sto:           Destination    = C:\WINDOWS\TEMP\{b7e51335-84ea-3c46-b181-e45dcfcd86ba}
+     sto:           Copying driver package files to 'C:\WINDOWS\TEMP\{b7e51335-84ea-3c46-b181-e45dcfcd86ba}'.
+     flq:           {FILE_QUEUE_COMMIT} 03:38:50.888
+     flq:                Copying 'C:\win3d\kmd\vgpusrv.exe' to 'C:\WINDOWS\TEMP\{b7e51335-84ea-3c46-b181-e45dcfcd86ba}\vgpusrv.exe'.
+     flq:                Copying 'C:\win3d\kmd\viogpu3d.cat' to 'C:\WINDOWS\TEMP\{b7e51335-84ea-3c46-b181-e45dcfcd86ba}\viogpu3d.cat'.
+     flq:                Copying 'C:\win3d\kmd\viogpu3d.inf' to 'C:\WINDOWS\TEMP\{b7e51335-84ea-3c46-b181-e45dcfcd86ba}\viogpu3d.inf'.
+     flq:                Copying 'C:\win3d\kmd\viogpu3d.sys' to 'C:\WINDOWS\TEMP\{b7e51335-84ea-3c46-b181-e45dcfcd86ba}\viogpu3d.sys'.
+     flq:                Copying 'C:\win3d\kmd\viogpuap.exe' to 'C:\WINDOWS\TEMP\{b7e51335-84ea-3c46-b181-e45dcfcd86ba}\viogpuap.exe'.
+     flq:           {FILE_QUEUE_COMMIT - exit(0x00000000)} 03:38:50.901
+     sto:      {Copy Driver Package: exit(0x00000000)} 03:38:50.901
+     ump:      Import flags: 0x00040000
+     pol:      {Driver package policy check} 03:38:50.958
+     pol:      {Driver package policy check - exit(0x00000000)} 03:38:50.958
+     sto:      {Stage Driver Package: C:\WINDOWS\TEMP\{b7e51335-84ea-3c46-b181-e45dcfcd86ba}\viogpu3d.inf} 03:38:50.958
+     inf:           Provider       = Hardsoft Swed.
+     inf:           Class GUID     = {4d36e968-e325-11ce-bfc1-08002be10318}
+     inf:           Driver Version = 09/27/2026,100.6.101.58100
+     inf:           Catalog File   = viogpu3d.cat
+     inf:           Version Flags  = 0x00000003
+     inf:           {Query Configurability: C:\WINDOWS\TEMP\{b7e51335-84ea-3c46-b181-e45dcfcd86ba}\viogpu3d.inf} 03:38:50.966
+     inf:                Driver package 'viogpu3d.inf' is configurable.
+     inf:           {Query Configurability: exit(0x00000000)} 03:38:50.970
+     flq:           {FILE_QUEUE_COMMIT} 03:38:50.972
+     flq:                Copying 'C:\WINDOWS\TEMP\{b7e51335-84ea-3c46-b181-e45dcfcd86ba}\vgpusrv.exe' to 'C:\WINDOWS\System32\DriverStore\Temp\{0f731e4c-303e-554d-87ca-18b617d2aff0}\vgpusrv.exe'.
+     flq:                Copying 'C:\WINDOWS\TEMP\{b7e51335-84ea-3c46-b181-e45dcfcd86ba}\viogpu3d.cat' to 'C:\WINDOWS\System32\DriverStore\Temp\{0f731e4c-303e-554d-87ca-18b617d2aff0}\viogpu3d.cat'.
+     flq:                Copying 'C:\WINDOWS\TEMP\{b7e51335-84ea-3c46-b181-e45dcfcd86ba}\viogpu3d.inf' to 'C:\WINDOWS\System32\DriverStore\Temp\{0f731e4c-303e-554d-87ca-18b617d2aff0}\viogpu3d.inf'.
+     flq:                Copying 'C:\WINDOWS\TEMP\{b7e51335-84ea-3c46-b181-e45dcfcd86ba}\viogpu3d.sys' to 'C:\WINDOWS\System32\DriverStore\Temp\{0f731e4c-303e-554d-87ca-18b617d2aff0}\viogpu3d.sys'.
+     flq:                Copying 'C:\WINDOWS\TEMP\{b7e51335-84ea-3c46-b181-e45dcfcd86ba}\viogpuap.exe' to 'C:\WINDOWS\System32\DriverStore\Temp\{0f731e4c-303e-554d-87ca-18b617d2aff0}\viogpuap.exe'.
+     flq:           {FILE_QUEUE_COMMIT - exit(0x00000000)} 03:38:51.018
+     sto:           {DRIVERSTORE IMPORT VALIDATE} 03:38:51.020
+     sig:                Driver package catalog is valid.
+     sig:                {_VERIFY_FILE_SIGNATURE} 03:38:51.031
+     sig:                     Key      = viogpu3d.inf
+     sig:                     FilePath = C:\WINDOWS\System32\DriverStore\Temp\{0f731e4c-303e-554d-87ca-18b617d2aff0}\viogpu3d.inf
+     sig:                     Catalog  = C:\WINDOWS\System32\DriverStore\Temp\{0f731e4c-303e-554d-87ca-18b617d2aff0}\viogpu3d.cat
+!    sig:                     Verifying file against specific (valid) catalog failed.
+!    sig:                     Error 0x800b0109: A certificate chain processed, but terminated in a root certificate which is not trusted by the trust provider.
+     sig:                {_VERIFY_FILE_SIGNATURE exit(0x800b0109)} 03:38:51.045
+     sig:                {_VERIFY_FILE_SIGNATURE} 03:38:51.047
+     sig:                     Key      = viogpu3d.inf
+     sig:                     FilePath = C:\WINDOWS\System32\DriverStore\Temp\{0f731e4c-303e-554d-87ca-18b617d2aff0}\viogpu3d.inf
+     sig:                     Catalog  = C:\WINDOWS\System32\DriverStore\Temp\{0f731e4c-303e-554d-87ca-18b617d2aff0}\viogpu3d.cat
+     sig:                     Success: File is signed in Authenticode(tm) catalog.
+     sig:                     Error 0xe0000241: The INF was signed with an Authenticode(tm) catalog from a trusted publisher.
+     sig:                {_VERIFY_FILE_SIGNATURE exit(0xe0000241)} 03:38:51.058
+     sto:           {DRIVERSTORE IMPORT VALIDATE: exit(0x00000000)} 03:38:51.089
+     sig:           Signer Score  = 0x0F000000 (Authenticode)
+     sig:           Signer Name   = vmlab-win3d Test Driver Signing
+     sto:           {Core Driver Package Import: viogpu3d.inf_amd64_9416c9e59a32b233} 03:38:51.094
+     sto:                {DRIVERSTORE IMPORT BEGIN} 03:38:51.094
+     sto:                {DRIVERSTORE IMPORT BEGIN: exit(0x00000000)} 03:38:51.094
+     cpy:                {Copy Directory: C:\WINDOWS\System32\DriverStore\Temp\{0f731e4c-303e-554d-87ca-18b617d2aff0}} 03:38:51.096
+     cpy:                     Target Path = C:\WINDOWS\System32\DriverStore\FileRepository\viogpu3d.inf_amd64_9416c9e59a32b233
+     cpy:                {Copy Directory: exit(0x00000000)} 03:38:51.098
+     idb:                {Register Driver Package: C:\WINDOWS\System32\DriverStore\FileRepository\viogpu3d.inf_amd64_9416c9e59a32b233\viogpu3d.inf} 03:38:51.118
+     idb:                     Created driver package object 'viogpu3d.inf_amd64_9416c9e59a32b233' in DRIVERS database node.
+     idb:                     Created driver INF file object 'oem15.inf' in DRIVERS database node.
+     idb:                     Registered driver package 'viogpu3d.inf_amd64_9416c9e59a32b233' with 'oem15.inf'.
+     idb:                {Register Driver Package: exit(0x00000000)} 03:38:51.121
+     idb:                {Publish Driver Package: C:\WINDOWS\System32\DriverStore\FileRepository\viogpu3d.inf_amd64_9416c9e59a32b233\viogpu3d.inf} 03:38:51.124
+     idb:                     Activating driver package 'viogpu3d.inf_amd64_9416c9e59a32b233'.
+     cpy:                     Published 'viogpu3d.inf_amd64_9416c9e59a32b233\viogpu3d.inf' to 'oem15.inf'.
+     idb:                     Indexed 2 device IDs for 'viogpu3d.inf_amd64_9416c9e59a32b233'.
+     sto:                     Flushed driver database node 'DRIVERS'. Time = 31 ms
+     sto:                     Flushed driver database node 'SYSTEM'. Time = 0 ms
+     idb:                {Publish Driver Package: exit(0x00000000)} 03:38:51.164
+     sto:                {DRIVERSTORE IMPORT END} 03:38:51.166
+     dvi:                     Flushed all driver package files to disk. Time = 17 ms
+     sig:                     Installed catalog 'viogpu3d.cat' as 'oem15.cat'.
+     sto:                {DRIVERSTORE IMPORT END: exit(0x00000000)} 03:38:51.248
+     sto:           {Core Driver Package Import: exit(0x00000000)} 03:38:51.250
+     sto:      {Stage Driver Package: exit(0x00000000)} 03:38:51.252
+     dvs:      Driver Package:
+     dvs:           Outcome        - Imported
+     dvs:           Driver INF     - viogpu3d.inf (oem15.inf)
+     dvs:           Class GUID     - {4d36e968-e325-11ce-bfc1-08002be10318}
+     dvs:           Driver Version - 09/27/2026,100.6.101.58100
+     dvs: {Driver Setup Import Driver Package - exit (0x00000000)} 03:38:51.269
+     dvs: {Driver Setup Update Device: PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18} 03:38:51.270
+     utl:      {Select Drivers - PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18} 03:38:51.272
+     utl:           Driver Node:
+     utl:                Status         - Selected
+     utl:                Driver INF     - oem15.inf (C:\WINDOWS\System32\DriverStore\FileRepository\viogpu3d.inf_amd64_9416c9e59a32b233\viogpu3d.inf)
+     utl:                Class GUID     - {4d36e968-e325-11ce-bfc1-08002be10318}
+     utl:                Driver Version - 09/27/2026,100.6.101.58100
+     utl:                Configuration  - PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+     utl:                Driver Rank    - 00F90000
+     utl:                Signer Score   - Authenticode (0F000000)
+     utl:                Attributes     - Legacy
+     utl:           Driver Node:
+     utl:                Status         - Outranked | Installed
+     utl:                Driver INF     - oem7.inf (C:\WINDOWS\System32\DriverStore\FileRepository\viogpudo.inf_amd64_d1816df2ef9c583c\viogpudo.inf)
+     utl:                Class GUID     - {4d36e968-e325-11ce-bfc1-08002be10318}
+     utl:                Driver Version - 07/09/2025,100.101.104.28500
+     utl:                Configuration  - PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01 [VioGpuDod_Inst]
+     utl:                Driver Rank    - 00F90000
+     utl:                Signer Score   - WHQL (0D000005)
+     utl:                Submission ID  - 30097770_13771730929169208_1152921505699737970
+     utl:           Driver Node:
+     utl:                Status         - Outranked | Installed
+     utl:                Driver INF     - oem7.inf (C:\WINDOWS\System32\DriverStore\FileRepository\viogpudo.inf_amd64_d1816df2ef9c583c\viogpudo.inf)
+     utl:                Class GUID     - {4d36e968-e325-11ce-bfc1-08002be10318}
+     utl:                Driver Version - 07/09/2025,100.101.104.28500
+     utl:                Configuration  - PCI\VEN_1AF4&DEV_1050 [VioGpuDod_Inst]
+     utl:                Driver Rank    - 00F93001
+     utl:                Signer Score   - WHQL (0D000005)
+     utl:                Submission ID  - 30097770_13771730929169208_1152921505699737970
+     utl:           Driver Node:
+     utl:                Status         - Outranked
+     utl:                Driver INF     - display.inf (C:\WINDOWS\System32\DriverStore\FileRepository\display.inf_amd64_34a28de3c87d810f\display.inf)
+     utl:                Class GUID     - {4d36e968-e325-11ce-bfc1-08002be10318}
+     utl:                Driver Version - 06/21/2006,10.0.26100.1
+     utl:                Configuration  - PCI\CC_0300 [MSBDA]
+     utl:                Driver Rank    - 00FB2006
+     utl:                Signer Score   - Inbox (0D000003)
+     utl:      {Select Drivers - exit(0x00000000} 03:38:51.296
+     dvs:      Installing best driver (oem15.inf) on device 'PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18'.
+     ump:      {Plug and Play Service: Device Install for PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18}
+     dvi:           Install flags: 0x00010001
+     dvi:           {Core Device Install} 03:38:51.308
+     dvi:                {Configure Device - PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18} 03:38:51.316
+     dvi:                     Device Status: 0x0180200a
+     dvi:                     Config Flags: 0x00000000
+     dvi:                     Parent Device: ACPI\PNP0A08\0
+     sto:                     {Configure Driver Package: C:\WINDOWS\System32\DriverStore\FileRepository\viogpu3d.inf_amd64_9416c9e59a32b233\viogpu3d.inf} 03:38:51.319
+     sto:                          Source Filter  = PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+     inf:                          Config Options = IsolationCompat
+     inf:                          Class GUID     = {4d36e968-e325-11ce-bfc1-08002be10318}
+     inf:                          Class Options  = Configurable
+     inf:                          {Configure Driver: Hardsoft VirtIO GPU 3D controller}
+     inf:                               Section Name = VioGpu3D_Inst.NT
+     inf:                               {Add Service: VioGpu3D}
+     inf:                                    Flags         = 0x2
+     inf:                                    Start Type    = 3
+     inf:                                    Service Type  = 1
+     inf:                                    Error Control = 0
+     inf:                                    Image Path    = \SystemRoot\System32\DriverStore\FileRepository\viogpu3d.inf_amd64_9416c9e59a32b233\viogpu3d.sys
+     inf:                                    Created new service 'VioGpu3D'.
+     inf:                               {Add Service: exit(0x00000000)}
+     inf:                               {Add Service: vgpusrv}
+     inf:                                    Flags         = 0x800
+     inf:                                    Start Type    = 2
+     inf:                                    Service Type  = 16
+     inf:                                    Error Control = 1
+     inf:                                    Image Path    = %SystemRoot%\System32\DriverStore\FileRepository\viogpu3d.inf_amd64_9416c9e59a32b233\vgpusrv.exe
+     inf:                                    Display Name  = VioGpu Resolution Service
+     inf:                                    Created new service 'vgpusrv'.
+     inf:                               {Add Service: exit(0x00000000)}
+     inf:                               Hardware Id  = PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+     inf:                               {Configure Driver Configuration: VioGpu3D_Inst.NT}
+     inf:                                    Service Name  = VioGpu3D
+     inf:                                    Included INFs = msdv.inf
+     inf:                                    Win32 Services = vgpusrv
+     inf:                                    Config Flags  = 0x00000000
+     inf:                               {Configure Driver Configuration: exit(0x00000000)}
+     inf:                          {Configure Driver: exit(0x00000000)}
+     flq:                          {FILE_QUEUE_COMMIT} 03:38:51.348
+     flq:                          {FILE_QUEUE_COMMIT - exit(0x00000000)} 03:38:51.348
+     inf:                          Started service 'vgpusrv'. 03:38:51.468
+     sto:                          Driver configuration complete.
+     sto:                     {Configure Driver Package: exit(0x00000000)} 03:38:51.470
+     dvi:                     Install Device: Configuring device. 03:38:51.472
+     dvi:                          Configuration: oem15.inf:PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01,*
+     dvi:                     Install Device: Configuring device completed. 03:38:51.474
+     dvi:                     Device Status: 0x0180200a
+     dvi:                     Install Device: Removing device 'PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18' and sub-tree. 03:38:51.476
+     dvi:                     Install Device: Removing device sub-tree completed. 03:38:51.530
+     dvi:                     Install Device: Restarting device. 03:38:51.530
+     dvi:                     Install Device: Restarting device completed. 03:38:51.568
+     dvi:                {Configure Device - exit(0x00000000)} 03:38:51.568
+     dvi:           {Core Device Install - exit(0x00000000)} 03:38:51.570
+     ump:      {Plug and Play Service: Device Install exit(00000000)}
+     dvs:      {Install Related Drivers - PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18} 03:38:51.574
+     dvs:      {Install Related Drivers: exit(0x00000000)} 03:38:51.576
+     dvs: {Driver Setup Update Device - exit(0x00000000)} 03:38:51.578
+<<<  Section end 2026/10/17 03:38:51.578
+<<<  [Exit status: SUCCESS]
+

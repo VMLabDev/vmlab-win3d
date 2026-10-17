@@ -1,0 +1,52 @@
+# sign-driver.sh idempotence
+
+sha256 of the signed package after the first run:
+79177910890b1b202261876f3a8b9cad77d3b625e52833b60a675e541efd300b  vgpusrv.exe
+c32a73ab8ebe992209953e321b2711830fd257beee04786457104f938c678479  viogpu3d.cat
+50b20f4493076fdc2b6f2d8920b57e78eb9087ac6bd2d399115278f7513b36f2  viogpu3d.inf
+6be79f7ed5637a14ccc40b447fc34f63de5680f1d0427f744bea86837c991d09  viogpu3d.sys
+f84a460e325010bed718dce1ed98575c8c1560cd2ddaa29e159c05011c727aad  viogpuap.exe
+
+build/signing/sign-driver.sh run again on the same directory; diff of sha256 lists:
+(no difference)
+
+## osslsigncode output of the second run
+== sign PE files
+  signed vgpusrv.exe
+  signed viogpu3d.sys
+  signed viogpuap.exe
+== catalog viogpu3d.cat
+  hwids pci\ven_1af4&dev_1050&subsys_11001af4&rev_01
+  member vgpusrv.exe:6742D719E97A81B2757771D4376C8C6BEE7417A9:PE
+  member viogpu3d.inf:74ED53AE821AF9692D3E5439618608457E8FACAE
+  member viogpuap.exe:B0CDEC194B8EFB2E7E6F393AA826150C323F6F55:PE
+  member viogpu3d.sys:C2DAAEB4FE00347A1DD3B261AA1907395256A779:PE
+== verify
+  ok vgpusrv.exe
+  ok viogpu3d.sys
+  ok viogpuap.exe
+  ok viogpu3d.cat
+
+## unsigned build output (out/kmd/BUILDINFO)
+driver_version 100.6.101.58100
+pin yttrium-virtio-gpu b99d951a1c97f6fb3a1adbc08a4d2ab9ce9f5a15 -
+pin llvm-mingw 20261006 5f9c6ed95b2d4bdb2869a488c5fd5857fbdabcf288a0aa3eb1da43f6a08d8ab4
+pin wdk-x64 10.0.26100.6584 c393d03dfb640b5c92f546b32f6770ef68cd3aaf691956e7d66d8e2c28a1b55e
+pin sdk-cpp 10.0.26100.6584 5d31b38205bdd9ac761b4cb39fbbc6b7209b01c11194324afc674d7d119483a0
+pin debian sha256:2c037a04925515fdd6ea85ea14a682d0e79931f5e9f5d07b6dbfc6ba12f9e858 -
+patch 0001-kmd-r10-copy.patch e0e13ed4f42156231255d5284c6de197f1f5e572fa20f772b2692021cf5a358b
+sha256 601ddd307f995980f4e1729cb4399b8de476863087fdf9f3ea894a4ebaf6bdf7  ./viogpu3d_x64_wow64.inf.template
+sha256 fd091e6d5d87ffca9c5e2b6c3c5e0d3d358a066304a4a464faeddc6e39f8bb48  ./x64/vgpusrv.exe
+sha256 50b20f4493076fdc2b6f2d8920b57e78eb9087ac6bd2d399115278f7513b36f2  ./x64/viogpu3d.inf
+sha256 5d187833571a6bdb13b0ac0b6b72ca6d48ab5620dae599d8af04131802126116  ./x64/viogpu3d.pdb
+sha256 7fefcfcac00f1e9fb690036adbdba941517115b597f4cde657a336075a8cc07e  ./x64/viogpu3d.sys
+sha256 fd78ce1c3a1cb30e7995310df3440953ea9a2bab6ce8e23b02a65c33e0761f50  ./x64/viogpuap.exe
+
+## test certificate (.signing/CERT-INFO.txt)
+subject:        O=vmlab-win3d local test (not for distribution),CN=vmlab-win3d Test Driver Signing
+notBefore:      Oct 17 02:59:21 2026 GMT
+notAfter:       Oct 14 02:59:21 2036 GMT
+serial:         1FFD5FB1E11E58791C1ACD541E5E6EF149784264
+sha1 thumbprint: 7E7A1D211D88151257CDDE2CFCBB9FEE1886665C
+sha256:         865DB68A2F25F6D9EA631AFCA54ABA8C8080D88D1B96465B0DCF2228AACF6552
+sign time:      2026-10-17T03:59:21Z

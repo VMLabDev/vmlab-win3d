@@ -1,0 +1,124 @@
+# After reboot
+## Display devices
+InstanceId:   PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18
+FriendlyName: Hardsoft VirtIO GPU 3D controller
+Status:       Error
+DEVPKEY_Device_ProblemCode:    43
+DEVPKEY_Device_DriverInfPath:  oem15.inf
+DEVPKEY_Device_DriverVersion:  100.6.101.58100
+DEVPKEY_Device_DriverProvider: Hardsoft Swed.
+DEVPKEY_Device_DriverDate:     9/26/2026 5:00:00 PM
+DEVPKEY_Device_Service:        VioGpu3D
+
+## pnputil /enum-devices /class Display /drivers
+Microsoft PnP Utility
+
+Instance ID:                PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18
+Device Description:         Hardsoft VirtIO GPU 3D controller
+Class Name:                 Display
+Class GUID:                 {4d36e968-e325-11ce-bfc1-08002be10318}
+Manufacturer Name:          Hardsoft Swed.
+Status:                     Problem
+Problem Code:               43 (0x2B) [CM_PROB_FAILED_POST_START]
+Driver Name:                oem15.inf
+Matching Drivers:
+    Driver Name:            oem15.inf
+    Original Name:          viogpu3d.inf
+    Provider Name:          Hardsoft Swed.
+    Class Name:             Display
+    Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+    Driver Version:         09/27/2026 100.6.101.58100
+    Signer Name:            vmlab-win3d Test Driver Signing
+    Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+    Driver Rank:            00F90000
+    Driver Status:          Best Ranked / Installed
+                            
+    Driver Name:            oem7.inf
+    Original Name:          viogpudo.inf
+    Provider Name:          Red Hat, Inc.
+    Class Name:             Display
+    Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+    Driver Version:         07/09/2025 100.101.104.28500
+    Signer Name:            Microsoft Windows Hardware Compatibility Publisher
+    Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+    Driver Rank:            00F90000
+    Driver Status:          Outranked
+                            
+    Driver Name:            oem7.inf
+    Original Name:          viogpudo.inf
+    Provider Name:          Red Hat, Inc.
+    Class Name:             Display
+    Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+    Driver Version:         07/09/2025 100.101.104.28500
+    Signer Name:            Microsoft Windows Hardware Compatibility Publisher
+    Matching Device ID:     PCI\VEN_1AF4&DEV_1050
+    Driver Rank:            00F93001
+    Driver Status:          Outranked
+                            
+    Driver Name:            display.inf
+    Provider Name:          Microsoft
+    Class Name:             Display
+    Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+    Driver Version:         06/21/2006 10.0.26100.1
+    Signer Name:            Microsoft Windows
+    Matching Device ID:     PCI\CC_0300
+    Driver Rank:            00FB2006
+    Driver Status:          Outranked
+
+(exit 0)
+## sc.exe query VioGpu3D
+
+SERVICE_NAME: VioGpu3D 
+        TYPE               : 1  KERNEL_DRIVER  
+        STATE              : 1  STOPPED 
+        WIN32_EXIT_CODE    : 1077  (0x435)
+        SERVICE_EXIT_CODE  : 0  (0x0)
+        CHECKPOINT         : 0x0
+        WAIT_HINT          : 0x0
+(exit 0)
+## sc.exe query vgpusrv
+
+SERVICE_NAME: vgpusrv 
+        TYPE               : 10  WIN32_OWN_PROCESS  
+        STATE              : 4  RUNNING 
+                                (STOPPABLE, NOT_PAUSABLE, ACCEPTS_SHUTDOWN)
+        WIN32_EXIT_CODE    : 0  (0x0)
+        SERVICE_EXIT_CODE  : 0  (0x0)
+        CHECKPOINT         : 0x0
+        WAIT_HINT          : 0x0
+(exit 0)
+## Kernel service
+
+
+Name      : VioGpu3D
+State     : Stopped
+Status    : OK
+PathName  : C:\WINDOWS\system32\DriverStore\FileRepository\viogpu3d.inf_amd64_9416c9e59a32b233\viogpu3d.sys
+StartMode : Manual
+
+
+
+## Get-AuthenticodeSignature (driver store copies)
+driver store dir: C:\Windows\System32\DriverStore\FileRepository\viogpu3d.inf_amd64_9416c9e59a32b233
+vgpusrv.exe    Valid  O=vmlab-win3d local test (not for distribution), CN=vmlab-win3d Test Driver Signing [Signature verified.]
+viogpu3d.cat   Valid  O=vmlab-win3d local test (not for distribution), CN=vmlab-win3d Test Driver Signing [Signature verified.]
+viogpu3d.sys   Valid  O=vmlab-win3d local test (not for distribution), CN=vmlab-win3d Test Driver Signing [Signature verified.]
+viogpuap.exe   Valid  O=vmlab-win3d local test (not for distribution), CN=vmlab-win3d Test Driver Signing [Signature verified.]
+## Code Integrity events naming the package (3004 3033 3089 3077 = rejections)
+no Code Integrity events mention viogpu3d, vgpusrv or viogpuap
+## Kernel-PnP configuration events for the device (400 configured, 410 started, 411 problem)
+10/17/2026 3:38:51 AM id=410 Device PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18 was started. Driver Name: oem15.inf Class GUID: {4d36e968-e325-11ce-bfc1-08002be10318} Service: VioGpu3D Lower Filters: Upper Filters: 
+10/17/2026 3:38:51 AM id=400 Device PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18 was configured. Driver Name: oem15.inf Driver Package ID: viogpu3d.inf_amd64_9416c9e59a32b233 Class GUID: {4d36e968-e325-11ce-bfc1-08002be10318} Driver Date: 09/27/2026 Driver Version: 100.6.101.58100 Driver Provider: Hardsoft Swed. Driver Section: VioGpu3D_Inst.NT Driver Rank: 0xF90000 Matching Device ID: PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01 Outranked Drivers: oem7.inf:PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01:00F90000 oem7.inf:PCI\VEN_1AF4&DEV_1050:00F93001 display.inf:PCI\CC_0300:00FB2006 Device Updated: true Parent Device: ACPI\PNP0A08\0
+10/17/2026 3:35:39 AM id=420 Device PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&20 was deleted. Class GUID: {4d36e968-e325-11ce-bfc1-08002be10318}
+10/17/2026 3:35:33 AM id=400 Device DISPLAY\RHT1234\4&2292971a&0&UID0 was configured. Driver Name: monitor.inf Driver Package ID: monitor.inf_amd64_a4dd19b6b4818242 Class GUID: {4d36e96e-e325-11ce-bfc1-08002be10318} Driver Date: 06/21/2006 Driver Version: 10.0.26100.9278 Driver Provider: Microsoft Driver Section: PnPMonitor.Install Driver Rank: 0xFF2000 Matching Device ID: *PNP09FF Outranked Drivers: Device Updated: false Parent Device: PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18
+10/17/2026 3:35:30 AM id=410 Device PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18 was started. Driver Name: oem7.inf Class GUID: {4d36e968-e325-11ce-bfc1-08002be10318} Service: VioGpuDod Lower Filters: Upper Filters: 
+10/17/2026 3:35:29 AM id=400 Device PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18 was configured. Driver Name: oem7.inf Driver Package ID: viogpudo.inf_amd64_d1816df2ef9c583c Class GUID: {4d36e968-e325-11ce-bfc1-08002be10318} Driver Date: 07/09/2025 Driver Version: 100.101.104.28500 Driver Provider: Red Hat, Inc. Driver Section: VioGpuDod_Inst Driver Rank: 0xF90000 Matching Device ID: PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01 Outranked Drivers: oem7.inf:PCI\VEN_1AF4&DEV_1050:00F93001 display.inf:PCI\CC_0300:00FB2006 Device Updated: false Parent Device: ACPI\PNP0A08\0
+10/17/2026 3:35:27 AM id=430 Device PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18 requires further installation.
+10/5/2026 11:48:34 PM id=400 Device DISPLAY\RHT1234\4&600cfc4&0&UID0 was configured. Driver Name: monitor.inf Driver Package ID: monitor.inf_amd64_cf1e3aee79246903 Class GUID: {4d36e96e-e325-11ce-bfc1-08002be10318} Driver Date: 06/21/2006 Driver Version: 10.0.26100.1150 Driver Provider: Microsoft Driver Section: PnPMonitor.Install Driver Rank: 0xFF2000 Matching Device ID: *PNP09FF Outranked Drivers: Device Updated: false Parent Device: PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&20
+10/5/2026 11:48:34 PM id=410 Device PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&20 was started. Driver Name: oem7.inf Class GUID: {4d36e968-e325-11ce-bfc1-08002be10318} Service: VioGpuDod Lower Filters: Upper Filters: 
+10/5/2026 11:48:34 PM id=400 Device PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&20 was configured. Driver Name: oem7.inf Driver Package ID: viogpudo.inf_amd64_d1816df2ef9c583c Class GUID: {4d36e968-e325-11ce-bfc1-08002be10318} Driver Date: 07/09/2025 Driver Version: 100.101.104.28500 Driver Provider: Red Hat, Inc. Driver Section: VioGpuDod_Inst Driver Rank: 0xF90000 Matching Device ID: PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01 Outranked Drivers: oem7.inf:PCI\VEN_1AF4&DEV_1050:00F93001 display.inf:PCI\CC_0300:00FB2006 Device Updated: true Parent Device: ACPI\PNP0A08\0
+10/6/2026 6:42:11 AM id=400 Device DISPLAY\Default_Monitor\4&600cfc4&0&UID0 was configured. Driver Name: monitor.inf Driver Package ID: monitor.inf_amd64_cf1e3aee79246903 Class GUID: {4d36e96e-e325-11ce-bfc1-08002be10318} Driver Date: 06/21/2006 Driver Version: 10.0.26100.1150 Driver Provider: Microsoft Driver Section: NonPnPMonitor.Install Driver Rank: 0xFF0000 Matching Device ID: MONITOR\Default_Monitor Outranked Drivers: monitor.inf:*PNP09FF:00FF2000 Device Updated: false Parent Device: PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&20
+10/6/2026 6:42:08 AM id=410 Device PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&20 was started. Driver Name: display.inf Class GUID: {4d36e968-e325-11ce-bfc1-08002be10318} Service: BasicDisplay Lower Filters: Upper Filters: 
+## System log: bugchecks and display driver events
+10/17/2026 3:38:51 AM Service Control Manager id=7045 A service was installed in the system. Service Name: VioGpu Resolution Service Service File Name: %SystemRoot%\System32\DriverStore\FileRepository\viogpu3d.inf_amd64_9416c9e59a32b233\vgpusrv.exe Service Type: user mode service Service Start Type: auto start Service Account: LocalSystem
+10/17/2026 3:38:51 AM Service Control Manager id=7045 A service was installed in the system. Service Name: VioGpu3D Service File Name: \SystemRoot\System32\DriverStore\FileRepository\viogpu3d.inf_amd64_9416c9e59a32b233\viogpu3d.sys Service Type: kernel mode driver Service Start Type: demand start Service Account: 
