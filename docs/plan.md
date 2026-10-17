@@ -23,12 +23,18 @@ acceleration. Decided by the user (D1, 2026-10-17): use the existing Yttrium dri
 ## Host assumptions
 
 - Venus works on the AMD iGPU (RADV, `renderD129`), not on the RTX 5090.
-- vmlab >= 0.24.0-alpha (handoff `20261017-142905`, answered 2026-10-17):
-  `gpu { mode = "vulkan" address = "0000:72:00.0" }` gives a one-adapter
-  `virtio-vga-gl,venus=true,blob=true` device on the AMD iGPU, with the Vulkan
-  ICD filtered in QEMU's own environment, and screenshots over VNC. Labs use
-  `labs/probe/vmlab.wcl`; the v0.23 `qemu_args` and isolated-supervisor
+- vmlab >= 0.24.0-alpha (handoff `20261017-142905`, answered 2026-10-17)
+  gives a one-adapter `virtio-vga-gl,venus=true,blob=true` device on the
+  named host GPU, with the Vulkan ICD filtered in QEMU's own environment, and
+  screenshots over VNC. The v0.23 `qemu_args` and isolated-supervisor
   workaround is superseded.
+- vmlab >= 0.25.0-alpha (handoff `20261017-210821`, 2026-10-17) moves the
+  GPU's PCI address into the host config, `~/.config/vmlab/config.wcl`. Labs
+  say `gpu { mode = "vulkan" host_gpu = "AMD1" }` (`labs/probe/vmlab.wcl`),
+  and helios's host config declares `gpu "AMD1" { address = "0000:72:00.0" }`.
+  The host's default GPU is `Nvidia1` (an RTX 5090), so labs name `AMD1`.
+  The evidence so far was taken on 0.23 or 0.24, with
+  `gpu { mode = "vulkan" address = "0000:72:00.0" }` on 0.24.
 
 ## Build layout contract
 

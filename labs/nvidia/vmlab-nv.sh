@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
-# Run vmlab (>= 0.24) against an isolated supervisor, so QEMU can be given a
-# patched virglrenderer render server and debug variables. The lab's
-# gpu.address already selects the RTX 5090 (render node and Vulkan ICD).
+# Run vmlab (>= 0.25.0-alpha) against an isolated supervisor, so QEMU can be
+# given a patched virglrenderer render server and debug variables. The lab's
+# gpu.host_gpu = "Nvidia1" already selects the RTX 5090 (render node and
+# Vulkan ICD) through the host config ~/.config/vmlab/config.wcl, which this
+# script leaves in place (it changes only XDG_RUNTIME_DIR and XDG_STATE_HOME).
 # The user's supervisor is never used.
 #   ./vmlab-nv.sh up | status | exec ... | down | destroy ...
 #   ./vmlab-nv.sh --stop-supervisor
@@ -28,6 +30,10 @@ unset VK_ICD_FILENAMES VK_DRIVER_FILES VK_LOADER_DRIVERS_SELECT MESA_VK_DEVICE_S
 for kv in ${WIN3D_QEMU_ENV:-}; do export "${kv?}"; done
 labdir=${WIN3D_LAB_DIR:-$repo/.scratch/labs/nvidia-a}
 mkdir -p "$labdir"; [ -f "$labdir/vmlab.wcl" ] || cp "$here/vmlab.wcl" "$labdir/vmlab.wcl"
+# A copy made before vmlab 0.25 still names the GPU by gpu.address, which 0.25 rejects.
+if grep -Eq '^[[:space:]]*(address|vulkan_icd)[[:space:]]*=' "$labdir/vmlab.wcl"; then
+  echo "$labdir/vmlab.wcl uses gpu.address (vmlab 0.24); copy $here/vmlab.wcl over it" >&2; exit 1
+fi
 lab=$(sed -n 's/^lab "\([^"]*\)".*/\1/p' "$labdir/vmlab.wcl")
 if [ "${1:-}" = --stop-supervisor ]; then
   # vmlab daemons are not dumpable (their environ is unreadable), so the

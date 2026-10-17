@@ -43,7 +43,7 @@ including the full host GPU matrix.
 
 ## Quick start
 
-You need Docker without sudo, vmlab 0.24.0-alpha or later, the local
+You need Docker without sudo, vmlab 0.25.0-alpha or later, the local
 `windows-11` template, and an AMD or Intel GPU on the host.
 
 ```sh
@@ -53,8 +53,11 @@ scripts/install-into-vm.sh <lab-dir> <vm>      # install, with the reboots
 ```
 
 The lab needs `secure_boot = false` and
-`gpu { mode = "vulkan" address = "<PCI address of the GPU>" }`, as in
-`labs/probe/vmlab.wcl`. [docs/install.md](docs/install.md) has the full
+`gpu { mode = "vulkan" host_gpu = "<name>" }`, where `<name>` is the AMD
+or Intel GPU as declared in the host config, `~/.config/vmlab/config.wcl`
+(for example `gpu "AMD1" { address = "0000:72:00.0" }`), as in
+`labs/probe/vmlab.wcl`. Without `host_gpu` the lab gets the host's default
+GPU. [docs/install.md](docs/install.md) has the full
 steps, including installing from inside the guest with `Install.cmd`.
 `tests/e2e/run.sh --template windows-11` checks every Done item on a fresh
 lab and destroys it afterwards.
