@@ -1,0 +1,24 @@
+import <vmlab.wcl>
+
+// Acceptance lab for tests/e2e/run.sh: the labs/probe/vmlab.wcl shape
+// (docs/host.md, docs/install.md). run.sh copies this file into
+// .scratch/e2e/<template>/lab/ and rewrites the lab name and the template
+// line for --template; as committed it is the windows-11 lab. Bring it up
+// only through run.sh: QEMU also needs VK_DRIVER_FILES (RADV) in the
+// supervisor's environment, which a lab file cannot set.
+lab "win3d-e2e-windows-11" {
+  vm "win" {
+    template = "x86_64/windows-11@26100.1742.5"
+    // The package is test-signed (decision 0001); Secure Boot must be off.
+    secure_boot = false
+    gpu { mode = "vulkan" }
+    qemu_args = [
+      // QEMU 11.1.1 refuses venus=true without blob=true.
+      "-global", "virtio-gpu-gl-device.blob=true",
+      // Without it q35 adds a std VGA, and Venus then enumerates no device.
+      "-vga", "none",
+      // The console must render on the same node as Venus (the AMD iGPU).
+      "-display", "egl-headless,rendernode=/dev/dri/renderD129",
+    ]
+  }
+}
