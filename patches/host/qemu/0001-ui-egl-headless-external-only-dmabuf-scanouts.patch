@@ -1,0 +1,228 @@
+diff --git a/include/ui/egl-helpers.h b/include/ui/egl-helpers.h
+index 405ddd9..f038af1 100644
+--- a/include/ui/egl-helpers.h
++++ b/include/ui/egl-helpers.h
+@@ -54,6 +54,7 @@ bool egl_dmabuf_export_texture(uint32_t tex_id, int *fd, EGLint *offset,
+ 
+ void egl_dmabuf_import_texture(QemuDmaBuf *dmabuf);
+ void egl_dmabuf_release_texture(QemuDmaBuf *dmabuf);
++bool egl_texture_is_external(uint32_t texture);
+ void egl_dmabuf_create_sync(QemuDmaBuf *dmabuf);
+ void egl_dmabuf_create_fence(QemuDmaBuf *dmabuf);
+ 
+diff --git a/ui/egl-headless.c b/ui/egl-headless.c
+index ba27efc..fa8df40 100644
+--- a/ui/egl-headless.c
++++ b/ui/egl-headless.c
+@@ -18,6 +18,10 @@ typedef struct egl_dpy {
+     bool y_0_top;
+     uint32_t pos_x;
+     uint32_t pos_y;
++    /* external dma-buf texture copied into guest_fb before each read-back */
++    GLuint ext_texture;
++    GLuint ext_program;
++    GLuint ext_vbo;
+ } egl_dpy;
+ 
+ static GPtrArray *egl_dpys;
+@@ -52,6 +56,7 @@ static void egl_scanout_disable(DisplayChangeListener *dcl)
+ {
+     egl_dpy *edpy = container_of(dcl, egl_dpy, dcl);
+ 
++    edpy->ext_texture = 0;
+     egl_fb_destroy(&edpy->guest_fb);
+     egl_fb_destroy(&edpy->blit_fb);
+ }
+@@ -70,8 +75,20 @@ static void egl_scanout_texture(DisplayChangeListener *dcl,
+     edpy->y_0_top = backing_y_0_top;
+ 
+     /* source framebuffer */
+-    egl_fb_setup_for_tex(&edpy->guest_fb,
+-                         backing_width, backing_height, backing_id, false);
++    if (egl_texture_is_external(backing_id)) {
++        /* an external texture cannot back a framebuffer: copy it (flush) */
++        edpy->ext_texture = backing_id;
++        if (!edpy->guest_fb.delete_texture ||
++            edpy->guest_fb.width != backing_width ||
++            edpy->guest_fb.height != backing_height) {
++            egl_fb_destroy(&edpy->guest_fb);
++            egl_fb_setup_new_tex(&edpy->guest_fb, backing_width, backing_height);
++        }
++    } else {
++        edpy->ext_texture = 0;
++        egl_fb_setup_for_tex(&edpy->guest_fb,
++                             backing_width, backing_height, backing_id, false);
++    }
+ 
+     /* dest framebuffer */
+     if (edpy->blit_fb.width  != backing_width ||
+@@ -140,6 +157,86 @@ static void egl_cursor_position(DisplayChangeListener *dcl,
+     edpy->pos_y = pos_y;
+ }
+ 
++static GLuint egl_ext_compile(GLenum type, const char *src)
++{
++    GLuint shader = glCreateShader(type);
++    GLint ok;
++
++    glShaderSource(shader, 1, &src, NULL);
++    glCompileShader(shader);
++    glGetShaderiv(shader, GL_COMPILE_STATUS, &ok);
++    if (!ok) {
++        char log[512];
++        glGetShaderInfoLog(shader, sizeof(log), NULL, log);
++        error_report("egl-headless: external copy shader: %s", log);
++    }
++    return shader;
++}
++
++/* Draw the external dma-buf texture into guest_fb's own texture, 1:1. */
++static void egl_ext_copy(egl_dpy *edpy)
++{
++    static const char vert[] =
++        "#version 300 es\n"
++        "in vec2 in_position;\n"
++        "out vec2 ex_tex_coord;\n"
++        "void main(void) {\n"
++        "    gl_Position = vec4(in_position, 0.0, 1.0);\n"
++        "    ex_tex_coord = (in_position + 1.0) * 0.5;\n"
++        "}\n";
++    static const char frag[] =
++        "#version 300 es\n"
++        "#extension GL_OES_EGL_image_external_essl3 : require\n"
++        "uniform mediump samplerExternalOES image;\n"
++        "in mediump vec2 ex_tex_coord;\n"
++        "out mediump vec4 out_frag_color;\n"
++        "void main(void) {\n"
++        "    out_frag_color = texture(image, ex_tex_coord);\n"
++        "}\n";
++    static const GLfloat quad[] = { -1, -1, 1, -1, -1, 1, 1, 1 };
++
++    if (!edpy->ext_program) {
++        GLuint vs = egl_ext_compile(GL_VERTEX_SHADER, vert);
++        GLuint fs = egl_ext_compile(GL_FRAGMENT_SHADER, frag);
++
++        edpy->ext_program = glCreateProgram();
++        glAttachShader(edpy->ext_program, vs);
++        glAttachShader(edpy->ext_program, fs);
++        glBindAttribLocation(edpy->ext_program, 0, "in_position");
++        glLinkProgram(edpy->ext_program);
++
++        glDeleteShader(vs);
++        glDeleteShader(fs);
++        glGenBuffers(1, &edpy->ext_vbo);
++        glBindBuffer(GL_ARRAY_BUFFER, edpy->ext_vbo);
++        glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STATIC_DRAW);
++    }
++
++    /*
++     * A core profile context draws only with a vertex array object, and
++     * vertex array objects are not shared between contexts: the context
++     * current here changes (virgl resets on guest reboot), so use a fresh one.
++     */
++    GLuint vao;
++    glGenVertexArrays(1, &vao);
++    glBindVertexArray(vao);
++    glBindBuffer(GL_ARRAY_BUFFER, edpy->ext_vbo);
++    glEnableVertexAttribArray(0);
++    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
++
++    glBindFramebuffer(GL_FRAMEBUFFER_EXT, edpy->guest_fb.framebuffer);
++    glViewport(0, 0, edpy->guest_fb.width, edpy->guest_fb.height);
++    glUseProgram(edpy->ext_program);
++    glActiveTexture(GL_TEXTURE0);
++    glBindTexture(GL_TEXTURE_EXTERNAL_OES, edpy->ext_texture);
++    glUniform1i(glGetUniformLocation(edpy->ext_program, "image"), 0);
++    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
++
++    glBindVertexArray(0);
++    glDeleteVertexArrays(1, &vao);
++    glUseProgram(0);
++}
++
+ static void egl_scanout_flush(DisplayChangeListener *dcl,
+                               uint32_t x, uint32_t y,
+                               uint32_t w, uint32_t h)
+@@ -151,6 +248,10 @@ static void egl_scanout_flush(DisplayChangeListener *dcl,
+     }
+     assert(surface_format(edpy->ds) == PIXMAN_x8r8g8b8);
+ 
++    if (edpy->ext_texture) {
++        egl_ext_copy(edpy);
++    }
++
+     if (edpy->cursor_fb.texture) {
+         /* have cursor -> render using textures */
+         egl_texture_blit(edpy->gls, &edpy->blit_fb, &edpy->guest_fb,
+diff --git a/ui/egl-helpers.c b/ui/egl-helpers.c
+index d689f18..a8bfdb2 100644
+--- a/ui/egl-helpers.c
++++ b/ui/egl-helpers.c
+@@ -323,6 +323,9 @@ bool egl_dmabuf_export_texture(uint32_t tex_id, int *fd, EGLint *offset,
+     return true;
+ }
+ 
++/* textures that egl_dmabuf_import_texture bound as GL_TEXTURE_EXTERNAL_OES */
++static GHashTable *egl_external_textures;
++
+ void egl_dmabuf_import_texture(QemuDmaBuf *dmabuf)
+ {
+     EGLImageKHR image = EGL_NO_IMAGE_KHR;
+@@ -409,6 +412,9 @@ void egl_dmabuf_import_texture(QemuDmaBuf *dmabuf)
+         return;
+     }
+ 
++    while (glGetError() != GL_NO_ERROR) {
++        /* clear stale errors */
++    }
+     glGenTextures(1, &texture);
+     qemu_dmabuf_set_texture(dmabuf, texture);
+     glBindTexture(GL_TEXTURE_2D, texture);
+@@ -416,9 +422,37 @@ void egl_dmabuf_import_texture(QemuDmaBuf *dmabuf)
+     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+ 
+     glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, (GLeglImageOES)image);
++    if (glGetError() != GL_NO_ERROR) {
++        /*
++         * Some drivers (NVIDIA) import some layouts, such as LINEAR, only
++         * as external images.  Import it as one; egl-headless copies it
++         * into a regular texture with a shader before each read-back.
++         */
++        glDeleteTextures(1, &texture);
++        glGenTextures(1, &texture);
++        qemu_dmabuf_set_texture(dmabuf, texture);
++        glBindTexture(GL_TEXTURE_EXTERNAL_OES, texture);
++        glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
++        glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
++        glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, (GLeglImageOES)image);
++        if (glGetError() != GL_NO_ERROR) {
++            error_report("egl: dma-buf import failed as 2D and external texture");
++        } else {
++            if (!egl_external_textures) {
++                egl_external_textures = g_hash_table_new(NULL, NULL);
++            }
++            g_hash_table_add(egl_external_textures, GUINT_TO_POINTER(texture));
++        }
++    }
+     eglDestroyImageKHR(qemu_egl_display, image);
+ }
+ 
++bool egl_texture_is_external(uint32_t texture)
++{
++    return egl_external_textures &&
++           g_hash_table_contains(egl_external_textures, GUINT_TO_POINTER(texture));
++}
++
+ void egl_dmabuf_release_texture(QemuDmaBuf *dmabuf)
+ {
+     uint32_t texture;
+@@ -428,6 +462,9 @@ void egl_dmabuf_release_texture(QemuDmaBuf *dmabuf)
+         return;
+     }
+ 
++    if (egl_external_textures) {
++        g_hash_table_remove(egl_external_textures, GUINT_TO_POINTER(texture));
++    }
+     glDeleteTextures(1, &texture);
+     qemu_dmabuf_set_texture(dmabuf, 0);
+ }

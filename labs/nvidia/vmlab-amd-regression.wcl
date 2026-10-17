@@ -1,0 +1,15 @@
+import <vmlab.wcl>
+
+// Regression lab for the guest-side NVIDIA fix (patches/mesa/0020): the same
+// package on the AMD iGPU (0000:72:00.0, RADV). Plain vmlab >= 0.24, no
+// patched host components. See docs/nvidia.md.
+lab "win3d-nvidia-amdreg" {
+  vm "win11" {
+    template = "x86_64/windows-11@26100.1742.5"
+    secure_boot = false
+    gpu {
+      mode    = "vulkan"
+      address = "0000:72:00.0"
+    }
+  }
+}

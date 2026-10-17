@@ -1,0 +1,30 @@
+# QEMU_EGL_DEBUG build (not committed), stock render server, guest fix. First boot, then a guest reboot at line ~785: the current GL context changes.
+egl dbg: scanout_texture id 1 ext 0 1280x800 ctx 0x7f6168325731
+egl dbg: scanout_texture id 1 ext 0 1280x800 ctx 0x7f6168325731
+egl dbg: scanout_texture id 3 ext 0 1280x800 ctx 0x7f6168325731
+egl dbg: scanout_texture id 1 ext 0 1280x800 ctx 0x7f6168325731
+egl dbg: scanout_texture id 3 ext 0 1280x800 ctx 0x7f6168325731
+egl dbg: scanout_texture id 3 ext 0 1280x800 ctx 0x7f6168325731
+egl dbg: scanout_texture id 1 ext 1 1280x800 ctx 0x7f6168325731
+egl dbg: ext copy ctx 0x7f6168325731 tex 1 fb 4 1280x800 prog 9 err 0x0 fbstatus 0x8cd5
+egl dbg: scanout_texture id 5 ext 1 1280x800 ctx 0x7f6168325731
+egl dbg: ext copy ctx 0x7f6168325731 tex 5 fb 4 1280x800 prog 9 err 0x0 fbstatus 0x8cd5
+...
+egl dbg: scanout_texture id 5 ext 1 1280x800 ctx 0x7f6168325731
+egl dbg: scanout_texture id 1 ext 1 1280x800 ctx 0x7f6168325731
+egl dbg: scanout_texture id 5 ext 1 1280x800 ctx 0x7f6168325731
+egl dbg: scanout_texture id 1 ext 1 1280x800 ctx 0x7f6168325731
+egl dbg: scanout_texture id 5 ext 1 1280x800 ctx 0x7f6168325731
+egl dbg: scanout_texture id 1 ext 1 1280x800 ctx 0x7f6168325731
+egl dbg: scanout_texture id 2 ext 0 1280x800 ctx 0x7f6158003d61
+egl dbg: scanout_texture id 2 ext 0 1280x800 ctx 0x7f6158003d61
+egl dbg: scanout_texture id 4 ext 0 1280x800 ctx 0x7f6158003d61
+egl dbg: scanout_texture id 2 ext 0 1280x800 ctx 0x7f6158003d61
+egl dbg: scanout_texture id 4 ext 0 1280x800 ctx 0x7f6158003d61
+egl dbg: scanout_texture id 4 ext 0 1280x800 ctx 0x7f6158003d61
+egl dbg: scanout_texture id 2 ext 1 1280x800 ctx 0x7f6158003d61
+...
+egl dbg: scanout_texture id 2 ext 1 1280x800 ctx 0x7f6158003d61
+egl dbg: scanout_texture id 1 ext 1 1280x800 ctx 0x7f6158003d61
+egl dbg: scanout_texture id 2 ext 1 1280x800 ctx 0x7f6158003d61
+egl dbg: scanout_texture id 1 ext 1 1280x800 ctx 0x7f6158003d61

@@ -1,0 +1,38 @@
+
+
+TimeCreated : 10/17/2026 5:07:28 AM
+Message     : Faulting application name: dwm.exe, version: 10.0.26100.9278, time stamp: 0x009bcb8a
+              Faulting module name: dwmcore.dll, version: 10.0.26100.9278, time stamp: 0x9a1af3ba
+              Exception code: 0x889800c0
+              Fault offset: 0x000000000023b255
+              Faulting process id: 0x478
+              Faulting application start time: 0x1DD5E2F9C3016EE
+              Faulting application path: C:\WINDOWS\system32\dwm.exe
+              Faulting module path: C:\WINDOWS\system32\dwmcore.dll
+              Report Id: 86f02895-32be-43ed-a18b-1421d7a22b55
+              Faulting package full name: 
+              Faulting package-relative application ID: 
+
+TimeCreated : 10/17/2026 5:05:56 AM
+Message     : Faulting application name: PickerHost.exe, version: 10.0.26100.9278, time stamp: 0x0ac7a186
+              Faulting module name: Microsoft.UI.Xaml.dll, version: 3.1.6.0, time stamp: 0x97cdad17
+              Exception code: 0xc000027b
+              Fault offset: 0x00000000003a3385
+              Faulting process id: 0x21B4
+              Faulting application start time: 0x1DD5E2FB365644E
+              Faulting application path: C:\Windows\System32\PickerHost.exe
+              Faulting module path: 
+              C:\WINDOWS\SystemApps\Microsoft.WindowsAppRuntime.CBS_8wekyb3d8bbwe\Microsoft.UI.Xaml.dll
+              Report Id: 646b75e3-fb2e-4f40-901b-96120f739640
+              Faulting package full name: 
+              Faulting package-relative application ID: 
+
+
+
+
+  Id ProcessName StartTime            
+  -- ----------- ---------            
+1124 dwm         10/17/2026 5:09:08 AM
+
+
+No User exists for *

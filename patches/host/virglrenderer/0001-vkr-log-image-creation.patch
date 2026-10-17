@@ -1,0 +1,111 @@
+diff --git a/src/venus/vkr_device_memory.c b/src/venus/vkr_device_memory.c
+index ffe621b..9fbdd04 100644
+--- a/src/venus/vkr_device_memory.c
++++ b/src/venus/vkr_device_memory.c
+@@ -5,6 +5,8 @@
+ 
+ #include "vkr_device_memory.h"
+ 
++#include <stdlib.h>
++
+ #include "venus-protocol/vn_protocol_renderer_transport.h"
+ 
+ #include "vkr_device_memory_gen.h"
+@@ -366,6 +368,15 @@ vkr_dispatch_vkAllocateMemory(struct vn_dispatch_context *dispatch,
+    }
+ 
+    struct vkr_device_memory *mem = vkr_device_memory_create_and_add(ctx, args);
++   if (!mem || getenv("VKR_LOG_IMAGES")) {
++      vkr_log("vkAllocateMemory%s: ret %d size %llu type %u flags 0x%x export 0x%x "
++              "import_fd %d gbm %d", mem ? "" : " failed", args->ret,
++              (unsigned long long)alloc_info->allocationSize, mem_type_index,
++              property_flags, export_info ? export_info->handleTypes : 0,
++              local_import_info.fd, gbm_bo != NULL);
++      for (const VkBaseInStructure *s = alloc_info->pNext; s; s = s->pNext)
++         vkr_log("  pNext sType %d", s->sType);
++   }
+    if (!mem) {
+       if (local_import_info.fd >= 0)
+          close(local_import_info.fd);
+diff --git a/src/venus/vkr_image.c b/src/venus/vkr_image.c
+index 2b627e3..20ba57a 100644
+--- a/src/venus/vkr_image.c
++++ b/src/venus/vkr_image.c
+@@ -5,9 +5,64 @@
+ 
+ #include "vkr_image.h"
+ 
++#include <stdlib.h>
++
+ #include "vkr_image_gen.h"
+ #include "vkr_physical_device.h"
+ 
++/* vmlab-win3d diagnostic: describe a VkImageCreateInfo and its pNext chain */
++static void
++vkr_log_image_create_info(const char *what, VkResult ret,
++                          const VkImageCreateInfo *info)
++{
++   vkr_log("%s: ret %d type %d fmt %d %ux%ux%u mips %u layers %u samples %u "
++           "tiling %d usage 0x%x flags 0x%x sharing %d layout %d",
++           what, ret, info->imageType, info->format, info->extent.width,
++           info->extent.height, info->extent.depth, info->mipLevels,
++           info->arrayLayers, info->samples, info->tiling, info->usage, info->flags,
++           info->sharingMode, info->initialLayout);
++   for (const VkBaseInStructure *s = info->pNext; s; s = s->pNext) {
++      switch ((uint32_t)s->sType) {
++      case VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO:
++         vkr_log("  external handleTypes 0x%x",
++                 ((const VkExternalMemoryImageCreateInfo *)s)->handleTypes);
++         break;
++      case VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT: {
++         const VkImageDrmFormatModifierListCreateInfoEXT *l = (const void *)s;
++         vkr_log("  modifier list count %u", l->drmFormatModifierCount);
++         for (uint32_t i = 0; i < l->drmFormatModifierCount; i++)
++            vkr_log("    modifier 0x%llx", (unsigned long long)l->pDrmFormatModifiers[i]);
++         break;
++      }
++      case VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT: {
++         const VkImageDrmFormatModifierExplicitCreateInfoEXT *e = (const void *)s;
++         vkr_log("  modifier explicit 0x%llx planes %u",
++                 (unsigned long long)e->drmFormatModifier, e->drmFormatModifierPlaneCount);
++         for (uint32_t i = 0; i < e->drmFormatModifierPlaneCount; i++)
++            vkr_log("    plane %u offset %llu size %llu rowPitch %llu", i,
++                    (unsigned long long)e->pPlaneLayouts[i].offset,
++                    (unsigned long long)e->pPlaneLayouts[i].size,
++                    (unsigned long long)e->pPlaneLayouts[i].rowPitch);
++         break;
++      }
++      case VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO: {
++         const VkImageFormatListCreateInfo *l = (const void *)s;
++         vkr_log("  format list count %u", l->viewFormatCount);
++         for (uint32_t i = 0; i < l->viewFormatCount; i++)
++            vkr_log("    view format %d", l->pViewFormats[i]);
++         break;
++      }
++      case VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO:
++         vkr_log("  stencil usage 0x%x",
++                 ((const VkImageStencilUsageCreateInfo *)s)->stencilUsage);
++         break;
++      default:
++         vkr_log("  pNext sType %d", s->sType);
++         break;
++      }
++   }
++}
++
+ static void
+ vkr_dispatch_vkCreateImage(struct vn_dispatch_context *dispatch,
+                            struct vn_command_vkCreateImage *args)
+@@ -31,7 +86,11 @@ vkr_dispatch_vkCreateImage(struct vn_dispatch_context *dispatch,
+     * situation because the app does not consider the memory external.
+     */
+ 
+-   vkr_image_create_and_add(dispatch->data, args);
++   struct vkr_image *img = vkr_image_create_and_add(dispatch->data, args);
++   if (!img || args->ret != VK_SUCCESS)
++      vkr_log_image_create_info("vkCreateImage failed", args->ret, args->pCreateInfo);
++   else if (getenv("VKR_LOG_IMAGES"))
++      vkr_log_image_create_info("vkCreateImage", args->ret, args->pCreateInfo);
+ }
+ 
+ static void

@@ -1,0 +1,22 @@
+     20 virgl_render_server: vkr: vkCreateImage retried without feedback-loop usage: ret 0 type 1 fmt 44 1024x640x1 mips 1 layers 1 samples 1 tiling 1 usage 0x17 flags 0x8 sharing 0 layout 0
+     18 virgl_render_server: vkr: vkCreateImage retried without feedback-loop usage: ret 0 type 1 fmt 44 1024x640x1 mips 1 layers 1 samples 1 tiling 1 usage 0x17 flags 0x408 sharing 0 layout 0
+     16 virgl_render_server: vkr: vkCreateImage retried without feedback-loop usage: ret 0 type 1 fmt 44 960x640x1 mips 1 layers 1 samples 1 tiling 1 usage 0x17 flags 0x8 sharing 0 layout 8
+     16 virgl_render_server: vkr: vkCreateImage retried without feedback-loop usage: ret 0 type 1 fmt 44 960x640x1 mips 1 layers 1 samples 1 tiling 1 usage 0x17 flags 0x8 sharing 0 layout 0
+     14 virgl_render_server: vkr: vkCreateImage retried without feedback-loop usage: ret 0 type 1 fmt 44 1024x640x1 mips 1 layers 1 samples 1 tiling 1 usage 0x17 flags 0x8 sharing 0 layout 8
+      6 virgl_render_server: vkr: vkCreateImage retried without feedback-loop usage: ret 0 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x17 flags 0x8 sharing 0 layout 0
+      6 virgl_render_server: vkr: vkCreateImage retried without feedback-loop usage: ret 0 type 1 fmt 44 1280x800x1 mips 1 layers 1 samples 1 tiling 1 usage 0x17 flags 0x8 sharing 0 layout 0
+      5 virgl_render_server: vkr: vkCreateImage retried without feedback-loop usage: ret 0 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x17 flags 0x8 sharing 0 layout 8
+      4 virgl_render_server: vkr: vkCreateImage retried without feedback-loop usage: ret 0 type 1 fmt 9 640x448x1 mips 1 layers 1 samples 1 tiling 1 usage 0x17 flags 0x8 sharing 0 layout 8
+      4 virgl_render_server: vkr: vkCreateImage retried without feedback-loop usage: ret 0 type 1 fmt 9 640x448x1 mips 1 layers 1 samples 1 tiling 1 usage 0x17 flags 0x8 sharing 0 layout 0
+      4 virgl_render_server: vkr: vkCreateImage retried without feedback-loop usage: ret 0 type 1 fmt 44 1066x752x1 mips 1 layers 1 samples 1 tiling 1 usage 0x17 flags 0x8 sharing 0 layout 8
+      4 virgl_render_server: vkr: vkCreateImage retried without feedback-loop usage: ret 0 type 1 fmt 44 1066x752x1 mips 1 layers 1 samples 1 tiling 1 usage 0x17 flags 0x8 sharing 0 layout 0
+      4 virgl_render_server: vkr: vkCreateImage retried without feedback-loop usage: ret 0 type 1 fmt 37 1024x640x1 mips 1 layers 1 samples 1 tiling 1 usage 0x17 flags 0x8 sharing 0 layout 8
+      4 virgl_render_server: vkr: vkCreateImage retried without feedback-loop usage: ret 0 type 1 fmt 37 1024x640x1 mips 1 layers 1 samples 1 tiling 1 usage 0x17 flags 0x8 sharing 0 layout 0
+      3 virgl_render_server: vkr: vkCreateImage retried without feedback-loop usage: ret 0 type 1 fmt 44 1081x570x1 mips 1 layers 1 samples 1 tiling 1 usage 0x17 flags 0x8 sharing 0 layout 8
+      3 virgl_render_server: vkr: vkCreateImage retried without feedback-loop usage: ret 0 type 1 fmt 44 1081x570x1 mips 1 layers 1 samples 1 tiling 1 usage 0x17 flags 0x8 sharing 0 layout 0
+      1 vmlab: env: VK_LOADER_DRIVERS_SELECT=*nvidia*
+      1 virgl_render_server: vkr: vkCreateImage retried without feedback-loop usage: ret 0 type 1 fmt 9 672x576x1 mips 1 layers 1 samples 1 tiling 1 usage 0x17 flags 0x8 sharing 0 layout 8
+      1 virgl_render_server: vkr: vkCreateImage retried without feedback-loop usage: ret 0 type 1 fmt 9 672x576x1 mips 1 layers 1 samples 1 tiling 1 usage 0x17 flags 0x8 sharing 0 layout 0
+      1 virgl_render_server: vkr: vkCreateImage retried without feedback-loop usage: ret 0 type 1 fmt 44 1312x800x1 mips 1 layers 1 samples 1 tiling 1 usage 0x17 flags 0x8 sharing 0 layout 8
+      1 virgl_render_server: vkr: vkCreateImage retried without feedback-loop usage: ret 0 type 1 fmt 44 1312x800x1 mips 1 layers 1 samples 1 tiling 1 usage 0x17 flags 0x8 sharing 0 layout 0
+7665

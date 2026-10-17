@@ -1,0 +1,27 @@
+memtype 0 flags 0x0 heap 1 (allowed)
+memtype 1 flags 0x1 heap 0 (allowed)
+memtype 2 flags 0x6 heap 1 (allowed)
+memtype 3 flags 0xe heap 1 (allowed)
+memtype 4 flags 0x7 heap 2 (allowed)
+alloc type 2 size 4096000: 0 rowPitch 5120
+EGL vendor NVIDIA
+GL renderer NVIDIA GeForce RTX 5090/PCIe/SSE2
+XRGB8888 modifier 0x0300000000606010 external_only 0
+XRGB8888 modifier 0x0300000000606011 external_only 0
+XRGB8888 modifier 0x0300000000606012 external_only 0
+XRGB8888 modifier 0x0300000000606013 external_only 0
+XRGB8888 modifier 0x0300000000606014 external_only 0
+XRGB8888 modifier 0x0300000000606015 external_only 0
+XRGB8888 modifier 0x0300000000e08010 external_only 0
+XRGB8888 modifier 0x0300000000e08011 external_only 0
+XRGB8888 modifier 0x0300000000e08012 external_only 0
+XRGB8888 modifier 0x0300000000e08013 external_only 0
+XRGB8888 modifier 0x0300000000e08014 external_only 0
+XRGB8888 modifier 0x0300000000e08015 external_only 0
+XRGB8888 modifier 0x0000000000000000 external_only 1
+INVALID: TEXTURE_2D target glerr 0x502
+INVALID: TEXTURE_EXTERNAL_OES target glerr 0x0
+INVALID: fbstatus 0x8cd6 glerr 0x506 pixel(10,10) RGBA 0,0,0,0 center 0,0,0,0 (want 0,255,0)
+LINEAR: TEXTURE_2D target glerr 0x502
+LINEAR: TEXTURE_EXTERNAL_OES target glerr 0x0
+LINEAR: fbstatus 0x8cd6 glerr 0x506 pixel(10,10) RGBA 0,0,0,0 center 0,0,0,0 (want 0,255,0)
