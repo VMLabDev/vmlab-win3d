@@ -1,0 +1,5 @@
+created user win3d
+autologon set for VMLABVM-I35OR5S\win3d
+rebooting in 5 s
+autologon set for VMLABVM-I35OR5S\win3d
+rebooting in 5 s

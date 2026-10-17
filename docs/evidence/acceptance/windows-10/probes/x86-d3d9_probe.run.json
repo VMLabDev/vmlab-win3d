@@ -1,0 +1,30 @@
+﻿{
+    "name":  "x86-d3d9_probe",
+    "exe":  "C:\\win3d\\probes\\x86\\d3d9_probe.exe",
+    "arguments":  "--seconds 20 --out C:\\win3d\\results\\probes\\x86-d3d9_probe.json",
+    "user":  "VMLABVM-JA06T5S\\win3d",
+    "session_id":  1,
+    "pid":  6728,
+    "wow64":  true,
+    "started":  "2026-10-17T07:34:09.8349609-07:00",
+    "ended":  "2026-10-17T07:34:30.8259570-07:00",
+    "duration_s":  21,
+    "timed_out":  false,
+    "exit_code":  0,
+    "task_result":  0,
+    "probe_json":  "C:\\win3d\\results\\probes\\x86-d3d9_probe.json",
+    "probe_result":  "pass",
+    "adapter":  "Hardsoft VirtIO GPU 3D controller",
+    "software":  false,
+    "readback_ok":  true,
+    "module_count":  42,
+    "graphics_modules":  [
+                             "C:\\Windows\\SysWOW64\\d3d9.dll [syswow64] 10.0.19041.5794 (WinBuild.160101.0800)",
+                             "C:\\Windows\\SysWOW64\\dwmapi.dll [syswow64] 10.0.19041.6157 (WinBuild.160101.0800)",
+                             "C:\\Windows\\SysWOW64\\viogpu_d3d10.dll [syswow64] ",
+                             "C:\\Windows\\SysWOW64\\d3dcompiler_47.dll [syswow64] 10.0.19041.3636 (WinBuild.160101.0800)"
+                         ],
+    "app_local_modules":  [
+
+                          ]
+}

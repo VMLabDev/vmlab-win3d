@@ -1,0 +1,39 @@
+﻿{
+    "name":  "opengl-x64-Blender",
+    "exe":  "C:\\apps\\blender-4.2.3-windows-x64\\blender.exe",
+    "arguments":  "--factory-startup",
+    "user":  "VMLABVM-JA06T5S\\win3d",
+    "session_id":  1,
+    "pid":  5392,
+    "wow64":  false,
+    "started":  "2026-10-17T07:41:29.8655175-07:00",
+    "ended":  "2026-10-17T07:43:01.2185273-07:00",
+    "duration_s":  91.4,
+    "timed_out":  true,
+    "exit_code":  null,
+    "task_result":  4294967295,
+    "probe_json":  null,
+    "probe_result":  null,
+    "adapter":  null,
+    "software":  null,
+    "readback_ok":  null,
+    "module_count":  135,
+    "graphics_modules":  [
+                             "C:\\Windows\\SYSTEM32\\dxgi.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
+                             "C:\\Windows\\SYSTEM32\\dwmapi.dll [system32] 10.0.19041.1 (WinBuild.160101.0800)",
+                             "C:\\Windows\\SYSTEM32\\OPENGL32.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
+                             "C:\\Windows\\SYSTEM32\\GLU32.dll [system32] 10.0.19041.1 (WinBuild.160101.0800)",
+                             "C:\\Windows\\system32\\viogpu_wgl.dll [system32] ",
+                             "C:\\Windows\\SYSTEM32\\vulkan-1.dll [system32] 1.4.363.0",
+                             "C:\\Windows\\system32\\libvulkan_virtio.dll [system32] ",
+                             "C:\\Windows\\system32\\d3d11.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
+                             "C:\\Windows\\system32\\viogpu_d3d10.dll [system32] ",
+                             "C:\\Windows\\SYSTEM32\\dxcore.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)"
+                         ],
+    "app_local_modules":  [
+                              "C:\\apps\\blender-4.2.3-windows-x64\\blender_cpu_check.dll",
+                              "C:\\apps\\blender-4.2.3-windows-x64\\cycles_kernel_oneapi_aot.dll",
+                              "C:\\apps\\blender-4.2.3-windows-x64\\python311.dll",
+                              "C:\\apps\\blender-4.2.3-windows-x64\\python3.DLL"
+                          ]
+}

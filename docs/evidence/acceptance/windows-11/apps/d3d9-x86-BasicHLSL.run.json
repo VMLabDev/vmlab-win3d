@@ -1,0 +1,32 @@
+﻿{
+    "name":  "d3d9-x86-BasicHLSL",
+    "exe":  "C:\\apps\\DXSDK\\Samples\\C++\\Direct3D\\Bin\\x86\\BasicHLSL.exe",
+    "arguments":  "-windowed",
+    "user":  "VMLABVM-I35OR5S\\win3d",
+    "session_id":  1,
+    "pid":  9524,
+    "wow64":  true,
+    "started":  "2026-10-17T07:16:45.8915661-07:00",
+    "ended":  "2026-10-17T07:17:17.9574318-07:00",
+    "duration_s":  32.1,
+    "timed_out":  true,
+    "exit_code":  null,
+    "task_result":  4294967295,
+    "probe_json":  null,
+    "probe_result":  null,
+    "adapter":  null,
+    "software":  null,
+    "readback_ok":  null,
+    "module_count":  52,
+    "graphics_modules":  [
+                             "C:\\WINDOWS\\SysWOW64\\d3dx9_43.dll [syswow64] 9.29.952.3111",
+                             "C:\\WINDOWS\\SysWOW64\\d3dx10_43.dll [syswow64] 9.29.952.3111",
+                             "C:\\WINDOWS\\SysWOW64\\d3d9.dll [syswow64] 10.0.26100.8972 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll [syswow64] "
+                         ],
+    "app_local_modules":  [
+
+                          ]
+}
