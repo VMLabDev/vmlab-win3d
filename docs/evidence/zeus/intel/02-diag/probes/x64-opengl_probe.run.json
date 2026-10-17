@@ -1,0 +1,29 @@
+﻿{
+    "name":  "x64-opengl_probe",
+    "exe":  "C:\\win3d\\probes\\x64\\opengl_probe.exe",
+    "arguments":  "--seconds 20 --out C:\\win3d\\results\\probes\\x64-opengl_probe.json",
+    "user":  "VMLABVM-UOGV1LO\\win3d",
+    "session_id":  1,
+    "pid":  7016,
+    "wow64":  false,
+    "started":  "2026-10-17T08:23:12.0390592-07:00",
+    "ended":  "2026-10-17T08:23:17.1707311-07:00",
+    "duration_s":  5.1,
+    "timed_out":  false,
+    "exit_code":  1,
+    "task_result":  1,
+    "probe_json":  "C:\\win3d\\results\\probes\\x64-opengl_probe.json",
+    "probe_result":  "api_failure",
+    "adapter":  "zink Vulkan 1.4(Virtio-GPU Venus (Intel(R) Iris(R) Xe Graphics (RPL-P)) (INTEL_OPEN_SOURCE_MESA))",
+    "software":  false,
+    "readback_ok":  false,
+    "module_count":  27,
+    "graphics_modules":  [
+                             "C:\\WINDOWS\\SYSTEM32\\OPENGL32.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\GLU32.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)"
+                         ],
+    "app_local_modules":  [
+
+                          ]
+}

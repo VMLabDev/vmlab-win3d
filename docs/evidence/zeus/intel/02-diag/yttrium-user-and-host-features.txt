@@ -1,0 +1,28 @@
+2026-10-17 08:16:34.932 pid=5748 tid=5960 d3d10umd: WDDM 2.0 requires typed image loads
+2026-10-17 08:16:34.964 pid=5068 tid=7172 d3d10umd: WDDM 2.0 requires typed image loads
+2026-10-17 08:16:34.984 pid=5748 tid=5960 d3d10umd: WDDM 2.0 requires typed image loads
+
+	deviceName        = Intel(R) Iris(R) Xe Graphics (RPL-P)
+	driverInfo                                           = Mesa 26.2.2-arch3.2
+	shaderStorageImageReadWithoutFormat     = false
+	shaderStorageImageWriteWithoutFormat    = true
+    722 d3d10umd: WDDM 2.0 requires typed image loads
+    598 yttrium: Venus router selected backend=venus2 process=d3d12_probe.exe backend_option=(null) etw=0 verbose_etw_
+    428 d3d10umd: create_screen select pid=1884 tid=7336 default_driver=yttrium selected_driver=yttrium env_driver=(nu
+    170 d3d10umd: create_screen select pid=2104 tid=2292 default_driver=yttrium selected_driver=yttrium env_driver=(nu
+    149 d3d10umd: create_screen using yttrium device=000002e99fb2afe0
+    147 d3d10umd: create_screen using yttrium device=000002e99d494280
+     91 yttrium: Venus router selected backend=venus2 process=Explorer.EXE backend_option=(null) etw=0 verbose_etw_tex
+     85 d3d10umd: create_screen using yttrium device=0a246b80
+     80 d3d10umd: create_screen using yttrium device=0a278e40
+     66 d3d10umd: create_screen select pid=4540 tid=8136 default_driver=yttrium selected_driver=yttrium env_driver=(nu
+     43 d3d10umd: create_screen using yttrium device=000002e99fb82360
+     41 d3d10umd: create_screen using yttrium device=000002e99d4bb2e0
+
+# Recorded the same day with the same vulkaninfo command on Zeus (before the GPU failed),
+# VK_LOADER_DRIVERS_SELECT=*nvidia*:
+#   deviceName = NVIDIA GeForce RTX 4060 Laptop GPU
+#   shaderStorageImageReadWithoutFormat = true
+# and on helios, VK_LOADER_DRIVERS_SELECT=*radeon*:
+#   deviceName = AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)
+#   shaderStorageImageReadWithoutFormat = true

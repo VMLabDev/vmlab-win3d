@@ -1,0 +1,11 @@
+adapter: Hardsoft VirtIO GPU 3D controller
+feature level: 0xb000
+TypedUAVLoadAdditionalFormats: 0
+UAV typed load R32_FLOAT: 1
+UAV typed load R32_UINT: 1
+UAV typed load R32_SINT: 1
+UAV typed load R8G8B8A8_UNORM: 0
+UAV typed load R16G16B16A16_FLOAT: 0
+R32_FLOAT: 0/4096 texels wrong (first -1); texel 5 = 0x41300000
+R32_UINT: 0/4096 texels wrong (first -1); texel 5 = 0x0000000b
+result: pass

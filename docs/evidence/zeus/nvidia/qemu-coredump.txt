@@ -1,0 +1,40 @@
+           PID: 3445680 (qemu-system-x86)
+           TID: 3628689 (vrend-sync)
+           UID: 1000 (wil)
+           GID: 1000 (wil)
+        Signal: 6 (ABRT) si_code: SI_TKILL
+     Timestamp: Sat 2026-10-17 19:20:00 AEST (7min ago)
+  Command Line: qemu-system-x86_64 -name vmlab:win3d-zeus-nvidia/win -machine q35 -accel kvm -cpu host,vmx=off,svm=off -smp 4 -m 8192M -display none -vnc unix:/home/wil/win3d-zeus/run/vmlab/labs/win3d-zeus-nvidia/vms/win/vnc.sock,share=ignore -qmp unix:/home/wil/win3d-zeus/run/vmlab/labs/win3d-zeus-nvidia/vms/win/qmp.sock,server=on,wait=off -monitor none -serial file:/home/wil/win3d-zeus/state/vmlab/labs/win3d-zeus-nvidia/vms/win/serial.log -drive if=pflash,format=raw,readonly=on,file=/home/wil/.local/share/vmlab/guest/firmware/x86_64/OVMF_CODE_4M.fd -drive if=pflash,format=raw,file=/home/wil/win3d-zeus/work/nvidia/lab/.vmlab/vms/win/OVMF_VARS.fd -chardev socket,id=vagent0,path=/home/wil/win3d-zeus/run/vmlab/labs/win3d-zeus-nvidia/vms/win/agent.sock,server=on,wait=off -device virtio-serial-pci -device virtserialport,chardev=vagent0,name=vmlab.agent.0 -blockdev driver=qcow2,node-name=disk0,file.driver=file,file.filename=/home/wil/win3d-zeus/work/nvidia/lab/.vmlab/vms/win/disk0.qcow2 -device virtio-blk-pci,drive=disk0 -nic none -chardev socket,id=chrtpm,path=/home/wil/win3d-zeus/run/vmlab/labs/win3d-zeus-nvidia/vms/win/tpm.sock -tpmdev emulator,id=tpm0,chardev=chrtpm -device tpm-tis,tpmdev=tpm0 -device virtio-vga-gl,venus=true,blob=true,hostmem=4G -display egl-headless,rendernode=/dev/dri/renderD128 -usb -device usb-tablet -S
+    Executable: /home/wil/win3d-zeus/repo/out/host/qemu/bin/qemu-system-x86_64
+ Control Group: /user.slice/user-1000.slice/session-c331.scope
+          Unit: session-c331.scope
+         Slice: user-1000.slice
+       Session: c331
+     Owner UID: 1000 (wil)
+       Boot ID: f5d16858863e450cb8488eba4a047533
+    Machine ID: a203efa8d3d74777821ffa0843f9dca7
+      Hostname: Zeus
+       Storage: /var/lib/systemd/coredump/core.qemu-system-x86.1000.f5d16858863e450cb8488eba4a047533.3445680.1792228800000000.zst (present)
+  Size on Disk: 1.7G
+       Message: Process 3445680 (qemu-system-x86) of user 1000 dumped core.
+                
+                Stack trace of thread 3628689:
+                #0  0x00007f6dace25839 abort (libc.so.6 + 0x25839)
+                #1  0x00007f6da1c9f194 n/a (libnvidia-eglcore.so.615.71.09 + 0x29f194)
+                #2  0x00007f6da248d62f n/a (libnvidia-eglcore.so.615.71.09 + 0xa8d62f)
+                #3  0x00007f6da23f1862 n/a (libnvidia-eglcore.so.615.71.09 + 0x9f1862)
+                #4  0x00007f6da23f1fa0 n/a (libnvidia-eglcore.so.615.71.09 + 0x9f1fa0)
+                #5  0x00007f6da23fb60e n/a (libnvidia-eglcore.so.615.71.09 + 0x9fb60e)
+                #6  0x00007f6da23fba3b n/a (libnvidia-eglcore.so.615.71.09 + 0x9fba3b)
+                #7  0x00007f6da23e4400 n/a (libnvidia-eglcore.so.615.71.09 + 0x9e4400)
+                #8  0x00007f6da23bfc0b n/a (libnvidia-eglcore.so.615.71.09 + 0x9bfc0b)
+                #9  0x00007f6da23c2a9d n/a (libnvidia-eglcore.so.615.71.09 + 0x9c2a9d)
+                #10 0x00007f6da237daa0 n/a (libnvidia-eglcore.so.615.71.09 + 0x97daa0)
+                #11 0x00007f6da237ee71 n/a (libnvidia-eglcore.so.615.71.09 + 0x97ee71)
+                #12 0x00007f6da23969c7 n/a (libnvidia-eglcore.so.615.71.09 + 0x9969c7)
+                #13 0x00007f6da91fe908 n/a (libEGL_nvidia.so.0 + 0xa0908)
+                #14 0x00007f6dacea9912 n/a (libc.so.6 + 0xa9912)
+                #15 0x00007f6daceac8ec n/a (libc.so.6 + 0xac8ec)
+                #16 0x00007f6dacf4f3dc n/a (libc.so.6 + 0x14f3dc)
+                
+                Stack trace of thread 3591548:

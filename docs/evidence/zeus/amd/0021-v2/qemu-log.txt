@@ -1,0 +1,21 @@
+      1 virtio_gpu_virgl_process_cmd: ctrl 0x102, error 0x1203
+      1 virgl_render_server[3832058]: vkr: destroying context 11 (yttrium) with a valid instance
+      1 virgl_render_server[3832017]: vkr: destroying context 10 (yttrium) with a valid instance
+      1 virgl_render_server[3843831]: vkr: destroying context 49 (yttrium) with a valid instance
+      1 virgl_render_server[3833410]: vkr: destroying context 15 (yttrium) with a valid instance
+      1 virgl_render_server[3832061]: vkr: destroying context 12 (yttrium) with a valid instance
+      1 virgl_render_server[3831986]: vkr: destroying context 8 (yttrium) with a valid instance
+      1 virgl_render_server[3832128]: vkr: destroying context 14 (yttrium) with a valid instance
+      1 virgl_render_server[3832017]: vkr: destroying device with valid objects
+      1 virgl_render_server[3832058]: vkr: destroying device with valid objects
+      1 virgl_render_server[3843831]: vkr: destroying device with valid objects
+      1 virgl_render_server[3831992]: vkr: destroying context 9 (yttrium) with a valid instance
+      1 virgl_render_server[3831908]: vkr: destroying context 5 (yttrium) with a valid instance
+      1 virgl_render_server[3832072]: vkr: destroying context 13 (yttrium) with a valid instance
+      1 virgl_render_server[3833410]: vkr: destroying device with valid objects
+      1 virgl_render_server[3832061]: vkr: destroying device with valid objects
+      1 virgl_render_server[3831986]: vkr: destroying device with valid objects
+      1 virgl_render_server[3832128]: vkr: destroying device with valid objects
+      1 virgl_render_server[3831992]: vkr: destroying device with valid objects
+      1 virgl_render_server[3831908]: vkr: destroying device with valid objects
+      1 virgl_render_server[3832072]: vkr: destroying device with valid objects

@@ -1,0 +1,1 @@
+      1 virtio_gpu_virgl_process_cmd: ctrl 0x102, error 0x1203

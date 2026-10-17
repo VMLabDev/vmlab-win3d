@@ -1,0 +1,66 @@
+2026-10-17T10:05:01.492-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
+2026-10-17T10:05:04.098-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-17T10:05:06.682-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
+2026-10-17T10:05:06.945-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-17T10:05:06.958-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-17T10:05:06.962-07:00 [Install]   Signature matches Public Key
+2026-10-17T10:05:06.965-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-17T10:05:06.968-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-17T10:05:07.014-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-17T10:05:07.018-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-17T10:05:07.020-07:00 [Install]   Signature matches Public Key
+2026-10-17T10:05:07.025-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-17T10:05:07.027-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-17T10:05:07.105-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-17T10:05:07.107-07:00 [Install]   The operation completed successfully.
+2026-10-17T10:05:07.516-07:00 [Install] test signing is set but not active in this boot
+2026-10-17T10:05:07.993-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-17T10:05:08.067-07:00 [Install] rebooting; step Driver resumes after the restart
+2026-10-17T10:05:47.738-07:00 [Resume] resume: status RebootPending, step Driver
+2026-10-17T10:05:57.042-07:00 [Resume] pnputil.exe /add-driver C:\ProgramData\vmlab-win3d\bundle\driver\viogpu3d.inf /install -> 0
+2026-10-17T10:05:57.113-07:00 [Resume]   Microsoft PnP Utility
+2026-10-17T10:05:57.120-07:00 [Resume]   Adding driver package:  viogpu3d.inf
+2026-10-17T10:05:57.154-07:00 [Resume]   Driver package added successfully.
+2026-10-17T10:05:57.215-07:00 [Resume]   Published Name:         oem15.inf
+2026-10-17T10:05:57.242-07:00 [Resume]   Driver package installed on device: PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18
+2026-10-17T10:05:57.262-07:00 [Resume]   Total driver packages:  1
+2026-10-17T10:05:57.268-07:00 [Resume]   Added driver packages:  1
+2026-10-17T10:05:57.905-07:00 [Resume] driver oem15.inf 100.6.101.58100 installed on PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18
+2026-10-17T10:05:58.113-07:00 [Resume] takeown.exe /F C:\WINDOWS\System32\vulkan-1.dll /A -> 0
+2026-10-17T10:05:58.117-07:00 [Resume]   SUCCESS: The file (or folder): "C:\WINDOWS\System32\vulkan-1.dll" now owned by the administrators group.
+2026-10-17T10:05:58.165-07:00 [Resume] icacls.exe C:\WINDOWS\System32\vulkan-1.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-17T10:05:58.170-07:00 [Resume]   processed file: C:\WINDOWS\System32\vulkan-1.dll
+2026-10-17T10:05:58.175-07:00 [Resume]   Successfully processed 1 files; Failed processing 0 files
+2026-10-17T10:05:58.380-07:00 [Resume] installed C:\WINDOWS\System32\vulkan-1.dll (0871D16D06F2C7C2F60C9B68E5ED3A61A069BF525D8F7CAD2D3C88F3CE71E219)
+2026-10-17T10:05:58.443-07:00 [Resume] installed C:\WINDOWS\System32\vulkaninfo.exe (68266EF104567081F93D00CC347AC3C1849CD3D0E1319F8DC05A576B2E23E83A)
+2026-10-17T10:05:58.530-07:00 [Resume] native d3d12.dll 6B32181599D4D6373F0B49905236B122ED5545C5D061AB4350A80CC095DC15E4 copied to C:\WINDOWS\System32\vmlab-win3d\d3d12-native.dll
+2026-10-17T10:05:58.564-07:00 [Resume] installed C:\WINDOWS\System32\vmlab-win3d\vkd3dcore.dll
+2026-10-17T10:05:58.581-07:00 [Resume] installed C:\WINDOWS\System32\vmlab-win3d\dxgi-vulkan.dll
+2026-10-17T10:05:58.613-07:00 [Resume] takeown.exe /F C:\WINDOWS\System32\d3d12.dll /A -> 0
+2026-10-17T10:05:58.619-07:00 [Resume]   SUCCESS: The file (or folder): "C:\WINDOWS\System32\d3d12.dll" now owned by the administrators group.
+2026-10-17T10:05:58.638-07:00 [Resume] icacls.exe C:\WINDOWS\System32\d3d12.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-17T10:05:58.642-07:00 [Resume]   processed file: C:\WINDOWS\System32\d3d12.dll
+2026-10-17T10:05:58.646-07:00 [Resume]   Successfully processed 1 files; Failed processing 0 files
+2026-10-17T10:05:58.739-07:00 [Resume] installed C:\WINDOWS\System32\d3d12.dll (B5D94F44466887CF5373C8550E3263425034A41E76B0AC11FE8C8A5229ACD9DA)
+2026-10-17T10:05:58.840-07:00 [Resume] takeown.exe /F C:\WINDOWS\SysWOW64\vulkan-1.dll /A -> 0
+2026-10-17T10:05:58.845-07:00 [Resume]   SUCCESS: The file (or folder): "C:\WINDOWS\SysWOW64\vulkan-1.dll" now owned by the administrators group.
+2026-10-17T10:05:58.864-07:00 [Resume] icacls.exe C:\WINDOWS\SysWOW64\vulkan-1.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-17T10:05:58.869-07:00 [Resume]   processed file: C:\WINDOWS\SysWOW64\vulkan-1.dll
+2026-10-17T10:05:58.872-07:00 [Resume]   Successfully processed 1 files; Failed processing 0 files
+2026-10-17T10:05:58.922-07:00 [Resume] installed C:\WINDOWS\SysWOW64\vulkan-1.dll (36EDC9F67CBEC1C5FB8C510AB08EFEA18AFFFBD40D77B829D39F1E76236416CD)
+2026-10-17T10:05:58.988-07:00 [Resume] installed C:\WINDOWS\SysWOW64\vulkaninfo.exe (BB717DB3466B5120B08EFB4A800AD7D4F15CC1C0D5D479C298804539B89C119D)
+2026-10-17T10:05:59.070-07:00 [Resume] native d3d12.dll A43885B075B8043D9FE99F03B26B056B426E1B7D73FAB8D420F4E4FFCB5100AF copied to C:\WINDOWS\SysWOW64\vmlab-win3d\d3d12-native.dll
+2026-10-17T10:05:59.120-07:00 [Resume] installed C:\WINDOWS\SysWOW64\vmlab-win3d\vkd3dcore.dll
+2026-10-17T10:05:59.173-07:00 [Resume] installed C:\WINDOWS\SysWOW64\vmlab-win3d\dxgi-vulkan.dll
+2026-10-17T10:05:59.204-07:00 [Resume] takeown.exe /F C:\WINDOWS\SysWOW64\d3d12.dll /A -> 0
+2026-10-17T10:05:59.209-07:00 [Resume]   SUCCESS: The file (or folder): "C:\WINDOWS\SysWOW64\d3d12.dll" now owned by the administrators group.
+2026-10-17T10:05:59.231-07:00 [Resume] icacls.exe C:\WINDOWS\SysWOW64\d3d12.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-17T10:05:59.234-07:00 [Resume]   processed file: C:\WINDOWS\SysWOW64\d3d12.dll
+2026-10-17T10:05:59.238-07:00 [Resume]   Successfully processed 1 files; Failed processing 0 files
+2026-10-17T10:05:59.281-07:00 [Resume] installed C:\WINDOWS\SysWOW64\d3d12.dll (944CC70E1F65C907C13D598396CBCB2AB9478A231DD653A5DC62C70C8E6BAE02)
+2026-10-17T10:06:00.133-07:00 [Resume] registered startup task vmlab-win3d-repair (-Mode Repair)
+2026-10-17T10:06:00.207-07:00 [Resume] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-17T10:06:00.259-07:00 [Resume] rebooting; step Verify resumes after the restart
+2026-10-17T10:06:43.291-07:00 [Resume] resume: status RebootPending, step Verify
+2026-10-17T10:06:53.449-07:00 [Resume] removed task vmlab-win3d-resume
+2026-10-17T10:06:53.730-07:00 [Resume] installed: oem15.inf 100.6.101.58100, problem code 0

@@ -1,0 +1,3 @@
+created user win3d
+autologon set for VMLABVM-T75CGC6\win3d
+rebooting in 5 s
