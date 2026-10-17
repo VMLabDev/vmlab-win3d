@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # End-to-end acceptance run for the Done items in docs/brief.md.
 #
-#   tests/e2e/run.sh [--template windows-11|windows-10] [--keep]
+#   tests/e2e/run.sh [--template windows-11|windows-10] [--keep] [--apps]
 #
 # From nothing: builds the package (or reuses out/package/ when it was built
 # from a tree identical to HEAD), brings up a fresh lab from
@@ -12,7 +12,9 @@
 # D3D12, OpenGL and Vulkan probes (x64 and x86) with `vmlab vm screenshot`
 # console captures of each, and dxdiag. The evidence goes to
 # docs/evidence/acceptance/<template>/; tests/e2e/check.py judges it.
-# The lab is destroyed unless --keep.
+# The lab is destroyed unless --keep. --apps also runs the stretch
+# applications (tests/e2e/apps.sh) into <evidence>/apps/; they do not
+# count towards the exit status.
 #
 # Exit status: 0 when every Done check passes, 1 otherwise, 2 on usage.
 # Lab state lives in .scratch/e2e/<template>/lab/.vmlab/.
@@ -21,12 +23,14 @@ REPO=$(cd "$(dirname "$0")/../.." && pwd)
 HERE=$REPO/tests/e2e
 TEMPLATE=windows-11
 KEEP=0
+APPS=0
 while [ $# -gt 0 ]; do
     case $1 in
         --template) TEMPLATE=${2:-}; shift 2 ;;
         --keep) KEEP=1; shift ;;
-        -h|--help) sed -n '2,20p' "$0"; exit 0 ;;
-        *) sed -n '2,20p' "$0" >&2; exit 2 ;;
+        --apps) APPS=1; shift ;;
+        -h|--help) sed -n '2,21p' "$0"; exit 0 ;;
+        *) sed -n '2,21p' "$0" >&2; exit 2 ;;
     esac
 done
 case $TEMPLATE in windows-11|windows-10) ;; *) echo "unknown template $TEMPLATE" >&2; exit 2 ;; esac
@@ -287,6 +291,11 @@ tests() {
     say "5c dxdiag"
     gfile 900 'C:\win3d\guest\Get-Dxdiag.ps1' -OutDir 'C:\win3d\results\dxdiag' -AsUser >"$WORK/raw/dxdiag.out" 2>&1 || true
     tail -5 "$WORK/raw/dxdiag.out"
+
+    if [ "$APPS" = 1 ]; then
+        say "5d stretch: third-party applications"
+        "$HERE/apps.sh" "$LABDIR" "$VM" "$EV" || note "apps.sh failed"
+    fi
 }
 
 collect() {

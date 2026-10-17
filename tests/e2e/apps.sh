@@ -42,6 +42,9 @@ stage() {
     local sdk blender
     sdk=$(fetch_pin dxsdk-jun2010) || return 1
     blender=$(fetch_pin blender-4.2.3) || return 1
+    local vc64 vc86
+    vc64=$(fetch_pin vcredist2010-x64) || return 1
+    vc86=$(fetch_pin vcredist2010-x86) || return 1
     if [ ! -f "$STAGE/dxsdk.zip" ]; then
         note "unpacking the DirectX SDK's samples, media and redistributable"
         rm -rf "$STAGE/dxsdk"
@@ -53,18 +56,23 @@ stage() {
     note "copying the DirectX SDK and Blender into the guest"
     in_lab vmlab cp "$STAGE/dxsdk.zip" "$VM:C:/apps/dxsdk.zip" || return 1
     in_lab vmlab cp "$blender" "$VM:C:/apps/blender.zip" || return 1
+    in_lab vmlab cp "$vc64" "$VM:C:/apps/vcredist_x64.exe" || return 1
+    in_lab vmlab cp "$vc86" "$VM:C:/apps/vcredist_x86.exe" || return 1
     gps 'Set-Location C:\apps; tar.exe -xf dxsdk.zip; tar.exe -xf blender.zip; Remove-Item dxsdk.zip, blender.zip
          Get-ChildItem C:\apps | ForEach-Object Name' 1200 || return 1
-    note "installing the DirectX End-User Runtime from the SDK (DXSETUP /silent)"
+    note "installing the DirectX End-User Runtime from the SDK (DXSETUP /silent) and the VC++ 2010 runtime"
     gps '$p = Start-Process C:\apps\DXSDK\Redist\DXSETUP.exe -ArgumentList "/silent" -Wait -PassThru; "DXSETUP exit {0}" -f $p.ExitCode
+         foreach ($a in "x64", "x86") { $p = Start-Process "C:\apps\vcredist_$a.exe" -ArgumentList "/q", "/norestart" -Wait -PassThru; "vcredist_$a exit {0}" -f $p.ExitCode }
+         foreach ($f in "System32\msvcr100.dll", "SysWOW64\msvcr100.dll", "System32\d3dx10_43.dll") { "{0} {1}" -f $f, (Test-Path "$env:windir\$f") }
          foreach ($f in "System32\d3dx9_43.dll", "System32\d3dx11_43.dll", "System32\D3DCompiler_43.dll", "SysWOW64\d3dx9_43.dll", "SysWOW64\D3DCompiler_43.dll") { "{0} {1}" -f $f, (Test-Path "$env:windir\$f") }' 900 \
         | tee "$EV/dxsetup.txt"
 }
 
 capture() { in_lab vmlab vm screenshot "$VM" "$1" >/dev/null 2>&1; }
 
-app() { # app NAME SECONDS EXE [ARGS...]
-    local name=$1 secs=$2 exe=$3 n=0 pid rc last=
+app() { # app NAME SECONDS EXE ARGS...  (Run-Probe -Raw needs at least one argument)
+    local name=$1 secs=$2 exe=$3 n=0 pid rc
+    local frames=()
     shift 3
     local arglist=
     [ $# -gt 0 ] && arglist="-ArgumentList $(printf "'%s'," "$@" | sed 's/,$//')"
@@ -75,13 +83,16 @@ app() { # app NAME SECONDS EXE [ARGS...]
     pid=$!
     while kill -0 "$pid" 2>/dev/null; do
         sleep 4; n=$((n + 1))
-        capture "$STAGE/shots/$name-$(printf %03d $n).png" && last=$STAGE/shots/$name-$(printf %03d $n).png
+        # Blender's first-run splash covers the viewport; Esc closes it (in
+        # the DXUT samples Esc quits, so only here).
+        [ "$n" = 8 ] && [[ $name == *Blender* ]] && in_lab vmlab vm sendkeys "$VM" esc >/dev/null 2>&1
+        capture "$STAGE/shots/$name-$(printf %03d $n).png" && frames+=("$STAGE/shots/$name-$(printf %03d $n).png")
     done
     wait "$pid"; rc=$?
     note "  Run-Probe exit $rc (124 = still running at $secs s, then closed)"
-    # The last frame before it was closed, and one from the middle of the run.
-    if [ -n "$last" ]; then
-        magick "$last" -resize 50% -strip -colors 256 "$EV/console-$name.png"
+    # A frame two thirds into the run: past start-up, before it was closed.
+    if [ ${#frames[@]} -gt 0 ]; then
+        magick "${frames[$(( ${#frames[@]} * 2 / 3 ))]}" -resize 50% -strip -colors 256 "$EV/console-$name.png"
     fi
     in_lab vmlab cp "$VM:C:/win3d/results/apps/$name.run.json" "$EV/$name.run.json" >/dev/null 2>&1
     in_lab vmlab cp "$VM:C:/win3d/results/apps/$name.modules.json" "$STAGE/$name.modules.json" >/dev/null 2>&1
@@ -99,13 +110,14 @@ EOF
 
 stage || { note "staging failed"; exit 1; }
 B=C:\\apps\\DXSDK\\Samples\\C++
-# D3D9 samples (DXUT, windowed 640x480 by default).
-app d3d9-x64-BasicHLSL 30 "$B\\Direct3D\\Bin\\x64\\BasicHLSL.exe"
-app d3d9-x86-BasicHLSL 30 "$B\\Direct3D\\Bin\\x86\\BasicHLSL.exe"
-app d3d9-x64-ParallaxOcclusionMapping 30 "$B\\Direct3D\\Bin\\x64\\ParallaxOcclusionMapping.exe"
+# D3D9 samples (DXUT; -windowed is their default, passed because Run-Probe
+# -Raw needs an argument).
+app d3d9-x64-BasicHLSL 30 "$B\\Direct3D\\Bin\\x64\\BasicHLSL.exe" -windowed
+app d3d9-x86-BasicHLSL 30 "$B\\Direct3D\\Bin\\x86\\BasicHLSL.exe" -windowed
+app d3d9-x64-ParallaxOcclusionMapping 30 "$B\\Direct3D\\Bin\\x64\\ParallaxOcclusionMapping.exe" -windowed
 # D3D11 samples.
-app d3d11-x64-BasicHLSL11 30 "$B\\Direct3D11\\Bin\\x64\\BasicHLSL11.exe"
-app d3d11-x64-SubD11 40 "$B\\Direct3D11\\Bin\\x64\\SubD11.exe"
+app d3d11-x64-BasicHLSL11 30 "$B\\Direct3D11\\Bin\\x64\\BasicHLSL11.exe" -windowed
+app d3d11-x64-SubD11 40 "$B\\Direct3D11\\Bin\\x64\\SubD11.exe" -windowed
 # OpenGL: Blender with its factory settings (default scene, OpenGL backend).
 app opengl-x64-Blender 90 'C:\apps\blender-4.2.3-windows-x64\blender.exe' --factory-startup
 

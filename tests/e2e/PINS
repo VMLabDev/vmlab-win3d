@@ -10,3 +10,7 @@ dxsdk-jun2010  705271dc83bfee54d9b94e028426e288d5f070784b7446d164f48ecfbb2a02cb 
 # Blender 4.2.3 LTS portable (GPL-2.0-or-later), OpenGL 4.3. The hash matches
 # https://download.blender.org/release/Blender4.2/blender-4.2.3.sha256
 blender-4.2.3  7f8be9b1dc904e7689b3112659791c29cc9ed9d46ce57c4ea5b31a0621489b3a  https://download.blender.org/release/Blender4.2/blender-4.2.3-windows-x64.zip
+# Visual C++ 2010 SP1 redistributables (MSVCR100.dll), which the SDK samples
+# import. Installed system-wide (/q /norestart), as a game installer would.
+vcredist2010-x64  f3b7a76d84d23f91957aa18456a14b4e90609e4ce8194c5653384ed38dada6f3  https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe
+vcredist2010-x86  99dce3c841cc6028560830f7866c9ce2928c98cf3256892ef8e6cf755147b0d8  https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe
