@@ -10,7 +10,7 @@ orchestrator owns it and updates it as slices land.
 | Kernel | Yttrium viogpu3d WDDM KMD (Venus, blob) | `arehnman/yttrium-virtio-gpu` @ tag `yttrium-experimental-2026-09-27` (`b99d951a`) + patches | PnP INF |
 | Vulkan | Mesa Venus ICD `libvulkan_virtio.dll` | `arehnman/virtio-win-mesa` @ `374c3022` + patches | INF: `HKLM\SOFTWARE\Khronos\Vulkan\Drivers` (+WOW6432Node) |
 | Vulkan loader | Khronos `vulkan-1.dll`, `vulkaninfo.exe` | Khronos Vulkan-Loader / Vulkan-Tools, built from source | Installer (System32/SysWOW64), only if absent or older |
-| D3D9/10/11 | **Proposed:** Yttrium Gallium UMD `viogpu_d3d10.dll` (Venus) | Same Mesa tree | INF: `UserModeDriverName[Wow]` |
+| D3D9/10/11 | Yttrium Gallium UMD `viogpu_d3d10.dll` (Venus) | Same Mesa tree | INF: `UserModeDriverName[Wow]` |
 | OpenGL | Mesa WGL + Zink `viogpu_wgl.dll` on the Venus ICD | Same Mesa tree | INF: `OpenGLDriverName[Wow]` |
 | D3D12 | vkd3d-proton + DXVK DXGI, behind a `d3d12.dll` bridge | vkd3d-proton, dxil-spirv, DXVK, all pinned + codex bridge patch | Installer: replaces System32/SysWOW64 `d3d12.dll`, with backup and a repair task |
 
@@ -18,7 +18,7 @@ Why the D3D9–11 row is not DXVK: Mesa's Win32 Vulkan WSI presents through the
 **system** `dxgi.dll` and `d3d11.dll`. Replacing those system-wide with DXVK hung
 even vkcube (prior-art §3, §4.5). Registering the UMD through the KMD is also
 the supported Windows mechanism, and it is what makes `dxdiag` report
-acceleration. This is pending the user's confirmation (open decision D1).
+acceleration. Decided by the user (D1, 2026-10-17): use the existing Yttrium drivers where they cover an API, and cover anything missing with Zink and DXVK (with vkd3d-proton for D3D12).
 
 ## Host assumptions
 
@@ -57,11 +57,16 @@ Wave 1 (parallel):
 | `kmd-build` | KMD build and test signing, scripted from this repo; the signing decision record |
 | `probes` | Small D3D9/D3D11/D3D12/OpenGL/Vulkan test apps, cross-built, that prove GPU rendering, plus guest test scripts |
 
+Wave 3, after the AMD iGPU path passes Done: make Venus work on the host's
+NVIDIA RTX 5090 (prior-art §3 dwm crash, decoder errors).
+
 Wave 2: `package` (INF, catalog, installer and uninstaller, `scripts/build.sh`),
 then `e2e` (fresh win11 lab, install, evidence for every Done item), then
 `docs`. Windows 10 runs after Windows 11 passes.
 
 ## Open decisions
 
-- D1: D3D9–11 through the Yttrium UMD (proposed) or through system-wide DXVK.
+- D1 (decided): Yttrium first; Zink and DXVK/vkd3d-proton fill gaps.
+- D3 (decided): no host system updates during this work; the host stack stays
+  QEMU 11.1.1, virglrenderer 1.3.0, Mesa 26.2.2.
 - D2: the signing approach (recorded by `kmd-build` in `docs/decisions/`).
