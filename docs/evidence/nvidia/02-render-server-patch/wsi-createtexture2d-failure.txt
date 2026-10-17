@@ -1,0 +1,5 @@
+vulkan_probe.exe stderr, user session, render server with the vkCreateImage retry only (no image-format-query workaround):
+
+MESA: warning: wsi/win32: DXGI_SHARED CreateTexture2D failed (HRESULT 0x8007000e)
+
+vulkan_probe result: vkCreateSwapchainKHR failed: VK_ERROR_OUT_OF_DEVICE_MEMORY (-2)

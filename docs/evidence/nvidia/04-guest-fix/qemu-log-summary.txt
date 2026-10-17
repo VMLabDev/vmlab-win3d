@@ -1,0 +1,2 @@
+# qemu.log lines other than vmlab's argv/env header, counted: none (no vkr: messages, no QEMU errors) over first boot, a guest reboot, and the acceptance run.
+0

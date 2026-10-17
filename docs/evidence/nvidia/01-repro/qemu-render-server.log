@@ -1,0 +1,712 @@
+virgl_render_server[1545840]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1545840]: vkr:   pNext sType 1000072002
+virgl_render_server[1545848]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1545848]: vkr:   pNext sType 1000072002
+virgl_render_server[1545842]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1545842]: vkr:   pNext sType 1000072002
+virgl_render_server[1545846]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1545846]: vkr:   pNext sType 1000072002
+virgl_render_server[1545853]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1545853]: vkr:   pNext sType 1000072002
+virgl_render_server[1545927]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1545927]: vkr:   pNext sType 1000072002
+virgl_render_server[1545927]: vkr: vkCreateImage failed: ret -11 type 1 fmt 44 1280x800x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1545927]: vkr: failed to look up object 25 of type 10
+virgl_render_server[1545927]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1545927]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1545935]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1545935]: vkr:   pNext sType 1000072002
+virgl_render_server[1545935]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1545935]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1545935]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1545935]: vkr:   pNext sType 1000072002
+virgl_render_server[1545935]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1545935]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1545935]: vkr:   pNext sType 1000072002
+virgl_render_server[1545935]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1545935]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1545935]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1545935]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1545935]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1545938]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1545938]: vkr:   pNext sType 1000072002
+virgl_render_server[1545938]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1545938]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1545938]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1545938]: vkr:   pNext sType 1000072002
+virgl_render_server[1545938]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1545938]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1545938]: vkr:   pNext sType 1000072002
+virgl_render_server[1545938]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1545942]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1545942]: vkr:   pNext sType 1000072002
+virgl_render_server[1545938]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1545938]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1545938]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1545938]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1545942]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1545942]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1545942]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1545942]: vkr:   pNext sType 1000072002
+virgl_render_server[1545942]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1545942]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1545942]: vkr:   pNext sType 1000072002
+virgl_render_server[1545942]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1545942]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1545942]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1545942]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1545942]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1545953]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1545953]: vkr:   pNext sType 1000072002
+virgl_render_server[1545953]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1545953]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1545953]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1545953]: vkr:   pNext sType 1000072002
+virgl_render_server[1545953]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1545953]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1545953]: vkr:   pNext sType 1000072002
+virgl_render_server[1545953]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1545953]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1545953]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1545953]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1545953]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1545953]: vkr: submit_cmd: early bail due to fatal decoder state
+virgl_render_server[1545953]: failed to dispatch context op 5
+virgl_render_server[1545953]: vkr: destroying context 13 (yttrium) with a valid instance
+virgl_render_server[1545953]: vkr: destroying device with valid objects
+virgl_render_server[1546371]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1546371]: vkr:   pNext sType 1000072002
+virgl_render_server[1546371]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1546371]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1546371]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1546371]: vkr:   pNext sType 1000072002
+virgl_render_server[1546371]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1546371]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1546371]: vkr:   pNext sType 1000072002
+virgl_render_server[1546371]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1546384]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1546384]: vkr:   pNext sType 1000072002
+virgl_render_server[1546686]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1546686]: vkr:   pNext sType 1000072002
+virgl_render_server[1546686]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1546686]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1546686]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1546686]: vkr:   pNext sType 1000072002
+virgl_render_server[1546686]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1546686]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1546686]: vkr:   pNext sType 1000072002
+virgl_render_server[1546686]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1546686]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1546686]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1546686]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1546686]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1545846]: vkr: vkCreateImage failed: ret -11 type 1 fmt 44 960x640x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1545846]: vkr: failed to look up object 10 of type 10
+virgl_render_server[1545846]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1545846]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1547264]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1547267]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1547267]: vkr:   pNext sType 1000072002
+virgl_render_server[1547264]: vkr:   pNext sType 1000072002
+virgl_render_server[1547271]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1547271]: vkr:   pNext sType 1000072002
+virgl_render_server[1547264]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1547264]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1547267]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1547267]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1547271]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1547271]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1547264]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1547264]: vkr:   pNext sType 1000072002
+virgl_render_server[1547267]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1547267]: vkr:   pNext sType 1000072002
+virgl_render_server[1547264]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1547267]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1547271]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1547271]: vkr:   pNext sType 1000072002
+virgl_render_server[1547271]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1547267]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1547267]: vkr:   pNext sType 1000072002
+virgl_render_server[1547271]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1547271]: vkr:   pNext sType 1000072002
+virgl_render_server[1547264]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1547264]: vkr:   pNext sType 1000072002
+virgl_render_server[1547267]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1547271]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1547264]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1547264]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1547264]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1547264]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1547264]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1547267]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1547267]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1547267]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1547267]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1547267]: vkr: submit_cmd: early bail due to fatal decoder state
+virgl_render_server[1547267]: failed to dispatch context op 5
+virgl_render_server[1547271]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1547271]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1547271]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1547271]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1547267]: vkr: destroying context 19 (yttrium) with a valid instance
+virgl_render_server[1547267]: vkr: destroying device with valid objects
+virgl_render_server[1548490]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1548490]: vkr:   pNext sType 1000072002
+virgl_render_server[1548490]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1548490]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1548490]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1548490]: vkr:   pNext sType 1000072002
+virgl_render_server[1548490]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1548490]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1548490]: vkr:   pNext sType 1000072002
+virgl_render_server[1548490]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1548490]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1548490]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1548490]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1548490]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1549003]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1549003]: vkr:   pNext sType 1000072002
+virgl_render_server[1549023]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1549023]: vkr:   pNext sType 1000072002
+virgl_render_server[1549003]: vkr: vkCreateImage failed: ret -11 type 1 fmt 44 960x640x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1549003]: vkr: failed to look up object 10 of type 10
+virgl_render_server[1549003]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1549003]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1549007]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1549007]: vkr:   pNext sType 1000072002
+virgl_render_server[1549065]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1549065]: vkr:   pNext sType 1000072002
+virgl_render_server[1549065]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1549065]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1549065]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1549065]: vkr:   pNext sType 1000072002
+virgl_render_server[1549065]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1549065]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1549065]: vkr:   pNext sType 1000072002
+virgl_render_server[1549065]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1549065]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1549065]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1549065]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1549065]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1549062]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1549062]: vkr:   pNext sType 1000072002
+virgl_render_server[1549062]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1549062]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1549062]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1549062]: vkr:   pNext sType 1000072002
+virgl_render_server[1549062]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1549062]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1549062]: vkr:   pNext sType 1000072002
+virgl_render_server[1549062]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1549062]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1549062]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1549062]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1549062]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1549007]: vkr: vkCreateImage failed: ret -11 type 1 fmt 44 960x640x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1549007]: vkr: failed to look up object 10 of type 10
+virgl_render_server[1549007]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1549007]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1549543]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1549543]: vkr:   pNext sType 1000072002
+virgl_render_server[1549543]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1549543]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1549543]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1549543]: vkr:   pNext sType 1000072002
+virgl_render_server[1549543]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1549543]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1549543]: vkr:   pNext sType 1000072002
+virgl_render_server[1549543]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1549543]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1549543]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1549543]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1549543]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1549543]: vkr: submit_cmd: early bail due to fatal decoder state
+virgl_render_server[1549543]: failed to dispatch context op 5
+virgl_render_server[1549543]: vkr: destroying context 28 (yttrium) with a valid instance
+virgl_render_server[1549543]: vkr: destroying device with valid objects
+virgl_render_server[1549023]: vkr: vkCreateImage failed: ret -11 type 1 fmt 44 1280x800x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1549023]: vkr: failed to look up object 25 of type 10
+virgl_render_server[1549023]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1549023]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1549097]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1549097]: vkr:   pNext sType 1000072002
+virgl_render_server[1549097]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1549097]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1550218]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1550218]: vkr:   pNext sType 1000072002
+virgl_render_server[1550218]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1550218]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1550218]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1550218]: vkr:   pNext sType 1000072002
+virgl_render_server[1550218]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1550218]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1550218]: vkr:   pNext sType 1000072002
+virgl_render_server[1550218]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1550218]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1550218]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1550218]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1550218]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1550221]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1550221]: vkr:   pNext sType 1000072002
+virgl_render_server[1550221]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1550221]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1550221]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1550221]: vkr:   pNext sType 1000072002
+virgl_render_server[1550221]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1550221]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1550221]: vkr:   pNext sType 1000072002
+virgl_render_server[1550221]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1550221]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1550221]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1550221]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1550221]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1549097]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1549097]: vkr:   pNext sType 1000072002
+virgl_render_server[1549097]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1549097]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1549097]: vkr:   pNext sType 1000072002
+virgl_render_server[1549097]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1549097]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1549097]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1549097]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1549097]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1550840]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1550840]: vkr:   pNext sType 1000072002
+virgl_render_server[1550840]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1550840]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1550840]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1550840]: vkr:   pNext sType 1000072002
+virgl_render_server[1550840]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1550840]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1550840]: vkr:   pNext sType 1000072002
+virgl_render_server[1550840]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1550840]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1550840]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1550840]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1550840]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1550058]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1550058]: vkr:   pNext sType 1000072002
+virgl_render_server[1550058]: vkr: vkCreateImage failed: ret -11 type 1 fmt 44 960x640x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1550058]: vkr: failed to look up object 10 of type 10
+virgl_render_server[1550058]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1550058]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1550271]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1550271]: vkr:   pNext sType 1000072002
+virgl_render_server[1550271]: vkr: vkCreateImage failed: ret -11 type 1 fmt 44 960x640x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1550271]: vkr: failed to look up object 10 of type 10
+virgl_render_server[1550271]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1550271]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1551249]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1551249]: vkr:   pNext sType 1000072002
+virgl_render_server[1551246]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1551246]: vkr:   pNext sType 1000072002
+virgl_render_server[1551249]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1551249]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1551246]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1551246]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1551249]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1551249]: vkr:   pNext sType 1000072002
+virgl_render_server[1551249]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1551246]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1551246]: vkr:   pNext sType 1000072002
+virgl_render_server[1551246]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1551249]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1551249]: vkr:   pNext sType 1000072002
+virgl_render_server[1551249]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1551246]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1551246]: vkr:   pNext sType 1000072002
+virgl_render_server[1551246]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1551249]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1551249]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1551249]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1551249]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1551246]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1551246]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1551246]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1551246]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1551652]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1551652]: vkr:   pNext sType 1000072002
+virgl_render_server[1551652]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1551652]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1551652]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1551652]: vkr:   pNext sType 1000072002
+virgl_render_server[1551652]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1551652]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1551652]: vkr:   pNext sType 1000072002
+virgl_render_server[1551652]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1551652]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1551652]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1551652]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1551652]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1551098]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1551098]: vkr:   pNext sType 1000072002
+virgl_render_server[1552144]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1552144]: vkr:   pNext sType 1000072002
+virgl_render_server[1551098]: vkr: vkCreateImage failed: ret -11 type 1 fmt 44 1280x800x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1551098]: vkr: failed to look up object 25 of type 10
+virgl_render_server[1551098]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1551098]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1551251]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1551251]: vkr:   pNext sType 1000072002
+virgl_render_server[1551251]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1551251]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1551251]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1551251]: vkr:   pNext sType 1000072002
+virgl_render_server[1551251]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1551251]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1551251]: vkr:   pNext sType 1000072002
+virgl_render_server[1551251]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1551251]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1551251]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1551251]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1551251]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1551249]: vkr: destroying context 37 (yttrium) with a valid instance
+virgl_render_server[1551249]: vkr: destroying device with valid objects
+virgl_render_server[1552633]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1552635]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1552633]: vkr:   pNext sType 1000072002
+virgl_render_server[1552635]: vkr:   pNext sType 1000072002
+virgl_render_server[1552635]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1552633]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1552635]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1552633]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1552633]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1552633]: vkr:   pNext sType 1000072002
+virgl_render_server[1552633]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1552635]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1552635]: vkr:   pNext sType 1000072002
+virgl_render_server[1552635]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1552635]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1552635]: vkr:   pNext sType 1000072002
+virgl_render_server[1552633]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1552633]: vkr:   pNext sType 1000072002
+virgl_render_server[1552633]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1552635]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1552633]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1552633]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1552633]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1552633]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1552635]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1552635]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1552635]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1552635]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1552635]: vkr: submit_cmd: early bail due to fatal decoder state
+virgl_render_server[1552635]: failed to dispatch context op 5
+virgl_render_server[1552635]: vkr: destroying context 44 (yttrium) with a valid instance
+virgl_render_server[1552635]: vkr: destroying device with valid objects
+virgl_render_server[1553162]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1553162]: vkr:   pNext sType 1000072002
+virgl_render_server[1553162]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1553162]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1553162]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1553162]: vkr:   pNext sType 1000072002
+virgl_render_server[1553162]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1553162]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1553162]: vkr:   pNext sType 1000072002
+virgl_render_server[1553162]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1553162]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1553162]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1553162]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1553162]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1552144]: vkr: vkCreateImage failed: ret -11 type 1 fmt 44 960x640x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1552144]: vkr: failed to look up object 10 of type 10
+virgl_render_server[1552144]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1552144]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1554897]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1554897]: vkr:   pNext sType 1000072002
+virgl_render_server[1554897]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1554897]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1554897]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1554897]: vkr:   pNext sType 1000072002
+virgl_render_server[1554897]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1554897]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1554897]: vkr:   pNext sType 1000072002
+virgl_render_server[1554897]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1554897]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1554897]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1554897]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1554897]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1555924]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1555924]: vkr:   pNext sType 1000072002
+virgl_render_server[1555924]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1555924]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1555924]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1555924]: vkr:   pNext sType 1000072002
+virgl_render_server[1555924]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1555924]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1555924]: vkr:   pNext sType 1000072002
+virgl_render_server[1555924]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1555924]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1555924]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1555924]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1555924]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1554328]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1554328]: vkr:   pNext sType 1000072002
+virgl_render_server[1556236]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1556236]: vkr:   pNext sType 1000072002
+virgl_render_server[1554328]: vkr: vkCreateImage failed: ret -11 type 1 fmt 44 1280x800x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1554328]: vkr: failed to look up object 25 of type 10
+virgl_render_server[1554328]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1554328]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1556368]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1556368]: vkr:   pNext sType 1000072002
+virgl_render_server[1556368]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1556368]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1556368]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1556368]: vkr:   pNext sType 1000072002
+virgl_render_server[1556368]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1556368]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1556368]: vkr:   pNext sType 1000072002
+virgl_render_server[1556368]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1556368]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1556368]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1556368]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1556368]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1556652]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1556652]: vkr:   pNext sType 1000072002
+virgl_render_server[1556652]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1556652]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1556652]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1556652]: vkr:   pNext sType 1000072002
+virgl_render_server[1556652]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1556652]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1556652]: vkr:   pNext sType 1000072002
+virgl_render_server[1556652]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1556652]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1556652]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1556652]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1556652]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1557225]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1557225]: vkr:   pNext sType 1000072002
+virgl_render_server[1557225]: vkr: vkCreateImage failed: ret -11 type 1 fmt 44 1280x800x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1557225]: vkr: failed to look up object 25 of type 10
+virgl_render_server[1557225]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1557225]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1557381]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1557381]: vkr:   pNext sType 1000072002
+virgl_render_server[1557381]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1557381]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1557381]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1557381]: vkr:   pNext sType 1000072002
+virgl_render_server[1557381]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1557381]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1557381]: vkr:   pNext sType 1000072002
+virgl_render_server[1557381]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1557381]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1557381]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1557381]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1557381]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1557853]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1557853]: vkr:   pNext sType 1000072002
+virgl_render_server[1557853]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1557853]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1557853]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1557853]: vkr:   pNext sType 1000072002
+virgl_render_server[1557853]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1557853]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1557853]: vkr:   pNext sType 1000072002
+virgl_render_server[1557853]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1557853]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1557853]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1557853]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1557853]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1558051]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1558051]: vkr:   pNext sType 1000072002
+virgl_render_server[1558051]: vkr: vkCreateImage failed: ret -11 type 1 fmt 44 1280x800x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1558051]: vkr: failed to look up object 25 of type 10
+virgl_render_server[1558051]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1558051]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1558590]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1558590]: vkr:   pNext sType 1000072002
+virgl_render_server[1558590]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1558590]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1558590]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1558590]: vkr:   pNext sType 1000072002
+virgl_render_server[1558590]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1558590]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1558590]: vkr:   pNext sType 1000072002
+virgl_render_server[1558590]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1558590]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1558590]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1558590]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1558590]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1558676]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1558676]: vkr:   pNext sType 1000072002
+virgl_render_server[1558676]: vkr: vkCreateImage failed: ret -11 type 1 fmt 44 1280x800x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1558676]: vkr: failed to look up object 25 of type 10
+virgl_render_server[1558676]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1558676]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1559834]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1559834]: vkr:   pNext sType 1000072002
+virgl_render_server[1559834]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1559834]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1559834]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1559834]: vkr:   pNext sType 1000072002
+virgl_render_server[1559834]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1559834]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1559834]: vkr:   pNext sType 1000072002
+virgl_render_server[1559834]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1559834]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1559834]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1559834]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1559834]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1560346]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1560346]: vkr:   pNext sType 1000072002
+virgl_render_server[1560346]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1560346]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1560346]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1560346]: vkr:   pNext sType 1000072002
+virgl_render_server[1560346]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1560346]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1560346]: vkr:   pNext sType 1000072002
+virgl_render_server[1560346]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1560346]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1560346]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1560346]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1560346]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1560939]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1560939]: vkr:   pNext sType 1000072002
+virgl_render_server[1560939]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1560939]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1560939]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1560939]: vkr:   pNext sType 1000072002
+virgl_render_server[1560939]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1560939]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1560939]: vkr:   pNext sType 1000072002
+virgl_render_server[1560939]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1560939]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1560939]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1560939]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1560939]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1562462]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1562462]: vkr:   pNext sType 1000072002
+virgl_render_server[1562462]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1562462]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1562462]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1562462]: vkr:   pNext sType 1000072002
+virgl_render_server[1562462]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1562462]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1562462]: vkr:   pNext sType 1000072002
+virgl_render_server[1562462]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1562462]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1562462]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1562462]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1562462]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1564114]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1564114]: vkr:   pNext sType 1000072002
+virgl_render_server[1564114]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1564114]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1564114]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1564114]: vkr:   pNext sType 1000072002
+virgl_render_server[1564114]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1564114]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1564114]: vkr:   pNext sType 1000072002
+virgl_render_server[1564114]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1564114]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1564114]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1564114]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1564114]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1566323]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1566323]: vkr:   pNext sType 1000072002
+virgl_render_server[1566323]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1566323]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1566323]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1566323]: vkr:   pNext sType 1000072002
+virgl_render_server[1566323]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1566323]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1566323]: vkr:   pNext sType 1000072002
+virgl_render_server[1566323]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1566323]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1566323]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1566323]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1566323]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1569113]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1569113]: vkr:   pNext sType 1000072002
+virgl_render_server[1569148]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1569148]: vkr:   pNext sType 1000072002
+virgl_render_server[1569148]: vkr: vkCreateImage: ret 0 type 1 fmt 44 50x50x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1569148]: vkr: vkAllocateMemory: ret 0 size 16384 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1569148]: vkr: vkAllocateMemory: ret 0 size 1024 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1569148]: vkr:   pNext sType 1000072002
+virgl_render_server[1569148]: vkr: vkCreateImage failed: ret -11 type 1 fmt 44 1280x800x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1569148]: vkr: failed to look up object 77 of type 10
+virgl_render_server[1569148]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1569148]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1569242]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1569242]: vkr:   pNext sType 1000072002
+virgl_render_server[1569242]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1569242]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1569242]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1569242]: vkr:   pNext sType 1000072002
+virgl_render_server[1569242]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1569242]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1569242]: vkr:   pNext sType 1000072002
+virgl_render_server[1569242]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1569242]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1569242]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1569242]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1569242]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1569242]: vkr: submit_cmd: early bail due to fatal decoder state
+virgl_render_server[1569242]: failed to dispatch context op 5
+virgl_render_server[1569242]: vkr: destroying context 7 (yttrium) with a valid instance
+virgl_render_server[1569242]: vkr: destroying device with valid objects
+virgl_render_server[1571578]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1571578]: vkr:   pNext sType 1000072002
+virgl_render_server[1571578]: vkr: vkCreateImage failed: ret -11 type 1 fmt 44 1280x800x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1571578]: vkr: failed to look up object 25 of type 10
+virgl_render_server[1571578]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1571578]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1572013]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1572013]: vkr:   pNext sType 1000072002
+virgl_render_server[1572013]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1572013]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1572013]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1572013]: vkr:   pNext sType 1000072002
+virgl_render_server[1572013]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1572013]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1572013]: vkr:   pNext sType 1000072002
+virgl_render_server[1572013]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1572013]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1572013]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1572013]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1572013]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1573966]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1573966]: vkr:   pNext sType 1000072002
+virgl_render_server[1573963]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1573963]: vkr:   pNext sType 1000072002
+virgl_render_server[1573963]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1573963]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1573963]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1573963]: vkr:   pNext sType 1000072002
+virgl_render_server[1573963]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1573963]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1573963]: vkr:   pNext sType 1000072002
+virgl_render_server[1573963]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1573963]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1573963]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1573963]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1573963]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1573966]: vkr: vkCreateImage failed: ret -11 type 1 fmt 44 1280x800x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1573966]: vkr: failed to look up object 25 of type 10
+virgl_render_server[1573966]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1573966]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1574729]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1574729]: vkr:   pNext sType 1000072002
+virgl_render_server[1574729]: vkr: vkCreateImage: ret 0 type 1 fmt 44 16x16x1 mips 1 layers 1 samples 1 tiling 0 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1574729]: vkr: vkAllocateMemory: ret 0 size 1024 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1574729]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1574729]: vkr:   pNext sType 1000072002
+virgl_render_server[1574729]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1574729]: vkr: vkAllocateMemory: ret 0 size 4096 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1574729]: vkr:   pNext sType 1000072002
+virgl_render_server[1574729]: vkr: vkAllocateMemory: ret 0 size 4096 type 1 flags 0x1 export 0x0 import_fd -1 gbm 0
+virgl_render_server[1574729]: vkr: vkCreateImage failed: ret -11 type 1 fmt 9 32x32x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1574729]: vkr: failed to look up object 24 of type 10
+virgl_render_server[1574729]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1574729]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[1575127]: vkr: vkAllocateMemory: ret 0 size 4194304 type 3 flags 0xe export 0x200 import_fd -1 gbm 0
+virgl_render_server[1575127]: vkr:   pNext sType 1000072002
+virgl_render_server[1575127]: vkr: vkCreateImage failed: ret -11 type 1 fmt 44 1280x800x1 mips 1 layers 1 samples 1 tiling 1 usage 0x80017 flags 0x8 sharing 0 layout 0
+virgl_render_server[1575127]: vkr: failed to look up object 25 of type 10
+virgl_render_server[1575127]: vkr: vkGetImageMemoryRequirements resulted in CS error
+virgl_render_server[1575127]: vkr: ring_submit_cmd: vn_dispatch_command failed

@@ -1,0 +1,16 @@
+
+name             exit_code result      adapter                                                                          software readback_ok avg_fps first_error                                                    
+----             --------- ------      -------                                                                          -------- ----------- ------- -----------                                                    
+x64-d3d11_probe          0 pass        Hardsoft VirtIO GPU 3D controller                                                   False        True   58.91                                                                
+x64-d3d12_probe          0 pass        Hardsoft VirtIO GPU 3D controller                                                   False        True    3.76                                                                
+x64-d3d9_probe           0 pass        Hardsoft VirtIO GPU 3D controller                                                   False        True   21.70                                                                
+x64-opengl_probe         1 api_failure zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY))    False       False    0.00 SwapBuffers failed: 0                                          
+x64-vulkan_probe         1 api_failure Virtio-GPU Venus (NVIDIA GeForce RTX 5090)                                          False       False    0.00 vkCreateSwapchainKHR failed: VK_ERROR_OUT_OF_DEVICE_MEMORY (-2)
+x86-d3d11_probe          0 pass        Hardsoft VirtIO GPU 3D controller                                                   False        True   56.84                                                                
+x86-d3d12_probe          0 pass        Hardsoft VirtIO GPU 3D controller                                                   False        True    3.82                                                                
+x86-d3d9_probe           0 pass        Hardsoft VirtIO GPU 3D controller                                                   False        True   20.38                                                                
+x86-opengl_probe         1 api_failure zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY))    False       False    0.00 SwapBuffers failed: 0                                          
+x86-vulkan_probe         1 api_failure Virtio-GPU Venus (NVIDIA GeForce RTX 5090)                                          False       False    0.00 vkCreateSwapchainKHR failed: VK_ERROR_OUT_OF_DEVICE_MEMORY (-2)
+
+
+

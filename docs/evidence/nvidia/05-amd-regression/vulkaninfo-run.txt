@@ -1,0 +1,27 @@
+{
+    "name":  "vkinfo",
+    "exe":  "C:\\Windows\\System32\\cmd.exe",
+    "arguments":  "/c C:\\win3d\\vkinfo.cmd",
+    "user":  "VMLABVM-L37GIKE\\win3d",
+    "session_id":  1,
+    "pid":  8088,
+    "wow64":  false,
+    "started":  "2026-10-17T06:08:24.0557022-07:00",
+    "ended":  "2026-10-17T06:08:28.3886967-07:00",
+    "duration_s":  4.3,
+    "timed_out":  false,
+    "exit_code":  0,
+    "task_result":  0,
+    "probe_json":  null,
+    "probe_result":  null,
+    "adapter":  null,
+    "software":  null,
+    "readback_ok":  null,
+    "module_count":  0,
+    "graphics_modules":  [
+
+                         ],
+    "app_local_modules":  [
+
+                          ]
+}

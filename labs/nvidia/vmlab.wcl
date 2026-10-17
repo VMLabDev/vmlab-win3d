@@ -1,0 +1,17 @@
+import <vmlab.wcl>
+
+// Windows 11 with Venus on the first RTX 5090 (0000:01:00.0, renderD128).
+// Needs vmlab >= 0.24.0-alpha: gpu.address picks the render node for
+// egl-headless and sets VK_LOADER_DRIVERS_SELECT=*nvidia* in QEMU's
+// environment. See docs/nvidia.md. Bring it up through ./vmlab-nv.sh when a
+// patched render server is wanted (its path has to be in QEMU's environment).
+lab "win3d-nvidia-a" {
+  vm "win11" {
+    template = "x86_64/windows-11@26100.1742.5"
+    secure_boot = false
+    gpu {
+      mode    = "vulkan"
+      address = "0000:01:00.0"
+    }
+  }
+}
