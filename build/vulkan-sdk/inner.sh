@@ -11,7 +11,7 @@ export SOURCE_DATE_EPOCH TZ=UTC LC_ALL=C.UTF-8
 
 # Fetch (or reuse) each pinned tarball and check it against PINS.
 mkdir -p "$dl"
-declare -A srcdir
+declare -A srcdir srctag
 while read -r kind name tag commit sha url; do
   [[ "$kind" == src ]] || continue
   file="$dl/$name-$tag.tar.gz"
@@ -27,6 +27,7 @@ while read -r kind name tag commit sha url; do
     exit 1
   fi
   srcdir[$name]="$work/src/$name"
+  srctag[$name]="$tag"
   rm -rf "${srcdir[$name]}"
   mkdir -p "${srcdir[$name]}"
   tar -C "${srcdir[$name]}" --strip-components=1 -xzf "$file"
@@ -41,6 +42,19 @@ cmake -S "${srcdir[Vulkan-Headers]}" -B "$work/build-headers" -G Ninja \
   -DCMAKE_INSTALL_PREFIX="$hdr" -DVULKAN_HEADERS_ENABLE_MODULE=OFF \
   -DVULKAN_HEADERS_ENABLE_TESTS=OFF
 cmake --install "$work/build-headers"
+
+# Version resources: tag vulkan-sdk-1.4.363.0 gives 1.4.363.0. Without
+# them the binaries say "Dev Build" in their version strings.
+sdk_version() {
+  local v="${srctag[$1]#vulkan-sdk-}"
+  [[ "$v" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] || {
+    echo "error: cannot derive a version from tag ${srctag[$1]}" >&2
+    exit 1
+  }
+  echo "$v"
+}
+loader_version="$(sdk_version Vulkan-Loader)"
+tools_version="$(sdk_version Vulkan-Tools)"
 
 prefix_map="-ffile-prefix-map=$work=/vulkan-sdk"
 cflags="-O2 $prefix_map"
@@ -69,11 +83,16 @@ build_arch() {
 
   # USE_GAS: assemble the unknown-function trampolines with clang (the MASM
   # path wants jwasm/uasm, which the image does not have).
+  # BUILD_DLL_VERSIONINFO: generate loader.rc with the SDK version, as the
+  # Vulkan Runtime build does. Without it the checked-in loader.rc says
+  # "Vulkan Loader - Dev Build". Its copyright year follows SOURCE_DATE_EPOCH.
   cmake -S "${srcdir[Vulkan-Loader]}" -B "$bl" "${common[@]}" \
+    -DBUILD_DLL_VERSIONINFO="$loader_version" \
     -DUSE_GAS=ON -DBUILD_TESTS=OFF -DLOADER_CODEGEN=OFF -DUPDATE_DEPS=OFF
   cmake --build "$bl" --target vulkan
 
   cmake -S "${srcdir[Vulkan-Tools]}" -B "$bt" "${common[@]}" \
+    -DVULKANINFO_BUILD_DLL_VERSIONINFO="$tools_version" \
     -DBUILD_CUBE=OFF -DBUILD_ICD=OFF -DBUILD_TESTS=OFF -DBUILD_VULKANINFO=ON \
     -DUPDATE_DEPS=OFF
   cmake --build "$bt" --target vulkaninfo
