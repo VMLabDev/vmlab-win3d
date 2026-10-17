@@ -56,8 +56,11 @@ def common(lines, version, date):
         line = re.sub(r",yttrium12\s*$", "", line)
         if any(tok in line for tok in ABSENT_PAYLOAD):
             continue
-        # stampinf
-        line = line.replace("$ARCH$", "amd64")
+        # stampinf -a $(InfArch). viogpu3d.vcxproj sets InfArch to
+        # amd64.10.0 for Win11 because the INX already carries "...16299";
+        # "NTamd64...16299" alone would put 16299 in the ProductType field and
+        # match no system.
+        line = line.replace("$ARCH$", "amd64.10.0")
         if re.match(r"^\s*DriverVer\s*=", line, re.I):
             line = f"DriverVer = {date},{version}"
         for k, v in SUBSTITUTIONS.items():

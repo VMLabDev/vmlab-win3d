@@ -115,9 +115,12 @@ iconv -f UTF-16 -t UTF-8 "$SRC/viogpu/viogpu3d/viogpu3d.rc" | sed 's/\r$//' >"$O
 echo "  LINK viogpu3d.sys"
 # Mirrors the WDK driver link: /DRIVER, native subsystem 10.0, GsDriverEntry
 # from bufferoverflowfastfailk.lib, no default libraries, INIT discardable.
+# lld-link's /SECTION replaces a section's attributes instead of adding to
+# them, so INIT needs E and R spelled out: "INIT,d" alone leaves
+# DriverEntry in a non-executable section and the load bugchecks (0x1A).
 "$LLD_LINK" /nologo /DRIVER /SUBSYSTEM:NATIVE,10.00 /ENTRY:GsDriverEntry /NODEFAULTLIB \
     /MACHINE:X64 /RELEASE /INCREMENTAL:NO /OPT:REF /OPT:ICF /Brepro /TSAWARE:NO \
-    /MERGE:_TEXT=.text /MERGE:_PAGE=PAGE /SECTION:INIT,d \
+    /MERGE:_TEXT=.text /MERGE:_PAGE=PAGE /SECTION:INIT,ERD \
     /DEBUG /PDB:"$OUT/viogpu3d.pdb" /PDBALTPATH:viogpu3d.pdb \
     /OUT:"$OUT/viogpu3d.sys" \
     "$OBJ"/viogpu3d/*.obj "$OBJ/viogpu3d.res" "$OBJ/virtiolib.lib" \
