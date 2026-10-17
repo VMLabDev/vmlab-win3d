@@ -8,7 +8,8 @@
 # The applications come from official downloads pinned in tests/e2e/PINS:
 # DirectX SDK (June 2010) prebuilt D3D9 and D3D11 samples (with the D3DX
 # runtime from the SDK's own DXSETUP redistributable, installed system-wide
-# as a game installer would), and Blender 4.2.3 (OpenGL 4.3). Each runs in
+# as a game installer would, and the SDK's developer runtime D3D11Ref.dll, as
+# the SDK installer would), and Blender 4.2.3 (OpenGL 4.3). Each runs in
 # the user's session through tests/guest/Run-Probe.ps1 -Raw for a fixed time
 # and is then closed; the console is captured with `vmlab vm screenshot`
 # while it runs. Writes <evidence-dir>/apps/: per app the run summary and
@@ -45,16 +46,18 @@ stage() {
     local vc64 vc86
     vc64=$(fetch_pin vcredist2010-x64) || return 1
     vc86=$(fetch_pin vcredist2010-x86) || return 1
-    if [ ! -f "$STAGE/dxsdk.zip" ]; then
-        note "unpacking the DirectX SDK's samples, media and redistributable"
+    # dxsdk-2.zip: the first version (dxsdk.zip) had no Developer Runtime.
+    if [ ! -f "$STAGE/dxsdk-2.zip" ]; then
+        note "unpacking the DirectX SDK's samples, media, redistributable and developer runtime"
         rm -rf "$STAGE/dxsdk"
         7z x -y -o"$STAGE/dxsdk" "$sdk" "DXSDK/Redist/*" "DXSDK/Samples/Media/*" \
-            "DXSDK/Samples/C++/Direct3D/*" "DXSDK/Samples/C++/Direct3D11/*" >/dev/null || return 1
-        (cd "$STAGE/dxsdk" && bsdtar -a -cf "$STAGE/dxsdk.zip" --options zip:compression=store DXSDK) || return 1
+            "DXSDK/Samples/C++/Direct3D/*" "DXSDK/Samples/C++/Direct3D11/*" \
+            "DXSDK/Developer Runtime/*" >/dev/null || return 1
+        (cd "$STAGE/dxsdk" && bsdtar -a -cf "$STAGE/dxsdk-2.zip" --options zip:compression=store DXSDK) || return 1
         rm -rf "$STAGE/dxsdk"
     fi
     note "copying the DirectX SDK and Blender into the guest"
-    in_lab vmlab cp "$STAGE/dxsdk.zip" "$VM:C:/apps/dxsdk.zip" || return 1
+    in_lab vmlab cp "$STAGE/dxsdk-2.zip" "$VM:C:/apps/dxsdk.zip" || return 1
     in_lab vmlab cp "$blender" "$VM:C:/apps/blender.zip" || return 1
     in_lab vmlab cp "$vc64" "$VM:C:/apps/vcredist_x64.exe" || return 1
     in_lab vmlab cp "$vc86" "$VM:C:/apps/vcredist_x86.exe" || return 1
@@ -66,11 +69,26 @@ stage() {
          foreach ($f in "System32\msvcr100.dll", "SysWOW64\msvcr100.dll", "System32\d3dx10_43.dll") { "{0} {1}" -f $f, (Test-Path "$env:windir\$f") }
          foreach ($f in "System32\d3dx9_43.dll", "System32\d3dx11_43.dll", "System32\D3DCompiler_43.dll", "SysWOW64\d3dx9_43.dll", "SysWOW64\D3DCompiler_43.dll") { "{0} {1}" -f $f, (Test-Path "$env:windir\$f") }' 900 \
         | tee "$EV/dxsetup.txt"
+    # Without the REFERENCE rasterizer, DXUT (June 2010) ends its device
+    # enumeration on WARP's adapter, which has no outputs on Windows 8 and
+    # later, and places BasicHLSL11's window off the screen
+    # (docs/d3d11-apps.md). The SDK installer puts D3D11Ref.dll in System32 and
+    # SysWOW64; the samples still render on the HARDWARE device.
+    note "installing the SDK developer runtime (D3D11Ref.dll)"
+    gps '$dr = "C:\apps\DXSDK\Developer Runtime"
+         foreach ($p in @(@("x64", "System32"), @("x86", "SysWOW64"))) {
+             $src = "$dr\$($p[0])\D3D11Ref.dll"
+             if (Test-Path -LiteralPath $src) {
+                 Copy-Item -LiteralPath $src -Destination "$env:windir\$($p[1])\D3D11Ref.dll" -Force
+                 "{0}\D3D11Ref.dll {1}" -f $p[1], (Get-FileHash -Algorithm SHA256 -LiteralPath $src).Hash.ToLowerInvariant()
+             } else { "{0}\D3D11Ref.dll missing from the SDK ({1})" -f $p[1], $src }
+         }' 300 \
+        | tee -a "$EV/dxsetup.txt"
 }
 
 capture() { in_lab vmlab vm screenshot "$VM" "$1" >/dev/null 2>&1; }
 
-app() { # app NAME SECONDS EXE ARGS...  (Run-Probe -Raw needs at least one argument)
+app() { # app NAME SECONDS EXE [ARGS...]
     local name=$1 secs=$2 exe=$3 n=0 pid rc
     local frames=()
     shift 3
@@ -110,8 +128,8 @@ EOF
 
 stage || { note "staging failed"; exit 1; }
 B=C:\\apps\\DXSDK\\Samples\\C++
-# D3D9 samples (DXUT; -windowed is their default, passed because Run-Probe
-# -Raw needs an argument).
+# D3D9 samples (DXUT; -windowed is their default. Run-Probe -Raw used to need
+# an argument; it no longer does, and the runs keep it for comparability).
 app d3d9-x64-BasicHLSL 30 "$B\\Direct3D\\Bin\\x64\\BasicHLSL.exe" -windowed
 app d3d9-x86-BasicHLSL 30 "$B\\Direct3D\\Bin\\x86\\BasicHLSL.exe" -windowed
 app d3d9-x64-ParallaxOcclusionMapping 30 "$B\\Direct3D\\Bin\\x64\\ParallaxOcclusionMapping.exe" -windowed
