@@ -1,0 +1,158 @@
+Subject: [PATCH 03/11] util/u_queue: do not join worker threads under the loader lock on Windows
+
+OpenGL may destroy a context, and so a util_queue, while the loader lock
+is held (DLL_PROCESS_DETACH or wglDeleteContext from DllMain paths). Joining
+the worker thread there deadlocks, because thread exit needs the same lock
+for DLL_THREAD_DETACH. Each worker now signals an event after its last queue
+access; kill_threads waits for that event or for thread exit (ExitProcess can
+kill workers before they signal), then detaches the thread. Fixes the
+GravityMark OpenGL shutdown hang (installer v15).
+
+Prior art: F215-F219, installer v15 (R/NATIVE-WDDM20.md; prior-art section 3).
+Origin: codex working tree R/mesa (git diff 374c3022), re-exported by
+vmlab-win3d build/mesa; see build/mesa/README.md.
+---
+diff --git a/src/util/u_queue.c b/src/util/u_queue.c
+index 1ccf4af1ad82bb34f5bc76f7877c9cfe84bdf2eb..4326a7d62702174fcdb3a458b9e7538ef773a63e 100644
+--- a/src/util/u_queue.c
++++ b/src/util/u_queue.c
+@@ -34,6 +34,10 @@
+ #include "util/timespec.h"
+ #include "u_process.h"
+ 
++#if DETECT_OS_WINDOWS
++#include <windows.h>
++#endif
++
+ #if defined(__linux__)
+ #include <sys/time.h>
+ #include <sys/resource.h>
+@@ -229,6 +233,9 @@ util_queue_fence_destroy(struct util_queue_fence *fence)
+ struct thread_input {
+    struct util_queue *queue;
+    int thread_index;
++#if DETECT_OS_WINDOWS
++   HANDLE done;
++#endif
+ };
+ 
+ static int
+@@ -236,6 +243,9 @@ util_queue_thread_func(void *input)
+ {
+    struct util_queue *queue = ((struct thread_input*)input)->queue;
+    int thread_index = ((struct thread_input*)input)->thread_index;
++#if DETECT_OS_WINDOWS
++   HANDLE done = ((struct thread_input*)input)->done;
++#endif
+ 
+    free(input);
+ 
+@@ -314,6 +324,10 @@ util_queue_thread_func(void *input)
+       queue->num_queued = 0;
+    }
+    mtx_unlock(&queue->lock);
++#if DETECT_OS_WINDOWS
++   /* No queue storage may be accessed after signaling completion. */
++   SetEvent(done);
++#endif
+    return 0;
+ }
+ 
+@@ -322,10 +336,24 @@ util_queue_create_thread(struct util_queue *queue, unsigned index)
+ {
+    struct thread_input *input =
+       (struct thread_input *) malloc(sizeof(struct thread_input));
++   if (!input)
++      return false;
+    input->queue = queue;
+    input->thread_index = index;
++#if DETECT_OS_WINDOWS
++   input->done = CreateEvent(NULL, TRUE, FALSE, NULL);
++   if (!input->done) {
++      free(input);
++      return false;
++   }
++   queue->thread_done[index] = input->done;
++#endif
+ 
+    if (thrd_success != u_thread_create(queue->threads + index, util_queue_thread_func, input)) {
++#if DETECT_OS_WINDOWS
++      CloseHandle(input->done);
++      queue->thread_done[index] = NULL;
++#endif
+       free(input);
+       return false;
+    }
+@@ -449,6 +477,12 @@ util_queue_init(struct util_queue *queue,
+    if (!queue->threads)
+       goto fail;
+ 
++#if DETECT_OS_WINDOWS
++   queue->thread_done = calloc(queue->max_threads, sizeof(*queue->thread_done));
++   if (!queue->thread_done)
++      goto fail;
++#endif
++
+    /* start threads */
+    for (i = 0; i < queue->num_threads; i++) {
+       if (!util_queue_create_thread(queue, i)) {
+@@ -468,6 +502,9 @@ util_queue_init(struct util_queue *queue,
+ 
+ fail:
+    free(queue->threads);
++#if DETECT_OS_WINDOWS
++   free(queue->thread_done);
++#endif
+ 
+    if (queue->jobs) {
+       cnd_destroy(&queue->has_space_cond);
+@@ -505,8 +542,24 @@ util_queue_kill_threads(struct util_queue *queue, unsigned keep_num_threads,
+    if (keep_num_threads < old_num_threads) {
+       /* We need to unlock the mutex to allow threads to terminate. */
+       mtx_unlock(&queue->lock);
+-      for (unsigned i = keep_num_threads; i < old_num_threads; i++)
++      for (unsigned i = keep_num_threads; i < old_num_threads; i++) {
++#if DETECT_OS_WINDOWS
++         /* OpenGL may destroy a context while holding the loader lock.
++          * Wait for the worker's last queue access, not OS thread exit,
++          * whose DLL_THREAD_DETACH callbacks require that same lock.
++          */
++         /* ExitProcess can terminate workers before they signal completion. */
++         HANDLE handles[] = {queue->thread_done[i], queue->threads[i].handle};
++         DWORD result = WaitForMultipleObjects(2, handles, FALSE, INFINITE);
++         if (result != WAIT_OBJECT_0 && result != WAIT_OBJECT_0 + 1)
++            abort();
++         CloseHandle(queue->thread_done[i]);
++         queue->thread_done[i] = NULL;
++         thrd_detach(queue->threads[i]);
++#else
+          thrd_join(queue->threads[i], NULL);
++#endif
++      }
+       if (locked)
+          mtx_lock(&queue->lock);
+    } else {
+@@ -537,6 +590,9 @@ util_queue_destroy(struct util_queue *queue)
+    mtx_destroy(&queue->lock);
+    free(queue->jobs);
+    free(queue->threads);
++#if DETECT_OS_WINDOWS
++   free(queue->thread_done);
++#endif
+ }
+ 
+ static void
+diff --git a/src/util/u_queue.h b/src/util/u_queue.h
+index 7cbb89cdec3a638559e7821ac72585555c52152a..6044ab7c03d9df96d140af7399ce543785f078a1 100644
+--- a/src/util/u_queue.h
++++ b/src/util/u_queue.h
+@@ -228,6 +228,9 @@ struct util_queue {
+    cnd_t has_queued_cond;
+    cnd_t has_space_cond;
+    thrd_t *threads;
++#if DETECT_OS_WINDOWS
++   void **thread_done;
++#endif
+    unsigned flags;
+    int num_queued;
+    unsigned max_threads;

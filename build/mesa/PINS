@@ -1,0 +1,17 @@
+# Inputs to build/mesa. inner.sh reads the "src" lines.
+# Format: src <name> <version or commit> <sha256-of-download> <url>
+src mesa 374c30222e0c08b04783c173c127abb3e465d028 7d8538c1d17ffe2a2abe733532d1dd1be9b43089ec79e9c2460730ea0694f72a https://github.com/arehnman/virtio-win-mesa/archive/374c30222e0c08b04783c173c127abb3e465d028.tar.gz
+src windows-sdk-cpp 10.0.26100.1 b4730a467a8f29145fc0136b2b3f626767e985f6aa6e32f1352953c38d6ff5d2 https://api.nuget.org/v3-flatcontainer/microsoft.windows.sdk.cpp/10.0.26100.1/microsoft.windows.sdk.cpp.10.0.26100.1.nupkg
+src windows-wdk-x64 10.0.26100.1 247b2919ae451f65ba5f1cd51c7c39730fb0fc383d607f3e8ab317fddc8a8239 https://api.nuget.org/v3-flatcontainer/microsoft.windows.wdk.x64/10.0.26100.1/microsoft.windows.wdk.x64.10.0.26100.1.nupkg
+src DirectX-Headers v1.619.1 6193774904c940eebb9b0c51b816b93dd776cfeb25a951f0f4a58f22387e5008 https://github.com/microsoft/DirectX-Headers/archive/refs/tags/v1.619.1.tar.gz
+# DirectX-Headers v1.619.1 is commit 9e393d6d8a3b30dcc6f2806ef604ec16a27b0d7e, the
+# revision of Mesa's subprojects/DirectX-Headers.wrap. It is unpacked as that
+# subproject, so Meson never downloads it.
+# The Mesa commit is branch yttrium-experimental of arehnman/virtio-win-mesa
+# ("yttrium: update experimental driver to September 2026 release", Mesa 26.1.0).
+# Local patches: patches/mesa/*.patch, applied in name order (see README.md).
+# SOURCE_DATE_EPOCH used for the build.
+epoch 0
+# Toolchain: the image printed by build/toolchain/build.sh; its inputs are in
+# build/toolchain/PINS.
+toolchain see build/toolchain/PINS

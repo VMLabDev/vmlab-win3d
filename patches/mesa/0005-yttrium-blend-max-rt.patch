@@ -1,0 +1,72 @@
+Subject: [PATCH 05/11] d3d10umd, yttrium: honour blend max_rt and ignore factors when blending is off
+
+The D3D10/11 blend-state creators now set pipe_blend_state.max_rt. The
+Yttrium backend leaves render targets beyond max_rt and targets with
+blending disabled at neutral factors instead of converting garbage. An
+invalid factor reached an unreachable branch and crashed Heaven, which
+initialises four of eight targets.
+
+Prior art: F3 (R/VERDICT.md "Driver changes"; prior-art section 2.2 Heaven D3D9).
+Origin: codex working tree R/mesa (git diff 374c3022), re-exported by
+vmlab-win3d build/mesa; see build/mesa/README.md.
+---
+diff --git a/src/gallium/frontends/d3d10umd/OutputMerger.cpp b/src/gallium/frontends/d3d10umd/OutputMerger.cpp
+index a6c9e18aac0759ea70a5e7ff47040899a65bcd2b..709dff03c6a3d66fddf2b43db4b5bb5600dcda8e 100644
+--- a/src/gallium/frontends/d3d10umd/OutputMerger.cpp
++++ b/src/gallium/frontends/d3d10umd/OutputMerger.cpp
+@@ -963,6 +963,7 @@ CreateBlendState(D3D10DDI_HDEVICE hDevice,                     // IN
+ 
+    struct pipe_blend_state state;
+    memset(&state, 0, sizeof state);
++   state.max_rt = MIN2(PIPE_MAX_COLOR_BUFS, D3D10_DDI_SIMULTANEOUS_RENDER_TARGET_COUNT) - 1;
+ 
+    for (i = 0; i < MIN2(PIPE_MAX_COLOR_BUFS, D3D10_DDI_SIMULTANEOUS_RENDER_TARGET_COUNT); ++i) {
+       state.rt[i].blend_enable = pBlendDesc->BlendEnable[i];
+@@ -1038,6 +1039,7 @@ CreateBlendState1(D3D10DDI_HDEVICE hDevice,                     // IN
+ 
+    struct pipe_blend_state state;
+    memset(&state, 0, sizeof state);
++   state.max_rt = MIN2(PIPE_MAX_COLOR_BUFS, D3D10_DDI_SIMULTANEOUS_RENDER_TARGET_COUNT) - 1;
+ 
+    state.alpha_to_coverage = pBlendDesc->AlphaToCoverageEnable;
+    state.independent_blend_enable = pBlendDesc->IndependentBlendEnable;
+@@ -1084,6 +1086,7 @@ CreateBlendState11_1Impl(D3D10DDI_HDEVICE hDevice,
+ 
+    struct pipe_blend_state state;
+    memset(&state, 0, sizeof state);
++   state.max_rt = MIN2(PIPE_MAX_COLOR_BUFS, D3D10_DDI_SIMULTANEOUS_RENDER_TARGET_COUNT) - 1;
+ 
+    state.alpha_to_coverage = pBlendDesc->AlphaToCoverageEnable;
+    state.independent_blend_enable = pBlendDesc->IndependentBlendEnable;
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_state.c b/src/gallium/winsys/yttrium/gdi/yttrium_state.c
+index 797c7f66978669c4c7f274dc128553797bdeb795..dd7c3c398827e9446c4ffc29fb0332c85bd074e9 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_state.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_state.c
+@@ -548,13 +548,26 @@ yttrium_pipe_colormask(unsigned colormask)
+ static void
+ yttrium_init_blend_state(struct yttrium_blend_state *blend)
+ {
++   const struct pipe_rt_blend_state unused = {0};
+    blend->logic_op = yttrium_pipe_logic_op(blend->state.logicop_func);
+    for (uint32_t i = 0; i < PIPE_MAX_COLOR_BUFS; i++) {
+       const uint32_t rt_index = blend->state.independent_blend_enable ? i : 0;
+-      const struct pipe_rt_blend_state *rt = &blend->state.rt[rt_index];
++      const struct pipe_rt_blend_state *rt =
++         blend->state.independent_blend_enable && i > blend->state.max_rt ?
++         &unused : &blend->state.rt[rt_index];
+ 
+       blend->rt_blend_enable[i] = rt->blend_enable ? VK_TRUE : VK_FALSE;
+       blend->rt_color_write_mask[i] = yttrium_pipe_colormask(rt->colormask);
++      blend->rt_src_color_blend_factor[i] = VK_BLEND_FACTOR_ONE;
++      blend->rt_dst_color_blend_factor[i] = VK_BLEND_FACTOR_ZERO;
++      blend->rt_color_blend_op[i] = VK_BLEND_OP_ADD;
++      blend->rt_src_alpha_blend_factor[i] = VK_BLEND_FACTOR_ONE;
++      blend->rt_dst_alpha_blend_factor[i] = VK_BLEND_FACTOR_ZERO;
++      blend->rt_alpha_blend_op[i] = VK_BLEND_OP_ADD;
++      /* Disabled blending and targets beyond max_rt have no valid factors. */
++      if (!rt->blend_enable)
++         continue;
++
+       blend->rt_src_color_blend_factor[i] =
+          yttrium_pipe_blend_factor(rt->rgb_src_factor);
+       blend->rt_dst_color_blend_factor[i] =

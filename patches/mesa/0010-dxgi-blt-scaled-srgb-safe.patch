@@ -1,0 +1,116 @@
+Subject: [PATCH 10/11] d3d10umd: make the DXGI Blt scale and keep sRGB data bit-exact
+
+_Blt used the destination rectangle as the source box and copied without
+scaling, so stretched or converting present Blts (for example a fullscreen
+back buffer smaller than the primary) copied the wrong region. It now blits
+the whole source subresource into the destination rectangle with linear
+filtering. sRGB sources and destinations go through linear-format
+intermediates so the bytes are not gamma-converted on the way.
+The codex XR (R10G10B10_XR_BIAS) compute decode that shared this code is
+left out.
+
+Prior art: F99-F100, non-XR part (R/NATIVE-WDDM20.md).
+Origin: codex working tree R/mesa (git diff 374c3022), re-exported by
+vmlab-win3d build/mesa; see build/mesa/README.md.
+---
+diff --git a/src/gallium/frontends/d3d10umd/DxgiFns.cpp b/src/gallium/frontends/d3d10umd/DxgiFns.cpp
+index e85dcfe01dbae05e9902869f35a7fbf49c84c726..dc960c8b584176f80d710f65c3299fecba60c546 100644
+--- a/src/gallium/frontends/d3d10umd/DxgiFns.cpp
++++ b/src/gallium/frontends/d3d10umd/DxgiFns.cpp
+@@ -752,6 +752,20 @@ _RotateResourceIdentities(DXGI_DDI_ARG_ROTATE_RESOURCE_IDENTITIES *RotateResourc
+  * ----------------------------------------------------------------------
+  */
+ 
++static struct pipe_resource *
++dxgi_create_linear_blit_texture(Device *device, struct pipe_resource *resource,
++                                unsigned level)
++{
++   struct pipe_resource desc = {};
++   desc.target = PIPE_TEXTURE_2D;
++   desc.format = util_format_linear(resource->format);
++   desc.width0 = u_minify(resource->width0, level);
++   desc.height0 = u_minify(resource->height0, level);
++   desc.depth0 = desc.array_size = 1;
++   desc.bind = PIPE_BIND_RENDER_TARGET | PIPE_BIND_SAMPLER_VIEW;
++   return device->screen->resource_create(device->screen, &desc);
++}
++
+ HRESULT APIENTRY
+ _Blt(DXGI_DDI_ARG_BLT *Blt)
+ {
+@@ -798,25 +812,57 @@ _Blt(DXGI_DDI_ARG_BLT *Blt)
+    unsigned src_level = Blt->SrcSubresource % (src_resource->last_level + 1);
+    unsigned src_layer = Blt->SrcSubresource / (src_resource->last_level + 1);
+ 
+-   struct pipe_box src_box = {};
+-   src_box.x = 0;
+-   src_box.y = 0;
+-   src_box.z = src_layer;
+-   src_box.width = Blt->DstRight > Blt->DstLeft ?
+-      Blt->DstRight - Blt->DstLeft : src_resource->width0;
+-   src_box.height = Blt->DstBottom > Blt->DstTop ?
+-      Blt->DstBottom - Blt->DstTop : src_resource->height0;
+-   src_box.depth = 1;
++   struct pipe_resource *linear_src = NULL;
++   struct pipe_resource *linear_dst = NULL;
++
++   if (util_format_is_srgb(src_resource->format)) {
++      linear_src = dxgi_create_linear_blit_texture(device, src_resource, src_level);
++      if (!linear_src)
++         return E_OUTOFMEMORY;
++      struct pipe_box box = {};
++      box.z = src_layer;
++      box.width = linear_src->width0;
++      box.height = linear_src->height0;
++      box.depth = 1;
++      pipe->resource_copy_region(pipe, linear_src, 0, 0, 0, 0,
++                                 src_resource, src_level, &box);
++      src_resource = linear_src;
++      src_level = src_layer = 0;
++   }
++   if (util_format_is_srgb(dst_resource->format)) {
++      linear_dst = dxgi_create_linear_blit_texture(device, dst_resource, dst_level);
++      if (!linear_dst) {
++         pipe_resource_reference(&linear_src, NULL);
++         return E_OUTOFMEMORY;
++      }
++   }
+ 
+-   pipe->resource_copy_region(pipe,
+-                              dst_resource,
+-                              dst_level,
+-                              Blt->DstLeft,
+-                              Blt->DstTop,
+-                              dst_layer,
+-                              src_resource,
+-                              src_level,
+-                              &src_box);
++   struct pipe_blit_info info = {};
++   info.src.resource = src_resource;
++   info.src.level = src_level;
++   info.src.format = util_format_linear(src_resource->format);
++   info.src.box.z = src_layer;
++   info.src.box.width = u_minify(src_resource->width0, src_level);
++   info.src.box.height = u_minify(src_resource->height0, src_level);
++   info.src.box.depth = 1;
++   info.dst.resource = linear_dst ? linear_dst : dst_resource;
++   info.dst.level = linear_dst ? 0 : dst_level;
++   info.dst.format = util_format_linear(dst_resource->format);
++   info.dst.box.x = Blt->DstLeft;
++   info.dst.box.y = Blt->DstTop;
++   info.dst.box.z = linear_dst ? 0 : dst_layer;
++   info.dst.box.width = Blt->DstRight - Blt->DstLeft;
++   info.dst.box.height = Blt->DstBottom - Blt->DstTop;
++   info.dst.box.depth = 1;
++   info.mask = PIPE_MASK_RGBA;
++   info.filter = PIPE_TEX_FILTER_LINEAR;
++   pipe->blit(pipe, &info);
++   if (linear_dst)
++      pipe->resource_copy_region(pipe, dst_resource, dst_level,
++                                 Blt->DstLeft, Blt->DstTop, dst_layer,
++                                 linear_dst, 0, &info.dst.box);
++   pipe_resource_reference(&linear_dst, NULL);
++   pipe_resource_reference(&linear_src, NULL);
+ 
+    if (Blt->Flags.Present) {
+       dxgi_flush_frontbuffer(device, dst_resource, dst_level, dst_layer, NULL);

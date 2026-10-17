@@ -1,0 +1,767 @@
+Subject: [PATCH 11/11] venus: opaque Win32 (NT handle) memory export and import on D3DKMT
+
+Exposes VK_KHR_external_memory_win32 with OPAQUE_WIN32 handles on the
+D3DKMT renderer and filters the guest-only extension from the host device:
+- shareable blob allocations are created with CreateShared and
+  NtSecuritySharing, and keep their resource handle for export and teardown;
+- vkGetMemoryWin32HandleKHR duplicates the D3DKMTShareObjects handle,
+  honouring access, security attributes, inheritance and names;
+- NT and named imports query private-data sizes, open the resource with
+  D3DKMTOpenResourceFromNtHandle and pass the handle straight to D3DKMT;
+- a private pNext (yttrium_memory_runtime_data_info) carries runtime private
+  data to D3DKMTCreateAllocation, used by the vkd3d-proton shared-resource
+  path.
+Needed for D3D12 shared resources through vkd3d-proton.
+
+Prior art: F69-F71 (R/NATIVE-WDDM20.md; V/EXPERIMENTS.md lines 402-416; prior-art section 1).
+Origin: codex working tree R/mesa (git diff 374c3022), re-exported by
+vmlab-win3d build/mesa; see build/mesa/README.md.
+---
+diff --git a/src/virtio/vulkan/vn_device.c b/src/virtio/vulkan/vn_device.c
+index 27cb23dce878f2f9ba43bcf789ee83d95e18f638..48189d87e1a353b60c1ebfa7e540eb882f0afb2e 100644
+--- a/src/virtio/vulkan/vn_device.c
++++ b/src/virtio/vulkan/vn_device.c
+@@ -314,6 +314,7 @@ vn_device_fix_create_info(const struct vn_device *dev,
+    }
+ 
+    if (app_exts->KHR_external_memory_fd ||
++       app_exts->KHR_external_memory_win32 ||
+        app_exts->EXT_external_memory_dma_buf || has_wsi) {
+       if (physical_dev->external_memory.renderer_handle_type ==
+           VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT) {
+@@ -328,6 +329,11 @@ vn_device_fix_create_info(const struct vn_device *dev,
+       }
+    }
+ 
++#if defined(HAVE_YTTRIUM)
++   if (app_exts->KHR_external_memory_win32)
++      block_exts[block_count++] = VK_KHR_EXTERNAL_MEMORY_WIN32_EXTENSION_NAME;
++#endif
++
+    /* see vn_queue_submission_count_batch_semaphores */
+    if (!app_exts->KHR_external_semaphore_fd && has_wsi) {
+       assert(physical_dev->renderer_sync_fd.semaphore_importable);
+diff --git a/src/virtio/vulkan/vn_device_memory.c b/src/virtio/vulkan/vn_device_memory.c
+index f52ec262511ad08072efce764f1ae24183042aae..5487eb2d0c35973c59c7663d84256aa0f0469ab6 100644
+--- a/src/virtio/vulkan/vn_device_memory.c
++++ b/src/virtio/vulkan/vn_device_memory.c
+@@ -16,6 +16,7 @@
+ #endif
+ #include "venus-protocol/vn_protocol_driver_transport.h"
+ #include "vk_debug_utils.h"
++#include "util/log.h"
+ 
+ #include "vn_android.h"
+ #include "vn_buffer.h"
+@@ -95,6 +96,12 @@ vn_device_memory_bo_init(struct vn_device *dev, struct vn_device_memory *mem)
+    const struct vk_device_memory *mem_vk = &mem->base.vk;
+    const VkMemoryType *mem_type = &dev->physical_device->memory_properties
+                                       .memoryTypes[mem_vk->memory_type_index];
++#if defined(HAVE_YTTRIUM)
++   if (mem->runtime_size)
++      return vn_renderer_create_memory_with_runtime_data(dev->renderer,
++         mem_vk->size, mem->base.id, mem_type->propertyFlags,
++         mem_vk->export_handle_types, mem->runtime_data, mem->runtime_size, &mem->base_bo);
++#endif
+    return vn_renderer_bo_create_from_device_memory(
+       dev->renderer, mem_vk->size, mem->base.id, mem_type->propertyFlags,
+       mem_vk->export_handle_types, &mem->base_bo);
+@@ -109,23 +116,12 @@ vn_device_memory_bo_fini(struct vn_device *dev, struct vn_device_memory *mem)
+    }
+ }
+ 
+-VkResult
+-vn_device_memory_import_dma_buf(struct vn_device *dev,
++static VkResult
++vn_device_memory_import_bo(struct vn_device *dev,
+                                 struct vn_device_memory *mem,
+                                 const VkMemoryAllocateInfo *alloc_info,
+-                                int fd)
++                                struct vn_renderer_bo *bo)
+ {
+-   const VkMemoryType *mem_type =
+-      &dev->physical_device->memory_properties
+-          .memoryTypes[alloc_info->memoryTypeIndex];
+-
+-   struct vn_renderer_bo *bo;
+-   VkResult result = vn_renderer_bo_create_from_dma_buf(
+-      dev->renderer, alloc_info->allocationSize, fd, mem_type->propertyFlags,
+-      &bo);
+-   if (result != VK_SUCCESS)
+-      return result;
+-
+    vn_ring_roundtrip(dev->primary_ring);
+ 
+    const VkImportMemoryResourceInfoMESA import_memory_resource_info = {
+@@ -139,19 +135,36 @@ vn_device_memory_import_dma_buf(struct vn_device *dev,
+       .allocationSize = alloc_info->allocationSize,
+       .memoryTypeIndex = alloc_info->memoryTypeIndex,
+    };
+-   result = vn_device_memory_alloc_simple(dev, mem, &memory_allocate_info);
++   VkResult result = vn_device_memory_alloc_simple(dev, mem, &memory_allocate_info);
+    if (result != VK_SUCCESS) {
+       vn_renderer_bo_unref(dev->renderer, bo);
+       return result;
+    }
+ 
+-   /* need to close import fd on success to avoid fd leak */
+-   close(fd);
+    mem->base_bo = bo;
+ 
+    return VK_SUCCESS;
+ }
+ 
++VkResult
++vn_device_memory_import_dma_buf(struct vn_device *dev,
++                                struct vn_device_memory *mem,
++                                const VkMemoryAllocateInfo *alloc_info,
++                                int fd)
++{
++   const VkMemoryType *mem_type = &dev->physical_device->memory_properties
++      .memoryTypes[alloc_info->memoryTypeIndex];
++   struct vn_renderer_bo *bo;
++   VkResult result = vn_renderer_bo_create_from_dma_buf(dev->renderer,
++      alloc_info->allocationSize, fd, mem_type->propertyFlags, &bo);
++   if (result != VK_SUCCESS)
++      return result;
++   result = vn_device_memory_import_bo(dev, mem, alloc_info, bo);
++   if (result == VK_SUCCESS)
++      close(fd);
++   return result;
++}
++
+ #if defined(HAVE_YTTRIUM)
+ static uint32_t
+ vn_choose_memory_type(const VkPhysicalDeviceMemoryProperties *props,
+@@ -272,9 +285,17 @@ vn_device_memory_alloc_guest_vram(struct vn_device *dev,
+    if (mem_vk->export_handle_types)
+       flags |= VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+ 
+-   VkResult result = vn_renderer_bo_create_from_device_memory(
+-      dev->renderer, mem_vk->size, mem->base.id, flags,
+-      mem_vk->export_handle_types, &mem->base_bo);
++   VkResult result;
++#if defined(HAVE_YTTRIUM)
++   if (mem->runtime_size)
++      result = vn_renderer_create_memory_with_runtime_data(dev->renderer,
++         mem_vk->size, mem->base.id, flags, mem_vk->export_handle_types,
++         mem->runtime_data, mem->runtime_size, &mem->base_bo);
++   else
++#endif
++      result = vn_renderer_bo_create_from_device_memory(
++         dev->renderer, mem_vk->size, mem->base.id, flags,
++         mem_vk->export_handle_types, &mem->base_bo);
+    if (result != VK_SUCCESS) {
+       return result;
+    }
+@@ -447,6 +468,7 @@ vn_device_memory_emit_report(struct vn_device *dev,
+                 : VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT;
+    }
+    const uint64_t mem_obj_id =
++      result != VK_SUCCESS ? 0 :
+       (mem_vk->import_handle_type | mem_vk->export_handle_types)
+          ? mem->base_bo->res_id
+          : mem->base.id;
+@@ -475,12 +497,22 @@ vn_AllocateMemory(VkDevice device,
+    const VkImportMemoryFdInfoKHR *import_fd_info =
+       vk_find_struct_const(pAllocateInfo->pNext, IMPORT_MEMORY_FD_INFO_KHR);
+ #if defined(HAVE_YTTRIUM)
++   const VkImportMemoryWin32HandleInfoKHR *import_nt =
++      vk_find_struct_const(pAllocateInfo->pNext, IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR);
++   const VkExportMemoryWin32HandleInfoKHR *export_nt =
++      vk_find_struct_const(pAllocateInfo->pNext, EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR);
++   const bool export_nt_requested = mem->base.vk.export_handle_types &
++      VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT;
+    const struct wsi_memory_win32_handle_import_info *import_win32_info = NULL;
+    vk_foreach_struct_const(pnext, pAllocateInfo->pNext) {
++      if (pnext->sType == VK_STRUCTURE_TYPE_YTTRIUM_MEMORY_RUNTIME_DATA_INFO) {
++         const struct yttrium_memory_runtime_data_info *runtime = (const void *)pnext;
++         mem->runtime_data = runtime->data;
++         mem->runtime_size = runtime->size;
++      }
+       if (pnext->sType ==
+           VK_STRUCTURE_TYPE_WSI_MEMORY_WIN32_HANDLE_IMPORT_INFO_MESA) {
+          import_win32_info = (const void *)pnext;
+-         break;
+       }
+    }
+ #endif
+@@ -492,6 +524,38 @@ vn_AllocateMemory(VkDevice device,
+       result = vn_device_memory_import_dma_buf(dev, mem, pAllocateInfo,
+                                                import_fd_info->fd);
+ #if defined(HAVE_YTTRIUM)
++   } else if (import_nt) {
++      HANDLE owned_handle = NULL;
++      if (import_nt->handleType == VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT) {
++         if (import_nt->handle) {
++            DuplicateHandle(GetCurrentProcess(), import_nt->handle,
++                            GetCurrentProcess(), &owned_handle, 0, FALSE,
++                            DUPLICATE_SAME_ACCESS);
++         } else if (import_nt->name) {
++            owned_handle = vn_renderer_open_nt_handle(dev->renderer, import_nt->name);
++         }
++      }
++      if (!owned_handle) {
++         mesa_loge("venus: NT memory handle preparation failed, type %#x, handle %p, owned %p, error %lu",
++                import_nt->handleType, import_nt->handle, owned_handle,
++                (unsigned long)GetLastError());
++         result = VK_ERROR_INVALID_EXTERNAL_HANDLE;
++      } else {
++         struct vn_device_memory_alloc_info local_info;
++         const VkMemoryAllocateInfo *info = vn_device_memory_fix_alloc_info(
++            pAllocateInfo, dev->physical_device->external_memory.renderer_handle_type,
++            dev->renderer->info.has_guest_vram, &local_info);
++         const VkMemoryType *mem_type = &dev->physical_device->memory_properties
++            .memoryTypes[pAllocateInfo->memoryTypeIndex];
++         struct vn_renderer_bo *bo;
++         result = vn_renderer_bo_create_from_nt_handle(dev->renderer,
++            info->allocationSize, owned_handle, mem_type->propertyFlags, &bo);
++         if (result == VK_SUCCESS)
++            result = vn_device_memory_import_bo(dev, mem, info, bo);
++         if (result != VK_SUCCESS)
++            mesa_loge("venus: NT memory import failed, result %d", result);
++         CloseHandle(owned_handle);
++      }
+    } else if (import_win32_info) {
+       result = vn_device_memory_import_win32_handle(dev, mem, pAllocateInfo,
+                                                     import_win32_info->handle);
+@@ -502,6 +566,24 @@ vn_AllocateMemory(VkDevice device,
+          vn_wsi_memory_info_init(mem, pAllocateInfo);
+    }
+ 
++#if defined(HAVE_YTTRIUM)
++   mem->runtime_data = NULL;
++   mem->runtime_size = 0;
++   if (result == VK_SUCCESS && export_nt_requested) {
++      result = vn_renderer_export_nt_handle(dev->renderer, mem->base_bo,
++                                            export_nt, &mem->export_nt_handle);
++      if (result == VK_SUCCESS) {
++         mem->export_nt_inherit = export_nt && export_nt->pAttributes &&
++            export_nt->pAttributes->bInheritHandle;
++      } else {
++         vn_device_memory_bo_fini(dev, mem);
++         if (mem->bo_roundtrip_seqno_valid)
++            vn_ring_wait_roundtrip(dev->primary_ring, mem->bo_roundtrip_seqno);
++         vn_device_memory_free_simple(dev, mem);
++      }
++   }
++#endif
++
+    vn_device_memory_emit_report(dev, mem, /* is_alloc */ true, result);
+ 
+    if (result != VK_SUCCESS) {
+@@ -526,6 +608,11 @@ vn_FreeMemory(VkDevice device,
+ 
+    vn_device_memory_emit_report(dev, mem, /* is_alloc */ false, VK_SUCCESS);
+ 
++#if defined(HAVE_YTTRIUM)
++   if (mem->export_nt_handle)
++      CloseHandle(mem->export_nt_handle);
++#endif
++
+    /* ensure renderer side import still sees the resource */
+    vn_device_memory_bo_fini(dev, mem);
+ 
+@@ -668,6 +755,38 @@ vn_GetDeviceMemoryCommitment(VkDevice device,
+                                        pCommittedMemoryInBytes);
+ }
+ 
++#if defined(HAVE_YTTRIUM)
++VKAPI_ATTR VkResult VKAPI_CALL
++vn_GetMemoryWin32HandleKHR(VkDevice device,
++                          const VkMemoryGetWin32HandleInfoKHR *info,
++                          HANDLE *handle)
++{
++   struct vn_device *dev = vn_device_from_handle(device);
++   struct vn_device_memory *mem = vn_device_memory_from_handle(info->memory);
++   if (info->handleType != VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT ||
++       !mem->export_nt_handle)
++      return vn_error(dev->instance, VK_ERROR_INVALID_EXTERNAL_HANDLE);
++   if (!DuplicateHandle(GetCurrentProcess(), mem->export_nt_handle,
++                        GetCurrentProcess(), handle, 0, mem->export_nt_inherit,
++                        DUPLICATE_SAME_ACCESS))
++      return vn_error(dev->instance, VK_ERROR_OUT_OF_HOST_MEMORY);
++   return VK_SUCCESS;
++}
++
++VKAPI_ATTR VkResult VKAPI_CALL
++vn_GetMemoryWin32HandlePropertiesKHR(VkDevice device,
++                                   VkExternalMemoryHandleTypeFlagBits handleType,
++                                   HANDLE handle,
++                                   VkMemoryWin32HandlePropertiesKHR *properties)
++{
++   /* Opaque handles are the only supported Win32 type. Vulkan excludes them
++    * from this query; their memory type is specified by the exporting device.
++    */
++   struct vn_device *dev = vn_device_from_handle(device);
++   return vn_error(dev->instance, VK_ERROR_INVALID_EXTERNAL_HANDLE);
++}
++#endif
++
+ VKAPI_ATTR VkResult VKAPI_CALL
+ vn_GetMemoryFdKHR(VkDevice device,
+                   const VkMemoryGetFdInfoKHR *pGetFdInfo,
+diff --git a/src/virtio/vulkan/vn_device_memory.h b/src/virtio/vulkan/vn_device_memory.h
+index c70b6681701cc0e81b9083f48de0b07a01511f3c..099d7babc36b0c8655f818d71cefe5a257026f19 100644
+--- a/src/virtio/vulkan/vn_device_memory.h
++++ b/src/virtio/vulkan/vn_device_memory.h
+@@ -18,6 +18,12 @@ struct vn_device_memory {
+ 
+    /* non-NULL when mappable or external */
+    struct vn_renderer_bo *base_bo;
++#if defined(HAVE_YTTRIUM)
++   HANDLE export_nt_handle;
++   BOOL export_nt_inherit;
++   const void *runtime_data;
++   uint32_t runtime_size;
++#endif
+ 
+    /* ensure renderer side resource create is called after vkAllocateMemory
+     *
+diff --git a/src/virtio/vulkan/vn_physical_device.c b/src/virtio/vulkan/vn_physical_device.c
+index 2d2e22b500e340bb1a17dc5919a37eea805d140b..66dafe3ab574035f441e09cdd2d15002a49123aa 100644
+--- a/src/virtio/vulkan/vn_physical_device.c
++++ b/src/virtio/vulkan/vn_physical_device.c
+@@ -1048,7 +1048,10 @@ vn_physical_device_init_external_memory(
+       physical_dev->external_memory.renderer_handle_type =
+          VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT;
+ 
+-#ifdef VK_USE_PLATFORM_ANDROID_KHR
++#if defined(HAVE_YTTRIUM)
++      physical_dev->external_memory.supported_handle_types =
++         VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT;
++#elif defined(VK_USE_PLATFORM_ANDROID_KHR)
+       physical_dev->external_memory.supported_handle_types |=
+          VK_EXTERNAL_MEMORY_HANDLE_TYPE_ANDROID_HARDWARE_BUFFER_BIT_ANDROID;
+ #else
+@@ -1211,6 +1214,8 @@ vn_physical_device_get_native_extensions(
+ #if !DETECT_OS_WINDOWS
+       exts->KHR_external_memory_fd = true;
+       exts->EXT_external_memory_dma_buf = true;
++#elif defined(HAVE_YTTRIUM)
++      exts->KHR_external_memory_win32 = true;
+ #endif /* !DETECT_OS_WINDOWS */
+    }
+ #endif /* VK_USE_PLATFORM_ANDROID_KHR */
+diff --git a/src/virtio/vulkan/vn_renderer.h b/src/virtio/vulkan/vn_renderer.h
+index 3b83cba4ce984fb318dcb46b795a535d73fbfc2f..d80336e3b7a2979de387ea7cf9b51294edaf8596 100644
+--- a/src/virtio/vulkan/vn_renderer.h
++++ b/src/virtio/vulkan/vn_renderer.h
+@@ -367,6 +367,26 @@ vn_renderer_bo_create_from_dma_buf(struct vn_renderer *renderer,
+ }
+ 
+ #if defined(HAVE_YTTRIUM)
++VkResult
++vn_renderer_bo_create_from_nt_handle(struct vn_renderer *renderer,
++   VkDeviceSize size, HANDLE handle, VkMemoryPropertyFlags flags,
++   struct vn_renderer_bo **out_bo);
++
++VkResult
++vn_renderer_create_memory_with_runtime_data(struct vn_renderer *renderer,
++   VkDeviceSize size, vn_object_id mem_id, VkMemoryPropertyFlags flags,
++   VkExternalMemoryHandleTypeFlags external_handles,
++   const void *runtime_data, uint32_t runtime_size, struct vn_renderer_bo **out_bo);
++
++VkResult
++vn_renderer_export_nt_handle(struct vn_renderer *renderer,
++                            struct vn_renderer_bo *bo,
++                            const VkExportMemoryWin32HandleInfoKHR *info,
++                            HANDLE *handle);
++
++HANDLE
++vn_renderer_open_nt_handle(struct vn_renderer *renderer, const WCHAR *name);
++
+ static inline VkResult
+ vn_renderer_bo_create_from_win32_handle(struct vn_renderer *renderer,
+                                         VkDeviceSize size,
+diff --git a/src/virtio/vulkan/vn_renderer_d3dkmt.c b/src/virtio/vulkan/vn_renderer_d3dkmt.c
+index 16a040a56994bb092a73cb66b5ea4a3a8b3eb46e..84ea85e8dd60bc102088bc1ab42011a39b848a91 100644
+--- a/src/virtio/vulkan/vn_renderer_d3dkmt.c
++++ b/src/virtio/vulkan/vn_renderer_d3dkmt.c
+@@ -59,7 +59,7 @@ struct virtgpu_shmem {
+ struct virtgpu_bo {
+    struct vn_renderer_bo base;
+    uint32_t alloc_handle;
+-   /* Non-zero when this bo came from D3DKMTOpenResource: its allocation is
++   /* Non-zero when this bo owns a D3DKMT resource: its allocation is
+     * owned by that resource and must be destroyed through it, not by the
+     * allocation handle alone.
+     */
+@@ -154,6 +154,8 @@ struct virtgpu {
+    PFND3DKMT_DESTROYALLOCATION pfnDestroyAllocation;
+    PFND3DKMT_SHAREOBJECTS pfnShareObjects;
+    PFND3DKMT_OPENRESOURCEFROMNTHANDLE pfnOpenResourceFromNtHandle;
++   PFND3DKMT_QUERYRESOURCEINFOFROMNTHANDLE pfnQueryResourceInfoFromNtHandle;
++   PFND3DKMT_OPENNTHANDLEFROMNAME pfnOpenNtHandleFromName;
+ #if defined(HAVE_YTTRIUM)
+    PFND3DKMT_QUERYRESOURCEINFO pfnQueryResourceInfo;
+    PFND3DKMT_OPENRESOURCE pfnOpenResource;
+@@ -615,6 +617,9 @@ virtgpu_context_init(struct virtgpu *gpu, uint32_t capset_id)
+ 
+ static void
+ virtgpu_d3dkmt_gem_close(struct virtgpu *gpu, uint32_t alloc_handle);
++static void
++virtgpu_d3dkmt_gem_close_resource(struct virtgpu *gpu, uint32_t alloc_handle,
++                                uint32_t resource_handle);
+ 
+ static uint32_t
+ virtgpu_d3dkmt_resource_create_blob(struct virtgpu *gpu,
+@@ -622,7 +627,9 @@ virtgpu_d3dkmt_resource_create_blob(struct virtgpu *gpu,
+                                    uint32_t blob_flags,
+                                    size_t blob_size,
+                                    uint64_t blob_id,
+-                                   uint32_t *res_id)
++                                   uint32_t *res_id,
++                                   uint32_t *resource_handle,
++                                   const void *runtime_data, uint32_t runtime_size)
+ {
+ #ifdef SIMULATE_BO_SIZE_FIX
+    blob_size = align64(blob_size, 4096);
+@@ -664,6 +671,12 @@ virtgpu_d3dkmt_resource_create_blob(struct virtgpu *gpu,
+    create.pPrivateDriverData = &res_exchange;
+    create.PrivateDriverDataSize = sizeof(res_exchange);
+    create.Flags.CreateResource = TRUE;
++   create.pPrivateRuntimeData = runtime_data;
++   create.PrivateRuntimeDataSize = runtime_size;
++   if (blob_flags & VIRTGPU_BLOB_FLAG_USE_SHAREABLE) {
++      create.Flags.CreateShared = TRUE;
++      create.Flags.NtSecuritySharing = TRUE;
++   }
+ 
+    NTSTATUS status = gpu->pfnCreateAllocation(&create);
+    if (!NT_SUCCESS(status))
+@@ -681,11 +694,14 @@ virtgpu_d3dkmt_resource_create_blob(struct virtgpu *gpu,
+    resinfo.ResourceInfo.ResHandle = alloc_info.hAllocation;
+    if (!virtgpu_d3dkmt_escape(gpu, &resinfo)) {
+       vn_log(gpu->instance,"virtgpu_d3dkmt_escape failed");
+-      virtgpu_d3dkmt_gem_close(gpu, (uint32_t)alloc_info.hAllocation);
++      virtgpu_d3dkmt_gem_close_resource(gpu, (uint32_t)alloc_info.hAllocation,
++                                      create.hResource);
+       return 0;
+    }
+ 
+    *res_id = resinfo.ResourceInfo.Id;
++   if (resource_handle)
++      *resource_handle = create.hResource;
+    return (uint32_t)alloc_info.hAllocation;
+ }
+ 
+@@ -877,29 +893,125 @@ virtgpu_d3dkmt_shared_handle_to_handle(struct virtgpu *gpu, void *handle,
+ #endif
+ 
+ static uint32_t
+-virtgpu_d3dkmt_prime_fd_to_handle(struct virtgpu *gpu, int fd)
++virtgpu_d3dkmt_nt_to_handle(struct virtgpu *gpu, HANDLE shared,
++                                uint32_t *resource_handle)
+ {
+-   if (!gpu->pfnOpenResourceFromNtHandle)
++   *resource_handle = 0;
++   if (!gpu->pfnOpenResourceFromNtHandle ||
++       !gpu->pfnQueryResourceInfoFromNtHandle)
+       return 0;
+ 
+-   HANDLE shared = (HANDLE)_get_osfhandle(fd);
+    if (shared == INVALID_HANDLE_VALUE)
+       return 0;
+ 
++   D3DKMT_QUERYRESOURCEINFOFROMNTHANDLE query = {0};
++   query.hDevice = gpu->hDevice;
++   query.hNtHandle = shared;
++   NTSTATUS query_status = gpu->pfnQueryResourceInfoFromNtHandle(&query);
++   if (!NT_SUCCESS(query_status) || query.NumAllocations != 1) {
++      mesa_loge("venus: NT import query failed, status %#lx, allocations %u",
++                (unsigned long)query_status, query.NumAllocations);
++      return 0;
++   }
++
++   void *runtime_data = calloc(1, MAX2(query.PrivateRuntimeDataSize, 1));
++   void *resource_data = calloc(1, MAX2(query.ResourcePrivateDriverDataSize, 1));
++   void *allocation_data = calloc(1, MAX2(query.TotalPrivateDriverDataSize, 1));
++   if (!runtime_data || !resource_data || !allocation_data) {
++      free(runtime_data);
++      free(resource_data);
++      free(allocation_data);
++      return 0;
++   }
+    D3DDDI_OPENALLOCATIONINFO2 alloc_info = {0};
+    D3DKMT_OPENRESOURCEFROMNTHANDLE open = {0};
+    open.hDevice = gpu->hDevice;
+    open.hNtHandle = shared;
+    open.NumAllocations = 1;
+    open.pOpenAllocationInfo2 = &alloc_info;
++   open.pPrivateRuntimeData = runtime_data;
++   open.PrivateRuntimeDataSize = query.PrivateRuntimeDataSize;
++   open.pResourcePrivateDriverData = resource_data;
++   open.ResourcePrivateDriverDataSize = query.ResourcePrivateDriverDataSize;
++   open.pTotalPrivateDriverDataBuffer = allocation_data;
++   open.TotalPrivateDriverDataBufferSize = query.TotalPrivateDriverDataSize;
+ 
+    NTSTATUS status = gpu->pfnOpenResourceFromNtHandle(&open);
++   free(runtime_data);
++   free(resource_data);
++   free(allocation_data);
+    if (!NT_SUCCESS(status))
++   {
++      mesa_loge("venus: NT import open failed, status %#lx", (unsigned long)status);
+       return 0;
++   }
+ 
++   *resource_handle = open.hResource;
+    return (uint32_t)alloc_info.hAllocation;
+ }
+ 
++#if defined(HAVE_YTTRIUM)
++static bool
++virtgpu_nt_name(const WCHAR *name, UNICODE_STRING *string)
++{
++   size_t length = wcslen(name) * sizeof(WCHAR);
++   if (length > UINT16_MAX - sizeof(WCHAR))
++      return false;
++   string->Buffer = (WCHAR *)name;
++   string->Length = length;
++   string->MaximumLength = length + sizeof(WCHAR);
++   return true;
++}
++
++VkResult
++vn_renderer_export_nt_handle(struct vn_renderer *renderer,
++                            struct vn_renderer_bo *_bo,
++                            const VkExportMemoryWin32HandleInfoKHR *info,
++                            HANDLE *handle)
++{
++   struct virtgpu *gpu = (struct virtgpu *)renderer;
++   struct virtgpu_bo *bo = (struct virtgpu_bo *)_bo;
++   OBJECT_ATTRIBUTES attrs = {0};
++   UNICODE_STRING name;
++   DWORD access = info ? info->dwAccess : SHARED_ALLOCATION_ALL_ACCESS;
++   attrs.Length = sizeof(attrs);
++   if (!(bo->blob_flags & VIRTGPU_BLOB_FLAG_USE_SHAREABLE))
++      return VK_ERROR_INVALID_EXTERNAL_HANDLE;
++   if (info && info->pAttributes) {
++      attrs.SecurityDescriptor = info->pAttributes->lpSecurityDescriptor;
++      if (info->pAttributes->bInheritHandle)
++         attrs.Attributes |= OBJ_INHERIT;
++   }
++   if (info && info->name) {
++      if (!virtgpu_nt_name(info->name, &name))
++         return VK_ERROR_INVALID_EXTERNAL_HANDLE;
++      attrs.ObjectName = &name;
++   }
++   D3DKMT_HANDLE allocation = bo->open_resource_handle;
++   NTSTATUS status = gpu->pfnShareObjects(1, &allocation, &attrs, access, handle);
++   if (!NT_SUCCESS(status))
++      mesa_loge("venus: NT memory export failed, allocation %#x, access %#lx, status %#lx",
++                allocation, (unsigned long)access, (unsigned long)status);
++   return NT_SUCCESS(status) ? VK_SUCCESS : VK_ERROR_INVALID_EXTERNAL_HANDLE;
++}
++
++HANDLE
++vn_renderer_open_nt_handle(struct vn_renderer *renderer, const WCHAR *name)
++{
++   struct virtgpu *gpu = (struct virtgpu *)renderer;
++   UNICODE_STRING string;
++   OBJECT_ATTRIBUTES attrs = {0};
++   D3DKMT_OPENNTHANDLEFROMNAME open = {0};
++   if (!gpu->pfnOpenNtHandleFromName || !virtgpu_nt_name(name, &string))
++      return NULL;
++   attrs.Length = sizeof(attrs);
++   attrs.ObjectName = &string;
++   open.pObjAttrib = &attrs;
++   open.dwDesiredAccess = SHARED_ALLOCATION_ALL_ACCESS;
++   return NT_SUCCESS(gpu->pfnOpenNtHandleFromName(&open)) ? open.hNtHandle : NULL;
++}
++#endif
++
+ static bool
+ virtgpu_load_d3dkmt(struct virtgpu *gpu)
+ {
+@@ -950,6 +1062,12 @@ virtgpu_load_d3dkmt(struct virtgpu *gpu)
+    gpu->pfnOpenResourceFromNtHandle =
+       (PFND3DKMT_OPENRESOURCEFROMNTHANDLE)GetProcAddress(
+          gpu->gdi32, "D3DKMTOpenResourceFromNtHandle");
++   gpu->pfnQueryResourceInfoFromNtHandle =
++      (PFND3DKMT_QUERYRESOURCEINFOFROMNTHANDLE)GetProcAddress(
++         gpu->gdi32, "D3DKMTQueryResourceInfoFromNtHandle");
++   gpu->pfnOpenNtHandleFromName =
++      (PFND3DKMT_OPENNTHANDLEFROMNAME)GetProcAddress(
++         gpu->gdi32, "D3DKMTOpenNtHandleFromName");
+ #if defined(HAVE_YTTRIUM)
+    gpu->pfnQueryResourceInfo = (PFND3DKMT_QUERYRESOURCEINFO)GetProcAddress(
+       gpu->gdi32, "D3DKMTQueryResourceInfo");
+@@ -972,6 +1090,7 @@ virtgpu_load_d3dkmt(struct virtgpu *gpu)
+        !gpu->pfnSignalSynchronizationObject2 ||
+        !gpu->pfnDestroyAllocation || !gpu->pfnShareObjects ||
+        !gpu->pfnOpenResourceFromNtHandle ||
++       !gpu->pfnQueryResourceInfoFromNtHandle || !gpu->pfnOpenNtHandleFromName ||
+        !gpu->pfnOpenAdapterFromHdc ||
+        !gpu->pfnCloseAdapter) {
+       FreeLibrary(gpu->gdi32);
+@@ -1505,7 +1624,7 @@ virtgpu_bo_export_dma_buf(struct vn_renderer *renderer,
+    const bool shareable = bo->blob_flags & VIRTGPU_BLOB_FLAG_USE_SHAREABLE;
+ 
+    return shareable
+-             ? virtgpu_d3dkmt_prime_handle_to_fd(gpu, bo->alloc_handle,
++             ? virtgpu_d3dkmt_prime_handle_to_fd(gpu, bo->open_resource_handle,
+                                                 mappable)
+              : -1;
+ }
+@@ -1633,34 +1752,58 @@ virtgpu_bo_close_failed_import_handle(struct virtgpu *gpu,
+ }
+ 
+ static VkResult
+-virtgpu_bo_create_from_dma_buf(struct vn_renderer *renderer,
++virtgpu_bo_create_from_nt_handle(struct vn_renderer *renderer,
+                                VkDeviceSize size,
+-                               int fd,
++                               HANDLE handle,
+                                VkMemoryPropertyFlags flags,
+                                struct vn_renderer_bo **out_bo)
+ {
+    struct virtgpu *gpu = (struct virtgpu *)renderer;
+    uint32_t alloc_handle = 0;
++   uint32_t resource_handle = 0;
+ 
+    mtx_lock(&gpu->import_mutex);
+ 
+-   alloc_handle = virtgpu_d3dkmt_prime_fd_to_handle(gpu, fd);
++   alloc_handle = virtgpu_d3dkmt_nt_to_handle(gpu, handle, &resource_handle);
+    VkResult result =
+       virtgpu_bo_create_from_alloc_handle(gpu, size, alloc_handle, flags,
+                                           out_bo);
+    if (result != VK_SUCCESS)
++   {
++      mesa_loge("venus: NT import buffer object failed, allocation %#x, resource %#x, result %d",
++                alloc_handle, resource_handle, result);
+       goto fail;
++   }
+ 
++   ((struct virtgpu_bo *)*out_bo)->open_resource_handle = resource_handle;
+    mtx_unlock(&gpu->import_mutex);
+    return VK_SUCCESS;
+ 
+ fail:
+-   /* prime_fd_to_handle opens a standalone allocation, not a resource. */
+-   virtgpu_bo_close_failed_import_handle(gpu, alloc_handle, 0);
++   virtgpu_bo_close_failed_import_handle(gpu, alloc_handle, resource_handle);
+    mtx_unlock(&gpu->import_mutex);
+    return VK_ERROR_INVALID_EXTERNAL_HANDLE;
+ }
+ 
++#if defined(HAVE_YTTRIUM)
++VkResult
++vn_renderer_bo_create_from_nt_handle(struct vn_renderer *renderer,
++   VkDeviceSize size, HANDLE handle, VkMemoryPropertyFlags flags,
++   struct vn_renderer_bo **out_bo)
++{
++   return virtgpu_bo_create_from_nt_handle(renderer, size, handle, flags, out_bo);
++}
++#endif
++
++static VkResult
++virtgpu_bo_create_from_dma_buf(struct vn_renderer *renderer,
++   VkDeviceSize size, int fd, VkMemoryPropertyFlags flags,
++   struct vn_renderer_bo **out_bo)
++{
++   return virtgpu_bo_create_from_nt_handle(renderer, size,
++                                          (HANDLE)_get_osfhandle(fd), flags, out_bo);
++}
++
+ #if defined(HAVE_YTTRIUM)
+ static VkResult
+ virtgpu_bo_create_from_win32_handle(struct vn_renderer *renderer,
+@@ -1699,25 +1842,27 @@ fail:
+ #endif
+ 
+ static VkResult
+-virtgpu_bo_create_from_device_memory(
++virtgpu_bo_create_memory(
+    struct vn_renderer *renderer,
+    VkDeviceSize size,
+    vn_object_id mem_id,
+    VkMemoryPropertyFlags flags,
+    VkExternalMemoryHandleTypeFlags external_handles,
++   const void *runtime_data, uint32_t runtime_size,
+    struct vn_renderer_bo **out_bo)
+ {
+    struct virtgpu *gpu = (struct virtgpu *)renderer;
+    const uint32_t blob_flags =
+       virtgpu_bo_blob_flags(gpu, flags, external_handles);
+ 
+-   uint32_t res_id;
++   uint32_t res_id, resource_handle;
+ #if VIRTGPU_LOG_SHMEM   
+    vn_log(gpu->instance, "resource_create_blob path=bo_create size=0x%llx mem_id=0x%llx flags=0x%x ext=0x%x",
+            (unsigned long long)size, (unsigned long long)mem_id, flags, external_handles);
+ #endif
+    uint32_t alloc_handle = virtgpu_d3dkmt_resource_create_blob(
+-      gpu, gpu->bo_blob_mem, blob_flags, size, mem_id, &res_id);
++      gpu, gpu->bo_blob_mem, blob_flags, size, mem_id, &res_id, &resource_handle,
++      runtime_data, runtime_size);
+ 
+    if (!alloc_handle)
+       return VK_ERROR_OUT_OF_DEVICE_MEMORY;
+@@ -1732,6 +1877,7 @@ virtgpu_bo_create_from_device_memory(
+       },
+       .alloc_handle = alloc_handle,
+       .blob_flags = blob_flags,
++      .open_resource_handle = resource_handle,
+    };
+ 
+    *out_bo = &bo->base;
+@@ -1739,6 +1885,27 @@ virtgpu_bo_create_from_device_memory(
+    return VK_SUCCESS;
+ }
+ 
++static VkResult
++virtgpu_bo_create_from_device_memory(struct vn_renderer *renderer,
++   VkDeviceSize size, vn_object_id mem_id, VkMemoryPropertyFlags flags,
++   VkExternalMemoryHandleTypeFlags external_handles, struct vn_renderer_bo **out_bo)
++{
++   return virtgpu_bo_create_memory(renderer, size, mem_id, flags,
++                                  external_handles, NULL, 0, out_bo);
++}
++
++#if defined(HAVE_YTTRIUM)
++VkResult
++vn_renderer_create_memory_with_runtime_data(struct vn_renderer *renderer,
++   VkDeviceSize size, vn_object_id mem_id, VkMemoryPropertyFlags flags,
++   VkExternalMemoryHandleTypeFlags external_handles,
++   const void *runtime_data, uint32_t runtime_size, struct vn_renderer_bo **out_bo)
++{
++   return virtgpu_bo_create_memory(renderer, size, mem_id, flags,
++                                  external_handles, runtime_data, runtime_size, out_bo);
++}
++#endif
++
+ static void
+ virtgpu_shmem_destroy_now(struct vn_renderer *renderer,
+                           struct vn_renderer_shmem *_shmem)
+@@ -1789,7 +1956,7 @@ virtgpu_shmem_create(struct vn_renderer *renderer, size_t size)
+    uint32_t res_id;
+    uint32_t alloc_handle = virtgpu_d3dkmt_resource_create_blob(
+       gpu, gpu->shmem_blob_mem, VIRTGPU_BLOB_FLAG_USE_MAPPABLE, alloc_size, 0,
+-      &res_id);
++      &res_id, NULL, NULL, 0);
+ 
+    if (!alloc_handle)
+       return NULL;
+diff --git a/src/vulkan/util/vk_internal_exts.h b/src/vulkan/util/vk_internal_exts.h
+index 8a0b2e3368bee4dd68852b20291a129b5d75efc4..7c2758c8d29fe204657c5f8aee509e6c85c305ca 100644
+--- a/src/vulkan/util/vk_internal_exts.h
++++ b/src/vulkan/util/vk_internal_exts.h
+@@ -69,6 +69,15 @@ struct wsi_memory_win32_handle_import_info {
+     const void *pNext;
+     void *handle;
+ };
++
++/* Private Yttrium runtime-to-driver contract, copied by D3DKMT at allocation. */
++struct yttrium_memory_runtime_data_info {
++    VkStructureType sType;
++    const void *pNext;
++    uint32_t size;
++    const void *data;
++};
++#define VK_STRUCTURE_TYPE_YTTRIUM_MEMORY_RUNTIME_DATA_INFO ((VkStructureType)1000001006)
+ #endif
+ 
+ /* To be chained into VkSurfaceCapabilities2KHR */
