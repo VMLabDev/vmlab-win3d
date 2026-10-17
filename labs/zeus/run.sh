@@ -17,10 +17,10 @@
 # docs/evidence/zeus/<gpu>/ in the staging tree; tests/e2e/check.py judges it.
 # The lab is destroyed unless --keep.
 #
-# --gpu nvidia runs vmlab through labs/zeus/vmlab-nv.sh: an isolated
+# --gpu nvidia runs vmlab through labs/zeus/vmlab-iso.sh: an isolated
 # supervisor whose PATH puts the patched QEMU (patches/host/qemu/0001, built
-# on Zeus into ~/win3d-zeus/qemu) first. --gpu intel uses the user's
-# supervisor and the host QEMU.
+# on Zeus in the staging tree) first. --gpu intel uses the user's supervisor
+# and the host QEMU, unless WIN3D_ISO=1 (then vmlab-iso.sh's WIN3D_* apply).
 #
 # Exit status: 0 when every Done check passes, 1 otherwise, 2 on usage.
 set -uo pipefail
@@ -34,18 +34,21 @@ while [ $# -gt 0 ]; do
     case $1 in
         --gpu) GPU=${2:-}; shift 2 ;;
         --keep) KEEP=1; shift ;;
-        -h|--help) sed -n '2,27p' "$0"; exit 0 ;;
-        *) sed -n '2,27p' "$0" >&2; exit 2 ;;
+        -h|--help) sed -n '2,/^set -uo/p' "$0" | sed '$d'; exit 0 ;;
+        *) sed -n '2,/^set -uo/p' "$0" | sed '$d' >&2; exit 2 ;;
     esac
 done
 case $GPU in
-    intel) PCI=0000:00:02.0; export VMLAB=$HOME/.local/bin/vmlab ;;
-    nvidia) PCI=0000:01:00.0; export VMLAB=$REPO/labs/zeus/vmlab-nv.sh ;;
+    intel) PCI=0000:00:02.0 ;;
+    nvidia) PCI=0000:01:00.0 ;;
     *) echo "--gpu intel|nvidia" >&2; exit 2 ;;
 esac
+# nvidia (or WIN3D_ISO=1) goes through the isolated supervisor.
+if [ "$GPU" = nvidia ] || [ "${WIN3D_ISO:-0}" = 1 ]; then ISO=1; export VMLAB=$REPO/labs/zeus/vmlab-iso.sh
+else ISO=0; export VMLAB=$HOME/.local/bin/vmlab; fi
 vmlab() { "$VMLAB" "$@"; }
 vmlab_state() { # the XDG_STATE_HOME the lab's supervisor uses
-    if [ "$GPU" = nvidia ]; then "$REPO/labs/zeus/vmlab-nv.sh" --state-home; else echo "${XDG_STATE_HOME:-$HOME/.local/state}"; fi
+    if [ "$ISO" = 1 ]; then "$VMLAB" --state-home; else echo "${XDG_STATE_HOME:-$HOME/.local/state}"; fi
 }
 LAB=win3d-zeus-$GPU
 VM=win
@@ -86,7 +89,7 @@ host_stack() {
         echo "staging: $(cat "$REPO/STAGED" 2>/dev/null)"
         echo "template: $TEMPLATE"
         echo "qemu: $(command -v qemu-system-x86_64) $(qemu-system-x86_64 --version | head -1)"
-        [ "$GPU" = nvidia ] && echo "qemu for the lab: $("$REPO/labs/zeus/vmlab-nv.sh" --which-qemu)"
+        [ "$ISO" = 1 ] && echo "isolated supervisor: qemu $("$VMLAB" --which-qemu); render server ${WIN3D_RENDER_SERVER:-host}; extra env ${WIN3D_QEMU_ENV:-none}"
         echo "packages: $(pacman -Q qemu-full qemu-base virglrenderer mesa vulkan-intel nvidia-utils 2>/dev/null | tr '\n' ' ')"
         echo "vmlab: $(vmlab --version)"
         local rn; rn=$(basename "$(ls -d /sys/bus/pci/devices/$PCI/drm/renderD* 2>/dev/null | head -1)")
@@ -313,6 +316,9 @@ teardown() {
         note "--keep: $LAB left running; destroy with (cd $LABDIR && vmlab destroy)"
         return 0
     fi
+    # QEMU's and the render server's messages (vkr: lines), minus the argv/env.
+    local qlog; qlog=$(vmlab_state)/vmlab/labs/$LAB/vms/$VM/qemu.log
+    [ -f "$qlog" ] && grep -v '^vmlab: ' "$qlog" | uniq -c | tail -400 >"$EV/qemu-log.txt"
     [ -f "$LABDIR/vmlab.wcl" ] && in_lab vmlab destroy
     find "$WORK/shots" -name '*.png' -delete
 }
