@@ -78,7 +78,7 @@ app() { # app NAME SECONDS EXE ARGS...  (Run-Probe -Raw needs at least one argum
     [ $# -gt 0 ] && arglist="-ArgumentList $(printf "'%s'," "$@" | sed 's/,$//')"
     note "app $name: $exe $*"
     in_lab vmlab exec --timeout $((secs + 400)) "$VM" -- powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \
-        "& C:\\win3d\\guest\\Run-Probe.ps1 -Path '$exe' $arglist -Raw -Name $name -OutDir C:\\win3d\\results\\apps -Seconds $secs -TimeoutSec $secs" \
+        "& C:\\win3d\\guest\\Run-Probe.ps1 -Path '$exe' $arglist -Raw -Name $name -OutDir C:\\win3d\\results\\apps -Seconds $secs -TimeoutSec $secs; exit \$LASTEXITCODE" \
         >"$STAGE/$name.out" 2>&1 &
     pid=$!
     while kill -0 "$pid" 2>/dev/null; do

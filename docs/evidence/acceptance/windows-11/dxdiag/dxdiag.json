@@ -1,7 +1,7 @@
 ﻿{
     "report":  "C:\\win3d\\results\\dxdiag\\dxdiag.txt",
     "system":  {
-                   "Time of this report":  "10/17/2026, 05:32:14",
+                   "Time of this report":  "10/17/2026, 07:15:02",
                    "Operating System":  "Windows 11 Enterprise Evaluation 64-bit (10.0, Build 26100) (26100.ge_release.240331-1435)",
                    "System Manufacturer":  "QEMU",
                    "System Model":  "Standard PC (Q35 + ICH9, 2009)",
@@ -20,12 +20,12 @@
                     "driver_model":  "WDDM 2.0",
                     "ddi_version":  "12",
                     "feature_levels":  "12_2,12_1,12_0,11_1,11_0,10_1,10_0,9_3,9_2,9_1,1_0_CORE",
-                    "directdraw_acceleration":  "Not Available",
+                    "directdraw_acceleration":  "Enabled",
                     "direct3d_acceleration":  "Enabled",
-                    "agp_texture_acceleration":  "Not Available",
+                    "agp_texture_acceleration":  "Enabled",
                     "display_only":  false,
                     "microsoft_basic_render":  false,
-                    "hardware_acceleration":  false,
+                    "hardware_acceleration":  true,
                     "display_notes":  [
                                           "Display Tab 1: No problems found."
                                       ]
@@ -62,16 +62,16 @@
                         "Block List":  "No Blocks",
                         "Catalog Attributes":  "N/A",
                         "Driver Attributes":  "Final Retail",
-                        "Driver Date/Size":  "9/26/2026 5:00:00 PM, 12861960 bytes",
+                        "Driver Date/Size":  "9/26/2026 5:00:00 PM, 12865032 bytes",
                         "Vendor ID":  "0x1AF4",
                         "Device ID":  "0x1050",
                         "SubSys ID":  "0x11001AF4",
                         "Revision ID":  "0x0001",
                         "Driver Strong Name":  "oem15.inf:69d9694bf2d45376:VioGpu3D_Inst:100.6.101.58100:pci\\ven_1af4\u0026dev_1050\u0026subsys_11001af4\u0026rev_01",
                         "D3D9 Overlay":  "Not Supported",
-                        "DDraw Status":  "Not Available",
+                        "DDraw Status":  "Enabled",
                         "D3D Status":  "Enabled",
-                        "AGP Status":  "Not Available"
+                        "AGP Status":  "Enabled"
                     }
                 ]
 }

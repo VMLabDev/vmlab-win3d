@@ -1,6 +1,6 @@
 {
-  "evidence_dir": "docs/evidence/acceptance/windows-11",
-  "passed": false,
+  "evidence_dir": "/home/wil/dev/vmlab-win3d-wt/e2e/docs/evidence/acceptance/windows-11",
+  "passed": true,
   "rows": [
     {
       "item": "1",
@@ -29,17 +29,33 @@
     {
       "item": "2",
       "check": "vulkaninfo --summary (x64) lists the Venus device",
-      "result": "FAIL",
+      "result": "pass",
       "evidence": "vulkaninfo/vulkaninfo-x64.txt",
-      "note": "no Venus device: no device",
+      "note": "Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))",
       "counts": true
     },
     {
       "item": "2",
       "check": "vulkaninfo --summary (x86) lists the Venus device",
-      "result": "FAIL",
+      "result": "pass",
       "evidence": "vulkaninfo/vulkaninfo-x86.txt",
-      "note": "no Venus device: no device",
+      "note": "Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))",
+      "counts": false
+    },
+    {
+      "item": "2",
+      "check": "LunarG vulkaninfo 1.4.363 (x64, pinned) lists Venus through the installed loader",
+      "result": "pass",
+      "evidence": "vulkaninfo/lunarg-vulkaninfo-x64.txt",
+      "note": "Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))",
+      "counts": false
+    },
+    {
+      "item": "2",
+      "check": "LunarG vulkaninfo 1.4.363 (x86, pinned) lists Venus through the installed loader",
+      "result": "pass",
+      "evidence": "vulkaninfo/lunarg-vulkaninfo-x86.txt",
+      "note": "Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))",
       "counts": false
     },
     {
@@ -47,7 +63,7 @@
       "check": "Direct3D 9 (x64) renders on the GPU and shows on the console",
       "result": "pass",
       "evidence": "probes/x64-d3d9_probe.run.json, probes/x64-d3d9_probe.modules.txt, console-x64-d3d9_probe.png",
-      "note": "Hardsoft VirtIO GPU 3D controller, 33.98 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating",
+      "note": "Hardsoft VirtIO GPU 3D controller, 30.17 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating",
       "counts": true
     },
     {
@@ -55,7 +71,7 @@
       "check": "Direct3D 9 (x86) renders on the GPU and shows on the console",
       "result": "pass",
       "evidence": "probes/x86-d3d9_probe.run.json, probes/x86-d3d9_probe.modules.txt, console-x86-d3d9_probe.png",
-      "note": "Hardsoft VirtIO GPU 3D controller, 32.98 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating",
+      "note": "Hardsoft VirtIO GPU 3D controller, 34.39 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating",
       "counts": true
     },
     {
@@ -63,7 +79,7 @@
       "check": "Direct3D 11 (x64) renders on the GPU and shows on the console",
       "result": "pass",
       "evidence": "probes/x64-d3d11_probe.run.json, probes/x64-d3d11_probe.modules.txt, console-x64-d3d11_probe.png",
-      "note": "Hardsoft VirtIO GPU 3D controller, 59.92 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating",
+      "note": "Hardsoft VirtIO GPU 3D controller, 59.91 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating",
       "counts": true
     },
     {
@@ -71,7 +87,7 @@
       "check": "Direct3D 11 (x86) renders on the GPU and shows on the console",
       "result": "pass",
       "evidence": "probes/x86-d3d11_probe.run.json, probes/x86-d3d11_probe.modules.txt, console-x86-d3d11_probe.png",
-      "note": "Hardsoft VirtIO GPU 3D controller, 59.88 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating",
+      "note": "Hardsoft VirtIO GPU 3D controller, 59.87 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating",
       "counts": true
     },
     {
@@ -79,7 +95,7 @@
       "check": "Direct3D 12 (x64) renders on the GPU and shows on the console",
       "result": "pass",
       "evidence": "probes/x64-d3d12_probe.run.json, probes/x64-d3d12_probe.modules.txt, console-x64-d3d12_probe.png",
-      "note": "Hardsoft VirtIO GPU 3D controller, 58.11 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating",
+      "note": "Hardsoft VirtIO GPU 3D controller, 58.92 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating",
       "counts": true
     },
     {
@@ -87,7 +103,7 @@
       "check": "Direct3D 12 (x86) renders on the GPU and shows on the console",
       "result": "pass",
       "evidence": "probes/x86-d3d12_probe.run.json, probes/x86-d3d12_probe.modules.txt, console-x86-d3d12_probe.png",
-      "note": "Hardsoft VirtIO GPU 3D controller, 58.27 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating",
+      "note": "Hardsoft VirtIO GPU 3D controller, 58.36 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating",
       "counts": true
     },
     {
@@ -95,7 +111,7 @@
       "check": "OpenGL (x64) renders on the GPU and shows on the console",
       "result": "pass",
       "evidence": "probes/x64-opengl_probe.run.json, probes/x64-opengl_probe.modules.txt, console-x64-opengl_probe.png",
-      "note": "zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 63.19 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating",
+      "note": "zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 65.82 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating",
       "counts": true
     },
     {
@@ -103,7 +119,7 @@
       "check": "OpenGL (x86) renders on the GPU and shows on the console",
       "result": "pass",
       "evidence": "probes/x86-opengl_probe.run.json, probes/x86-opengl_probe.modules.txt, console-x86-opengl_probe.png",
-      "note": "zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 63.31 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating",
+      "note": "zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 66.35 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating",
       "counts": true
     },
     {
@@ -111,7 +127,7 @@
       "check": "Vulkan (x64) renders on the GPU and shows on the console",
       "result": "pass",
       "evidence": "probes/x64-vulkan_probe.run.json, probes/x64-vulkan_probe.modules.txt, console-x64-vulkan_probe.png",
-      "note": "Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 59.84 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating",
+      "note": "Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 58.92 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating",
       "counts": false
     },
     {
@@ -119,15 +135,15 @@
       "check": "Vulkan (x86) renders on the GPU and shows on the console",
       "result": "pass",
       "evidence": "probes/x86-vulkan_probe.run.json, probes/x86-vulkan_probe.modules.txt, console-x86-vulkan_probe.png",
-      "note": "Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 59.8 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating",
+      "note": "Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 59.82 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating",
       "counts": false
     },
     {
       "item": "2",
       "check": "dxdiag reports hardware acceleration on our driver",
-      "result": "FAIL",
+      "result": "pass",
       "evidence": "dxdiag/dxdiag.json",
-      "note": "hardware_acceleration=False, card 'Hardsoft VirtIO GPU 3D controller', D3D Enabled, DDraw Not Available, WDDM 2.0",
+      "note": "hardware_acceleration=True, card 'Hardsoft VirtIO GPU 3D controller', D3D Enabled, DDraw Enabled, WDDM 2.0",
       "counts": true
     },
     {

@@ -73,7 +73,7 @@ host_stack() {
     {
         echo "date: $(date -Is)"
         echo "commit: $(git -C "$REPO" rev-parse HEAD)"
-        echo "worktree changes: $(git -C "$REPO" status --porcelain | grep -v '^?? docs/evidence/acceptance/' | wc -l)"
+        echo "worktree changes: $(git -C "$REPO" status --porcelain | grep -v ' docs/evidence/acceptance/' | wc -l)"
         echo "template: x86_64/$TEMPLATE@$VER"
         echo "kernel: $(uname -r)"
         echo "qemu: $(qemu-system-x86_64 --version | head -1)"
