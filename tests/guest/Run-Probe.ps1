@@ -144,7 +144,11 @@ $argString = ($args2 | ForEach-Object { if ($_ -match '[\s"]') { '"' + ($_ -repl
 & icacls.exe $OutDir /grant "${User}:(OI)(CI)M" /Q | Out-Null
 
 $taskName = "win3d-run-$Name-" + [guid]::NewGuid().ToString('N').Substring(0, 8)
-$action = New-ScheduledTaskAction -Execute $Path -Argument $argString -WorkingDirectory $OutDir
+# New-ScheduledTaskAction rejects an empty -Argument, so pass it only when
+# there is one (a -Raw run with no -ArgumentList has none).
+$actionArgs = @{ Execute = $Path; WorkingDirectory = $OutDir }
+if ($argString) { $actionArgs.Argument = $argString }
+$action = New-ScheduledTaskAction @actionArgs
 $principal = New-ScheduledTaskPrincipal -UserId $User -LogonType Interactive -RunLevel Limited
 $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
     -ExecutionTimeLimit (New-TimeSpan -Seconds ($TimeoutSec + 60)) -MultipleInstances IgnoreNew
@@ -224,7 +228,9 @@ try {
 }
 $ended = Get-Date
 if ($null -eq $exitCode -and -not $timedOut -and $null -ne $taskResult -and $taskResult -ne 267009) {
-    $exitCode = [int]$taskResult
+    # LastTaskResult is unsigned: an NTSTATUS such as 0xC0000135 (missing DLL)
+    # does not fit [int], so reinterpret its bits as Process.ExitCode does.
+    $exitCode = [BitConverter]::ToInt32([BitConverter]::GetBytes([uint32]([int64]$taskResult -band [int64]4294967295)), 0)
 }
 
 $exeDir = [IO.Path]::GetDirectoryName($Path).ToLowerInvariant()
@@ -293,6 +299,7 @@ $run = [ordered]@{
     duration_s         = [math]::Round(($ended - $started).TotalSeconds, 1)
     timed_out          = $timedOut
     exit_code          = $exitCode
+    exit_code_hex      = $(if ($null -ne $exitCode) { '0x{0:X8}' -f $exitCode } else { $null })
     task_result        = $taskResult
     probe_json         = $(if ($probeResult) { $probeJson } else { $null })
     probe_result       = $(if ($probeResult) { $probeResult.result } else { $null })
