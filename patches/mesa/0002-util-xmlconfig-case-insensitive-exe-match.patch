@@ -1,0 +1,40 @@
+Subject: [PATCH 02/11] util/xmlconfig: match drirc executable names case-insensitively on Windows
+
+Windows file names are case-insensitive, so a drirc <application
+executable="heaven.exe"> entry must also match Heaven.exe and HEAVEN.EXE.
+Fixes Heaven OpenGL on Zink, which otherwise needed the machine-wide
+allow_glsl_extension_directive_midshader override.
+
+Prior art: F2 (R/VERDICT.md "Driver changes"; prior-art section 2.2, 4.5).
+Origin: codex working tree R/mesa (git diff 374c3022), re-exported by
+vmlab-win3d build/mesa; see build/mesa/README.md.
+---
+diff --git a/src/util/xmlconfig.c b/src/util/xmlconfig.c
+index 5922dc8704e2f7150a56893341b2ec88b5dfa87b..d1f9c08cc25d0c27a3ee6c9818de690f2666b5a8 100644
+--- a/src/util/xmlconfig.c
++++ b/src/util/xmlconfig.c
+@@ -60,6 +60,7 @@ static inline void regfree(regex_t* r) {}
+ #include "u_process.h"
+ #include "os_file.h"
+ #include "os_misc.h"
++#include "detect_os.h"
+ 
+ /* For systems like Hurd */
+ #ifndef PATH_MAX
+@@ -759,7 +760,15 @@ parseAppAttr(struct OptConfData *data, const char **attr)
+          application_versions = attr[i+1];
+       else XML_WARNING("unknown application attribute: %s.", attr[i]);
+    }
+-   if (exec && strcmp(exec, data->execName)) {
++   /* Windows executable names are case-insensitive.  Keep the original
++    * spelling for diagnostics and regular-expression matching.
++    */
++#if DETECT_OS_WINDOWS
++   const bool executable_mismatch = exec && _stricmp(exec, data->execName);
++#else
++   const bool executable_mismatch = exec && strcmp(exec, data->execName);
++#endif
++   if (executable_mismatch) {
+       data->ignoringApp = data->inApp;
+    } else if (exec_regexp) {
+       regex_t re;

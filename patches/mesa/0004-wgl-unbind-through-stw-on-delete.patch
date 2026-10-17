@@ -1,0 +1,24 @@
+Subject: [PATCH 04/11] wgl: unbind the current context through stw_make_current on delete
+
+DrvDeleteContext unbound the current context with st_api_make_current
+directly. That skips the stw bookkeeping, so the current framebuffer kept a
+reference and leaked on every delete of a current context. Fixes the
+repeated-unload framebuffer leak (installer v16).
+
+Prior art: F220-F221, installer v16 (R/NATIVE-WDDM20.md; prior-art section 3).
+Origin: codex working tree R/mesa (git diff 374c3022), re-exported by
+vmlab-win3d build/mesa; see build/mesa/README.md.
+---
+diff --git a/src/gallium/frontends/wgl/stw_context.c b/src/gallium/frontends/wgl/stw_context.c
+index f0f543c243b4c3fd4f063217002d0ab294473962..60f0d39083369f3cc1a4fa63f47426c256b57935 100644
+--- a/src/gallium/frontends/wgl/stw_context.c
++++ b/src/gallium/frontends/wgl/stw_context.c
+@@ -327,7 +327,7 @@ DrvDeleteContext(DHGLRC dhglrc)
+ 
+       /* Unbind current if deleting current context. */
+       if (curctx == ctx)
+-         st_api_make_current(NULL, NULL, NULL);
++         stw_make_current(NULL, NULL, NULL);
+ 
+       stw_destroy_context(ctx);
+       ret = true;

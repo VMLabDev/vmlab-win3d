@@ -1,0 +1,76 @@
+Subject: [PATCH 01/11] build: add the WDK include path and drop x86-unsafe 64-bit Interlocked calls
+
+Adds inc_winddk to libgallium and to the Venus Windows build, so the DDK
+headers extracted from the Windows SDK/WDK 10.0.26100.1 NuGet packages are
+found. Replaces InterlockedIncrement64, which i686 llvm-mingw does not
+provide, with Mesa's p_atomic_inc_return in the Yttrium context. Without it
+the x86 build fails.
+
+Prior art: F1 (R/VERDICT.md "Driver changes"; prior-art section 3/6).
+Origin: codex working tree R/mesa (git diff 374c3022), re-exported by
+vmlab-win3d build/mesa; see build/mesa/README.md.
+---
+diff --git a/src/gallium/auxiliary/meson.build b/src/gallium/auxiliary/meson.build
+index edac06d082cd210bc314e6bcd4de9ab589b33338..ef4fe9f85954d238ce02f479f80d68bbd127646d 100644
+--- a/src/gallium/auxiliary/meson.build
++++ b/src/gallium/auxiliary/meson.build
+@@ -503,7 +503,7 @@ libgallium = static_library(
+   'gallium',
+   [files_libgallium, u_indices_gen_c, u_unfilled_gen_c],
+   include_directories : [
+-    inc_loader, inc_gallium, inc_src, inc_include, include_directories('util')
++    inc_loader, inc_gallium, inc_src, inc_include, inc_winddk, include_directories('util')
+   ],
+   c_args : [c_msvc_compat_args, libgallium_extra_c_args],
+   cpp_args : [cpp_msvc_compat_args],
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_context.c b/src/gallium/winsys/yttrium/gdi/yttrium_context.c
+index e1206a3304687d8132614419ff40012c04d678ba..a43095e2460fbbf5a50a5daf24932332c6269c69 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_context.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_context.c
+@@ -11,6 +11,7 @@
+ #include <winternl.h>
+ 
+ #include "util/u_prim.h"
++#include "util/u_atomic.h"
+ #include "util/u_framebuffer.h"
+ #include "util/u_inlines.h"
+ #include "util/u_memory.h"
+@@ -428,7 +429,7 @@ yttrium_gdi_flush_async_issuance(struct pipe_context *ctx,
+    issuance->references = 2;
+    issuance->state = YTTRIUM_FLUSH_ISSUANCE_PENDING;
+    issuance->id =
+-      (uint64_t)InterlockedIncrement64(&yttrium_next_flush_issuance_id);
++      (uint64_t)p_atomic_inc_return(&yttrium_next_flush_issuance_id);
+ 
+    if (ctx->flush != yttrium_flush) {
+       if (!yttrium_threaded_queue_flush_label(
+@@ -552,7 +553,7 @@ yttrium_gdi_flush_async_present(
+ 
+    ticket->publish = *publish;
+    ticket->id =
+-      (uint64_t)InterlockedIncrement64(&yttrium_next_present_ticket_id);
++      (uint64_t)p_atomic_inc_return(&yttrium_next_present_ticket_id);
+ 
+    struct yttrium_gdi_flush_issuance *issuance = NULL;
+    if (issued) {
+@@ -563,7 +564,7 @@ yttrium_gdi_flush_async_present(
+       }
+       issuance->references = 2;
+       issuance->state = YTTRIUM_FLUSH_ISSUANCE_PENDING;
+-      issuance->id = (uint64_t)InterlockedIncrement64(&yttrium_next_flush_issuance_id);
++      issuance->id = (uint64_t)p_atomic_inc_return(&yttrium_next_flush_issuance_id);
+    }
+ 
+    if (ctx->flush != yttrium_flush) {
+diff --git a/src/virtio/vulkan/meson.build b/src/virtio/vulkan/meson.build
+index acfa6145428601c1c329ca4e8d59172813615b16..c83fe824178210c0c1790b0ff907913b6ba97dae 100644
+--- a/src/virtio/vulkan/meson.build
++++ b/src/virtio/vulkan/meson.build
+@@ -116,6 +116,7 @@ if not with_platform_windows
+ endif
+ 
+ if with_platform_windows
++  vn_incs += inc_winddk
+   libvn_files += files('vn_renderer_d3dkmt.c')
+   libvn_files += files('vn_wsi.c')
+   vn_c_args += '-DVN_USE_WSI_PLATFORM'

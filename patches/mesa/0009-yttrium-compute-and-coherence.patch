@@ -1,0 +1,720 @@
+Subject: [PATCH 09/11] d3d10umd, yttrium: compute, constant-buffer and resource-coherence fixes
+
+- Accept cube and cube-array resources behind 2D-array SRVs and
+  RWTexture2DArray UAVs, and initialise every mip and layer of depth arrays
+  (F21-F22).
+- Resource waits flush the recording command batch and add a buffer-to-host
+  barrier, so CPU reads of GPU-written buffers see the producer (F38).
+- Ordered CPU uploads into mapped buffers snapshot pure vertex/index buffers
+  per draw and wait for earlier GPU reads before overwriting (staged-draw-0212,
+  Heaven D3D9 menu).
+- Compute shaders may sample buffer SRVs through uniform texel buffers (F33).
+- Constant buffers written by the GPU are read back before CPU constant
+  collection, and compute constants stay in their GPU buffer (F224-F229).
+- DispatchIndirect runs natively through vkCmdDispatchIndirect with argument
+  validation and barriers, instead of a CPU readback stall (F230-F231).
+
+Prior art: F21, F22, F33, F38, F224-F231, staged-draw-0212 (R/NATIVE-WDDM20.md; V/EXPERIMENTS.md).
+Origin: codex working tree R/mesa (git diff 374c3022), re-exported by
+vmlab-win3d build/mesa; see build/mesa/README.md.
+---
+diff --git a/src/gallium/frontends/d3d10umd/Shader.cpp b/src/gallium/frontends/d3d10umd/Shader.cpp
+index 701d12a5970d843937ea444a98eb0774794822f8..1ee542894afa6930bf47a61182cd0f596dfba307 100644
+--- a/src/gallium/frontends/d3d10umd/Shader.cpp
++++ b/src/gallium/frontends/d3d10umd/Shader.cpp
+@@ -3559,6 +3559,25 @@ DispatchIndirect(D3D10DDI_HDEVICE hDevice,
+    if (!pDevice || !pDevice->pipe || !args || !args->resource)
+       return;
+ 
++   Shader *cs = pDevice->bound_cs;
++   if (!cs)
++      return;
++   if (cs->compute_emulation == COMPUTE_EMULATION_NONE && cs->handle) {
++      if (args->resource->target != PIPE_BUFFER ||
++          (AlignedByteOffsetForArgs & 3) ||
++          AlignedByteOffsetForArgs > args->resource->width0 ||
++          sizeof(dispatch_args) > args->resource->width0 - AlignedByteOffsetForArgs)
++         return;
++      struct pipe_grid_info info = {};
++      info.work_dim = 3;
++      info.indirect = args->resource;
++      info.indirect_offset = AlignedByteOffsetForArgs;
++      for (unsigned i = 0; i < 3; i++)
++         info.block[i] = cs->thread_group_size[i] ? cs->thread_group_size[i] : 1;
++      pDevice->pipe->launch_grid(pDevice->pipe, &info);
++      return;
++   }
++
+    if (!ReadBufferRange(pDevice->pipe, args->resource,
+                         AlignedByteOffsetForArgs, sizeof(dispatch_args),
+                         dispatch_args))
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_internal.h b/src/gallium/winsys/yttrium/gdi/yttrium_internal.h
+index 324123025ecaf69ff86c0761f29431ced596e2a2..a90200803a59942e5aff7256abd93d8fdef79fe4 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_internal.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_internal.h
+@@ -307,6 +307,8 @@ struct yttrium_resource {
+     * stale and the draw uploads the wrong vertex range.
+     */
+    uint32_t contents_serial;
++   uint32_t constant_readback_serial;
++   bool constant_readback_valid;
+ 
+    /*
+     * Process-unique, assigned once at create.  Index bounds cache entries key
+@@ -340,8 +342,8 @@ struct yttrium_resource {
+    uint64_t data_capacity;
+    bool owns_data;
+    bool data_dirty;
+-   /* Counter/indirect buffer writes make GPU storage authoritative.  Detached
+-    * CPU storage is refreshed only for an explicit CPU map, never for a draw. */
++   /* GPU writes make GPU storage authoritative. CPU consumers, including
++    * constant collection, must map the resource before reading its backing. */
+    bool gpu_buffer_written;
+    bool direct_bind_unsafe;
+    bool private_immutable_draw_buffer;
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.c b/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.c
+index 5b4ab2ab91a71f3ba6fae3dbfe20630ff22a94b7..fbfa73b1339ab4e0677414a9de357f9a66ee845f 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.c
+@@ -1574,9 +1574,13 @@ yttrium_pipeline_sampler_slot_is_buffer(
+           * resource shape as a non-array Texture2D.  Preserve the shader's
+           * array interpretation by creating a one-layer Vulkan array view. */
+          if (src->base.target != PIPE_TEXTURE_2D_ARRAY &&
+-             src->base.target != PIPE_TEXTURE_2D)
++             src->base.target != PIPE_TEXTURE_2D &&
++             src->base.target != PIPE_TEXTURE_CUBE &&
++             src->base.target != PIPE_TEXTURE_CUBE_ARRAY)
+             return false;
+-         if (view->target == PIPE_TEXTURE_2D_ARRAY)
++         if (view->target == PIPE_TEXTURE_2D_ARRAY ||
++             view->target == PIPE_TEXTURE_CUBE ||
++             view->target == PIPE_TEXTURE_CUBE_ARRAY)
+             return true;
+          return view->target == PIPE_TEXTURE_2D &&
+                 view->u.tex.first_layer == view->u.tex.last_layer;
+@@ -1751,11 +1755,16 @@ yttrium_pipeline_sampled_image_view_desc(
+       /* A shader that declares a cube array over D3D's one-element cube needs
+        * a cube-array view, the same way a one-layer Texture2DArray does. */
+       *view_type = yttrium_pipeline_unshadow_sampler_target(shader_target) ==
++                      TGSI_TEXTURE_2D_ARRAY ?
++                   VK_IMAGE_VIEW_TYPE_2D_ARRAY :
++                   yttrium_pipeline_unshadow_sampler_target(shader_target) ==
+                       TGSI_TEXTURE_CUBE_ARRAY ?
+                    VK_IMAGE_VIEW_TYPE_CUBE_ARRAY : VK_IMAGE_VIEW_TYPE_CUBE;
+       break;
+    case PIPE_TEXTURE_CUBE_ARRAY:
+-      *view_type = VK_IMAGE_VIEW_TYPE_CUBE_ARRAY;
++      *view_type = yttrium_pipeline_unshadow_sampler_target(shader_target) ==
++                      TGSI_TEXTURE_2D_ARRAY ?
++                   VK_IMAGE_VIEW_TYPE_2D_ARRAY : VK_IMAGE_VIEW_TYPE_CUBE_ARRAY;
+       break;
+    default:
+       return false;
+@@ -2579,7 +2588,7 @@ yttrium_pipeline_build_ubo_layouts(
+ 
+ static bool
+ yttrium_pipeline_collect_ubo_uploads(
+-   const struct yttrium_context *yctx,
++   struct yttrium_context *yctx,
+    struct yttrium_venus_ubo_upload *uploads,
+    uint32_t *upload_count);
+ 
+@@ -4585,7 +4594,8 @@ yttrium_pipeline_build_ubo_layouts(
+ }
+ 
+ static const uint8_t *
+-yttrium_pipeline_constant_buffer_bytes(const struct yttrium_constant_buffer *cb,
++yttrium_pipeline_constant_buffer_bytes(struct pipe_context *ctx,
++                                       const struct yttrium_constant_buffer *cb,
+                                        uint64_t *available)
+ {
+    if (available)
+@@ -4601,10 +4611,24 @@ yttrium_pipeline_constant_buffer_bytes(const struct yttrium_constant_buffer *cb,
+    }
+ 
+    if (cb->buffer) {
+-      const struct yttrium_resource *res = yttrium_resource(cb->buffer);
++      struct yttrium_resource *res = yttrium_resource(cb->buffer);
+       if (res && res->data && cb->buffer_offset < res->size) {
+          const uint64_t size = MIN2((uint64_t)cb->buffer_size,
+                                     res->size - cb->buffer_offset);
++         const bool cacheable = res->base.bind == PIPE_BIND_CONSTANT_BUFFER;
++         if (res->gpu_buffer_written &&
++             (!cacheable || !res->constant_readback_valid ||
++              res->constant_readback_serial != res->contents_serial)) {
++            const struct pipe_box box = {.x = cb->buffer_offset,
++               .width = size, .height = 1, .depth = 1};
++            struct pipe_transfer *transfer = NULL;
++            if (!ctx->buffer_map(ctx, cb->buffer, 0, PIPE_MAP_READ,
++                                 &box, &transfer))
++               return NULL;
++            ctx->buffer_unmap(ctx, transfer);
++            res->constant_readback_serial = res->contents_serial;
++            res->constant_readback_valid = cacheable;
++         }
+          if (available)
+             *available = size;
+          return (const uint8_t *)res->data + cb->buffer_offset;
+@@ -4616,7 +4640,7 @@ yttrium_pipeline_constant_buffer_bytes(const struct yttrium_constant_buffer *cb,
+ 
+ static bool
+ yttrium_pipeline_add_shader_push_constants(
+-   const struct yttrium_context *yctx,
++   struct yttrium_context *yctx,
+    const struct yttrium_shader_state *shader,
+    struct yttrium_venus_draw_state *draw_state)
+ {
+@@ -4641,7 +4665,7 @@ yttrium_pipeline_add_shader_push_constants(
+          &yctx->constant_buffers[shader->stage][raw_index];
+       slot_data[raw_index] =
+          yttrium_pipeline_constant_buffer_bytes(
+-            cb, &slot_available[raw_index]);
++            &yctx->base, cb, &slot_available[raw_index]);
+       if (!slot_data[raw_index] || !slot_available[raw_index] ||
+           slot_available[raw_index] > YTTRIUM_SHADER_MAX_UBO_BYTES)
+          return false;
+@@ -4675,7 +4699,7 @@ yttrium_pipeline_add_shader_push_constants(
+ 
+ static bool
+ yttrium_pipeline_collect_push_constants(
+-   const struct yttrium_context *yctx,
++   struct yttrium_context *yctx,
+    struct yttrium_venus_draw_state *draw_state)
+ {
+    if (!yctx || !draw_state)
+@@ -4689,7 +4713,7 @@ yttrium_pipeline_collect_push_constants(
+ 
+ static bool
+ yttrium_pipeline_add_ubo_uploads(
+-   const struct yttrium_context *yctx,
++   struct yttrium_context *yctx,
+    const struct yttrium_shader_state *shader,
+    struct yttrium_venus_ubo_upload *uploads,
+    uint32_t *upload_count)
+@@ -4714,10 +4738,27 @@ yttrium_pipeline_add_ubo_uploads(
+ 
+       const struct yttrium_constant_buffer *cb =
+          &yctx->constant_buffers[shader->stage][raw_index];
++      struct yttrium_resource *cb_res =
++         cb->buffer ? yttrium_resource(cb->buffer) : NULL;
++      /* Offset zero satisfies every Vulkan uniform-buffer alignment. Keep
++       * GPU-written compute constants in their tracked native allocation. */
++      const bool gpu_direct =
++         shader->stage == MESA_SHADER_COMPUTE && !cb->user_buffer &&
++         cb_res && cb_res->gpu_buffer_written && !cb_res->data_dirty &&
++         !cb->buffer_offset && cb_res->venus.initialized &&
++         cb_res->venus.buffer_backed && cb_res->venus.buffer &&
++         cb_res->venus.memory &&
++         (cb_res->venus.buffer_usage & VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT) &&
++         cb->buffer_size <= cb_res->size &&
++         cb->buffer_size <= cb_res->venus.image_size;
+       uint64_t available = 0;
+       const uint8_t *data =
+-         yttrium_pipeline_constant_buffer_bytes(cb, &available);
+-      if (!data || !available || available > YTTRIUM_SHADER_MAX_UBO_BYTES ||
++         gpu_direct ? NULL :
++         yttrium_pipeline_constant_buffer_bytes(&yctx->base, cb, &available);
++      if (gpu_direct)
++         available = cb->buffer_size;
++      if ((!data && !gpu_direct) || !available ||
++          available > YTTRIUM_SHADER_MAX_UBO_BYTES ||
+          (available & 3)) {
+          YTTRIUM_WARN("yttrium: shader_draw_probe try_draw skipped ubo missing stage=%s raw=%u binding=%u elem=%u size=0x%llx data=%p\n",
+                       yttrium_shader_stage_name(shader->stage),
+@@ -4728,10 +4769,8 @@ yttrium_pipeline_add_ubo_uploads(
+          return false;
+       }
+ 
+-      struct yttrium_resource *cb_res =
+-         cb->buffer ? yttrium_resource(cb->buffer) : NULL;
+       struct yttrium_venus_resource *direct_resource =
+-         cb_res && cb_res->ordered_worker_upload_direct_backing ?
++         cb_res && (gpu_direct || cb_res->ordered_worker_upload_direct_backing) ?
+             &cb_res->venus : NULL;
+       const bool version_cache_safe =
+          cb_res && !direct_resource &&
+@@ -4774,7 +4813,7 @@ yttrium_pipeline_add_ubo_uploads(
+ 
+ static bool
+ yttrium_pipeline_collect_ubo_uploads(
+-   const struct yttrium_context *yctx,
++   struct yttrium_context *yctx,
+    struct yttrium_venus_ubo_upload *uploads,
+    uint32_t *upload_count)
+ {
+@@ -5427,6 +5466,10 @@ yttrium_pipeline_collect_sampled_textures(
+          sampled_buffer &&
+          yttrium_pipeline_sampled_buffer_uses_r8_bitcast_coords(
+             shader, slot, view->format);
++      if (sampled_stage == MESA_SHADER_COMPUTE && sampled_bitcast_upload) {
++         YTTRIUM_WARN("yttrium: compute sampled buffer rejected reason=cpu-bitcast-expansion-required slot=%u\n", slot);
++         return false;
++      }
+       if (sampled_buffer && sampled_format != view->format) {
+          yttrium_trace_debug_stringf(
+             "yttrium: shader_draw_probe sampled buffer format override slot=%u binding=%u sampler_return=%u view_format=%u sampled_format=%u bitcast_upload=%u",
+@@ -5779,6 +5822,8 @@ yttrium_pipeline_storage_image_view_desc(
+       *view_type = VK_IMAGE_VIEW_TYPE_1D_ARRAY;
+       break;
+    case PIPE_TEXTURE_2D:
++   case PIPE_TEXTURE_CUBE:
++   case PIPE_TEXTURE_CUBE_ARRAY:
+       *view_type = shader_arrayed ? VK_IMAGE_VIEW_TYPE_2D_ARRAY :
+                                     VK_IMAGE_VIEW_TYPE_2D;
+       break;
+@@ -6119,8 +6164,25 @@ yttrium_launch_grid(struct pipe_context *ctx,
+ 
+    if (!ctx || !info || !cs || !yttrium_shader_state_has_module(cs))
+       return;
+-   if (!info->grid[0] || !info->grid[1] || !info->grid[2])
++   if (!info->indirect && (!info->grid[0] || !info->grid[1] || !info->grid[2]))
+       return;
++   struct yttrium_resource *args = info->indirect ?
++      yttrium_resource(info->indirect) : NULL;
++   if (args) {
++      if (args->base.target != PIPE_BUFFER || !args->venus.initialized ||
++          !args->venus.buffer_backed || !args->venus.buffer ||
++          !(args->venus.buffer_usage & VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT) ||
++          (info->indirect_offset & 3) || info->indirect_offset > args->size ||
++          sizeof(VkDispatchIndirectCommand) > args->size - info->indirect_offset ||
++          (args->data_dirty && (!args->data ||
++             !yttrium_venus_update_buffer(screen->venus, &args->venus, 0,
++                                          args->base.width0, args->data)))) {
++         YTTRIUM_WARN("yttrium: indirect compute arguments invalid or publication failed\n");
++         InterlockedExchange(&yctx->draw_failure, 1);
++         return;
++      }
++      args->data_dirty = false;
++   }
+    if (cs->info.shader_buffers_declared) {
+       YTTRIUM_WARN("yttrium: compute dispatch skipped unsupported resources shader=%p samplers=0x%x ssbos=0x%x\n",
+                    cs, cs->sampler_used_mask,
+@@ -6181,17 +6243,10 @@ yttrium_launch_grid(struct pipe_context *ctx,
+                    sampled_buffer_mask);
+       return;
+    }
+-   /* Compute sampling is limited to native images. In particular, do not enter
+-    * the graphics sampled-buffer expansion/upload path with GPU-written data. */
+-   if (sampled_buffer_mask) {
+-      YTTRIUM_WARN("yttrium: compute dispatch skipped owner=yttrium-pipeline reason=sampled_buffers_unsupported shader=%p samplers=0x%x buffers=0x%x action=reject-dispatch\n",
+-                   cs, cs->sampler_used_mask, sampled_buffer_mask);
+-      return;
+-   }
+-   if (sampled_image_mask)
++   if (sampled_image_mask | sampled_buffer_mask)
+       pipeline.key.sampled_stage_mask = 1u << MESA_SHADER_COMPUTE;
+    if (!yttrium_pipeline_add_sampled_layouts(
+-          yctx, cs, sampled_image_mask, 0, &pipeline.key)) {
++          yctx, cs, sampled_image_mask, sampled_buffer_mask, &pipeline.key)) {
+       YTTRIUM_WARN("yttrium: compute dispatch skipped sampled layout failed shader=%p samplers=0x%x\n",
+                    cs, cs->sampler_used_mask);
+       return;
+@@ -6261,7 +6316,8 @@ yttrium_launch_grid(struct pipe_context *ctx,
+                                        storage_images, storage_image_count,
+                                        ubo_uploads, ubo_upload_count,
+                                        info->grid[0], info->grid[1],
+-                                       info->grid[2])) {
++                                       info->grid[2], args ? &args->venus : NULL,
++                                       info->indirect_offset)) {
+       YTTRIUM_WARN("yttrium: compute dispatch failed shader=%p pipeline_id=%llu grid=%ux%ux%u storage_count=%u ubos=%u\n",
+                    cs, (unsigned long long)cached->pipeline_obj.id,
+                    info->grid[0], info->grid[1], info->grid[2],
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_resource.c b/src/gallium/winsys/yttrium/gdi/yttrium_resource.c
+index 3b85028bd6d5c636315ec0cb2177f86d523c3a35..e5fe97732651f9408aaee1406967ab786d0b985a 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_resource.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_resource.c
+@@ -4501,6 +4501,22 @@ yttrium_resource_copy_region(struct pipe_context *ctx,
+          ydst->contents_serial++;
+          return;
+       }
++      /* Staging uploads bypass buffer_map's discard protection.  Snapshot
++       * pure vertex/index buffers for subsequent draws, and retire earlier
++       * direct GPU reads before overwriting their mapped storage. */
++      const unsigned draw_bind = PIPE_BIND_VERTEX_BUFFER | PIPE_BIND_INDEX_BUFFER;
++      const bool snapshot_draw_data = (ydst->base.bind & draw_bind) &&
++         !(ydst->base.bind & ~draw_bind);
++      if (yttrium_resource_uses_mapped_venus_buffer(ydst) &&
++          (!snapshot_draw_data || !ydst->direct_bind_unsafe) &&
++          !yttrium_venus_wait_resource(screen->venus, &ydst->venus,
++                                         "ordered CPU buffer upload")) {
++         YTTRIUM_WARN("yttrium: ordered CPU buffer upload failed owner=yttrium_resource reason=prior-gpu-use-wait-failed action=fail-draw\n");
++         InterlockedExchange(&yttrium_context(ctx)->draw_failure, 1);
++         return;
++      }
++      if (snapshot_draw_data)
++         ydst->direct_bind_unsafe = true;
+       memmove((uint8_t *)ydst->data + dstx,
+               (const uint8_t *)ysrc->data + src_x, width);
+       yttrium_trace_resource_copy(YTTRIUM_TRACE_COPY_CPU_TO_CPU,
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus.c
+index ffa2a5b0cf0dd20ccdb138d0f5b8b801b4b45b11..daeb96c796efa6ca31247797437ac65fa7e04d9a 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus.c
+@@ -452,13 +452,16 @@ yttrium_venus_dispatch_compute(
+    uint32_t ubo_upload_count,
+    uint32_t grid_x,
+    uint32_t grid_y,
+-   uint32_t grid_z)
++   uint32_t grid_z,
++   struct yttrium_venus_resource *indirect_resource,
++   VkDeviceSize indirect_offset)
+ {
+    const struct yttrium_venus_backend *backend =
+       yttrium_venus_backend_or_null(venus);
+    return backend && backend->dispatch_compute(
+       venus->ctx, pipeline, sampled_images, sampled_image_count, storage_images,
+-      storage_image_count, ubo_uploads, ubo_upload_count, grid_x, grid_y, grid_z);
++      storage_image_count, ubo_uploads, ubo_upload_count, grid_x, grid_y, grid_z,
++      indirect_resource, indirect_offset);
+ }
+ 
+ bool
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus.h b/src/gallium/winsys/yttrium/gdi/yttrium_venus.h
+index c57665e4726baff91cf94e354b14b02298b8d8a5..e8d93de6bd373596482dcd213c0accfef8b55ef3 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus.h
+@@ -629,7 +629,9 @@ yttrium_venus_dispatch_compute(
+    uint32_t ubo_upload_count,
+    uint32_t grid_x,
+    uint32_t grid_y,
+-   uint32_t grid_z);
++   uint32_t grid_z,
++   struct yttrium_venus_resource *indirect_resource,
++   VkDeviceSize indirect_offset);
+ 
+ bool
+ yttrium_venus_clear_display(struct yttrium_venus *venus,
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c
+index ababaacbcb5f59bab0976c810a00111827fcc37f..4e29d6f113e6e42346a42faac57d6a5f61732127 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c
+@@ -1914,9 +1914,9 @@ yttrium_venus_cmd_ensure_depth_initialized(struct yttrium_venus *venus,
+    const VkImageSubresourceRange range = {
+       .aspectMask = yttrium_venus_format_aspects(resource->vk_format),
+       .baseMipLevel = 0,
+-      .levelCount = 1,
++      .levelCount = MAX2(resource->levels, 1),
+       .baseArrayLayer = 0,
+-      .layerCount = 1,
++      .layerCount = MAX2(resource->layers, 1),
+    };
+    yttrium_venus_cmd_transition_image(venus, resource,
+                                       VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+@@ -6557,7 +6557,8 @@ retry_layout:
+    bool has_arena_upload = false;
+    for (uint32_t i = 0; i < upload_count; i++) {
+       const struct yttrium_venus_ubo_upload *upload = &uploads[i];
+-      if (!upload->data || !upload->size || (upload->size & 3) ||
++      if ((!upload->data && !upload->direct_resource) ||
++          !upload->size || (upload->size & 3) ||
+           upload->size > YTTRIUM_VENUS_MAX_PIPELINE_UBO_BYTES)
+          return false;
+ 
+@@ -6585,7 +6586,7 @@ retry_layout:
+          slot->memory = resource->memory;
+          slot->offset = upload->direct_offset;
+          slot->size = upload->size;
+-         /* The immutable bytes already reside in the descriptor's buffer. */
++         /* The bytes already reside in the descriptor's tracked buffer. */
+          slot->upload_reused = true;
+          slots[i] = slot;
+          continue;
+@@ -11437,8 +11438,8 @@ yttrium_venus_compute_push_descriptors_complete(
+    if (ubo_update_count != pipeline->ubo_descriptor_count ||
+        ubo_update_count != pipeline->ubo_count ||
+        ubo_update_count > YTTRIUM_VENUS_MAX_PIPELINE_UBO_SLOTS ||
+-       sampled_image_count != pipeline->sampled_image_descriptor_count ||
+-       pipeline->sampled_buffer_descriptor_count ||
++       sampled_image_count != pipeline->sampled_image_descriptor_count +
++                                 pipeline->sampled_buffer_descriptor_count ||
+        storage_update_count != pipeline->storage_image_descriptor_count +
+                                   pipeline->storage_buffer_descriptor_count)
+       return false;
+@@ -11475,20 +11476,31 @@ yttrium_venus2_dispatch_compute(
+    uint32_t ubo_upload_count,
+    uint32_t grid_x,
+    uint32_t grid_y,
+-   uint32_t grid_z)
++   uint32_t grid_z,
++   struct yttrium_venus_resource *indirect_resource,
++   VkDeviceSize indirect_offset)
+ {
+-   if (!venus || !pipeline || !pipeline->pipeline || !grid_x || !grid_y ||
+-       !grid_z)
++   if (!venus || !pipeline || !pipeline->pipeline ||
++       (!indirect_resource && (!grid_x || !grid_y || !grid_z)))
++      return false;
++   if (indirect_resource &&
++       (!indirect_resource->initialized || !indirect_resource->buffer_backed ||
++        !indirect_resource->buffer ||
++        !(indirect_resource->buffer_usage & VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT) ||
++        (indirect_offset & 3) || indirect_offset > indirect_resource->image_size ||
++        sizeof(VkDispatchIndirectCommand) >
++           indirect_resource->image_size - indirect_offset))
+       return false;
+ 
+    if (sampled_image_count != pipeline->key.sampled_binding_count ||
+        sampled_image_count > YTTRIUM_VENUS_MAX_PIPELINE_SAMPLED_IMAGES ||
+-       (sampled_image_count && !sampled_images) || pipeline->has_sampled_buffer)
++       (sampled_image_count && !sampled_images))
+       return false;
+ 
+    const bool has_descriptors =
+       pipeline->ubo_descriptor_count ||
+       pipeline->sampled_image_descriptor_count ||
++      pipeline->sampled_buffer_descriptor_count ||
+       pipeline->storage_image_descriptor_count ||
+       pipeline->storage_buffer_descriptor_count;
+    const bool use_push_descriptors =
+@@ -11534,19 +11546,44 @@ yttrium_venus2_dispatch_compute(
+       [YTTRIUM_VENUS_MAX_PIPELINE_SAMPLED_IMAGES];
+    VkDescriptorImageInfo sampled_infos
+       [YTTRIUM_VENUS_MAX_PIPELINE_SAMPLED_IMAGES];
++   VkBufferView sampled_buffer_views
++      [YTTRIUM_VENUS_MAX_PIPELINE_SAMPLED_IMAGES];
+    VkWriteDescriptorSet sampled_writes
+       [YTTRIUM_VENUS_MAX_PIPELINE_SAMPLED_IMAGES];
+    memset(resolved_samples, 0, sizeof(resolved_samples));
+    memset(sampled_infos, 0, sizeof(sampled_infos));
++   memset(sampled_buffer_views, 0, sizeof(sampled_buffer_views));
+    memset(sampled_writes, 0, sizeof(sampled_writes));
+    for (uint32_t i = 0; i < sampled_image_count; i++) {
+       const struct yttrium_venus_sampled_binding_layout *layout =
+          &pipeline->key.sampled_bindings[i];
+       struct yttrium_venus_sampled_image *sampled = &resolved_samples[i];
+       *sampled = sampled_images[i];
+-      if (layout->stage != MESA_SHADER_COMPUTE || layout->buffer ||
+-          sampled->buffer || sampled->binding != layout->binding ||
+-          !pipeline->samplers[i])
++      if (layout->stage != MESA_SHADER_COMPUTE ||
++          sampled->buffer != (layout->buffer != VK_FALSE) ||
++          sampled->binding != layout->binding)
++         return false;
++      if (sampled->buffer) {
++         struct yttrium_venus_resource *resource = sampled->resource;
++         if (!resource || !resource->initialized || !resource->buffer_backed ||
++             !resource->buffer || !sampled->buffer_size ||
++             (!sampled->buffer_data && !resource->contents_initialized) ||
++             !yttrium_venus_ensure_sample_buffer_view(
++                venus, resource, sampled->resource_id, sampled->format,
++                sampled->buffer_offset, sampled->buffer_range,
++                &sampled_buffer_views[i]))
++            return false;
++         sampled_writes[i] = (VkWriteDescriptorSet) {
++            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
++            .dstSet = use_push_descriptors ? VK_NULL_HANDLE : dispatch_descriptor_set,
++            .dstBinding = sampled->binding,
++            .descriptorCount = 1,
++            .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER,
++            .pTexelBufferView = &sampled_buffer_views[i],
++         };
++         continue;
++      }
++      if (!pipeline->samplers[i])
+          return false;
+       if (!sampled->resource &&
+           !yttrium_venus_ensure_null_sampled_image(
+@@ -11559,18 +11596,6 @@ yttrium_venus2_dispatch_compute(
+           !(resource->image_usage & VK_IMAGE_USAGE_SAMPLED_BIT))
+          return false;
+ 
+-      /* The existing depth initializer covers only mip 0 / layer 0, but
+-       * layout and initialization state are tracked for the whole image.
+-       * Do not claim the remaining subresources were initialized by it.
+-       */
+-      if (yttrium_venus_format_has_depth(resource->vk_format) &&
+-          !resource->contents_initialized &&
+-          (resource->levels > 1 || resource->layers > 1)) {
+-         YTTRIUM_WARN("yttrium: compute dispatch rejected owner=yttrium_venus reason=uninitialized_depth_subresources_unsupported res_id=%u levels=%u layers=%u\n",
+-                      sampled->resource_id, resource->levels, resource->layers);
+-         return false;
+-      }
+-
+       VkImageView view = VK_NULL_HANDLE;
+       if (!yttrium_venus_ensure_sample_image_view(
+              venus, sampled->resource, sampled->resource_id,
+@@ -11723,6 +11748,13 @@ yttrium_venus2_dispatch_compute(
+                                           false, true))
+       return false;
+ 
++   if (indirect_resource &&
++       !yttrium_venus_cmd_batch_track_resource(venus, indirect_resource)) {
++      yttrium_venus_cancel_command_batch_setup_failure(
++         venus, "indirect compute argument tracking failure");
++      return false;
++   }
++
+    if (!yttrium_venus_cmd_batch_track_pipeline(venus, pipeline)) {
+       yttrium_venus_cancel_command_batch_setup_failure(
+          venus, "native compute dispatch pipeline tracking failure");
+@@ -11852,7 +11884,8 @@ yttrium_venus2_dispatch_compute(
+       }
+       ubo_barriers[ubo_barrier_count++] = (VkBufferMemoryBarrier) {
+          .sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
+-         .srcAccessMask = direct_resource ? VK_ACCESS_HOST_WRITE_BIT :
++         .srcAccessMask = direct_resource ?
++                            VK_ACCESS_HOST_WRITE_BIT | VK_ACCESS_MEMORY_WRITE_BIT :
+                                             VK_ACCESS_TRANSFER_WRITE_BIT,
+          .dstAccessMask = VK_ACCESS_UNIFORM_READ_BIT,
+          .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+@@ -11865,7 +11898,7 @@ yttrium_venus2_dispatch_compute(
+    if (ubo_barrier_count) {
+       vn_async_vkCmdPipelineBarrier(&venus->vn_ring, venus->command_buffer,
+                                     VK_PIPELINE_STAGE_HOST_BIT |
+-                                       VK_PIPELINE_STAGE_TRANSFER_BIT,
++                                       VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+                                     VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+                                     0, 0, NULL,
+                                     ubo_barrier_count, ubo_barriers,
+@@ -11875,6 +11908,46 @@ yttrium_venus2_dispatch_compute(
+    for (uint32_t i = 0; i < sampled_image_count; i++) {
+       struct yttrium_venus_sampled_image *sampled = &resolved_samples[i];
+       struct yttrium_venus_resource *resource = sampled->resource;
++      if (sampled->buffer) {
++         if (sampled->buffer_data) {
++            const VkBufferMemoryBarrier overwrite = {
++               .sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
++               .srcAccessMask = VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_MEMORY_WRITE_BIT,
++               .dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT,
++               .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
++               .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
++               .buffer = resource->buffer,
++               .offset = 0,
++               .size = sampled->buffer_size,
++            };
++            vn_async_vkCmdPipelineBarrier(
++               &venus->vn_ring, venus->command_buffer,
++               VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
++               0, 0, NULL, 1, &overwrite, 0, NULL);
++            VkDeviceSize written_size = 0;
++            if (!yttrium_venus_cmd_update_buffer_padded(
++                   venus, venus->command_buffer, resource->buffer, 0,
++                   sampled->buffer_size, sampled->buffer_data, &written_size))
++               goto fail_command_batch;
++         }
++         const VkBufferMemoryBarrier barrier = {
++            .sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
++            .srcAccessMask = VK_ACCESS_MEMORY_WRITE_BIT | VK_ACCESS_HOST_WRITE_BIT,
++            .dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
++            .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
++            .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
++            .buffer = resource->buffer,
++            .offset = sampled->buffer_offset,
++            .size = sampled->buffer_range,
++         };
++         vn_async_vkCmdPipelineBarrier(
++            &venus->vn_ring, venus->command_buffer,
++            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT | VK_PIPELINE_STAGE_HOST_BIT,
++            VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0,
++            0, NULL, 1, &barrier, 0, NULL);
++         resource->contents_initialized = true;
++         continue;
++      }
+       const bool depth = yttrium_venus_format_has_depth(resource->vk_format);
+       if (depth ?
+           !yttrium_venus_cmd_ensure_depth_initialized(
+@@ -11973,8 +12046,28 @@ yttrium_venus2_dispatch_compute(
+                                        compute_pipeline_layout, 0, 1,
+                                        &dispatch_descriptor_set, 0, NULL);
+    }
+-   vn_async_vkCmdDispatch(&venus->vn_ring, venus->command_buffer,
+-                          grid_x, grid_y, grid_z);
++   if (indirect_resource) {
++      const VkBufferMemoryBarrier barrier = {
++         .sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
++         .srcAccessMask = VK_ACCESS_MEMORY_WRITE_BIT | VK_ACCESS_HOST_WRITE_BIT,
++         .dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT,
++         .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
++         .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
++         .buffer = indirect_resource->buffer,
++         .offset = indirect_offset,
++         .size = sizeof(VkDispatchIndirectCommand),
++      };
++      vn_async_vkCmdPipelineBarrier(
++         &venus->vn_ring, venus->command_buffer,
++         VK_PIPELINE_STAGE_ALL_COMMANDS_BIT | VK_PIPELINE_STAGE_HOST_BIT,
++         VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT, 0,
++         0, NULL, 1, &barrier, 0, NULL);
++      vn_async_vkCmdDispatchIndirect(&venus->vn_ring, venus->command_buffer,
++                                     indirect_resource->buffer, indirect_offset);
++   } else {
++      vn_async_vkCmdDispatch(&venus->vn_ring, venus->command_buffer,
++                             grid_x, grid_y, grid_z);
++   }
+ 
+    for (uint32_t i = 0; i < storage_image_count; i++) {
+       if (storage_images[i].resource)
+@@ -14502,6 +14595,37 @@ yttrium_venus2_wait_resource(struct yttrium_venus *venus,
+                              struct yttrium_venus_resource *resource,
+                              const char *label)
+ {
++   if (!venus || !resource)
++      return true;
++
++   if (resource->initialized && resource->buffer_backed && resource->buffer) {
++      if (!yttrium_venus_begin_transfer_batch(venus))
++         return false;
++      if (!yttrium_venus_cmd_batch_track_resource(venus, resource)) {
++         yttrium_venus_cancel_command_batch_setup_failure(venus, label);
++         return false;
++      }
++      const VkBufferMemoryBarrier barrier = {
++         .sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
++         .srcAccessMask = VK_ACCESS_MEMORY_WRITE_BIT,
++         .dstAccessMask = VK_ACCESS_HOST_READ_BIT | VK_ACCESS_HOST_WRITE_BIT,
++         .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
++         .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
++         .buffer = resource->buffer,
++         .offset = 0,
++         .size = VK_WHOLE_SIZE,
++      };
++      vn_async_vkCmdPipelineBarrier(
++         &venus->vn_ring, venus->command_buffer,
++         VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_HOST_BIT,
++         0, 0, NULL, 1, &barrier, 0, NULL);
++      if (!yttrium_venus_cmd_batch_after_record(venus, label))
++         return false;
++   }
++
++   /* Resource waits must include commands that have not been submitted yet. */
++   if (!yttrium_venus_flush_command_batch(venus, label))
++      return false;
+    return yttrium_venus_wait_resource_batches(venus, resource, label);
+ }
+ 
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus_backend.h b/src/gallium/winsys/yttrium/gdi/yttrium_venus_backend.h
+index 1844eb903579302d320608af5121a855129b3542..a5fb8a69f544e0ecd0ff4032dd2a7fa4dab563fb 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus_backend.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus_backend.h
+@@ -123,7 +123,9 @@ struct yttrium_venus_backend {
+                             uint32_t ubo_upload_count,
+                             uint32_t grid_x,
+                             uint32_t grid_y,
+-                            uint32_t grid_z);
++                            uint32_t grid_z,
++                            struct yttrium_venus_resource *indirect_resource,
++                            VkDeviceSize indirect_offset);
+ 
+    bool (*clear_display)(void *ctx,
+                          struct gdikmt_context *kmt_ctx,
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus_backend_adapter.h b/src/gallium/winsys/yttrium/gdi/yttrium_venus_backend_adapter.h
+index 50ffe7f7cb431c2c2d5f6c4e3ea31a4a28dac21c..a3bcd107bc894dcf8d46d1d5dbbca82736622bd5 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus_backend_adapter.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus_backend_adapter.h
+@@ -233,11 +233,14 @@ backend_dispatch_compute(void *ctx,
+                          uint32_t ubo_upload_count,
+                          uint32_t grid_x,
+                          uint32_t grid_y,
+-                         uint32_t grid_z)
++                         uint32_t grid_z,
++                         struct yttrium_venus_resource *indirect_resource,
++                         VkDeviceSize indirect_offset)
+ {
+    return YTTRIUM_VENUS_BACKEND_SYM(dispatch_compute)(
+       ctx, pipeline, sampled_images, sampled_image_count, storage_images,
+-      storage_image_count, ubo_uploads, ubo_upload_count, grid_x, grid_y, grid_z);
++      storage_image_count, ubo_uploads, ubo_upload_count, grid_x, grid_y, grid_z,
++      indirect_resource, indirect_offset);
+ }
+ 
+ static bool

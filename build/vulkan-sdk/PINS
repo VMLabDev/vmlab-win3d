@@ -1,0 +1,14 @@
+# Inputs to build/vulkan-sdk. build.sh reads the "src" lines; edit them together.
+# Format: src <name> <tag> <commit> <sha256-of-tarball> <url>
+# The commit is what `git ls-remote <repo> refs/tags/<tag>` returned when pinned
+# (all three tags are lightweight). The sha256 is of the GitHub source tarball.
+src Vulkan-Headers vulkan-sdk-1.4.363.0 6802bb4733b63ed5efd3adb308a6c885ef180ea1 4a078be12bef21cfebc09d878b77a63cff9d68f899254a0b00d0e37ef73e7f7e https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/vulkan-sdk-1.4.363.0.tar.gz
+src Vulkan-Loader vulkan-sdk-1.4.363.0 fa218055ff4948b159f31d43f800c808a13d51df 941eff558fc74f248745fb7df367640cf89a8457f216dae498a74ae14b6ba6f7 https://github.com/KhronosGroup/Vulkan-Loader/archive/refs/tags/vulkan-sdk-1.4.363.0.tar.gz
+src Vulkan-Tools vulkan-sdk-1.4.363.0 6fe2055cf2fa921d52a4c6a31528cfc279a6977f 6cbeb83294434e636a0c78760f1a6dfe3e50c1bab0cffa154603ce73e70508f1 https://github.com/KhronosGroup/Vulkan-Tools/archive/refs/tags/vulkan-sdk-1.4.363.0.tar.gz
+# SOURCE_DATE_EPOCH: commit time of the newest input (Vulkan-Loader tag commit,
+# 2026-09-18T16:28:24Z). Used for the copyright year CMake writes into the .rc files.
+epoch 1789748904
+# Toolchain: the image printed by build/toolchain/build.sh (llvm-mingw 20261006
+# ucrt, CMake, Ninja, Python). Its inputs are pinned in build/toolchain/
+# (see build/toolchain/PINS).
+toolchain see build/toolchain/PINS

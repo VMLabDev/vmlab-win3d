@@ -1,0 +1,399 @@
+Subject: [PATCH 06/11] d3d10umd/d3d9, yttrium: D3D9 sampler, depth-bias, format and D32F fixes
+
+- Keep the shader-declared sampler type while a bound texture has no pipe
+  resource yet. Fixes the Heaven D3D9 abort "Unknown TGSI texture target 18"
+  (F4).
+- Implement D3DRS_DEPTHBIAS and D3DRS_SLOPESCALEDEPTHBIAS as unscaled
+  (float) depth bias, using VK_EXT_depth_bias_control float representation,
+  and disable it for points and lines as D3D9 does (F15-F16).
+- Map D3DFMT_A4R4G4B4 through VK_EXT_4444_formats, D3DFMT_A8L8 with the
+  luminance-alpha swizzle, and D32F_LOCKABLE to Z32_FLOAT. Bind any depth or
+  stencil format as a depth-stencil resource (F15).
+- Upload buffer-to-image copies into depth images through the depth aspect,
+  so D32F write locks take effect; packed depth-stencil uploads stay
+  rejected (F20).
+
+Prior art: F4, F15, F16, F20 (R/VERDICT.md, R/NATIVE-WDDM20.md "D3D9 D32F"; prior-art section 2.2).
+Origin: codex working tree R/mesa (git diff 374c3022), re-exported by
+vmlab-win3d build/mesa; see build/mesa/README.md.
+---
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Draw.cpp b/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
+index de775eb1b8b7564f3f22cd7e70e7935eeaed5136..c6bba4454b527f602ae1af78c240890a2c4a7dfc 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
+@@ -188,7 +188,11 @@ D3D9TranslatedPsSamplerTypeOverrides(const D3D9Device *device,
+       if (!texture)
+          continue;
+ 
+-      *types |= D3D9SmSamplerTypeFromTexture(texture) << (stage * 3);
++      const uint64_t sampler_type = D3D9SmSamplerTypeFromTexture(texture);
++      /* Keep the shader declaration until the texture has a pipe resource. */
++      if (!sampler_type)
++         continue;
++      *types |= sampler_type << (stage * 3);
+       *mask |= 1u << stage;
+    }
+ }
+@@ -1605,6 +1609,12 @@ D3D9CreateRasterizerState(D3D9Device *device, bool depth_clamp,
+    }
+    state.fill_front = PIPE_POLYGON_MODE_FILL;
+    state.fill_back = PIPE_POLYGON_MODE_FILL;
++   state.offset_units =
++      D3D9RenderStateFloat(device->render_states[D3DRS_DEPTHBIAS]);
++   state.offset_scale =
++      D3D9RenderStateFloat(device->render_states[D3DRS_SLOPESCALEDEPTHBIAS]);
++   state.offset_units_unscaled = 1;
++   state.offset_tri = state.offset_units != 0.0f || state.offset_scale != 0.0f;
+    state.line_width = 1.0f;
+    state.point_size = D3D9PointSize(device);
+    state.point_quad_rasterization = !point_position_gs &&
+@@ -2275,6 +2285,11 @@ D3D9CreateTextureBinding(D3D9Device *device, UINT stage,
+       view.swizzle_b = PIPE_SWIZZLE_X;
+       view.swizzle_a = PIPE_SWIZZLE_1;
+    }
++   if (texture->format == D3D9_FMT_A8L8) {
++      view.swizzle_g = PIPE_SWIZZLE_X;
++      view.swizzle_b = PIPE_SWIZZLE_X;
++      view.swizzle_a = PIPE_SWIZZLE_Y;
++   }
+    if (texture->format == D3D9_FMT_R16F ||
+        texture->format == D3D9_FMT_R32F) {
+       view.swizzle_g = PIPE_SWIZZLE_1;
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Resource.cpp b/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
+index 81ca56b30c21b78d181caa703d144a5138b86799..7c5554c15d063c28a3e9833582768af89885b9d9 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
+@@ -219,6 +219,8 @@ D3D9FormatToPipe(D3DDDIFORMAT format)
+       return PIPE_FORMAT_B5G6R5_UNORM;
+    case D3DDDIFMT_A1R5G5B5:
+       return PIPE_FORMAT_B5G5R5A1_UNORM;
++   case D3DDDIFMT_A4R4G4B4:
++      return PIPE_FORMAT_B4G4R4A4_UNORM;
+    case D3DDDIFMT_A2R10G10B10:
+       return PIPE_FORMAT_B10G10R10A2_UNORM;
+    case D3D9_FMT_A2B10G10R10:
+@@ -264,6 +266,8 @@ D3D9FormatToPipe(D3DDDIFORMAT format)
+    case D3D9_FMT_D16_LOCKABLE:
+    case D3D9_FMT_DF16:
+       return PIPE_FORMAT_Z16_UNORM;
++   case D3D9_FMT_D32F_LOCKABLE:
++      return PIPE_FORMAT_Z32_FLOAT;
+    case D3DDDIFMT_D24S8:
+       return PIPE_FORMAT_Z24_UNORM_S8_UINT;
+    case D3DDDIFMT_D24X8:
+@@ -301,8 +305,12 @@ D3D9PipeToFormat(enum pipe_format format)
+       return D3DDDIFMT_R5G6B5;
+    case PIPE_FORMAT_B5G5R5A1_UNORM:
+       return D3DDDIFMT_A1R5G5B5;
++   case PIPE_FORMAT_B4G4R4A4_UNORM:
++      return D3DDDIFMT_A4R4G4B4;
+    case PIPE_FORMAT_Z16_UNORM:
+       return D3DDDIFMT_D16;
++   case PIPE_FORMAT_Z32_FLOAT:
++      return D3D9_FMT_D32F_LOCKABLE;
+    case PIPE_FORMAT_Z24X8_UNORM:
+       return D3DDDIFMT_D24X8;
+    case PIPE_FORMAT_Z24_UNORM_S8_UINT:
+@@ -441,9 +449,7 @@ static unsigned
+ D3D9PipeBind(const D3DDDIARG_CREATERESOURCE *data)
+ {
+    const enum pipe_format format = D3D9ResourcePipeFormat(data);
+-   const bool depth = format == PIPE_FORMAT_Z16_UNORM ||
+-      format == PIPE_FORMAT_Z24X8_UNORM ||
+-      format == PIPE_FORMAT_Z24_UNORM_S8_UINT;
++   const bool depth = util_format_is_depth_or_stencil(format);
+ 
+    if (data->Flags.VertexBuffer)
+       return PIPE_BIND_VERTEX_BUFFER;
+diff --git a/src/gallium/frontends/d3d10umd/D3D9State.cpp b/src/gallium/frontends/d3d10umd/D3D9State.cpp
+index 207ba6a3b910375737516bc084c35164957a7efd..b348bc8dc9285e7188b806dc03fe12090fa1b2bc 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9State.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9State.cpp
+@@ -204,16 +204,6 @@ D3D9SetRenderState(HANDLE hDevice, const D3DDDIARG_RENDERSTATE *data)
+       break;
+    case D3DDDIRS_DEPTHBIAS:
+    case D3DDDIRS_SLOPESCALEDEPTHBIAS:
+-      if (data->Value & 0x7fffffffu) {
+-         static volatile LONG logged;
+-         D3D9WarnOncef(
+-            &logged,
+-            "unsupported D3D9 depth bias owner=d3d9-state "
+-            "reason=d3d9-depth-bias-scaling-not-implemented "
+-            "fallback=ignore-state-for-runtime-cap-compatibility "
+-            "state=%u value=0x%08x\n",
+-            data->State, data->Value);
+-      }
+       break;
+    case D3DDDIRS_MULTISAMPLEANTIALIAS:
+       if (data->Value > TRUE)
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_draw.c b/src/gallium/winsys/yttrium/gdi/yttrium_draw.c
+index 96643f654b8217ab256eea29d48b768616e00dcc..d5f81f0c9a2d9a8411dbbcb0ee312e91c156174d 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_draw.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_draw.c
+@@ -462,9 +462,16 @@ yttrium_make_venus_draw_state(struct yttrium_context *yctx,
+          VK_FRONT_FACE_COUNTER_CLOCKWISE : VK_FRONT_FACE_CLOCKWISE;
+       state->depth_bias_constant_factor =
+          yctx->rasterizer->state.offset_units;
++      state->depth_bias_unscaled =
++         yctx->rasterizer->state.offset_units_unscaled;
+       state->depth_bias_clamp = yctx->rasterizer->state.offset_clamp;
+       state->depth_bias_slope_factor =
+          yctx->rasterizer->state.offset_scale;
++      if (state->depth_bias_unscaled &&
++          (line_topology || topology == VK_PRIMITIVE_TOPOLOGY_POINT_LIST)) {
++         state->depth_bias_constant_factor = 0.0f;
++         state->depth_bias_slope_factor = 0.0f;
++      }
+       state->depth_bias_enable =
+          (state->depth_bias_constant_factor != 0.0f ||
+           state->depth_bias_clamp != 0.0f ||
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.c b/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.c
+index 3ea7b613875ed0c3d3ae11c3c076b769c8fcaf48..5b4ab2ab91a71f3ba6fae3dbfe20630ff22a94b7 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.c
+@@ -2362,6 +2362,7 @@ yttrium_pipeline_build_key(struct yttrium_context *yctx,
+    key->cull_mode = draw_state->cull_mode;
+    key->front_face = draw_state->front_face;
+    key->depth_bias_enable = draw_state->depth_bias_enable;
++   key->depth_bias_unscaled = draw_state->depth_bias_unscaled;
+    key->depth_clamp_enable = draw_state->depth_clamp_enable;
+    key->depth_bias_constant_factor =
+       draw_state->depth_bias_constant_factor;
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.h b/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.h
+index a0777b0787424c41b8eb27651ad1f7550b9a36a3..329941b25e263a8cf17812d9bd18c8e2d57863fa 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_pipeline.h
+@@ -70,6 +70,7 @@ struct yttrium_pipeline_key {
+    VkCullModeFlags cull_mode;
+    VkFrontFace front_face;
+    VkBool32 depth_bias_enable;
++   VkBool32 depth_bias_unscaled;
+    VkBool32 depth_clamp_enable;
+    float depth_bias_constant_factor;
+    float depth_bias_clamp;
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus.h b/src/gallium/winsys/yttrium/gdi/yttrium_venus.h
+index 42caa9327df0238abd8205a6eaf07a6965e37346..c57665e4726baff91cf94e354b14b02298b8d8a5 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus.h
+@@ -416,6 +416,7 @@ struct yttrium_venus_draw_state {
+    VkCullModeFlags cull_mode;
+    VkFrontFace front_face;
+    VkBool32 depth_bias_enable;
++   VkBool32 depth_bias_unscaled;
+    VkBool32 depth_clamp_enable;
+    float depth_bias_constant_factor;
+    float depth_bias_clamp;
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_format.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_format.c
+index ed2a84d1a2a0588f9cf9681c901991c04e60f337..da8c8520519a5c8408f6482f0e14676b2263ac00 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_format.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_format.c
+@@ -95,6 +95,8 @@ yttrium_venus2_pipe_format(enum pipe_format format)
+       return VK_FORMAT_B5G6R5_UNORM_PACK16;
+    case PIPE_FORMAT_B5G5R5A1_UNORM:
+       return VK_FORMAT_B5G5R5A1_UNORM_PACK16;
++   case PIPE_FORMAT_B4G4R4A4_UNORM:
++      return VK_FORMAT_A4R4G4B4_UNORM_PACK16;
+    case PIPE_FORMAT_R8_USCALED:
+       return VK_FORMAT_R8_USCALED;
+    case PIPE_FORMAT_R8G8_USCALED:
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c
+index 0653b07a4cfeeeb8f5b3ba67c69d123427660f44..ababaacbcb5f59bab0976c810a00111827fcc37f 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c
+@@ -787,6 +787,7 @@ yttrium_venus_create_device_objects(struct yttrium_venus *venus)
+    bool have_load_store_op_none_ext = false;
+    bool have_vulkan_memory_model_khr = false;
+    bool have_custom_border_color_ext = false;
++   bool have_4444_formats_ext = false;
+    uint32_t extension_count = 0;
+    result = vn_call_vkEnumerateDeviceExtensionProperties(
+       &venus->vn_ring, venus->physical_device, NULL, &extension_count, NULL);
+@@ -845,6 +846,11 @@ yttrium_venus_create_device_objects(struct yttrium_venus *venus)
+                   have_custom_border_color_ext =
+                      vn_cs_renderer_protocol_has_extension(
+                         288 /* VK_EXT_custom_border_color */);
++               } else if (!strcmp(extensions[i].extensionName,
++                                  VK_EXT_4444_FORMATS_EXTENSION_NAME)) {
++                  have_4444_formats_ext =
++                     vn_cs_renderer_protocol_has_extension(
++                        341 /* VK_EXT_4444_formats */);
+                }
+             }
+          }
+@@ -890,8 +896,15 @@ yttrium_venus_create_device_objects(struct yttrium_venus *venus)
+    };
+    const bool have_vertex_attribute_divisor =
+       have_vertex_attribute_divisor_khr || have_vertex_attribute_divisor_ext;
++   VkPhysicalDevice4444FormatsFeaturesEXT formats_4444 = {
++      .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_4444_FORMATS_FEATURES_EXT,
++   };
+    features12.pNext = &features11;
+    void *features_pnext = &features12;
++   if (have_4444_formats_ext) {
++      formats_4444.pNext = features_pnext;
++      features_pnext = &formats_4444;
++   }
+    if (have_custom_border_color_ext) {
+       custom_border_color.pNext = features_pnext;
+       features_pnext = &custom_border_color;
+@@ -977,6 +990,8 @@ yttrium_venus_create_device_objects(struct yttrium_venus *venus)
+       venus->uniform_buffer_offset_alignment = 256;
+    venus->depth_bias_control =
+       have_depth_bias_control_ext && depth_bias_control.depthBiasControl;
++   venus->depth_bias_float =
++      venus->depth_bias_control && depth_bias_control.floatRepresentation;
+    venus->transform_feedback =
+       have_transform_feedback_ext && transform_feedback.transformFeedback;
+    venus->vertex_attribute_instance_rate_divisor =
+@@ -1046,6 +1061,8 @@ yttrium_venus_create_device_objects(struct yttrium_venus *venus)
+       custom_border_color.customBorderColorWithoutFormat &&
+       custom_border_color_props.maxCustomBorderColorSamplers;
+    venus->custom_border_color_without_format = venus->custom_border_colors;
++   venus->format_a4r4g4b4 =
++      have_4444_formats_ext && formats_4444.formatA4R4G4B4;
+    venus->max_custom_border_color_samplers = venus->custom_border_colors ?
+       custom_border_color_props.maxCustomBorderColorSamplers : 0;
+    venus->max_dual_source_render_targets = venus->dual_src_blend ?
+@@ -1121,6 +1138,7 @@ yttrium_venus_create_device_objects(struct yttrium_venus *venus)
+                venus->custom_border_colors,
+                venus->max_custom_border_color_samplers);
+    depth_bias_control.depthBiasControl = venus->depth_bias_control;
++   depth_bias_control.floatRepresentation = venus->depth_bias_float;
+    depth_bias_control.depthBiasExact = VK_FALSE;
+    transform_feedback.transformFeedback = venus->transform_feedback;
+    transform_feedback.geometryStreams = VK_FALSE;
+@@ -1172,8 +1190,14 @@ yttrium_venus_create_device_objects(struct yttrium_venus *venus)
+       .multiViewport = venus->multi_viewport,
+    };
+ 
+-   const char *device_extensions[12];
++   formats_4444.formatA4R4G4B4 = venus->format_a4r4g4b4;
++   formats_4444.formatA4B4G4R4 = VK_FALSE;
++
++   const char *device_extensions[13];
+    uint32_t device_extension_count = 0;
++   if (venus->format_a4r4g4b4)
++      device_extensions[device_extension_count++] =
++         VK_EXT_4444_FORMATS_EXTENSION_NAME;
+    if (venus->depth_bias_control)
+       device_extensions[device_extension_count++] =
+          VK_EXT_DEPTH_BIAS_CONTROL_EXTENSION_NAME;
+@@ -3748,6 +3772,14 @@ yttrium_venus2_pipeline_init(struct yttrium_venus *venus,
+       .viewportCount = MAX2(draw_state->viewport_count, 1),
+       .scissorCount = MAX2(draw_state->viewport_count, 1),
+    };
++   const bool float_depth_bias =
++      draw_state->depth_bias_unscaled && has_depth &&
++      draw_state->depth_bias_constant_factor != 0.0f;
++   if (float_depth_bias && !venus->depth_bias_float) {
++      YTTRIUM_WARN("yttrium: unscaled depth bias requires Vulkan float representation\n");
++      yttrium_venus2_pipeline_fini(venus, pipeline);
++      return false;
++   }
+    const bool force_unorm_depth_bias =
+       venus->depth_bias_control && has_depth &&
+       (depth_resource->vk_format == VK_FORMAT_D24_UNORM_S8_UINT ||
+@@ -3755,12 +3787,14 @@ yttrium_venus2_pipeline_init(struct yttrium_venus *venus,
+    const VkDepthBiasRepresentationInfoEXT depth_bias_representation = {
+       .sType = VK_STRUCTURE_TYPE_DEPTH_BIAS_REPRESENTATION_INFO_EXT,
+       .depthBiasRepresentation =
++         float_depth_bias ? VK_DEPTH_BIAS_REPRESENTATION_FLOAT_EXT :
+          VK_DEPTH_BIAS_REPRESENTATION_LEAST_REPRESENTABLE_VALUE_FORCE_UNORM_EXT,
+       .depthBiasExact = VK_FALSE,
+    };
+    const VkPipelineRasterizationStateCreateInfo raster = {
+       .sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+-      .pNext = force_unorm_depth_bias ? &depth_bias_representation : NULL,
++      .pNext = (float_depth_bias || force_unorm_depth_bias) ?
++         &depth_bias_representation : NULL,
+       .depthClampEnable = draw_state->depth_clamp_enable,
+       .rasterizerDiscardEnable = draw_state->rasterizer_discard_enable,
+       .polygonMode = VK_POLYGON_MODE_FILL,
+@@ -14037,6 +14071,11 @@ yttrium_venus2_copy_buffer_to_display_image(struct yttrium_venus *venus,
+       return false;
+    if (!(dst->image_usage & VK_IMAGE_USAGE_TRANSFER_DST_BIT))
+       return false;
++   const VkImageAspectFlags aspect =
++      yttrium_venus_format_aspects(dst->vk_format);
++   /* Packed depth-stencil uploads need separate aspect data. */
++   if (!aspect || (aspect & (aspect - 1)))
++      return false;
+    const bool dst_is_3d = MAX2(dst->depth, 1) > 1;
+    const uint32_t dst_array_layer = dst_is_3d ? 0 : dst_layer;
+    const uint32_t dst_z = dst_is_3d ? dst_layer : 0;
+@@ -14109,7 +14148,7 @@ yttrium_venus2_copy_buffer_to_display_image(struct yttrium_venus *venus,
+                                  0, NULL, 1, &buffer_barrier, 0, NULL);
+ 
+    const VkImageSubresourceRange dst_range = {
+-      .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
++      .aspectMask = aspect,
+       .baseMipLevel = dst_level,
+       .levelCount = 1,
+       .baseArrayLayer = dst_array_layer,
+@@ -14122,8 +14161,11 @@ yttrium_venus2_copy_buffer_to_display_image(struct yttrium_venus *venus,
+       MAX2(dst->depth, 1) == 1 && MAX2(dst->levels, 1) == 1 &&
+       MAX2(dst->layers, 1) == 1;
+    if (!dst->contents_initialized && !full_dst_copy &&
+-       !yttrium_venus_cmd_ensure_image_initialized(venus, dst,
+-                                                   dst_resource_id)) {
++       !(aspect == VK_IMAGE_ASPECT_DEPTH_BIT ?
++          yttrium_venus_cmd_ensure_depth_initialized(venus, dst,
++                                                     dst_resource_id) :
++          yttrium_venus_cmd_ensure_image_initialized(venus, dst,
++                                                     dst_resource_id))) {
+       yttrium_venus_cancel_command_batch_setup_failure(
+          venus, "buffer-to-image destination init failure");
+       return false;
+@@ -14139,7 +14181,7 @@ yttrium_venus2_copy_buffer_to_display_image(struct yttrium_venus *venus,
+       .bufferRowLength = buffer_row_length,
+       .bufferImageHeight = buffer_image_height,
+       .imageSubresource = {
+-         .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
++         .aspectMask = aspect,
+          .mipLevel = dst_level,
+          .baseArrayLayer = dst_array_layer,
+          .layerCount = 1,
+@@ -14160,7 +14202,7 @@ yttrium_venus2_copy_buffer_to_display_image(struct yttrium_venus *venus,
+       dst_resource_id, width, height, depth, src_stride, src_layer_stride);
+ 
+    dst->layout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+-   dst->contents_initialized = true;
++   yttrium_venus_mark_aspects_initialized(dst, aspect);
+    YTTRIUM_LOG("yttrium: Venus copied buffer to display image src_res_id=%u buffer_id=%llu dst_res_id=%u image_id=%llu src_offset=0x%llx dst_level=%u dst=%u,%u layer=%u %ux%ux%u stride=%u layer_stride=%u row_length=%u image_height=%u\n",
+                 src_resource_id,
+                 (unsigned long long)src->buffer_obj.id,
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h
+index 7290fc4da0613544bcd08e4981ba180a4ffc21ee..3cb57d540ebac6d422595e9bdcdc273d8d857a11 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h
+@@ -715,6 +715,7 @@ struct yttrium_venus {
+    struct yttrium_venus_resource null_sampled_buffer;
+    VkPhysicalDeviceTransformFeedbackPropertiesEXT transform_feedback_props;
+    bool depth_bias_control;
++   bool depth_bias_float;
+    bool depth_clamp;
+    bool dual_src_blend;
+    bool independent_blend;
+@@ -737,6 +738,7 @@ struct yttrium_venus {
+    bool vertex_attribute_instance_rate_zero_divisor;
+    bool push_descriptor;
+    bool custom_border_colors;
++   bool format_a4r4g4b4;
+    bool custom_border_color_without_format;
+    bool multi_viewport;
+    bool shader_output_viewport_index;
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_resource.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_resource.c
+index c4da7510b0fd959aef98b8ec50597e9f17fafd79..7d33ea4c8b08da2b568d062214772271560b26a2 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_resource.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_resource.c
+@@ -963,6 +963,10 @@ static VkImageUsageFlags
+ yttrium_venus_image_usage_for_bind(const struct yttrium_venus *venus,
+                                    VkFormat vk_format, unsigned bind)
+ {
++   if (vk_format == VK_FORMAT_A4R4G4B4_UNORM_PACK16 &&
++       !venus->format_a4r4g4b4)
++      return 0;
++
+    const bool depth_format = yttrium_venus_format_has_depth(vk_format);
+    VkImageUsageFlags usage =
+       VK_IMAGE_USAGE_TRANSFER_SRC_BIT |

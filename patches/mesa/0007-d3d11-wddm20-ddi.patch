@@ -1,0 +1,595 @@
+Subject: [PATCH 07/11] d3d10umd: negotiate the WDDM 2.0 D3D11 DDI and report typed UAV loads
+
+The Yttrium KMD reports WDDM 2.0, and the D3D11 runtime then asks the UMD
+for the WDDM 2.0 DDI. The UMD now supplies the changed view, rasterizer,
+query, flush, relocation, hardware-protection and resource-layout entry
+points and the DXGI 1.4 table. It reports a 32-bit GPU VA range per resource
+(zero made CreateDevice fail with 887a0020) and advertises additional typed
+UAV loads only after checking host storage-image support for every required
+format. Maps R10G10B10A2_UINT for typed loads. Protected resources,
+conservative rasterization and overlays stay unsupported.
+
+Prior art: F11-F14 (R/NATIVE-WDDM20.md "Native D3D11").
+Origin: codex working tree R/mesa (git diff 374c3022), re-exported by
+vmlab-win3d build/mesa; see build/mesa/README.md.
+---
+diff --git a/src/gallium/frontends/d3d10umd/Adapter.cpp b/src/gallium/frontends/d3d10umd/Adapter.cpp
+index b9d75f819f3e8f2491ebf0f3cdae036b4e8c2a92..945ced18bcdb0d674fc3951beb9ff23b5fdc87c8 100644
+--- a/src/gallium/frontends/d3d10umd/Adapter.cpp
++++ b/src/gallium/frontends/d3d10umd/Adapter.cpp
+@@ -144,6 +144,12 @@ OpenAdapter10(__inout D3D10DDIARG_OPENADAPTER *pOpenData)   // IN
+          return E_FAIL;
+       break;
+ #endif
++#if SUPPORT_D3D_WDDM2_0
++   case D3DWDDM2_0_DDI_INTERFACE_VERSION:
++      if (!ExposeD3D11_1())
++         return E_FAIL;
++      break;
++#endif
+ #endif
+       break;
+    default:
+@@ -183,6 +189,9 @@ SupportedDDIInterfaceVersions11_1[] = {
+ #if SUPPORT_D3D_WDDM1_3
+    D3DWDDM1_3_DDI_SUPPORTED,
+ #endif
++#if SUPPORT_D3D_WDDM2_0
++   D3DWDDM2_0_DDI_SUPPORTED,
++#endif
+ };
+ #endif
+ 
+@@ -282,6 +291,9 @@ GetCaps(D3D10DDI_HADAPTER hAdapter,
+             (D3D11DDI_SHADER_CAPS *)pData->pData;
+          caps->Caps =
+             D3D11DDICAPS_SHADER_COMPUTE_PLUS_RAW_AND_STRUCTURED_BUFFERS_IN_SHADER_4_X;
++#if SUPPORT_D3D_WDDM2_0
++         caps->Caps |= D3D11DDICAPS_SHADER_TYPED_UAV_LOAD_ADDITIONAL_FORMATS;
++#endif
+       }
+       break;
+ #if SUPPORT_D3D11_1
+@@ -302,6 +314,17 @@ GetCaps(D3D10DDI_HADAPTER hAdapter,
+       }
+       break;
+ #endif
++#if SUPPORT_D3D_WDDM2_0
++   case D3DWDDM2_0DDICAPS_GPUVA_CAPS:
++      if (pData->DataSize != sizeof(D3DWDDM2_0DDI_GPUVA_CAPS_DATA))
++         return E_INVALIDARG;
++      /* D3D11 resource-relative byte offsets are 32-bit in this frontend.
++       * This does not advertise tiled resources or GPUVA-based submission.
++       */
++      ((D3DWDDM2_0DDI_GPUVA_CAPS_DATA *)pData->pData)->
++         MaxGPUVirtualAddressBitsPerResource = 32;
++      break;
++#endif
+ #endif
+    default:
+       break;
+diff --git a/src/gallium/frontends/d3d10umd/Device.cpp b/src/gallium/frontends/d3d10umd/Device.cpp
+index 260b6929492571f2da928c42050c2953a3e35367..f34334affa533ce54366bc52a65d657cbd19be31 100644
+--- a/src/gallium/frontends/d3d10umd/Device.cpp
++++ b/src/gallium/frontends/d3d10umd/Device.cpp
+@@ -101,6 +101,9 @@ FeatureLevelFromCreateDevice(const D3D10DDIARG_CREATEDEVICE *pCreateData)
+ #endif
+ #if SUPPORT_D3D_WDDM1_3
+    case D3DWDDM1_3_DDI_INTERFACE_VERSION:
++#endif
++#if SUPPORT_D3D_WDDM2_0
++   case D3DWDDM2_0_DDI_INTERFACE_VERSION:
+ #endif
+       switch (D3D11DDI_EXTRACT_3DPIPELINELEVEL_FROM_FLAGS(pCreateData->Flags)) {
+ #if SUPPORT_D3D11_1
+@@ -853,6 +856,341 @@ FillDeviceFuncsWDDM1_3(D3DWDDM1_3DDI_DEVICEFUNCS *funcs)
+ #endif
+ #endif
+ 
++#if SUPPORT_D3D_WDDM2_0
++static bool
++ValidPlaneWDDM2_0(D3D10DDI_HDEVICE hDevice, DXGI_FORMAT format, UINT plane)
++{
++   const bool stencil = format == DXGI_FORMAT_X24_TYPELESS_G8_UINT ||
++                        format == DXGI_FORMAT_X32_TYPELESS_G8X24_UINT;
++   if (plane > 1 || (plane && !stencil)) {
++      SetError(hDevice, E_INVALIDARG);
++      return false;
++   }
++   return true;
++}
++
++static bool
++SupportsTypedLoadsWDDM2_0(struct pipe_screen *screen)
++{
++   const enum pipe_format required[] = {
++      PIPE_FORMAT_R32G32B32A32_FLOAT,
++      PIPE_FORMAT_R32G32B32A32_UINT,
++      PIPE_FORMAT_R32G32B32A32_SINT,
++      PIPE_FORMAT_R16G16B16A16_FLOAT,
++      PIPE_FORMAT_R16G16B16A16_UINT,
++      PIPE_FORMAT_R16G16B16A16_SINT,
++      PIPE_FORMAT_R8G8B8A8_UNORM,
++      PIPE_FORMAT_R8G8B8A8_UINT,
++      PIPE_FORMAT_R8G8B8A8_SINT,
++      PIPE_FORMAT_R16_FLOAT,
++      PIPE_FORMAT_R16_UINT,
++      PIPE_FORMAT_R16_SINT,
++      PIPE_FORMAT_R8_UNORM,
++      PIPE_FORMAT_R8_UINT,
++      PIPE_FORMAT_R8_SINT,
++   };
++   for (unsigned i = 0; i < ARRAY_SIZE(required); ++i) {
++      if (!yttrium_gdi_screen_supports_typed_image_load(screen, required[i]))
++         return false;
++   }
++   return true;
++}
++
++static D3D11DDIARG_CREATESHADERRESOURCEVIEW
++ConvertShaderViewWDDM2_0(const D3DWDDM2_0DDIARG_CREATESHADERRESOURCEVIEW *source)
++{
++   D3D11DDIARG_CREATESHADERRESOURCEVIEW dest = {};
++   dest.hDrvResource = source->hDrvResource;
++   dest.Format = source->Format;
++   dest.ResourceDimension = source->ResourceDimension;
++   switch (source->ResourceDimension) {
++   case D3D10DDIRESOURCE_BUFFER: dest.Buffer = source->Buffer; break;
++   case D3D11DDIRESOURCE_BUFFEREX: dest.BufferEx = source->BufferEx; break;
++   case D3D10DDIRESOURCE_TEXTURE1D: dest.Tex1D = source->Tex1D; break;
++   case D3D10DDIRESOURCE_TEXTURE2D:
++      dest.Tex2D = {source->Tex2D.MostDetailedMip, source->Tex2D.FirstArraySlice,
++                   source->Tex2D.MipLevels, source->Tex2D.ArraySize};
++      break;
++   case D3D10DDIRESOURCE_TEXTURE3D: dest.Tex3D = source->Tex3D; break;
++   case D3D10DDIRESOURCE_TEXTURECUBE: dest.TexCube = source->TexCube; break;
++   default: break;
++   }
++   return dest;
++}
++
++static SIZE_T APIENTRY
++CalcPrivateShaderResourceViewSizeWDDM2_0(D3D10DDI_HDEVICE device,
++   const D3DWDDM2_0DDIARG_CREATESHADERRESOURCEVIEW *source)
++{
++   auto desc = ConvertShaderViewWDDM2_0(source);
++   return CalcPrivateShaderResourceViewSize11(device, &desc);
++}
++
++static void APIENTRY
++CreateShaderResourceViewWDDM2_0(D3D10DDI_HDEVICE device,
++   const D3DWDDM2_0DDIARG_CREATESHADERRESOURCEVIEW *source,
++   D3D10DDI_HSHADERRESOURCEVIEW view, D3D10DDI_HRTSHADERRESOURCEVIEW rtView)
++{
++   if (source->ResourceDimension == D3D10DDIRESOURCE_TEXTURE2D &&
++       !ValidPlaneWDDM2_0(device, source->Format, source->Tex2D.PlaneSlice))
++      return;
++   auto desc = ConvertShaderViewWDDM2_0(source);
++   CreateShaderResourceView11(device, &desc, view, rtView);
++}
++
++static D3D10DDIARG_CREATERENDERTARGETVIEW
++ConvertRenderViewWDDM2_0(const D3DWDDM2_0DDIARG_CREATERENDERTARGETVIEW *source)
++{
++   D3D10DDIARG_CREATERENDERTARGETVIEW dest = {};
++   dest.hDrvResource = source->hDrvResource;
++   dest.Format = source->Format;
++   dest.ResourceDimension = source->ResourceDimension;
++   switch (source->ResourceDimension) {
++   case D3D10DDIRESOURCE_BUFFER: dest.Buffer = source->Buffer; break;
++   case D3D10DDIRESOURCE_TEXTURE1D: dest.Tex1D = source->Tex1D; break;
++   case D3D10DDIRESOURCE_TEXTURE2D:
++      dest.Tex2D = {source->Tex2D.MipSlice, source->Tex2D.FirstArraySlice,
++                   source->Tex2D.ArraySize};
++      break;
++   case D3D10DDIRESOURCE_TEXTURE3D: dest.Tex3D = source->Tex3D; break;
++   case D3D10DDIRESOURCE_TEXTURECUBE: dest.TexCube = source->TexCube; break;
++   default: break;
++   }
++   return dest;
++}
++
++static SIZE_T APIENTRY
++CalcPrivateRenderTargetViewSizeWDDM2_0(D3D10DDI_HDEVICE device,
++   const D3DWDDM2_0DDIARG_CREATERENDERTARGETVIEW *source)
++{
++   auto desc = ConvertRenderViewWDDM2_0(source);
++   return CalcPrivateRenderTargetViewSize(device, &desc);
++}
++
++static void APIENTRY
++CreateRenderTargetViewWDDM2_0(D3D10DDI_HDEVICE device,
++   const D3DWDDM2_0DDIARG_CREATERENDERTARGETVIEW *source,
++   D3D10DDI_HRENDERTARGETVIEW view, D3D10DDI_HRTRENDERTARGETVIEW rtView)
++{
++   if (source->ResourceDimension == D3D10DDIRESOURCE_TEXTURE2D &&
++       !ValidPlaneWDDM2_0(device, source->Format, source->Tex2D.PlaneSlice))
++      return;
++   auto desc = ConvertRenderViewWDDM2_0(source);
++   CreateRenderTargetView(device, &desc, view, rtView);
++}
++
++static D3D11DDIARG_CREATEUNORDEREDACCESSVIEW
++ConvertUnorderedViewWDDM2_0(const D3DWDDM2_0DDIARG_CREATEUNORDEREDACCESSVIEW *source)
++{
++   D3D11DDIARG_CREATEUNORDEREDACCESSVIEW dest = {};
++   dest.hDrvResource = source->hDrvResource;
++   dest.Format = source->Format;
++   dest.ResourceDimension = source->ResourceDimension;
++   switch (source->ResourceDimension) {
++   case D3D10DDIRESOURCE_BUFFER: dest.Buffer = source->Buffer; break;
++   case D3D10DDIRESOURCE_TEXTURE1D: dest.Tex1D = source->Tex1D; break;
++   case D3D10DDIRESOURCE_TEXTURE2D:
++      dest.Tex2D = {source->Tex2D.MipSlice, source->Tex2D.FirstArraySlice,
++                   source->Tex2D.ArraySize};
++      break;
++   case D3D10DDIRESOURCE_TEXTURE3D: dest.Tex3D = source->Tex3D; break;
++   default: break;
++   }
++   return dest;
++}
++
++static SIZE_T APIENTRY
++CalcPrivateUnorderedAccessViewSizeWDDM2_0(D3D10DDI_HDEVICE device,
++   const D3DWDDM2_0DDIARG_CREATEUNORDEREDACCESSVIEW *source)
++{
++   auto desc = ConvertUnorderedViewWDDM2_0(source);
++   return CalcPrivateUnorderedAccessViewSize(device, &desc);
++}
++
++static void APIENTRY
++CreateUnorderedAccessViewWDDM2_0(D3D10DDI_HDEVICE device,
++   const D3DWDDM2_0DDIARG_CREATEUNORDEREDACCESSVIEW *source,
++   D3D11DDI_HUNORDEREDACCESSVIEW view, D3D11DDI_HRTUNORDEREDACCESSVIEW rtView)
++{
++   if (source->ResourceDimension == D3D10DDIRESOURCE_TEXTURE2D &&
++       !ValidPlaneWDDM2_0(device, source->Format, source->Tex2D.PlaneSlice))
++      return;
++   auto desc = ConvertUnorderedViewWDDM2_0(source);
++   CreateUnorderedAccessView(device, &desc, view, rtView);
++}
++
++static SIZE_T APIENTRY
++CalcPrivateRasterizerStateSizeWDDM2_0(D3D10DDI_HDEVICE device,
++   const D3DWDDM2_0DDI_RASTERIZER_DESC *source)
++{
++   D3D11_1_DDI_RASTERIZER_DESC desc;
++   static_assert(sizeof(desc) ==
++                 offsetof(D3DWDDM2_0DDI_RASTERIZER_DESC, ConservativeRasterizationMode),
++                 "WDDM 2.0 rasterizer prefix");
++   memcpy(&desc, source, sizeof(desc));
++   return CalcPrivateRasterizerStateSize11_1(device, &desc);
++}
++
++static void APIENTRY
++CreateRasterizerStateWDDM2_0(D3D10DDI_HDEVICE device,
++   const D3DWDDM2_0DDI_RASTERIZER_DESC *source,
++   D3D10DDI_HRASTERIZERSTATE state, D3D10DDI_HRTRASTERIZERSTATE rtState)
++{
++   if (source->ConservativeRasterizationMode !=
++       D3DWDDM2_0DDI_CONSERVATIVE_RASTERIZATION_OFF) {
++      SetError(device, E_INVALIDARG);
++      return;
++   }
++   D3D11_1_DDI_RASTERIZER_DESC desc;
++   memcpy(&desc, source, sizeof(desc));
++   CreateRasterizerState11_1(device, &desc, state, rtState);
++}
++
++static SIZE_T APIENTRY
++CalcPrivateQuerySizeWDDM2_0(D3D10DDI_HDEVICE device,
++   const D3DWDDM2_0DDIARG_CREATEQUERY *source)
++{
++   const D3D10DDIARG_CREATEQUERY desc = {source->Query, source->MiscFlags};
++   return CalcPrivateQuerySize(device, &desc);
++}
++
++static bool
++ValidContextWDDM2_0(D3D10DDI_HDEVICE device, UINT context)
++{
++   if (context & ~(D3DWDDM2_0DDI_CONTEXTTYPE_3D |
++                   D3DWDDM2_0DDI_CONTEXTTYPE_COMPUTE |
++                   D3DWDDM2_0DDI_CONTEXTTYPE_COPY)) {
++      SetError(device, E_INVALIDARG);
++      return false;
++   }
++   return true;
++}
++
++static void APIENTRY
++CreateQueryWDDM2_0(D3D10DDI_HDEVICE device,
++   const D3DWDDM2_0DDIARG_CREATEQUERY *source,
++   D3D10DDI_HQUERY query, D3D10DDI_HRTQUERY rtQuery)
++{
++   if (!ValidContextWDDM2_0(device, source->ContextType))
++      return;
++   const D3D10DDIARG_CREATEQUERY desc = {source->Query, source->MiscFlags};
++   CreateQuery(device, &desc, query, rtQuery);
++}
++
++static BOOL APIENTRY
++FlushWDDM2_0(D3D10DDI_HDEVICE device, UINT context, UINT flags)
++{
++   if (!ValidContextWDDM2_0(device, context))
++      return FALSE;
++   /* All supported engine types share the same ordered Gallium context. */
++   return Flush11_1(device, flags);
++}
++
++static void APIENTRY
++RelocateDeviceFuncsWDDM2_0(D3D10DDI_HDEVICE device,
++                          D3DWDDM2_0DDI_DEVICEFUNCS *funcs)
++{
++   /* The driver does not retain the runtime's function table address. */
++   LOG_ENTRYPOINT();
++}
++
++static void APIENTRY
++SetHardwareProtectionWDDM2_0(D3D10DDI_HDEVICE device,
++                            D3D10DDI_HRESOURCE resource, BOOL enabled)
++{
++   if (enabled)
++      SetError(device, E_INVALIDARG);
++}
++
++static void APIENTRY
++SetHardwareProtectionStateWDDM2_0(D3D10DDI_HDEVICE device, BOOL enabled)
++{
++   if (enabled)
++      SetError(device, E_INVALIDARG);
++}
++
++static void APIENTRY
++GetResourceLayoutWDDM2_0(D3D10DDI_HDEVICE device, D3D10DDI_HRESOURCE resource,
++   UINT count, D3DKMT_HANDLE *handle, D3DWDDM2_0DDI_TEXTURE_LAYOUT *layout,
++   UINT *transition, D3DWDDM2_0DDI_SUBRESOURCE_LAYOUT *subresources)
++{
++   /* Default textures remain opaque; CPU mapping uses ResourceMap. */
++   *handle = 0;
++   *layout = D3DWDDM2_0DDI_TL_UNDEFINED;
++   *transition = 0;
++   SetError(device, E_INVALIDARG);
++}
++
++static void
++FillDeviceFuncsWDDM2_0(D3DWDDM2_0DDI_DEVICEFUNCS *funcs)
++{
++   D3DWDDM1_3DDI_DEVICEFUNCS old = {};
++   FillDeviceFuncsWDDM1_3(&old);
++   static_assert(sizeof(old) ==
++                 offsetof(D3DWDDM2_0DDI_DEVICEFUNCS, pfnSetHardwareProtection),
++                 "WDDM 2.0 function table prefix");
++   memcpy(funcs, &old, sizeof(old));
++   funcs->pfnRelocateDeviceFuncs = RelocateDeviceFuncsWDDM2_0;
++   funcs->pfnFlush = FlushWDDM2_0;
++   funcs->pfnCalcPrivateShaderResourceViewSize = CalcPrivateShaderResourceViewSizeWDDM2_0;
++   funcs->pfnCreateShaderResourceView = CreateShaderResourceViewWDDM2_0;
++   funcs->pfnCalcPrivateRenderTargetViewSize = CalcPrivateRenderTargetViewSizeWDDM2_0;
++   funcs->pfnCreateRenderTargetView = CreateRenderTargetViewWDDM2_0;
++   funcs->pfnCalcPrivateUnorderedAccessViewSize = CalcPrivateUnorderedAccessViewSizeWDDM2_0;
++   funcs->pfnCreateUnorderedAccessView = CreateUnorderedAccessViewWDDM2_0;
++   funcs->pfnCalcPrivateRasterizerStateSize = CalcPrivateRasterizerStateSizeWDDM2_0;
++   funcs->pfnCreateRasterizerState = CreateRasterizerStateWDDM2_0;
++   funcs->pfnCalcPrivateQuerySize = CalcPrivateQuerySizeWDDM2_0;
++   funcs->pfnCreateQuery = CreateQueryWDDM2_0;
++   funcs->pfnSetHardwareProtection = SetHardwareProtectionWDDM2_0;
++   funcs->pfnSetHardwareProtectionState = SetHardwareProtectionStateWDDM2_0;
++   funcs->pfnGetResourceLayout = GetResourceLayoutWDDM2_0;
++}
++
++static HRESULT APIENTRY
++TrimResidencySetWDDM2_0(DXGI_DDI_ARG_TRIMRESIDENCYSET *args)
++{
++   D3D10DDI_HDEVICE device = {reinterpret_cast<void *>(args->hDevice)};
++   struct pipe_context *pipe = CastPipeContext(device);
++   /* Submit outstanding work so retired upload allocations can be released.
++    * Live blob backing remains resident for its resource lifetime.
++    */
++   yttrium_gdi_flush_labeled(pipe, NULL, 0, "DXGI trim residency");
++   return S_OK;
++}
++
++static HRESULT APIENTRY
++CheckOverlayColorSpaceWDDM2_0(
++   DXGI_DDI_ARG_CHECKMULTIPLANEOVERLAYCOLORSPACESUPPORT *args)
++{
++   args->Supported = FALSE;
++   return S_OK;
++}
++
++static HRESULT APIENTRY
++PresentOverlayWDDM2_0(DXGI_DDI_ARG_PRESENTMULTIPLANEOVERLAY1 *args)
++{
++   return DXGI_ERROR_UNSUPPORTED;
++}
++
++static HRESULT APIENTRY
++RetrieveShaderCommentWDDM2_0(D3D10DDI_HDEVICE device, D3D10DDI_HSHADER shader,
++                            WCHAR *buffer, SIZE_T *count)
++{
++   /* Shader translation does not add a driver diagnostic comment. */
++   if (!count)
++      return E_INVALIDARG;
++   const SIZE_T capacity = *count;
++   *count = 1;
++   if (!buffer)
++      return S_OK;
++   if (!capacity)
++      return HRESULT_FROM_WIN32(ERROR_INSUFFICIENT_BUFFER);
++   buffer[0] = L'\0';
++   return S_OK;
++}
++#endif
++
+ EXTERN_C bool use_old_tex_ops = false;
+ 
+ /*
+@@ -919,6 +1257,9 @@ CreateDevice(D3D10DDI_HADAPTER hAdapter,                 // IN
+ #if SUPPORT_D3D_WDDM1_3
+    case D3DWDDM1_3_DDI_INTERFACE_VERSION:
+ #endif
++#if SUPPORT_D3D_WDDM2_0
++   case D3DWDDM2_0_DDI_INTERFACE_VERSION:
++#endif
+ #endif
+       break;
+    default:
+@@ -966,6 +1307,17 @@ CreateDevice(D3D10DDI_HADAPTER hAdapter,                 // IN
+       return E_FAIL;
+    }
+ 
++#if SUPPORT_D3D_WDDM2_0
++   if (pCreateData->Interface == D3DWDDM2_0_DDI_INTERFACE_VERSION &&
++       !SupportsTypedLoadsWDDM2_0(screen)) {
++      yttrium_gdi_user_logf("d3d10umd: WDDM 2.0 requires typed image loads\n");
++      screen->destroy(screen);
++      pDevice->device.base.destroy(&pDevice->device.base);
++      mtx_destroy(&pDevice->CreateResourceMtx);
++      return E_FAIL;
++   }
++#endif
++
+    struct pipe_context *pipe = screen->context_create(screen, NULL, 0);
+    if (!pipe) {
+       DebugPrintf("%s: failed to create pipe context\n", __func__);
+@@ -1074,6 +1426,10 @@ CreateDevice(D3D10DDI_HADAPTER hAdapter,                 // IN
+ #if SUPPORT_D3D_WDDM1_3
+    } else if (pCreateData->Interface == D3DWDDM1_3_DDI_INTERFACE_VERSION) {
+       memset(pCreateData->pWDDM1_3DeviceFuncs, 0, sizeof(*pCreateData->pWDDM1_3DeviceFuncs));
++#endif
++#if SUPPORT_D3D_WDDM2_0
++   } else if (pCreateData->Interface == D3DWDDM2_0_DDI_INTERFACE_VERSION) {
++      memset(pCreateData->pWDDM2_0DeviceFuncs, 0, sizeof(*pCreateData->pWDDM2_0DeviceFuncs));
+ #endif
+    }
+ #endif
+@@ -1279,6 +1635,15 @@ CreateDevice(D3D10DDI_HADAPTER hAdapter,                 // IN
+       FillDeviceFuncsWDDM1_3(pWDDM1_3DeviceFuncs);
+    }
+ #endif
++#if SUPPORT_D3D_WDDM2_0
++   else if (pCreateData->Interface == D3DWDDM2_0_DDI_INTERFACE_VERSION) {
++      FillDeviceFuncsWDDM2_0(pCreateData->pWDDM2_0DeviceFuncs);
++      pCreateData->pWDDM2_0DeviceFuncs->pfnRetrieveShaderComment =
++         RetrieveShaderCommentWDDM2_0;
++      yttrium_gdi_user_logf("d3d10umd: WDDM 2.0 device feature_level=%x\n",
++                            pDevice->feature_level);
++   }
++#endif
+ #endif
+ 
+    /*
+@@ -1286,7 +1651,11 @@ CreateDevice(D3D10DDI_HADAPTER hAdapter,                 // IN
+     */
+ #if SUPPORT_D3D11_1
+ #if SUPPORT_D3D_WDDM1_3
+-   if (pCreateData->Interface == D3DWDDM1_3_DDI_INTERFACE_VERSION) {
++   if (pCreateData->Interface == D3DWDDM1_3_DDI_INTERFACE_VERSION
++#if SUPPORT_D3D_WDDM2_0
++       || pCreateData->Interface == D3DWDDM2_0_DDI_INTERFACE_VERSION
++#endif
++       ) {
+       DXGI1_3_DDI_BASE_FUNCTIONS *dxgiFuncs =
+          pCreateData->DXGIBaseDDI.pDXGIDDIBaseFunctions4;
+ 
+@@ -1310,6 +1679,14 @@ CreateDevice(D3D10DDI_HADAPTER hAdapter,                 // IN
+       dxgiFuncs->pfnPresent1 = _Present1;
+       dxgiFuncs->pfnCheckPresentDurationSupport =
+          _CheckPresentDurationSupport;
++#if SUPPORT_D3D_WDDM2_0
++      if (pCreateData->Interface == D3DWDDM2_0_DDI_INTERFACE_VERSION) {
++         auto funcs = pCreateData->DXGIBaseDDI.pDXGIDDIBaseFunctions5;
++         funcs->pfnTrimResidencySet = TrimResidencySetWDDM2_0;
++         funcs->pfnCheckMultiplaneOverlayColorSpaceSupport = CheckOverlayColorSpaceWDDM2_0;
++         funcs->pfnPresentMultiplaneOverlay1 = PresentOverlayWDDM2_0;
++      }
++#endif
+    } else
+ #endif
+    if (pCreateData->Interface == D3D11_1_DDI_INTERFACE_VERSION) {
+@@ -1924,6 +2301,11 @@ CheckFormatSupport(D3D10DDI_HDEVICE hDevice, // IN
+        is_format_supported_with_fallback(screen, format, PIPE_TEXTURE_2D, 0, 0,
+                                          PIPE_BIND_SHADER_IMAGE)) {
+       *pFormatCaps |= D3D11_1DDI_FORMAT_SUPPORT_UAV_WRITES;
++#if SUPPORT_D3D_WDDM2_0
++      if (device->feature_level >= 0xb000 && Format != DXGI_FORMAT_A8_UNORM &&
++          yttrium_gdi_screen_supports_typed_image_load(screen, format))
++         *pFormatCaps |= D3DWDDM2_0DDI_FORMAT_SUPPORT_UAV_READS;
++#endif
+    }
+ #endif
+ 
+diff --git a/src/gallium/frontends/d3d10umd/State.h b/src/gallium/frontends/d3d10umd/State.h
+index abfc56446bd718716bdfbd46096ea0daf2a4843d..f4bb97b0b454f2de0eb86037b35ac4f03dfaa42c 100644
+--- a/src/gallium/frontends/d3d10umd/State.h
++++ b/src/gallium/frontends/d3d10umd/State.h
+@@ -54,6 +54,9 @@
+ #ifndef SUPPORT_D3D_WDDM1_3
+ #define SUPPORT_D3D_WDDM1_3 (SUPPORT_D3D11_1 && D3D11DDI_MINOR_HEADER_VERSION >= 4)
+ #endif
++#ifndef SUPPORT_D3D_WDDM2_0
++#define SUPPORT_D3D_WDDM2_0 (SUPPORT_D3D_WDDM1_3 && D3D11DDI_MINOR_HEADER_VERSION >= 9)
++#endif
+ 
+ 
+ struct Adapter
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_gdi_public.h b/src/gallium/winsys/yttrium/gdi/yttrium_gdi_public.h
+index 7a574f621fd7785103fbaf413df4d1cd85ce9ba6..aac1204ff7d775b3a3e58f3f7ccbd595509ad00e 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_gdi_public.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_gdi_public.h
+@@ -10,6 +10,7 @@
+ 
+ #include "gallium/auxiliary/gdikmt/gdikmt.h"
+ #include "pipe/p_defines.h"
++#include "util/format/u_format.h"
+ 
+ /* Yttrium-private pipe_resource flag: the KMD will CPU-read this display
+  * image for a legacy blt Present, so its exported backing must be cached. */
+@@ -69,6 +70,10 @@ yttrium_gdi_flush_async_present(
+ bool
+ yttrium_gdi_screen_supports_logic_op(struct pipe_screen *screen);
+ 
++bool
++yttrium_gdi_screen_supports_typed_image_load(struct pipe_screen *screen,
++                                           enum pipe_format format);
++
+ /* Nonblocking handoff of an asynchronously detected native draw failure to
+  * the D3D DDI entry point.  Reading the latch never drains the worker. */
+ bool
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_screen.c b/src/gallium/winsys/yttrium/gdi/yttrium_screen.c
+index fae945f1c9496858dff4245996340d1d50f48a31..1f47f77c0e0f1cb1578af910166e63c67835bc7f 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_screen.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_screen.c
+@@ -116,6 +116,19 @@ yttrium_gdi_screen_supports_logic_op(struct pipe_screen *pscreen)
+    return yttrium_venus_logic_op_enabled(screen->venus);
+ }
+ 
++bool
++yttrium_gdi_screen_supports_typed_image_load(struct pipe_screen *pscreen,
++                                           enum pipe_format format)
++{
++   if (!pscreen || !pscreen->get_name ||
++       strcmp(pscreen->get_name(pscreen), "yttrium") != 0)
++      return false;
++
++   struct yttrium_screen *screen = yttrium_screen(pscreen);
++   return yttrium_venus_storage_image_formatless_format_supported(
++      screen->venus, format, true, true);
++}
++
+ void
+ yttrium_destroy_screen(struct pipe_screen *pscreen)
+ {
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_format.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_format.c
+index da8c8520519a5c8408f6482f0e14676b2263ac00..2878d78b08b3102a871757c468bc9e6b436f999e 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_format.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_format.c
+@@ -25,6 +25,8 @@ yttrium_venus2_pipe_format(enum pipe_format format)
+       return VK_FORMAT_R8G8B8A8_SRGB;
+    case PIPE_FORMAT_R10G10B10A2_UNORM:
+       return VK_FORMAT_A2B10G10R10_UNORM_PACK32;
++   case PIPE_FORMAT_R10G10B10A2_UINT:
++      return VK_FORMAT_A2B10G10R10_UINT_PACK32;
+    case PIPE_FORMAT_A8_UNORM:
+       return VK_FORMAT_R8_UNORM;
+    case PIPE_FORMAT_R9G9B9E5_FLOAT:

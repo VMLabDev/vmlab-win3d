@@ -1,0 +1,104 @@
+Subject: [PATCH 08/11] tgsi_to_nir, d3d10umd: fix array gradients and UAV load component selection
+
+- TXD on array textures passed the array layer as a gradient component,
+  which produces SPIR-V that spirv-val rejects (GravityMark) (F17).
+- Raw UAV loads ignored the source swizzle, so a scalar load into .y read
+  the next DWORD (F28).
+- Typed UAV loads ignored the source swizzle, so uint4.w returned .x (F29).
+
+Prior art: F17, F28, F29 (R/NATIVE-WDDM20.md).
+Origin: codex working tree R/mesa (git diff 374c3022), re-exported by
+vmlab-win3d build/mesa; see build/mesa/README.md.
+---
+diff --git a/src/gallium/auxiliary/nir/tgsi_to_nir.c b/src/gallium/auxiliary/nir/tgsi_to_nir.c
+index 1d1f25dca79dba515bbb56503e23e1ce51b8ddcc..7d41b4ca68350017c887a1a82e941bbd3f676e79 100644
+--- a/src/gallium/auxiliary/nir/tgsi_to_nir.c
++++ b/src/gallium/auxiliary/nir/tgsi_to_nir.c
+@@ -1816,13 +1816,15 @@ ttn_tex(struct ttn_compile *c, nir_def **src)
+    }
+ 
+    if (tgsi_inst->Instruction.Opcode == TGSI_OPCODE_TXD) {
++      const unsigned gradient_components =
++         instr->coord_components - instr->is_array;
+       instr->src[src_number] =
+          nir_tex_src_for_ssa(nir_tex_src_ddx,
+-               nir_trim_vector(b, src[1], instr->coord_components));
++               nir_trim_vector(b, src[1], gradient_components));
+       src_number++;
+       instr->src[src_number] =
+          nir_tex_src_for_ssa(nir_tex_src_ddy,
+-               nir_trim_vector(b, src[2], instr->coord_components));
++               nir_trim_vector(b, src[2], gradient_components));
+       src_number++;
+    }
+ 
+diff --git a/src/gallium/frontends/d3d10umd/ShaderTGSI.c b/src/gallium/frontends/d3d10umd/ShaderTGSI.c
+index 847ce035a2627c1a3c7795b1e08c0773af495803..0ad98f1a536bd6315fe2ae7bfac273d58eab7599 100644
+--- a/src/gallium/frontends/d3d10umd/ShaderTGSI.c
++++ b/src/gallium/frontends/d3d10umd/ShaderTGSI.c
+@@ -3139,7 +3139,8 @@ sample_i_buffer_dwords_ureg_emit(struct ureg_program *ureg,
+                                  struct ureg_dst dst,
+                                  struct ureg_src coord,
+                                  struct ureg_src resource,
+-                                 enum tgsi_texture_type target)
++                                 enum tgsi_texture_type target,
++                                 const D3D10_SB_4_COMPONENT_NAME *swizzle)
+ {
+    struct ureg_dst base = ureg_DECL_temporary(ureg);
+    struct ureg_dst fetch_coord = ureg_DECL_temporary(ureg);
+@@ -3155,10 +3156,11 @@ sample_i_buffer_dwords_ureg_emit(struct ureg_program *ureg,
+       if (scalar_dst.WriteMask == TGSI_WRITEMASK_NONE)
+          continue;
+ 
+-      if (chan) {
++      const unsigned component = swizzle[chan];
++      if (component) {
+          ureg_UADD(ureg, fetch_coord,
+                    ureg_scalar(ureg_src(base), TGSI_SWIZZLE_X),
+-                   ureg_imm1u(ureg, chan));
++                   ureg_imm1u(ureg, component));
+       } else {
+          ureg_MOV(ureg, fetch_coord,
+                   ureg_scalar(ureg_src(base), TGSI_SWIZZLE_X));
+@@ -4263,7 +4265,7 @@ Shader_tgsi_translate(const unsigned *code,
+                                                ureg_src(coord),
+                                                sx->images[image_index].target,
+                                                sx->images[image_index].format,
+-                                               1, NULL);
++                                               1, opcode.src[1].swizzle);
+             ureg_release_temporary(ureg, coord);
+             break;
+          }
+@@ -4303,7 +4305,8 @@ Shader_tgsi_translate(const unsigned *code,
+          sample_i_buffer_dwords_ureg_emit(
+             ureg, &opcode,
+             translate_dst_operand(sx, &opcode.dst[0], opcode.saturate),
+-            srcreg[0], srcreg[1], sx->resources[resource].target);
++            srcreg[0], srcreg[1], sx->resources[resource].target,
++            opcode.src[1].swizzle);
+          ureg_release_temporary(ureg, coord);
+          break;
+       }
+@@ -4454,7 +4457,8 @@ Shader_tgsi_translate(const unsigned *code,
+          sample_i_buffer_dwords_ureg_emit(
+             ureg, &opcode,
+             translate_dst_operand(sx, &opcode.dst[0], opcode.saturate),
+-            srcreg[0], srcreg[1], sx->resources[resource].target);
++            srcreg[0], srcreg[1], sx->resources[resource].target,
++            opcode.src[2].swizzle);
+          ureg_release_temporary(ureg, byte_offset);
+          ureg_release_temporary(ureg, coord);
+          break;
+@@ -6117,7 +6121,11 @@ Shader_tgsi_translate(const unsigned *code,
+                           &load, 1, src, ARRAY_SIZE(src), 0,
+                           sx->images[image_index].target,
+                           sx->images[image_index].format);
+-         ureg_MOV(ureg, dst, ureg_src(load));
++         ureg_MOV(ureg, dst, ureg_swizzle(ureg_src(load),
++                                         opcode.src[1].swizzle[0],
++                                         opcode.src[1].swizzle[1],
++                                         opcode.src[1].swizzle[2],
++                                         opcode.src[1].swizzle[3]));
+          ureg_release_temporary(ureg, load);
+          break;
+       }
