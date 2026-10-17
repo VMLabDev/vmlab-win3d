@@ -23,10 +23,13 @@ acceleration. Decided by the user (D1, 2026-10-17): use the existing Yttrium dri
 ## Host assumptions
 
 - Venus works on the AMD iGPU (RADV, `renderD129`), not on the RTX 5090.
-- vmlab's `gpu { mode = "vulkan" }` line lacks `blob=true`, the shared memfd
-  RAM backend and a render node / Vulkan ICD choice. Slice `host-probe` finds
-  the minimum set, and the orchestrator files a vmlab handoff. Until vmlab
-  ships the change, labs use `display`/`qemu_args`, as the prior art did.
+- vmlab's `gpu { mode = "vulkan" }` alone does not work here (docs/host.md):
+  Venus needs `blob=true`, q35's default VGA must go (`-vga none`), egl-headless
+  needs `rendernode=/dev/dri/renderD129`, and QEMU needs
+  `VK_DRIVER_FILES=…/radeon_icd.json` in its environment. QMP screenshots fail
+  under egl-headless; VNC capture works. Filed to vmlab as handoff
+  `20261017-142905`. Until vmlab ships it, labs use `labs/probe/vmlab.wcl`
+  (`gpu { mode = "vulkan" }` plus `qemu_args`) through `labs/probe/vmlab-amd.sh`.
 
 ## Build layout contract
 
