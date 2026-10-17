@@ -1,0 +1,1 @@
+     12 virgl-N-gpu_render: /dev/dri/renderD128 /dev/dri/renderD130 /dev/nvidia0 /dev/nvidia1 /dev/nvidiactl /dev/nvidia-modeset <nvidia GL cache> <nvidia GL cache> 

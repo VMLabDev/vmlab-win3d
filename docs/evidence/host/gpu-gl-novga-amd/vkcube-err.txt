@@ -1,0 +1,2 @@
+Selected WSI platform: win32
+Selected GPU 0: Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), type: IntegratedGpu, apiVersion: 4211022 (1.4.334), driverVersion: 109056000 (26.1.0) 

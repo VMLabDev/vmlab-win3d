@@ -1,0 +1,9 @@
+lines: 50
+     16  vkr: ring_submit_cmd: vn_dispatch_command failed
+     15  vkr: vkGetImageMemoryRequirements resulted in CS error
+     10  vkr: failed to look up object 25 of type 10
+      4  vkr: failed to look up object 11 of type 10
+      1  vkr: submit_cmd: early bail due to fatal decoder state
+      1  vkr: failed to look up object 26 of type 10
+      1  vkr: destroying device with valid objects
+      1  vkr: destroying context 105 (yttrium) with a valid instance

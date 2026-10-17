@@ -1,0 +1,1 @@
+VK_LOADER_DRIVERS_SELECT=*radeon*

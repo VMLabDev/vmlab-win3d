@@ -1,0 +1,10 @@
+Name                        : Microsoft Basic Display Adapter
+DriverVersion               : 10.0.26100.1
+ConfigManagerErrorCode      : 0
+CurrentHorizontalResolution : 1280
+CurrentVerticalResolution   : 800
+Name                        : Hardsoft VirtIO GPU 3D controller
+DriverVersion               : 100.2026.9.1
+ConfigManagerErrorCode      : 0
+CurrentHorizontalResolution : 1280
+CurrentVerticalResolution   : 800

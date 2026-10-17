@@ -1,0 +1,3 @@
+user: vmlabvm-pbe6qfd\probe  session: 1
+vulkaninfo exit 1
+vkcube alive after 6s: True

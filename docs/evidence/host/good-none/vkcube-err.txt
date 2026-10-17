@@ -1,0 +1,3 @@
+Selected WSI platform: win32
+Selected GPU 0: Virtio-GPU Venus (NVIDIA GeForce RTX 5090), type: DiscreteGpu, apiVersion: 4211022 (1.4.334), driverVersion: 109056000 (26.1.0) 
+MESA: warning: wsi/win32: DXGI_SHARED CreateSwapChainForComposition failed (HRESULT 0x887a0005)

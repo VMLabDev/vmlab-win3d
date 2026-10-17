@@ -1,0 +1,3 @@
+vmlab up with plain gpu { mode = "vulkan" } (lab .scratch/labs/a, variant plain):
+QEMU exited during startup: exit status: 1
+  qemu-system-x86_64: -device virtio-gpu-gl,venus=true,hostmem=4G: venus requires enabled blob and hostmem options

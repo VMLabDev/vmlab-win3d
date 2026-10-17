@@ -1,0 +1,2 @@
+user: vmlabvm-pbe6qfd\probe  session: 1
+vulkaninfo exit 1

@@ -1,0 +1,2 @@
+ERROR: [Loader Message] Code 0 : setup_loader_term_phys_devs:  Failed to detect any valid GPUs in the current config
+ERROR at C:\SDKBuild\build-X64-1.4.363.0\Vulkan-Tools\vulkaninfo\vulkaninfo.h:249:vkEnumeratePhysicalDevices failed with ERROR_INITIALIZATION_FAILED

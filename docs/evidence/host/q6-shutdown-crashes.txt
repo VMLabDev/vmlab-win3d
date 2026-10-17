@@ -1,0 +1,27 @@
+# Host journal, 12:40-14:30 AEST, QEMU entries only (journalctl | grep qemu-system-x86)
+Oct 17 14:00:48 helios kernel: qemu-system-x86[997310]: segfault at 4 ip 00007fa8ec7c7eaa sp 00007ffcdc7b1d80 error 4 in libgallium-26.2.2-arch3.2.so[7c7eaa,7fa8ec01b000+2946000] likely on CPU 20 (core 4, socket 0)
+Oct 17 14:00:48 helios systemd-coredump[1014419]: Process 997310 (qemu-system-x86) of user 1000 terminated abnormally with signal 11/SEGV, processing...
+Oct 17 14:00:48 helios systemd-coredump[1014420]: Process 997310 (qemu-system-x86) of user 1000 dumped core.
+Oct 17 14:13:15 helios kernel: qemu-system-x86[1022293]: segfault at 4 ip 00007f30807c7eaa sp 00007ffed7374e50 error 4 in libgallium-26.2.2-arch3.2.so[7c7eaa,7f308001b000+2946000] likely on CPU 4 (core 4, socket 0)
+Oct 17 14:13:15 helios systemd-coredump[1063822]: Process 1022293 (qemu-system-x86) of user 1000 terminated abnormally with signal 11/SEGV, processing...
+Oct 17 14:13:15 helios systemd-coredump[1063823]: Process 1022293 (qemu-system-x86) of user 1000 dumped core.
+
+# vm.stopped events, lab win3d-host-probe-a (UTC = AEST-10h)
+2026-10-17T02:49:11.233093901Z exit status: 0
+2026-10-17T02:50:17.907100862Z exit status: 0
+2026-10-17T02:52:46.625319574Z exit status: 0
+2026-10-17T03:13:48.416104501Z exit status: 0
+2026-10-17T03:28:29.606191881Z exit status: 0
+2026-10-17T03:35:20.494326294Z exit status: 0
+2026-10-17T03:36:47.805326551Z exit status: 0
+2026-10-17T03:38:12.377438494Z exit status: 0
+2026-10-17T03:49:56.076229641Z exit status: 0
+2026-10-17T03:51:23.750620582Z exit status: 0
+2026-10-17T03:52:47.553420Z exit status: 0
+2026-10-17T04:00:48.520682696Z signal: 11 (SIGSEGV) (core dumped)
+2026-10-17T04:02:13.798815248Z exit status: 0
+2026-10-17T04:03:37.883992193Z exit status: 0
+2026-10-17T04:13:15.167993037Z signal: 11 (SIGSEGV) (core dumped)
+2026-10-17T04:14:46.252874157Z exit status: 0
+2026-10-17T04:21:19.472812041Z exit status: 0
+2026-10-17T04:24:02.242132304Z exit status: 0
