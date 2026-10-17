@@ -1,0 +1,57 @@
+## state.json
+{
+    "version":  "0.1.0",
+    "step":  null,
+    "last_error":  null,
+    "operation":  "Uninstall",
+    "status":  "Removed",
+    "bundle_sha256":  "758057F5CC40F39EC14EC20C46D4CE3385E84D1BB65EFDAEC25513F13EC6F9C7",
+    "schema":  1,
+    "updated":  "2026-10-17T04:45:33.5650639-07:00",
+    "boot_id":  "2026-10-17T11:39:48.5000000Z",
+    "loader_installed":  null,
+    "native_d3d12_x64":  null,
+    "bridge_hashes":  null,
+    "native_d3d12_x86":  null,
+    "installed":  "2026-10-17T04:44:01.1121178-07:00",
+    "installed_inf":  null,
+    "driver_version":  "100.6.101.58100",
+    "removed":  "2026-10-17T04:45:33.5411465-07:00"
+}
+
+## driver store (viogpu)
+oem7.inf 100.101.104.28500 C:\Windows\System32\DriverStore\FileRepository\viogpudo.inf_amd64_d1816df2ef9c583c\viogpudo.inf
+## scheduled tasks
+## d3d12.dll owner and hash
+C:\Windows\System32\d3d12.dll NT SERVICE\TrustedInstaller 6B32181599D4D6373F0B49905236B122ED5545C5D061AB4350A80CC095DC15E4
+  O:S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464G:S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464D:PAI(A;;0x1200a9;;;SY)(A;;0x1200a9;;;BA)(A;;0x1200a9;;;BU)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)(A;;0x1200a9;;;AC)(A;;0x1200a9;;;S-1-15-2-2)
+C:\Windows\SysWOW64\d3d12.dll NT SERVICE\TrustedInstaller A43885B075B8043D9FE99F03B26B056B426E1B7D73FAB8D420F4E4FFCB5100AF
+  O:S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464G:S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464D:PAI(A;;0x1200a9;;;SY)(A;;0x1200a9;;;BA)(A;;0x1200a9;;;BU)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)(A;;0x1200a9;;;AC)(A;;0x1200a9;;;S-1-15-2-2)
+## private dirs
+C:\Windows\System32\vmlab-win3d absent
+C:\Windows\SysWOW64\vmlab-win3d absent
+## services
+## certificates
+## powercfg /a
+The following sleep states are available on this system:
+    Standby (S3)
+
+The following sleep states are not available on this system:
+    Standby (S1)
+	The system firmware does not support this standby state.
+
+    Standby (S2)
+	The system firmware does not support this standby state.
+
+    Hibernate
+	Hibernation has not been enabled.
+
+    Standby (S0 Low Power Idle)
+	The system firmware does not support this standby state.
+
+    Hybrid Sleep
+	Hibernation is not available.
+
+    Fast Startup
+	Hibernation is not available.
+

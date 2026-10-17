@@ -139,7 +139,7 @@ powershell -ExecutionPolicy Bypass -File C:\ProgramData\vmlab-win3d\vmlab-win3d.
 | Baseline (first install only) | Writes `baseline.json`: testsigning, hibernation and Fast Startup, whether the certificate is trusted, the display device's driver INF, version and problem code, the hash, version and security descriptor of every system file the package touches, and the Vulkan registry values. Copies the original `d3d12.dll`, `vulkan-1.dll` and `vulkaninfo.exe` (System32 and SysWOW64) to `backup\`. | — |
 | Trust and boot policy | `certutil -f -addstore Root` and `TrustedPublisher` with `vmlab-win3d-test.cer`; `powercfg /hibernate off` (which also turns off Fast Startup); `bcdedit /set {current} testsigning on`. | If test signing is not active in the running kernel, registers the startup task `vmlab-win3d-resume` and restarts. |
 | Driver | Removes older builds of this package from the driver store (`pnputil /delete-driver oemNN.inf /uninstall /force`), then `pnputil /add-driver viogpu3d.inf /install`. Checks that the device now uses this package through `DEVPKEY_Device_DriverInfPath`. The INF copies the UMDs and the Venus ICD into System32 and SysWOW64 and registers them (below). | — |
-| Vulkan loader | Installs `vulkan-1.dll` and `vulkaninfo.exe` into System32 (x64) and SysWOW64 (x86), each only if the existing file is absent or has an older file version. The template's loader is 1.3.301; the package's is 1.4.363. | — |
+| Vulkan loader | Installs `vulkan-1.dll` and `vulkaninfo.exe` into System32 (x64) and SysWOW64 (x86) when the existing `vulkan-1.dll` is absent or has an older file version (the binary version resource is compared). Otherwise it keeps the existing loader and installs `vulkaninfo.exe` only where none exists. The template's loader is 1.3.300; the package's is 1.4.363. | — |
 | D3D12 bridge | For System32 and SysWOW64: copies the machine's own `d3d12.dll` to `vmlab-win3d\d3d12-native.dll`, copies `vkd3dcore.dll` and `dxgi-vulkan.dll` there, takes ownership of `d3d12.dll` (`takeown /A`, `icacls /grant`), replaces it with the bridge, and puts back the original owner (TrustedInstaller) and ACL. | — |
 | Repair task | Registers `vmlab-win3d-repair`, a SYSTEM startup task. | — |
 | Final reboot | Registers `vmlab-win3d-resume` and restarts, unless nothing changed. | Yes |
@@ -211,3 +211,8 @@ the newest backup, and the bridge goes back in place. The journal records it.
 | Device problem code 43 | The KMD started but failed, for example without Venus or blob on the host side. |
 | `The display device uses oemNN.inf …, not this package's` | A better-ranked driver for the same hardware ID is in the driver store. Remove it with the `pnputil` command in the message and run `Install.cmd` again. |
 | Vulkan lists no device from `vmlab exec` | Vulkan does not enumerate from the SYSTEM session. Run tests in a user session (`tests/guest/Run-Probe.ps1`). |
+
+## Evidence
+
+`docs/evidence/package/README.md`: a fresh-clone build, then install,
+probes, rerun, uninstall and reinstall on a fresh `windows-11` lab.

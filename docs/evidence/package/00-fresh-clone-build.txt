@@ -1,0 +1,130 @@
+# scripts/build.sh from a fresh clone
+clone: git clone --branch work/package <worktree> .scratch/clone3, commit f7fa236b421a5467531c19da348738774f252698
+host: Linux 7.2.3-1-cachyos, docker 29.7.2
+
+## stages
+==== toolchain (2026-10-17T14:29:23+10:00)
+==== mesa (2026-10-17T14:29:23+10:00)
+==== vulkan-sdk (2026-10-17T14:30:45+10:00)
+==== d3d12 (2026-10-17T14:31:16+10:00)
+==== kmd (2026-10-17T14:32:41+10:00)
+==== probes (2026-10-17T14:33:15+10:00)
+==== signing-cert (2026-10-17T14:33:19+10:00)
+==== package (2026-10-17T14:33:21+10:00)
+EXIT 0
+
+## bundle
+fe77d8811f644392a1eec1f98ec77a3337783f5b0ca1a6bdc3efa0d53711d8ef  vmlab-win3d-0.1.0.zip
+758057f5cc40f39ec14ec20c46d4ce3385e84d1bb65efdaec25513f13ec6f9c7  vmlab-win3d-0.1.0/manifest.json
+
+## test certificate (.signing/CERT-INFO.txt, created by this run)
+subject:        O=vmlab-win3d local test (not for distribution),CN=vmlab-win3d Test Driver Signing
+notBefore:      Oct 17 04:33:21 2026 GMT
+notAfter:       Oct 14 04:33:21 2036 GMT
+serial:         78EE7DC1A8CD21429BE8071515AADD18C321D715
+sha1 thumbprint: 05ED0AC6E2DB2C7465641CAF68936B3A2B22B71A
+sha256:         321DA14653DEBB5C24C88A782C978992C65760D3AB09196DC32C4437D70F10D1
+sign time:      2026-10-17T05:33:21Z
+
+## manifest.json (header)
+schema: 1
+name: vmlab-win3d
+version: 0.1.0
+commit: f7fa236b421a5467531c19da348738774f252698
+driver_date: 09/27/2026
+driver_version: 100.6.101.58100
+hardware_id: PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+certificate_thumbprint: 05ED0AC6E2DB2C7465641CAF68936B3A2B22B71A
+files: 28
+
+## bundle files (sha256)
+8b4babf9234bd2de6b8bf85704bb4592a5172a76a7200353d2cd40067fcfcab5 Install.cmd
+47fc58868b988bddce4309ffb8d30bfc885ab38e9d847a48198b4bbe7956ade0 README.txt
+fbed10d23852529ee495515e8d242a3ea404e11ff5cc8194487c7b1cc67f4402 Uninstall.cmd
+3fad250c9956c8256c1db985f0271ea191a6007a3c56e7d4142afd52d400f04f driver/vgpusrv.exe
+de375508aded71dc8081702b2d30af7bd11fc8bbca8c6af53d7c80a056d2b73e driver/viogpu3d.cat
+21663f174a674056804b138f6b1cc7d3f6f31c30921f7c466793bd80eeefa627 driver/viogpu3d.inf
+fe173f11590e349b42a80273c790571076c0ae2fec759c2cde72d31ee032de9f driver/viogpu3d.sys
+01daffce0573b32f64d02754f0f06de1ac419301d1202048ac5dc903a3915f37 driver/viogpuap.exe
+70cdfa920fcc5fd7737201de94f9b451c388a008348058e3089a1229b47afa9a driver/x64/libvulkan_virtio_x64.dll
+65490b8ae4bb70a8ce5cbbe9f0982a8c62abaffdc574e8d550b702586c5e1239 driver/x64/viogpu_d3d10_x64.dll
+520d5b85f196ac31f118ee9a43f2c51ef246526c2fc04fd46ea338fe630c5231 driver/x64/viogpu_wgl_x64.dll
+f67d39fde82a46dfdbb34581493632e164fe6694310ff125c0c180c91283304a driver/x64/virtio_icd.x86_64.json
+2d50e357182b35d50eba58ffb12331892325658fea64be8b3b5f4dcb51fafb0b driver/x86/libvulkan_virtio_x86.dll
+e274841fe2b9e9b88c600b8108f1afce391cccec2ca6a1bf38e64f7004cb36e1 driver/x86/viogpu_d3d10_x86.dll
+7203f572a7be35d4f2767903ec1b73d653bc3a9974194aeb30cb13142e447ed5 driver/x86/viogpu_wgl_x86.dll
+69e6a7c23226a0c1c854f9b8ac340cedc361ad2db66fe6aa7733c8e060e03151 driver/x86/virtio_icd.x86.json
+b5d94f44466887cf5373c8550e3263425034a41e76b0ac11fe8c8a5229acd9da runtime/x64/d3d12.dll
+e8c6b7d855c54bf4a7625f6e32fc3b1dbfdb552ff5361649066f814e80f6c76b runtime/x64/dxgi-vulkan.dll
+d972de771cb2fa8940735a481c7d96a7ba7e618b695a92743cfac67b43dd68ad runtime/x64/vkd3dcore.dll
+eae9c602ce4705acda71dd74d3dec1636ea4dceba3a86c8e2f9f2bdefff6bc05 runtime/x64/vulkan-1.dll
+db91a68b47786ee4fad4de0c24c6eee0fe568d1ec0dd49a1103e8e4c0ce5034c runtime/x64/vulkaninfo.exe
+944cc70e1f65c907c13d598396cbcb2ab9478a231dd653a5dc62c70c8e6bae02 runtime/x86/d3d12.dll
+2c0387962a8d822385b05e56a843541ca75407fee1a6fbb48b42cf2643640e0c runtime/x86/dxgi-vulkan.dll
+9331694d07dc260db154a3e45db30bd9aa554698a9515f6ac1660af4dab766ef runtime/x86/vkd3dcore.dll
+1b8122e8f09a5d4e6c70e100537742dd6049c26ee3261fe17188fb39b03491a9 runtime/x86/vulkan-1.dll
+de07ea7a6d344937cb1c0767b0b954b6b044f22d685e76fe6e28b71ea205e1fa runtime/x86/vulkaninfo.exe
+321da14653debb5c24c88a782c978992c65760d3ab09196dc32c4437d70f10d1 vmlab-win3d-test.cer
+00d36edea360db670a6cb1e4c6beda777cc2d31ed0c17b985e921e8b5c2cffdc vmlab-win3d.ps1
+
+## tail of the build log
+i686-w64-mingw32-clang -O2 -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -municode -DUNICODE -D_UNICODE -D_WIN32_WINNT=0x0A00 -DWINVER=0x0A00 -I/src/out/probes/deps/vulkan-headers-vulkan-sdk-1.4.363.0/include -I/src/out/probes/obj/gen -c -o /src/out/probes/obj/x86/vulkan.o vulkan/vulkan_probe.c
+i686-w64-mingw32-clang++ -municode -mwindows -static -s -Wl,--no-insert-timestamp -o /src/out/probes/x86/vulkan_probe.exe /src/out/probes/obj/x86/vulkan.o /src/out/probes/obj/x86/probe.o 
+check-imports: every probe imports only system DLLs
+
+==== signing-cert (2026-10-17T14:33:19+10:00)
+created test certificate: /home/wil/dev/vmlab-win3d-wt/package/.scratch/clone3/.signing
+subject:        O=vmlab-win3d local test (not for distribution),CN=vmlab-win3d Test Driver Signing
+notBefore:      Oct 17 04:33:21 2026 GMT
+notAfter:       Oct 14 04:33:21 2036 GMT
+serial:         78EE7DC1A8CD21429BE8071515AADD18C321D715
+sha1 thumbprint: 05ED0AC6E2DB2C7465641CAF68936B3A2B22B71A
+sha256:         321DA14653DEBB5C24C88A782C978992C65760D3AB09196DC32C4437D70F10D1
+sign time:      2026-10-17T05:33:21Z
+
+==== package (2026-10-17T14:33:21+10:00)
+== driver package
+INF lists 11 files; all present
+== sign PE files
+  signed vgpusrv.exe
+  signed viogpu3d.sys
+  signed viogpuap.exe
+  signed x64/libvulkan_virtio_x64.dll
+  signed x64/viogpu_d3d10_x64.dll
+  signed x64/viogpu_wgl_x64.dll
+  signed x86/libvulkan_virtio_x86.dll
+  signed x86/viogpu_d3d10_x86.dll
+  signed x86/viogpu_wgl_x86.dll
+== catalog viogpu3d.cat
+  hwids pci\ven_1af4&dev_1050&subsys_11001af4&rev_01
+  member viogpu3d.inf:00CB543D30BF53B53FD9554579899AE0E9703B7F
+  member virtio_icd.x86_64.json:048C4ADC640BB43942E388DB65DBE5D209742F5A
+  member viogpu_wgl_x86.dll:0B4D01E7D582975869CE76F6CC44D9E91FB89078:PE
+  member virtio_icd.x86.json:10165D394F94441B3DD2581313EDA5CA44CD8F15
+  member viogpu_d3d10_x64.dll:2CD9371756A20036352E879CE042C77C4487A7B0:PE
+  member libvulkan_virtio_x86.dll:66E34A6BCA95EB511F699FB7D8DE0CC3941B4562:PE
+  member vgpusrv.exe:6742D719E97A81B2757771D4376C8C6BEE7417A9:PE
+  member libvulkan_virtio_x64.dll:9A07C23FFDF4D800D01C9E5C10752616C1A084DE:PE
+  member viogpu_d3d10_x86.dll:A7BA8EB78EFACB7E9DB5E73DDCBB8A6301D95F3F:PE
+  member viogpuap.exe:B0CDEC194B8EFB2E7E6F393AA826150C323F6F55:PE
+  member viogpu3d.sys:C2DAAEB4FE00347A1DD3B261AA1907395256A779:PE
+  member viogpu_wgl_x64.dll:CBACF48BA303706EBE8DFE8F0D683090B8FF7947:PE
+== verify
+  ok vgpusrv.exe
+  ok viogpu3d.sys
+  ok viogpuap.exe
+  ok x64/libvulkan_virtio_x64.dll
+  ok x64/viogpu_d3d10_x64.dll
+  ok x64/viogpu_wgl_x64.dll
+  ok x86/libvulkan_virtio_x86.dll
+  ok x86/viogpu_d3d10_x86.dll
+  ok x86/viogpu_wgl_x86.dll
+  ok viogpu3d.cat
+== runtime
+== installer
+== manifest and zip
+manifest: 28 files, driver 100.6.101.58100, PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+fe77d8811f644392a1eec1f98ec77a3337783f5b0ca1a6bdc3efa0d53711d8ef  vmlab-win3d-0.1.0.zip
+758057f5cc40f39ec14ec20c46d4ce3385e84d1bb65efdaec25513f13ec6f9c7  vmlab-win3d-0.1.0/manifest.json
+bundle: /home/wil/dev/vmlab-win3d-wt/package/.scratch/clone3/out/package/vmlab-win3d-0.1.0
+EXIT 0

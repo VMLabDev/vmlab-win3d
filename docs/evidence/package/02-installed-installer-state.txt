@@ -1,0 +1,82 @@
+## state.json
+{
+    "version":  "0.1.0",
+    "step":  null,
+    "last_error":  null,
+    "operation":  "Install",
+    "status":  "Installed",
+    "bundle_sha256":  "758057F5CC40F39EC14EC20C46D4CE3385E84D1BB65EFDAEC25513F13EC6F9C7",
+    "schema":  1,
+    "updated":  "2026-10-17T04:40:29.0360306-07:00",
+    "boot_id":  "2026-10-17T11:38:42.5000000Z",
+    "loader_installed":  {
+                             "x86/vulkan-1.dll":  "1B8122E8F09A5D4E6C70E100537742DD6049C26EE3261FE17188FB39B03491A9",
+                             "x64/vulkaninfo.exe":  "DB91A68B47786EE4FAD4DE0C24C6EEE0FE568D1EC0DD49A1103E8E4C0CE5034C",
+                             "x64/vulkan-1.dll":  "EAE9C602CE4705ACDA71DD74D3DEC1636EA4DCEBA3A86C8E2F9F2BDEFFF6BC05",
+                             "x86/vulkaninfo.exe":  "DE07EA7A6D344937CB1C0767B0B954B6B044F22D685E76FE6E28B71EA205E1FA"
+                         },
+    "native_d3d12_x64":  {
+                             "sha256":  "6B32181599D4D6373F0B49905236B122ED5545C5D061AB4350A80CC095DC15E4",
+                             "sddl":  "O:S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464G:S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464D:P(A;;0x1200a9;;;SY)(A;;0x1200a9;;;BA)(A;;0x1200a9;;;BU)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)(A;;0x1200a9;;;AC)(A;;0x1200a9;;;S-1-15-2-2)",
+                             "backup":  "C:\\ProgramData\\vmlab-win3d\\backup\\x64-d3d12.dll"
+                         },
+    "bridge_hashes":  [
+                          "B5D94F44466887CF5373C8550E3263425034A41E76B0AC11FE8C8A5229ACD9DA",
+                          "944CC70E1F65C907C13D598396CBCB2AB9478A231DD653A5DC62C70C8E6BAE02"
+                      ],
+    "native_d3d12_x86":  {
+                             "sha256":  "A43885B075B8043D9FE99F03B26B056B426E1B7D73FAB8D420F4E4FFCB5100AF",
+                             "sddl":  "O:S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464G:S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464D:P(A;;0x1200a9;;;SY)(A;;0x1200a9;;;BA)(A;;0x1200a9;;;BU)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)(A;;0x1200a9;;;AC)(A;;0x1200a9;;;S-1-15-2-2)",
+                             "backup":  "C:\\ProgramData\\vmlab-win3d\\backup\\x86-d3d12.dll"
+                         },
+    "installed":  "2026-10-17T04:40:29.0157105-07:00",
+    "installed_inf":  "oem15.inf",
+    "driver_version":  "100.6.101.58100"
+}
+
+## driver store (viogpu)
+oem15.inf 100.6.101.58100 C:\Windows\System32\DriverStore\FileRepository\viogpu3d.inf_amd64_3277819e3c850c24\viogpu3d.inf
+oem7.inf 100.101.104.28500 C:\Windows\System32\DriverStore\FileRepository\viogpudo.inf_amd64_d1816df2ef9c583c\viogpudo.inf
+## scheduled tasks
+vmlab-win3d-repair Ready
+## d3d12.dll owner and hash
+C:\Windows\System32\d3d12.dll NT SERVICE\TrustedInstaller B5D94F44466887CF5373C8550E3263425034A41E76B0AC11FE8C8A5229ACD9DA
+  O:S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464G:S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464D:PAI(A;;0x1200a9;;;SY)(A;;0x1200a9;;;BA)(A;;0x1200a9;;;BU)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)(A;;0x1200a9;;;AC)(A;;0x1200a9;;;S-1-15-2-2)
+C:\Windows\SysWOW64\d3d12.dll NT SERVICE\TrustedInstaller 944CC70E1F65C907C13D598396CBCB2AB9478A231DD653A5DC62C70C8E6BAE02
+  O:S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464G:S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464D:PAI(A;;0x1200a9;;;SY)(A;;0x1200a9;;;BA)(A;;0x1200a9;;;BU)(A;;FA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464)(A;;0x1200a9;;;AC)(A;;0x1200a9;;;S-1-15-2-2)
+## private dirs
+C:\Windows\System32\vmlab-win3d\d3d12-native.dll 6B32181599D4D6373F0B49905236B122ED5545C5D061AB4350A80CC095DC15E4
+C:\Windows\System32\vmlab-win3d\dxgi-vulkan.dll E8C6B7D855C54BF4A7625F6E32FC3B1DBFDB552FF5361649066F814E80F6C76B
+C:\Windows\System32\vmlab-win3d\vkd3dcore.dll D972DE771CB2FA8940735A481C7D96A7BA7E618B695A92743CFAC67B43DD68AD
+C:\Windows\SysWOW64\vmlab-win3d\d3d12-native.dll A43885B075B8043D9FE99F03B26B056B426E1B7D73FAB8D420F4E4FFCB5100AF
+C:\Windows\SysWOW64\vmlab-win3d\dxgi-vulkan.dll 2C0387962A8D822385B05E56A843541CA75407FEE1A6FBB48B42CF2643640E0C
+C:\Windows\SysWOW64\vmlab-win3d\vkd3dcore.dll 9331694D07DC260DB154A3E45DB30BD9AA554698A9515F6AC1660AF4DAB766EF
+## services
+vgpusrv Running
+VioGpu3D Running
+## certificates
+LocalMachine\Root 05ED0AC6E2DB2C7465641CAF68936B3A2B22B71A
+LocalMachine\TrustedPublisher 05ED0AC6E2DB2C7465641CAF68936B3A2B22B71A
+## powercfg /a
+The following sleep states are available on this system:
+    Standby (S3)
+
+The following sleep states are not available on this system:
+    Standby (S1)
+	The system firmware does not support this standby state.
+
+    Standby (S2)
+	The system firmware does not support this standby state.
+
+    Hibernate
+	Hibernation has not been enabled.
+
+    Standby (S0 Low Power Idle)
+	The system firmware does not support this standby state.
+
+    Hybrid Sleep
+	Hibernation is not available.
+
+    Fast Startup
+	Hibernation is not available.
+

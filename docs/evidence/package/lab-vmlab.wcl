@@ -1,0 +1,25 @@
+import <vmlab.wcl>
+
+// Minimal lab that gives a Windows 11 guest a working Venus device on this
+// host (AMD iGPU, RADV, /dev/dri/renderD129) with vmlab v0.23.0-alpha.
+// See docs/host.md. Bring it up through ./vmlab-amd.sh, not plain vmlab:
+// QEMU also needs VK_DRIVER_FILES in its environment, which a lab file
+// cannot set.
+lab "win3d-package-b" {
+  vm "win11" {
+    template = "x86_64/windows-11@26100.1742.5"
+    // The template's windows-11 profile turns Secure Boot on; test-signed
+    // Yttrium needs it off.
+    secure_boot = false
+    gpu { mode = "vulkan" }
+    qemu_args = [
+      // QEMU 11.1.1 refuses venus=true without blob=true.
+      "-global", "virtio-gpu-gl-device.blob=true",
+      // gpu{} emits virtio-gpu-gl (no VGA), so q35 adds its default std VGA.
+      // With that second adapter in the guest, Venus enumerates no device.
+      "-vga", "none",
+      // egl-headless must share the render node Venus uses, or the console is black.
+      "-display", "egl-headless,rendernode=/dev/dri/renderD129",
+    ]
+  }
+}
