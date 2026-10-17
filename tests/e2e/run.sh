@@ -130,6 +130,18 @@ lab_up() {
     sed -e "s/\"win3d-e2e-windows-11\"/\"$LAB\"/" \
         -e "s#\"x86_64/windows-11@[^\"]*\"#\"x86_64/$TEMPLATE@$VER\"#" \
         "$REPO/labs/acceptance/vmlab.wcl" >"$LABDIR/vmlab.wcl"
+    # vmlab 0.25 moved the GPU address into the host config: the lab names a
+    # host GPU with host_gpu, and without one takes the host's default, which
+    # may be an NVIDIA card Venus does not work on. Name the host config's GPU
+    # at the lab file's address, and refuse to start when there is none.
+    if [ "$(printf '%s\n' 0.25 "$(vmlab --version | awk '{print $2}')" | sort -V | head -1)" = 0.25 ]; then
+        local addr name
+        addr=$(sed -n 's/^ *address *= *"\([^"]*\)".*/\1/p' "$LABDIR/vmlab.wcl")
+        name=$(sed -n "s/^ *gpu *\"\([^\"]*\)\" *{[^}]*address *= *\"$addr\".*/\1/p" "$HOME/.config/vmlab/config.wcl" 2>/dev/null | head -1)
+        [ -n "$name" ] || { note "vmlab >= 0.25: no gpu with address $addr in ~/.config/vmlab/config.wcl"; return 1; }
+        note "vmlab >= 0.25: gpu address $addr is host GPU \"$name\""
+        sed -i "s/^\( *\)address *= *\"$addr\"/\1host_gpu = \"$name\"/" "$LABDIR/vmlab.wcl"
+    fi
     cp "$LABDIR/vmlab.wcl" "$EV/lab-vmlab.wcl"
     in_lab vmlab validate || return 1
     in_lab vmlab up || return 1
