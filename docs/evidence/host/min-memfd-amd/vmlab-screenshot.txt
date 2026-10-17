@@ -1,0 +1,2 @@
+qmp command failed: GenericError: no surface
+rc=1

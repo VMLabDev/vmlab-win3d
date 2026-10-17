@@ -1,0 +1,4 @@
+lines: 3
+      1  vkr: destroying device with valid objects
+      1  vkr: destroying context 20 (yttrium) with a valid instance
+      1  vkr: destroying context 16 (yttrium) with a valid instance

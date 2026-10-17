@@ -1,0 +1,2 @@
+/home/wil/dev/vmlab-win3d-wt/host-probe/.scratch/results/gpu-blob-amd/vmlab-screenshot.png
+rc=0
