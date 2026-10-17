@@ -229,7 +229,7 @@ out = {'frames': len(frames), 'frames_with_window': len(seen), 'visible': bool(s
 if seen:
     pick = seen[len(seen) // 2]
     png = f'console-{name}.png'
-    subprocess.run(['magick', pick['png'], '-resize', '50%', '-strip', '-define', 'png:compression-level=9',
+    subprocess.run(['magick', pick['png'], '-resize', '50%', '-strip', '-colors', '256', '-define', 'png:compression-level=9',
                     os.path.join(ev, png)], check=True)
     out['png'] = png
     out['window'] = pick['probe_window']
@@ -247,7 +247,7 @@ tests() {
     # Dismiss the Start menu a first logon can leave open over the probe windows.
     in_lab vmlab vm sendkeys "$VM" esc || true
     sleep 2
-    capture desktop && magick "$WORK/shots/desktop.png" -resize 50% -strip "$EV/console-desktop.png"
+    capture desktop && magick "$WORK/shots/desktop.png" -resize 50% -strip -colors 256 "$EV/console-desktop.png"
 
     say "5a vulkaninfo --summary"
     gfile 600 'C:\win3d\e2e\Invoke-Vulkaninfo.ps1' >"$WORK/raw/vulkaninfo.out" 2>&1 || true

@@ -1,0 +1,19 @@
+import <vmlab.wcl>
+
+// Acceptance lab for tests/e2e/run.sh: the labs/probe/vmlab.wcl shape
+// (vmlab >= 0.24.0-alpha; docs/host.md, docs/install.md). run.sh copies this
+// file into .scratch/e2e/<template>/lab/ and rewrites the lab name and the
+// template line for --template; as committed it is the windows-11 lab.
+lab "win3d-e2e-windows-11" {
+  vm "win" {
+    template = "x86_64/windows-11@26100.1742.5"
+    // The package is test-signed (decision 0001); Secure Boot must be off.
+    secure_boot = false
+    // 0000:72:00.0 is the AMD iGPU (RADV, renderD129); Venus on the RTX 5090s
+    // does not work yet (docs/known-limits.md).
+    gpu {
+      mode    = "vulkan"
+      address = "0000:72:00.0"
+    }
+  }
+}

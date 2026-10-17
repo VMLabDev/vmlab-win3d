@@ -1,0 +1,3 @@
+WARNING: [Loader Message] Code 0 : windows_read_data_files_in_registry: Registry lookup failed to get layer manifest files.
+WARNING: [Loader Message] Code 0 : Path to given binary C:\WINDOWS\SysWOW64\libvulkan_virtio.dll was found to differ from OS loaded path C:\WINDOWS\System32\libvulkan_virtio.dll
+exit -1073741819 
