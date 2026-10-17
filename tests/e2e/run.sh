@@ -138,7 +138,12 @@ lab_up() {
 
 prepare_guest() {
     say "3 guest scripts, probes and the baseline"
-    gps 'New-Item -ItemType Directory -Force C:\win3d\results | Out-Null' >/dev/null || return 1
+    local i
+    for i in 1 2 3 4 5; do
+        gps 'New-Item -ItemType Directory -Force C:\win3d\results | Out-Null' 60 >/dev/null && break
+        [ "$i" = 5 ] && return 1
+        note "guest not ready (try $i); waiting for the agent"; sleep 20; wait_agent
+    done
     in_lab vmlab cp "$REPO/tests/guest" "$VM:C:/win3d/guest" || return 1
     in_lab vmlab cp "$HERE/guest" "$VM:C:/win3d/e2e" || return 1
     in_lab vmlab cp "$REPO/out/probes/x64" "$VM:C:/win3d/probes/x64" || return 1
@@ -157,6 +162,27 @@ prepare_guest() {
     say "3b test desktop (autologon user win3d)"
     gfile 300 'C:\win3d\guest\Set-TestDesktop.ps1' -Reboot >"$EV/test-desktop.txt" 2>&1 || true
     sleep 60; wait_agent || return 1
+    autologon before-install
+}
+
+autologon() { # autologon NAME: record the Winlogon autologon values (not the password)
+    gps '$w = Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+        foreach ($n in "AutoAdminLogon", "DefaultUserName", "DefaultDomainName", "AutoLogonCount", "ForceAutoLogon") { "{0}={1}" -f $n, $w.$n }
+        "DefaultPassword set={0}" -f [bool]$w.DefaultPassword
+        "console user={0}" -f (Get-CimInstance Win32_ComputerSystem).UserName' 60 >"$EV/autologon-$1.txt" 2>&1
+    note "autologon $1: $(tr '\n' ' ' <"$EV/autologon-$1.txt")"
+}
+
+session_tests() {
+    # The autologon must survive the install's reboots for the session tests;
+    # if it did not, set it up again (and the evidence shows it).
+    autologon after-install
+    if ! grep -q '^AutoAdminLogon=1' "$EV/autologon-after-install.txt"; then
+        note "autologon gone after install; running Set-TestDesktop.ps1 -Reboot again"
+        gfile 300 'C:\win3d\guest\Set-TestDesktop.ps1' -Reboot >>"$EV/test-desktop.txt" 2>&1
+        sleep 60; wait_agent; autologon after-redo
+    fi
+    tests
 }
 
 install() {
@@ -307,8 +333,8 @@ if ! build; then STAGE="build failed"
 elif ! lab_up; then STAGE="lab bring-up failed"
 else
     if ! prepare_guest; then STAGE="guest preparation failed"
-    elif ! install; then STAGE="install failed"; tests; collect
-    else tests; collect || STAGE="collect failed"
+    elif ! install; then STAGE="install failed"; session_tests; collect
+    else session_tests; collect || STAGE="collect failed"
     fi
 fi
 teardown
