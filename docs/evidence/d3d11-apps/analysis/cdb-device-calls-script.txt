@@ -1,0 +1,26 @@
+sxd av
+sxd eh
+
+bu d3d11!D3D11CreateDevice-0x83d80+0x79d80 ".printf \"CreateBuffer\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bu d3d11!D3D11CreateDevice-0x83d80+0xc1710 ".printf \"CreateTexture1D\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bu d3d11!D3D11CreateDevice-0x83d80+0xdce0 ".printf \"CreateTexture2D\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bu d3d11!D3D11CreateDevice-0x83d80+0x8ae10 ".printf \"CreateTexture3D\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bu d3d11!D3D11CreateDevice-0x83d80+0x63ba0 ".printf \"CreateSRV\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bu d3d11!D3D11CreateDevice-0x83d80+0x6d200 ".printf \"CreateUAV\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bu d3d11!D3D11CreateDevice-0x83d80+0x607b0 ".printf \"CreateRTV\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bu d3d11!D3D11CreateDevice-0x83d80+0x7b2a0 ".printf \"CreateDSV\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bu d3d11!D3D11CreateDevice-0x83d80+0x72090 ".printf \"CreateInputLayout\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bu d3d11!D3D11CreateDevice-0x83d80+0x84b20 ".printf \"CreateVertexShader\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bu d3d11!D3D11CreateDevice-0x83d80+0x92750 ".printf \"CreateGeometryShader\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bu d3d11!D3D11CreateDevice-0x83d80+0xc10b0 ".printf \"CreateGSWithSO\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bu d3d11!D3D11CreateDevice-0x83d80+0x82cb0 ".printf \"CreatePixelShader\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bu d3d11!D3D11CreateDevice-0x83d80+0x8c640 ".printf \"CreateHullShader\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bu d3d11!D3D11CreateDevice-0x83d80+0x8a100 ".printf \"CreateDomainShader\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bu d3d11!D3D11CreateDevice-0x83d80+0x87100 ".printf \"CreateComputeShader\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bu d3d11!D3D11CreateDevice-0x83d80+0xc0ee0 ".printf \"CreateClassLinkage\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bu d3d11!D3D11CreateDevice-0x83d80+0x84a50 ".printf \"CreateBlendState\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bu d3d11!D3D11CreateDevice-0x83d80+0x8a950 ".printf \"CreateDepthStencilState\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bu d3d11!D3D11CreateDevice-0x83d80+0x8d8a0 ".printf \"CreateRasterizerState\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bu d3d11!D3D11CreateDevice-0x83d80+0x7faf0 ".printf \"CreateSamplerState\\n\"; gu; .if (@eax & 0x80000000) { .printf \"  FAILED %x\\n\", @eax; k 8 } ; g"
+bp user32!MessageBoxW "k 8; q"
+g

@@ -1,0 +1,8 @@
+# tess_probe.exe on HARDWARE with 0015 applied and 0016 not yet applied (from
+# the investigation lab). Values 0-16 matched; value 17 (SubD11's light loop
+# over an immediate constant buffer, icb[r + 4]) did not. WARP matched all 72.
+sel 17 patch 0: got (0.3529, -0.395465, -0.584927, 1) want (0.789348, 0.569357, 0.11645, 1) MISMATCH  [pixel-shader loop over an immediate constant buffer, k=1]
+sel 17 patch 1: got (0.419096, -0.476738, -0.757292, 1) want (0.989534, 0.723898, 0.183767, 1) MISMATCH  [pixel-shader loop over an immediate constant buffer, k=1]
+sel 17 patch 2: got (-0.108644, -0.080085, -0.560652, 1) want (0.537794, 0.513437, 0.50853, 1) MISMATCH  [pixel-shader loop over an immediate constant buffer, k=1]
+sel 17 patch 3: got (-0.487709, -0.00987833, -0.286189, 1) want (0.422922, 0.502697, 0.658165, 1) MISMATCH  [pixel-shader loop over an immediate constant buffer, k=1]
+4 mismatches
