@@ -11,52 +11,51 @@ virtio-gpu Venus, with no per-application files or settings.
 On the host:
 
 - Docker, usable without sudo, and network access for the pinned downloads.
-- vmlab 0.23 or later, and the local `windows-11` (or `windows-10`) template.
-- An AMD GPU with RADV for Venus. On this host that is the iGPU,
-  `/dev/dri/renderD129`; Venus on the NVIDIA RTX 5090 does not work yet
-  (prior-art §8.1, `docs/host.md`).
+- vmlab 0.24.0-alpha or later, and the local `windows-11` (or `windows-10`)
+  template. Earlier vmlab versions do not give the guest a working Venus
+  device; `docs/host.md` records why.
+- An AMD GPU with RADV for Venus. On this host that is the iGPU at PCI
+  address `0000:72:00.0` (`/dev/dri/renderD129`); Venus on the NVIDIA RTX
+  5090 does not work yet (`docs/known-limits.md`).
 
-For the lab, the VM needs what `labs/probe/vmlab.wcl` sets up (measured in
-`docs/host.md`):
+The VM needs two settings, as in `labs/probe/vmlab.wcl`:
 
 | Setting | Why |
 | --- | --- |
 | `secure_boot = false` | The package is test-signed (decision 0001). Windows ignores `testsigning` while Secure Boot is on, so `Install.cmd` refuses to run. This cannot be changed from inside the guest. |
-| `gpu { mode = "vulkan" }` | vmlab's Venus mode: a `virtio-gpu-gl` device with `venus=true`. The KMD needs its `VIRTIO_GPU_F_VIRGL` feature. The INF matches its hardware ID, `PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01`. |
-| `-global virtio-gpu-gl-device.blob=true` | QEMU 11.1.1 refuses `venus=true` without blob resources. |
-| `-vga none` | Without it q35 adds a second, standard VGA adapter, and Venus then enumerates no device. |
-| `-display egl-headless,rendernode=/dev/dri/renderD129` | Renders on the AMD iGPU; the console must use the same render node as Venus. |
-| `VK_DRIVER_FILES=/usr/share/vulkan/icd.d/radeon_icd.json` in the vmlab **supervisor's** environment | QEMU's virglrenderer must pick RADV. A running supervisor keeps the environment it started with, so `labs/probe/vmlab-amd.sh` runs vmlab against its own isolated supervisor. |
+| `gpu { mode = "vulkan" address = "0000:72:00.0" }` | vmlab's Venus mode. vmlab 0.24 emits one `virtio-vga-gl,venus=true,blob=true,hostmem=4G` adapter. `address` names the host GPU: vmlab puts egl-headless on its render node and sets `VK_LOADER_DRIVERS_SELECT` in QEMU's environment, so virglrenderer uses RADV. The KMD needs the device's `VIRTIO_GPU_F_VIRGL` feature; the INF matches its hardware ID, `PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01`. |
 
-The lab used for the evidence in `docs/evidence/package/` is that file with
-another lab name:
+Find the address of an AMD GPU with `lspci -D | grep -i vga`, or from
+`/sys/class/drm/renderD*/device`. `gpu.vulkan_icd = "<path to ICD JSON>"`
+overrides the ICD choice when the driver name is not enough.
+
+A lab for the package:
 
 ```wcl
 import <vmlab.wcl>
 
-lab "win3d-package-b" {
+lab "win3d-package" {
   vm "win11" {
     template = "x86_64/windows-11@26100.1742.5"
     secure_boot = false
-    gpu { mode = "vulkan" }
-    qemu_args = [
-      "-global", "virtio-gpu-gl-device.blob=true",
-      "-vga", "none",
-      "-display", "egl-headless,rendernode=/dev/dri/renderD129",
-    ]
+    gpu {
+      mode    = "vulkan"
+      address = "0000:72:00.0"
+    }
   }
 }
 ```
 
-Bring it up with an isolated supervisor that has the RADV ICD, as
-`labs/probe/vmlab-amd.sh` does:
+Bring it up with plain `vmlab up`. QEMU's log, `qemu.log` in the VM's state
+directory, starts with `vmlab: argv:` and `vmlab: env:` lines, so you can
+check the device line and the ICD filter there.
 
-```sh
-export XDG_RUNTIME_DIR=/tmp/win3d-run XDG_STATE_HOME=$PWD/.scratch/state
-mkdir -p -m 700 "$XDG_RUNTIME_DIR"
-export VK_DRIVER_FILES=/usr/share/vulkan/icd.d/radeon_icd.json
-vmlab up
-```
+The evidence in `docs/evidence/package/` predates vmlab 0.24. It used vmlab
+0.23 with `qemu_args` and an isolated supervisor that had
+`VK_DRIVER_FILES=/usr/share/vulkan/icd.d/radeon_icd.json` in its environment
+(`docs/evidence/package/lab-vmlab.wcl`, `docs/host.md`). The guest sees the
+same device either way: `virtio-vga-gl` and `virtio-gpu-gl` present the same
+PCI ID.
 
 ## 1. Build
 
@@ -111,8 +110,7 @@ It copies the bundle to `C:\vmlab-win3d` in the guest (`vmlab cp`), runs
 `C:\ProgramData\vmlab-win3d\state.json` says `Installed`. It exits 0 on
 success, 1 on failure (and prints the end of the journal), and 124 on a
 timeout (`INSTALL_TIMEOUT`, default 2400 s). `--bundle DIR` installs another
-bundle; `VMLAB=<command>` runs another vmlab, such as the isolated wrapper
-above.
+bundle; `VMLAB=<command>` runs another vmlab binary.
 
 ### In the guest
 
