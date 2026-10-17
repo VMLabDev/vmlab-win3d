@@ -1,7 +1,7 @@
 {
   "x64-d3d9_probe": {
-    "frames": 11,
-    "frames_with_window": 8,
+    "frames": 12,
+    "frames_with_window": 9,
     "visible": true,
     "animating": true,
     "png": "console-x64-d3d9_probe.png",
@@ -13,7 +13,7 @@
         "blue",
         "green"
       ],
-      "crc": "b2d6c488"
+      "crc": "e061487e"
     }
   },
   "x86-d3d9_probe": {
@@ -30,7 +30,7 @@
         "blue",
         "green"
       ],
-      "crc": "6db6a2bf"
+      "crc": "ade91391"
     }
   },
   "x64-d3d11_probe": {
@@ -47,12 +47,12 @@
         "blue",
         "green"
       ],
-      "crc": "a6f080c5"
+      "crc": "7af3b31e"
     }
   },
   "x86-d3d11_probe": {
     "frames": 12,
-    "frames_with_window": 10,
+    "frames_with_window": 9,
     "visible": true,
     "animating": true,
     "png": "console-x86-d3d11_probe.png",
@@ -64,7 +64,7 @@
         "blue",
         "green"
       ],
-      "crc": "b47665c9"
+      "crc": "9ac79937"
     }
   },
   "x64-d3d12_probe": {
@@ -81,7 +81,7 @@
         "blue",
         "green"
       ],
-      "crc": "8fe7fc0f"
+      "crc": "5e360908"
     }
   },
   "x86-d3d12_probe": {
@@ -98,7 +98,7 @@
         "blue",
         "green"
       ],
-      "crc": "740b3537"
+      "crc": "a3324bca"
     }
   },
   "x64-opengl_probe": {
@@ -115,7 +115,7 @@
         "blue",
         "green"
       ],
-      "crc": "fb6f68e2"
+      "crc": "83a23e57"
     }
   },
   "x86-opengl_probe": {
@@ -132,12 +132,12 @@
         "blue",
         "green"
       ],
-      "crc": "576cdee0"
+      "crc": "10996912"
     }
   },
   "x64-vulkan_probe": {
     "frames": 12,
-    "frames_with_window": 10,
+    "frames_with_window": 9,
     "visible": true,
     "animating": true,
     "png": "console-x64-vulkan_probe.png",
@@ -149,12 +149,12 @@
         "blue",
         "green"
       ],
-      "crc": "5d6873af"
+      "crc": "0eb7628a"
     }
   },
   "x86-vulkan_probe": {
     "frames": 12,
-    "frames_with_window": 10,
+    "frames_with_window": 9,
     "visible": true,
     "animating": true,
     "png": "console-x86-vulkan_probe.png",
@@ -166,7 +166,7 @@
         "blue",
         "green"
       ],
-      "crc": "5db44627"
+      "crc": "a4bef62f"
     }
   }
 }

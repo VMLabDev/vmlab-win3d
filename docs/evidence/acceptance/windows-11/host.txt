@@ -1,6 +1,6 @@
-date: 2026-10-17T17:00:52+10:00
-commit: b3e179837e76ff7ebf013ce90e60a586af5138a2
-worktree changes: 0 outside docs/evidence/acceptance/ (the run recorded 60: its own removal of the previous evidence files; the filter was fixed after this run)
+date: 2026-10-17T20:46:37+10:00
+commit: 82ec390e34e251f3e00d9da673ff917305a2740c
+worktree changes: 0
 template: x86_64/windows-11@26100.1742.5
 kernel: 7.2.3-1-cachyos
 qemu: QEMU emulator version 11.1.1

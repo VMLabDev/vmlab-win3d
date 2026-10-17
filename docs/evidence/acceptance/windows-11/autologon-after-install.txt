@@ -1,6 +1,6 @@
 AutoAdminLogon=
 DefaultUserName=
-DefaultDomainName=VMLABVM-I35OR5S
+DefaultDomainName=VMLABVM-LLQ4RGQ
 AutoLogonCount=
 ForceAutoLogon=
 DefaultPassword set=True
