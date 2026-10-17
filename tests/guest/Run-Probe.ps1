@@ -48,7 +48,7 @@ if (-not $Name) {
     # x64\d3d11_probe.exe -> x64-d3d11_probe, so x86 and x64 runs do not collide.
     $Name = (Split-Path -Leaf (Split-Path -Parent $Path)) + '-' + [IO.Path]::GetFileNameWithoutExtension($Path)
 }
-if ($TimeoutSec -le 0) { $TimeoutSec = $Seconds + 120 }
+if ($TimeoutSec -le 0) { $TimeoutSec = $Seconds + 300 }
 New-Item -ItemType Directory -Path $OutDir -Force | Out-Null
 $OutDir = (Resolve-Path -LiteralPath $OutDir).ProviderPath
 
@@ -159,8 +159,9 @@ $exitCode = $null
 $taskResult = $null
 try {
     Start-ScheduledTask -TaskName $taskName
-    # Find the process the task started.
-    $deadline = $started.AddSeconds(30)
+    # Find the process the task started. A task stays Queued until the user's
+    # logon has finished, so allow for that.
+    $deadline = $started.AddSeconds(180)
     $escaped = $Path.Replace('\', '\\').Replace("'", "\'")
     while (-not $proc -and (Get-Date) -lt $deadline) {
         $cim = Get-CimInstance Win32_Process -Filter "ExecutablePath='$escaped'" |
@@ -172,8 +173,8 @@ try {
             } catch { $proc = $null }
         }
         if (-not $proc) {
-            $info = Get-ScheduledTaskInfo -TaskName $taskName
-            if ((Get-ScheduledTask -TaskName $taskName).State -ne 'Running' -and $info.LastRunTime -gt [datetime]'2000-01-01') {
+            $state = "$((Get-ScheduledTask -TaskName $taskName).State)"
+            if ($state -ne 'Running' -and $state -ne 'Queued' -and ((Get-Date) - $started).TotalSeconds -gt 5) {
                 break  # the task already ended
             }
             Start-Sleep -Milliseconds 200
@@ -210,7 +211,7 @@ try {
     }
     # The task result is the exit code too; wait for the scheduler to record it.
     for ($i = 0; $i -lt 20; $i++) {
-        if ((Get-ScheduledTask -TaskName $taskName).State -ne 'Running') { break }
+        if ("$((Get-ScheduledTask -TaskName $taskName).State)" -notin @('Running', 'Queued')) { break }
         Start-Sleep -Milliseconds 250
     }
     $taskResult = (Get-ScheduledTaskInfo -TaskName $taskName).LastTaskResult
