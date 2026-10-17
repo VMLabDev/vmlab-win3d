@@ -64,14 +64,26 @@ The Meson options are the prior art's (`R/build.sh`, prior-art section 6):
 
 ## Patches
 
-The codex session left its fixes uncommitted in `R/mesa`, and its exported
-`R/mesa-driver.patch` is stale (prior-art section 3). The series in
-`patches/mesa/` was re-exported from `git diff 374c3022` of that working tree.
-It had 43 changed files, +1793/−161, and two untracked files. The two untracked
-files are the mixed-case header symlinks that `prepare-build.py` creates, so
-they are build output, not source. The diff was then split by topic. Each
-patch has a header that says what it fixes and which prior-art finding it
-comes from. The patches apply in name order.
+The series has two parts, and the patches apply in name order:
+
+- **0001 to 0011** come from the prior art. The codex session left its fixes
+  uncommitted in `R/mesa`, and its exported `R/mesa-driver.patch` is stale
+  (prior-art section 3). These patches were re-exported from
+  `git diff 374c3022` of that working tree. It had 43 changed files,
+  +1793/−161, and two untracked files. The two untracked files are the
+  mixed-case header symlinks that `prepare-build.py` creates, so they are
+  build output, not source. The diff was then split by topic. Each patch has
+  a header that says what it fixes and which prior-art finding it comes from.
+- **0012 to 0017, 0020 and 0021** are this repository's own fixes, found by
+  the acceptance and host runs. Each header names the document with the
+  evidence. The series skips 0018 and 0019.
+
+0005 to 0010 and every patch from 0012 on change `viogpu_d3d10.dll`, the
+D3D9/D3D10/D3D11 UMD (the `d3d10umd` frontend and the Yttrium winsys). 0001
+to 0003 are build and utility fixes that every DLL shares, 0004 is in WGL,
+and 0011 is in the Venus ICD.
+
+### From the prior art
 
 | Patch | Fixes | Prior art |
 | --- | --- | --- |
@@ -87,7 +99,23 @@ comes from. The patches apply in name order.
 | 0010 dxgi-blt-scaled-srgb-safe | DXGI present Blt scaling with sRGB-safe copies | F99–F100 (non-XR part) |
 | 0011 venus-win32-nt-memory | Venus opaque Win32 (NT handle) memory export and import | F69–F71 |
 
-Applied in order to the pinned tarball, the series gives exactly the codex
+### This repository's fixes
+
+| Patch | Fixes | Explained in |
+| --- | --- | --- |
+| 0012 d3d9-directdraw-hal-caps | The D3D9 UMD answers DirectDraw's `GETD3D7CAPS` and `GETD3D8CAPS` queries, so DirectDraw keeps its HAL and dxdiag reports DDraw and AGP Enabled | [`docs/dxdiag.md`](../../docs/dxdiag.md) |
+| 0013 d3d9-write-only-lock-keeps-contents | A write-only D3D9 lock no longer loses the texels the caller did not write (DirectDraw's emulated colour-key and mirror blits) | [`docs/dxdiag.md`](../../docs/dxdiag.md) |
+| 0014 d3d9-ddraw-surfaces-are-present-sources | DirectDraw plain surfaces are display targets, so a windowed DirectDraw primary Blt shows | [`docs/dxdiag.md`](../../docs/dxdiag.md) |
+| 0015 d3d10umd-hull-shader-vprim-and-indexed-patch-io | Hull shaders with `vPrim`, indexed patch-constant outputs and indexed control-point reads translate (SubD11's device was removed) | [`docs/d3d11-apps.md`](../../docs/d3d11-apps.md) |
+| 0016 d3d10umd-immediate-constant-buffer-relative-offset | `icb[r + n]` reads keep their offset (SubD11 rendered purple) | [`docs/d3d11-apps.md`](../../docs/d3d11-apps.md) |
+| 0017 yttrium-honour-wireframe-fill-mode | `D3D11_FILL_WIREFRAME` draws wireframe when the host has `fillModeNonSolid` | [`docs/d3d11-apps.md`](../../docs/d3d11-apps.md) |
+| 0020 yttrium-gate-feedback-loop-usage-on-format-support | Drops `ATTACHMENT_FEEDBACK_LOOP` usage when the host driver refuses it for the image (NVIDIA rejects it on LINEAR images; dwm crashed before logon) | [`docs/nvidia.md`](../../docs/nvidia.md) |
+| 0021 yttrium-d3d11-typed-uav-loads-without-formatless-read | WDDM 2.0 D3D11 devices are created without `shaderStorageImageReadWithoutFormat`, with R32 typed UAV loads only, and GetCaps reports `TypedUAVLoadAdditionalFormats` from the host (Intel ANV; dwm crash-looped) | [`docs/zeus.md`](../../docs/zeus.md) |
+
+0021 has no mail header. `scripts/pins-table.py` carries its one-line
+description.
+
+Applied in order to the pinned tarball, 0001 to 0011 give exactly the codex
 tree minus the parts listed below. This was checked by comparing git tree
 hashes.
 
@@ -106,9 +134,22 @@ Mesa tree; that work was in vkd3d-proton. The error-level `mesa_loge` lines in
 the Venus NT memory path are failure reports, not diagnostics, so 0011 keeps
 them.
 
-None of these patches has been run in a guest since the re-export. The
-evidence for each is the codex session's own finding, cited in the patch
-header.
+Which patches have run in a guest, and where:
+
+| Run | Mesa patches in the package | Evidence |
+| --- | --- | --- |
+| Acceptance, Windows 11 and Windows 10, AMD | 0001 to 0014, 0020 | `docs/acceptance.md` |
+| D3D11 samples, Windows 11, AMD | 0001 to 0017, 0020 | `docs/d3d11-apps.md` |
+| Zeus Intel and the helios AMD regression, Windows 11 | 0001 to 0014, 0020, 0021 | `docs/zeus.md` |
+
+No recorded run has the full current series, 0015 to 0017 together with
+0021. The two sets touch different code (shader translation and fill mode
+against device creation and typed UAV loads). The full series applies to the
+pinned tarball and builds (`build/mesa/build.sh` on 2026-10-17, hashes under
+[Reproducibility](#reproducibility)), but that build has not run in a guest. The runs
+cover the code paths that the probes, dxdiag and the samples reach, not every
+fix in 0001 to 0011; for the rest, the evidence is the codex session's own
+finding, cited in the patch header.
 
 ## Reproducibility
 
@@ -124,7 +165,8 @@ for all eight outputs:
 The build sets `SOURCE_DATE_EPOCH=0`, `-ffile-prefix-map=<work>=/mesa` and
 `--no-insert-timestamp`, and mounts the checkout at the fixed path `/w`.
 No other machine was tried. Toolchain image
-`vmlab-win3d/toolchain:ab524e07f89c`, 2026-10-17:
+`vmlab-win3d/toolchain:ab524e07f89c`, 2026-10-17. These hashes are for the
+series as it was then, 0001 to 0011:
 
 ```
 a417f90c7e82ffda1f88ef8365da2f3cc225bca282b7b320a365fb0b844df262  mesa/x64/libvulkan_virtio.dll
@@ -135,4 +177,14 @@ a4b09b58804984d91719f75fdacdf69c7f9ff7c731f90a5f615be189d5360800  mesa/x86/libvu
 f50cf4dd0b1804599bc6c72832bd07faefd93a7a25fe8b4585c07ff393a349e3  mesa/x86/viogpu_d3d10.dll
 eebe236cb7a97e2bdd540c9d68709f132e48aa887d39374b649c655df5691b3e  mesa/x86/viogpu_wgl.dll
 69e6a7c23226a0c1c854f9b8ac340cedc361ad2db66fe6aa7733c8e060e03151  mesa/x86/virtio_icd.json
+```
+
+The full series, 0001 to 0021, built once on 2026-10-17 with the same
+toolchain image, changes only `viogpu_d3d10.dll`. The other six files keep
+the hashes above, which fits every patch after 0011 being in the UMD.
+This build was not repeated, so its bit-reproducibility is not checked:
+
+```
+a43c70d4e56407055e438a6fc831f61ad9c9e458d98ef9937c360a3863fca2fb  mesa/x64/viogpu_d3d10.dll
+657e89272ed867033f03a71204d39a30b5063f0e4b275b0a7a7ecd428813dd7e  mesa/x86/viogpu_d3d10.dll
 ```

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the pin and patch tables in docs/stack.md from build/*/PINS and patches/.
+"""Generate the pin and patch tables in docs/stack.md from build/*/PINS, patches/host/PINS and patches/.
 
 usage: scripts/pins-table.py           print both tables
        scripts/pins-table.py --write   rewrite the generated blocks in docs/stack.md
@@ -8,6 +8,11 @@ usage: scripts/pins-table.py           print both tables
 Each build/<component>/PINS has its own line format (see the header of each
 file). The parsers below read every format in the repository and fail on a
 line they do not understand, so a new PINS format cannot be skipped silently.
+
+The patch table lists every *.patch under patches/, recursively (patches/host/
+has one directory per host component). Each row links the document that
+explains the patch: the first docs/*.md its header names, else DOC_OVERRIDE,
+else DOC_DEFAULT for its directory.
 """
 import argparse
 import difflib
@@ -20,10 +25,36 @@ STACK = REPO / "docs" / "stack.md"
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 
-# Patches whose file has no "Subject:" header.
+# Patches whose file has no "Subject:" header, by path under patches/.
 SUBJECT_FALLBACK = {
     "kmd/0001-kmd-r10-copy.patch":
         "Convert R10G10B10A2 sources to 8-bit RGBA or BGRA in the KMD's CPU present blit (the prior art's r10 KMD)",
+    "mesa/0021-yttrium-d3d11-typed-uav-loads-without-formatless-read.patch":
+        "d3d10umd, yttrium: create WDDM 2.0 D3D11 devices without formatless storage-image reads; "
+        "R32 typed UAV loads only, and TypedUAVLoadAdditionalFormats from the host (Intel ANV)",
+    "host/qemu/0001-ui-egl-headless-external-only-dmabuf-scanouts.patch":
+        "ui/egl-headless: show LINEAR scanout dma-bufs that the host EGL imports as external only (NVIDIA)",
+    "host/virglrenderer/0001-vkr-log-image-creation.patch":
+        "vkr: log failed image creation and memory allocation, with the create-info (diagnostic render server)",
+    "host/virglrenderer/workaround/0002-vkr-drop-unsupported-feedback-loop-usage.patch":
+        "vkr: retry vkCreateImage and the image-format queries without feedback-loop usage "
+        "(superseded by mesa/0020; built only with WITH_WORKAROUND=1)",
+}
+
+# The document that explains a patch, by directory under patches/, when its
+# header names no docs/*.md (paths relative to the repository root).
+DOC_DEFAULT = {
+    "dxvk": "build/d3d12/README.md",
+    "kmd": "build/kmd/README.md",
+    "mesa": "build/mesa/README.md",
+    "vkd3d-proton": "build/d3d12/README.md",
+    "vulkan-tools": "build/vulkan-sdk/README.md",
+    "host/qemu": "docs/nvidia.md",
+    "host/virglrenderer": "docs/nvidia.md",
+    "host/virglrenderer/workaround": "docs/nvidia.md",
+}
+DOC_OVERRIDE = {
+    "mesa/0021-yttrium-d3d11-typed-uav-loads-without-formatless-read.patch": "docs/zeus.md",
 }
 
 
@@ -110,11 +141,25 @@ def parse_plain(component, lines):
     return out
 
 
+def parse_host(component, lines):
+    """name url (tag|version) value sha256 hash  |  name url digest sha256:...  (patches/host)."""
+    out = []
+    for f, _ in lines:
+        name, url, kind = f[0], f[1], f[2]
+        if kind in ("tag", "version") and len(f) == 6 and f[4] == "sha256":
+            out.append(row(component, name, f[3], "", f[5], url))
+        elif kind == "digest" and len(f) == 4:
+            out.append(row(component, name, "", f[3], "", url))
+        else:
+            raise ValueError(f"unknown line {' '.join(f)!r}")
+    return out
+
+
 SKIP_FIRST = {"epoch", "toolchain"}  # SOURCE_DATE_EPOCH and the toolchain pointer
 
 
-def read_pins(component):
-    path = REPO / "build" / component / "PINS"
+def read_pins(component, path=None):
+    path = path or REPO / "build" / component / "PINS"
     lines, comments = [], []
     for raw in path.read_text().splitlines():
         if raw.lstrip().startswith("#"):
@@ -136,6 +181,8 @@ def read_pins(component):
             rows = parse_vulkan_sdk(component, lines)
         elif component in ("probes", "toolchain"):
             rows = parse_plain(component, lines)
+        elif component == "host":
+            rows = parse_host(component, lines)
         else:
             raise ValueError("no parser for this PINS file")
     except ValueError as e:
@@ -156,9 +203,11 @@ def pins_table():
     components = sorted(p.parent.name for p in (REPO / "build").glob("*/PINS"))
     out = ["| Build | Input | Version or tag | Commit or digest | sha256 of the download | Source |",
            "| --- | --- | --- | --- | --- | --- |"]
-    for c in components:
-        for r in read_pins(c):
-            out.append(f"| [`{c}`](../build/{c}/PINS) | {r['name']} | {code(r['version'])} | "
+    sources = [(c, f"build/{c}/PINS", None) for c in components]
+    sources.append(("host", "patches/host/PINS", REPO / "patches" / "host" / "PINS"))
+    for c, rel, path in sources:
+        for r in read_pins(c, path):
+            out.append(f"| [`{c}`](../{rel}) | {r['name']} | {code(r['version'])} | "
                        f"{code(r['commit'])} | {code(r['sha256'])} | {r['url'] or '—'} |")
     return out
 
@@ -175,23 +224,46 @@ def subject(path):
             return re.sub(r"^\s*\[PATCH[^\]]*\]\s*", "", s).strip()
         if line.startswith("diff --git"):
             break
-    key = f"{path.parent.name}/{path.name}"
+    key = path.relative_to(REPO / "patches").as_posix()
     if key not in SUBJECT_FALLBACK:
         sys.exit(f"{path.relative_to(REPO)}: no Subject: header and no fallback in pins-table.py")
     return SUBJECT_FALLBACK[key]
 
 
+def explaining_doc(path):
+    """The document that explains a patch (see the module docstring)."""
+    key = path.relative_to(REPO / "patches").as_posix()
+    header = path.read_text(errors="replace").split("\ndiff --git", 1)[0]
+    m = re.search(r"\bdocs/[\w./-]+\.md\b", header)
+    doc = m.group(0) if m else DOC_OVERRIDE.get(key) or DOC_DEFAULT.get(path.parent.relative_to(REPO / "patches").as_posix())
+    if not doc:
+        sys.exit(f"patches/{key}: no docs/*.md in its header and no DOC_DEFAULT for its directory")
+    if not (REPO / doc).is_file():
+        sys.exit(f"patches/{key}: {doc} does not exist")
+    return doc
+
+
+def doc_link(doc):
+    # Links are relative to docs/stack.md.
+    target = doc[len("docs/"):] if doc.startswith("docs/") else f"../{doc}"
+    return f"[`{doc}`]({target})"
+
+
 def patches_table():
-    out = ["| Upstream | Patches | Patch | What it does |", "| --- | --- | --- | --- |"]
-    for d in sorted(p for p in (REPO / "patches").iterdir() if p.is_dir()):
+    out = ["| Upstream | Patches | Patch | What it does | Explained in |", "| --- | --- | --- | --- | --- |"]
+    root = REPO / "patches"
+    dirs = sorted({p.parent for p in root.rglob("*.patch")} | {p for p in root.iterdir() if p.is_dir()})
+    for d in dirs:
+        rel = d.relative_to(root).as_posix()
         patches = sorted(d.glob("*.patch"))
         if not patches:
-            out.append(f"| {d.name} | 0 | — | None; see [`patches/{d.name}/`](../patches/{d.name}/) |")
+            if not any(d.rglob("*.patch")):  # a directory like patches/dxil-spirv/
+                out.append(f"| {rel} | 0 | — | None; see [`patches/{rel}/`](../patches/{rel}/) | — |")
             continue
         for i, p in enumerate(patches):
-            first = f"| {d.name} | {len(patches)} |" if i == 0 else "| | |"
+            first = f"| {rel} | {len(patches)} |" if i == 0 else "| | |"
             desc = subject(p).replace("|", "\\|")
-            out.append(f"{first} [`{p.name[:4]}`](../patches/{d.name}/{p.name}) | {desc} |")
+            out.append(f"{first} [`{p.name[:4]}`](../patches/{rel}/{p.name}) | {desc} | {doc_link(explaining_doc(p))} |")
     return out
 
 

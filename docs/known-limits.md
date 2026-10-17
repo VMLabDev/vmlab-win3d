@@ -7,26 +7,52 @@ says so.
 
 ## Host
 
-### AMD only, for now
+### Host GPU support
 
-Venus works on the host's AMD iGPU (RADV, `/dev/dri/renderD129`) and fails on
-the NVIDIA RTX 5090 (driver 610.57.04).
+Venus runs the guest's Vulkan commands on the host's own Vulkan driver, so the
+result depends on the host GPU. Four were tried:
 
-- With Venus on NVIDIA, the host's render server logs
-  `vkr: vkGetImageMemoryRequirements resulted in CS error`, and in the guest
-  vkcube fails to present
-  (`wsi/win32: DXGI_SHARED CreateSwapChainForComposition failed (HRESULT 0x887a0005)`)
-  with a black console.
-  Evidence: `docs/host.md` Q2 and Q3,
-  `docs/evidence/host/good-none/render-server-journal-summary.txt`,
-  `docs/evidence/host/min-none/`.
-- The prior art saw dwm crash before login on NVIDIA (prior-art §3, §8.1).
-- The cause is unknown. Making NVIDIA work is wave 3 of `docs/plan.md`.
+| Host GPU, driver | Host | Result | Needs | Evidence |
+| --- | --- | --- | --- | --- |
+| AMD Radeon iGPU (Granite Ridge), RADV, Mesa 26.2.2 | helios | **Full pass**: every Done check in `docs/brief.md` item 2, on `windows-11` and `windows-10` | A plain vmlab 0.24 lab | [`acceptance.md`](acceptance.md) |
+| Intel Iris Xe (Raptor Lake-P), ANV, Mesa 26.2.2 | Zeus | **Full pass** on `windows-11`, 12 of 12 Done checks. Without `patches/mesa/0021`, dwm crash-loops and the console is black | `patches/mesa/0021` (in the package) | [`zeus.md`](zeus.md) |
+| NVIDIA RTX 5090, 610.57.04 | helios | **Partial**: all ten probes pass, vulkaninfo lists Venus, and the console shows the desktop and every probe. Not run through `tests/e2e/run.sh` | `patches/mesa/0020` (in the package) **and** the patched QEMU `patches/host/qemu/0001`, run through an isolated supervisor, until vmlab can name a QEMU binary (handoff `20261017-163910`, pending). The identical-GPU gap below applies | [`nvidia.md`](nvidia.md) |
+| NVIDIA RTX 4060 Max-Q (laptop), 615.71.09 | Zeus | **Unmet**: install, desktop and console worked; then the GPU fell off the bus (Xid 79) during vulkaninfo and QEMU aborted. Cause unknown | Not known | [`zeus.md`](zeus.md) |
 
-So a lab on a host with both must name the AMD GPU in `gpu.address`, which
-makes vmlab put egl-headless on its render node and filter QEMU's Vulkan
-loader to its driver. On a host with only an AMD GPU, the choice is moot. No
-other host was tried.
+All four hosts ran QEMU 11.1.1 and virglrenderer 1.3.0. No other GPU or driver
+version was tried.
+
+**Without the patched QEMU, NVIDIA gives a black console.** NVIDIA's EGL
+imports a LINEAR dma-buf only as an external texture, and QEMU 11.1.1's
+egl-headless binds the guest's scanout as `GL_TEXTURE_2D`. The guest renders,
+but the console and `vmlab vm screenshot` stay black. Without
+`patches/mesa/0020` (bundles built before it), dwm crashes before logon.
+`docs/nvidia.md` explains both faults.
+
+**Two identical GPUs cannot be told apart.** On helios, vmlab's
+`VK_LOADER_DRIVERS_SELECT=*nvidia*` matches both RTX 5090s, so the guest sees
+two Venus devices with the same UUID. Applications picked GPU0, the one
+`gpu.address` names. One that picks GPU1 would render on the other card while
+egl-headless reads from the first. Handoff `20261017-163910` asks vmlab for a
+way to pick one; it is pending.
+
+> **Warning: the RTX 4060 failure needed a host reboot.** On Zeus, the NVIDIA
+> GSP failed to boot during a Venus run (`Failed to boot GSP`, then Xid 119,
+> Xid 79 "GPU has fallen off the bus"). QEMU aborted, `nvidia-smi` found no
+> devices, and the GPU stayed unusable until Zeus rebooted. The evidence cannot
+> separate runtime power management, the laptop's power state and the
+> workload as the trigger. Do not run Venus on a laptop NVIDIA GPU that
+> anything else depends on, and watch any repeat run
+> (`docs/evidence/zeus/nvidia/kernel-nvrm.txt`).
+
+On a host with an AMD or Intel GPU and an NVIDIA GPU, name the AMD or Intel
+GPU in `gpu.address`. vmlab then puts egl-headless on its render node and
+filters QEMU's Vulkan loader to its driver.
+
+The `docs/host.md` probe, on vmlab 0.23 with workarounds, first found the
+NVIDIA failure (`vkGetImageMemoryRequirements resulted in CS error` and a
+black console; `docs/evidence/host/good-none/`, `min-none/`). It is
+historical: `docs/nvidia.md` names the cause.
 
 ### Requires vmlab 0.24.0-alpha or later
 
@@ -38,7 +64,7 @@ screenshots failed on GL displays (`docs/host.md`). Handoff
 `docs/host.md`, "Update: vmlab 0.24", lists what replaced each workaround.
 
 With 0.24 or later, a lab needs only `secure_boot = false` and
-`gpu { mode = "vulkan" address = "<PCI address of an AMD GPU>" }`, as in
+`gpu { mode = "vulkan" address = "<PCI address of an AMD or Intel GPU>" }`, as in
 `labs/probe/vmlab.wcl`. On an older vmlab, QEMU refuses to start that VM
 (`docs/evidence/host/up-plain.txt`).
 
@@ -52,6 +78,20 @@ Two vmlab limits remain, with no fix:
 - Vulkan does not enumerate in the SYSTEM session, so `vmlab exec` cannot run
   a GPU test directly. The tests use an autologon user and a scheduled task
   in session 1 (`tests/guest/Set-TestDesktop.ps1`, `tests/guest/Run-Probe.ps1`).
+
+### Autologon values can vanish on a fresh clone
+
+In one of the four `windows-11` acceptance runs, `AutoAdminLogon` and
+`DefaultUserName` were gone from the Winlogon key after
+`tests/guest/Set-TestDesktop.ps1 -Reboot`, before the package was installed.
+`DefaultPassword` survived. Without those values nobody is logged on after a
+reboot, and the session tests cannot start. The installer does not touch
+Winlogon, and vmlab's repository has no code that does. The template agent's first-logon hooks are the likely
+cause, but this is unconfirmed, and no vmlab handoff has been filed for it.
+This affects only the tests, not the package: `tests/e2e/run.sh` records the
+values before and after the install (`autologon-*.txt`) and sets them again
+when they are missing. Evidence: `docs/acceptance.md`, "Findings from these
+runs".
 
 ### QEMU crashes on shutdown
 
@@ -135,7 +175,7 @@ installed. Evidence: decision 0001, "Fast Startup and hibernation hazard";
 `docs/evidence/package/00-baseline-installer-state.txt` (the template already
 had hibernation off).
 
-### Presentation pacing is unmeasured
+### Presentation pacing is unmeasured, and D3D9 runs at about 30 fps
 
 Nobody has measured frame pacing or console latency for this package. The
 prior art measured its own builds of the same components (prior-art §3,
@@ -146,10 +186,19 @@ prior art measured its own builds of the same components (prior-art §3,
 - D3D12 dropped about 40 % of its presents (667 of 1628 windowed), with
   about 105 ms display latency.
 
-The probes here report frame rates, which are not a pacing measurement. In
-`docs/evidence/package/README.md` they range from 19.6 fps (D3D9 x64) to
-64.4 fps (OpenGL x86). Presentation only has to make a game watchable on the
-console (`docs/brief.md`); deeper frame-pacing work is out of scope.
+The probes here report frame rates, which are not a pacing measurement. On
+the AMD host, the D3D9 probe reached about 30 fps in every acceptance run
+(29.4 to 34.4 fps), against about 60 for D3D11, D3D12 and Vulkan and about 66
+for OpenGL (`docs/evidence/acceptance/*/results.txt`). On Zeus's Intel GPU the
+same D3D9 probe reached 59.3 and 58.0 fps (`docs/zeus.md`), so the halving is
+not inherent to D3D9 on this stack. Its cause was not investigated. The
+earlier package run on vmlab 0.23 measured 19.6 fps for D3D9 x64
+(`docs/evidence/package/README.md`). Presentation only has to make a game
+watchable on the console (`docs/brief.md`); deeper frame-pacing work is out
+of scope.
+
+DirectDraw presents are slow too: windowed blits to the primary reached 13 to
+17 per second in `ddcaps` (`docs/dxdiag.md`, "Not covered").
 
 ### Kernel driver diagnostics
 
@@ -168,21 +217,37 @@ Windows. See `build/kmd/README.md`.
 
 ### Windows 10
 
-<!-- TODO(acceptance): fill from docs/acceptance.md once the e2e slice records the Windows 10 run. -->
+Windows 10 passes. On a fresh lab from the local `windows-10` template
+(`x86_64/windows-10@19045.2006.8`) on the AMD host, every Done check in
+`docs/brief.md` item 2 passed, 12 of 12, with the same package as the
+Windows 11 run (`docs/acceptance.md`, commit `cb4d53c`;
+`docs/evidence/acceptance/windows-10/`). The DirectX SDK D3D9 samples and
+Blender also rendered there.
 
-**Status: not yet recorded.** `docs/acceptance.md` will hold the result of
-the Windows 10 run from the local `windows-10` template (19045.2006.8). Until
-it does, treat Windows 10 as untested. The prior art never tested Windows 10
-either (prior-art §2). The D3D12 bridge was checked against the Windows 10
-template's `d3d12.dll` export table at build time
-(`build/d3d12/native-exports/win10-19045.2006.8-*.txt`), but it has not
-run there.
+What was not run on Windows 10:
+
+- the D3D11 sample fixes (`patches/mesa/0015` to `0017`, `docs/d3d11-apps.md`)
+  and the Intel fix (`patches/mesa/0021`, `docs/zeus.md`), which came later;
+- any host other than AMD;
+- the uninstall and reinstall cycle, which ran on Windows 11 only
+  (`docs/evidence/package/README.md`).
 
 ### Application compatibility is barely tested
 
 This package has run the five probes in `probes/` (D3D9, D3D11, D3D12,
-OpenGL and Vulkan, x64 and x86) and nothing else. D3D10 has no probe here.
-The prior art ran real applications on its own builds of the same components:
+OpenGL and Vulkan, x64 and x86), two diagnostic probes (`probes/dxut-enum`,
+`probes/d3d11-tess`), and a few unmodified applications
+(`docs/acceptance.md`, "Stretch"; `docs/d3d11-apps.md`):
+
+- DirectX SDK (June 2010) samples: `BasicHLSL` and
+  `ParallaxOcclusionMapping` (D3D9) render; `SubD11` and `BasicHLSL11`
+  (D3D11) render after `patches/mesa/0015` to `0017`, with the window
+  caveat below;
+- Blender 4.2.3 (OpenGL 4.3) renders its UI and viewport.
+
+D3D10 has no probe here, and no D3D12 application other than the probe has
+run (see below). The prior art ran real applications on its own builds of the
+same components:
 
 - GravityMark (D3D11, D3D12, OpenGL), Unigine Heaven (D3D9, D3D11, OpenGL),
   Godot 4.7.2 (Vulkan, D3D12) and Blender EEVEE (prior-art §2);
@@ -200,6 +265,48 @@ issues from the prior art:
   graphics fault.
 - DXVK 3.1.1 has a clear-only black-frame bug in its D3D9/D3D11 path. This
   package uses only DXVK's DXGI, for D3D12, which the bug does not affect.
+
+### DXUT (June 2010) D3D11 samples place their window off the screen
+
+`BasicHLSL11` renders on our device, but its window lands at
+(32758, −32768), off the screen, so the console shows nothing. `SubD11` lands
+at (0, 0) in a 200×200 window. This is a bug in the June 2010 DXUT, not in
+the package. On Windows 8 and later, without the SDK's reference rasterizer
+`D3D11Ref.dll`, DXUT ends its enumeration on WARP's adapter, which has no
+outputs, and then centres the window in an uninitialised `MONITORINFO`.
+Current DXUT no longer does this. Workarounds: install the SDK's developer
+runtime (`D3D11Ref.dll` in `System32`), or move the window from outside. The
+samples still render on the hardware device either way. `D3D11Ref.dll` is not
+redistributable, so the package cannot ship it. Evidence:
+`docs/d3d11-apps.md`, "BasicHLSL11: a DXUT bug on Windows 8 and later".
+
+### Domain shaders cannot index patch constants dynamically
+
+A domain shader that indexes its patch constants with a register
+(`dcl_indexrange vpc6.xyz 4`) is rejected by the UMD's shader translation
+(`dcl_input_index_range` unsupported), and the D3D11 runtime then removes the
+device. `patches/mesa/0015` added indexed patch constants and control points
+for hull shaders only. SubD11 does not need it; the first version of
+`probes/d3d11-tess` did (`docs/d3d11-apps.md`, "Not covered").
+
+### No D3D12 application besides the probe
+
+The planned D3D12 application, Microsoft's DirectX-Graphics-Samples
+`D3D12HelloTriangle`, does not build unmodified with the project toolchain,
+llvm-mingw. It uses the MSVC return-value form of
+`GetCPUDescriptorHandleForHeapStart()`, WRL's `FileHandle` and `_uuidof`,
+which DirectX-Headers and mingw do not provide for that compiler. Building it
+needs MSVC or clang-cl with the Windows SDK, so it was skipped
+(`docs/acceptance.md`, "Stretch"). D3D12 has run only as the probe here; the
+prior art's D3D12 application results are listed above.
+
+### DirectDraw fullscreen exclusive mode is untested
+
+`patches/mesa/0012` to `0014` gave DirectDraw a hardware HAL, and `ddcaps`
+checked it in windowed mode only. Fullscreen exclusive DirectDraw
+(`DDSCL_EXCLUSIVE`, `Flip`) has not been tried. The UMD also offers no
+hardware colour-key or mirror blits, so DirectDraw emulates them on the CPU
+(`docs/dxdiag.md`, "Not covered").
 
 ### Other limits
 

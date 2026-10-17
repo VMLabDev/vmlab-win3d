@@ -10,7 +10,9 @@ are generated from `build/*/PINS` and `patches/` by `scripts/pins-table.py`.
 
 Nothing in the guest talks to the GPU directly. Every API ends up as Vulkan
 commands that the Venus protocol carries over virtio-gpu to the host. There,
-virglrenderer replays them on the host's Vulkan driver, RADV.
+virglrenderer replays them on the host's Vulkan driver. The diagram shows the
+reference host, helios, where that driver is RADV on an AMD iGPU.
+[Tested hosts](#tested-hosts) lists the other host GPUs.
 
 ```mermaid
 flowchart TD
@@ -72,7 +74,8 @@ Read the diagram with these points in mind:
   even vkcube hung (prior-art §3, §4.5).
 - **The host side is not built here.** QEMU, virglrenderer and RADV are the
   host's Arch packages (`docs/host.md`). Decision D3 in `docs/plan.md` keeps
-  them at the versions shown.
+  them at the versions shown. The exception is NVIDIA hosts, which need a
+  patched QEMU (`patches/host/`, [Host patches](#host-patches)).
 
 The probes confirm which modules each API loads in the guest:
 `docs/evidence/package/03-probes-summary.json`, `graphics_modules`.
@@ -105,7 +108,7 @@ and loads the WGL ICD. The package changes only `d3d12.dll`, described below.
 | Installed by | `installer/vmlab-win3d.ps1`, only when the existing `vulkan-1.dll` is missing or has an older file version. The template has 1.3.300. |
 | Upstream | [KhronosGroup/Vulkan-Loader](https://github.com/KhronosGroup/Vulkan-Loader) and [Vulkan-Tools](https://github.com/KhronosGroup/Vulkan-Tools), tag `vulkan-sdk-1.4.363.0` |
 | Build | [`build/vulkan-sdk/`](../build/vulkan-sdk/README.md) |
-| Patches | None |
+| Patches | Loader: none. Vulkan-Tools: 1, `vulkan-tools/0001`, which stops the llvm-mingw `vulkaninfo.exe` crashing on a null `user32_handles` (table below) |
 | Licence | Apache-2.0 |
 
 ### D3D12: the bridge, vkd3d-proton and DXVK's DXGI
@@ -135,7 +138,7 @@ vkd3d-proton queues go to DXVK's DXGI, and everything else stays native.
 | Installed by | The INF (`VioGpu3D_Files.Usermode`, `VioGpu3D_Files.Wow64`, `VioGpu3D_DeviceSettings`) |
 | Upstream | [arehnman/virtio-win-mesa](https://github.com/arehnman/virtio-win-mesa), branch `yttrium-experimental`, commit `374c3022` (Mesa 26.1.0) |
 | Build | [`build/mesa/`](../build/mesa/README.md) |
-| Patches | Mesa 11, shared with the two Mesa components below (table below). 0005 to 0010 change this UMD. |
+| Patches | Mesa 19, shared with the two Mesa components below (table below). 0005 to 0010, 0012 to 0017, 0020 and 0021 change this UMD; 0001 to 0003 are shared build and utility fixes. |
 | Licence | Mesa MIT; the Yttrium winsys (`src/gallium/winsys/yttrium/gdi/`) MPL-2.0 |
 
 `viogpu_d3d10.dll` is Mesa's `d3d10umd` front end (D3D10/11 DDI, plus a
@@ -208,6 +211,28 @@ them on vmlab 0.23, with `qemu_args`, before vmlab emitted them itself.
 | Selected by | vmlab sets `VK_LOADER_DRIVERS_SELECT` in QEMU's environment from the driver of `gpu.address` (`*radeon*` here), so the render workers open only `renderD129`. `gpu.vulkan_icd` sets `VK_DRIVER_FILES` instead. |
 | Upstream | virglrenderer 1.3.0 (Arch `1.3.0-2.1`), Mesa RADV 26.2.2 (Arch `vulkan-radeon 3:26.2.2-2`), not built here |
 
+### Tested hosts
+
+The package was run on four host GPUs. AMD (RADV) is the reference: the
+acceptance runs in `docs/acceptance.md` used it. Intel (ANV) passes with
+`patches/mesa/0021`. NVIDIA works only partly. The full matrix, with the
+evidence for each row, is in
+[Known limits: host GPU support](known-limits.md#host-gpu-support).
+
+### Host patches
+
+`patches/host/` is **not part of the guest package**. `scripts/build.sh`
+does not build it, and the installer does not use it. It holds patches to
+two host components and the scripts that build them into `out/host/`, for
+labs that select them explicitly. Nothing is installed on the host
+(decision D3). Its pins are the `host` rows of the pin table below.
+
+| Path | What it is for |
+| --- | --- |
+| `patches/host/qemu/0001` and `patches/host/build-qemu.sh` | A QEMU 11.1.1 whose egl-headless display shows LINEAR scanout dma-bufs that the host's EGL imports as external only. NVIDIA needs it for a visible console; AMD and Intel do not. The build is native against the host's libraries, not in Docker, and a lab runs it through an isolated supervisor (`labs/nvidia/vmlab-nv.sh`, `labs/zeus/vmlab-iso.sh`) until vmlab can name a QEMU binary itself ([`nvidia.md`](nvidia.md)) |
+| `patches/host/virglrenderer/0001` and `patches/host/build-virglrenderer.sh` | A diagnostic render server: stock virglrenderer 1.3.0 that also logs failed image creation with its create-info. It is selected with `RENDER_SERVER_EXEC_PATH` and used only to investigate a failure ([`nvidia.md`](nvidia.md), [`zeus.md`](zeus.md)) |
+| `patches/host/virglrenderer/workaround/0002` | The host-side workaround for the NVIDIA feedback-loop fault, kept as documentation. `patches/mesa/0020` replaced it; `build-virglrenderer.sh` applies it only with `WITH_WORKAROUND=1` |
+
 ### Build-only inputs
 
 These produce the binaries but are not installed in the guest:
@@ -221,7 +246,7 @@ These produce the binaries but are not installed in the guest:
 
 ## Pins
 
-Generated from every `build/<component>/PINS` by `scripts/pins-table.py
+Generated from every `build/<component>/PINS` and `patches/host/PINS` by `scripts/pins-table.py
 --write`; `scripts/pins-table.py --check` fails when this table is stale. Git
 sources are pinned by commit, so they have no download hash. Each `PINS` file
 also records the `SOURCE_DATE_EPOCH` its build uses, and the KMD and signing
@@ -262,35 +287,54 @@ Dockerfiles pin their Debian packages by version.
 | [`vulkan-sdk`](../build/vulkan-sdk/PINS) | Vulkan-Headers | `vulkan-sdk-1.4.363.0` | `6802bb4733b63ed5efd3adb308a6c885ef180ea1` | `4a078be12bef21cfebc09d878b77a63cff9d68f899254a0b00d0e37ef73e7f7e` | https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/vulkan-sdk-1.4.363.0.tar.gz |
 | [`vulkan-sdk`](../build/vulkan-sdk/PINS) | Vulkan-Loader | `vulkan-sdk-1.4.363.0` | `fa218055ff4948b159f31d43f800c808a13d51df` | `941eff558fc74f248745fb7df367640cf89a8457f216dae498a74ae14b6ba6f7` | https://github.com/KhronosGroup/Vulkan-Loader/archive/refs/tags/vulkan-sdk-1.4.363.0.tar.gz |
 | [`vulkan-sdk`](../build/vulkan-sdk/PINS) | Vulkan-Tools | `vulkan-sdk-1.4.363.0` | `6fe2055cf2fa921d52a4c6a31528cfc279a6977f` | `6cbeb83294434e636a0c78760f1a6dfe3e50c1bab0cffa154603ce73e70508f1` | https://github.com/KhronosGroup/Vulkan-Tools/archive/refs/tags/vulkan-sdk-1.4.363.0.tar.gz |
+| [`host`](../patches/host/PINS) | virglrenderer | `1.3.0` | — | `065bc56e89e6f631f96101cd62eba0748e48eb888b434edc86e89d05395e76f3` | https://gitlab.freedesktop.org/virgl/virglrenderer/-/archive/1.3.0/virglrenderer-1.3.0.tar.gz |
+| [`host`](../patches/host/PINS) | build-image | — | `sha256:3c64b538588416593f69a1aebd2f2ec0f2541b29159f32556fa7def2167147a0` | — | docker.io/library/archlinux |
+| [`host`](../patches/host/PINS) | qemu | `11.1.1` | — | `079ffbff8a7111bbc89022107cbabf3bbfd614d5fc9d7cc675991196aca12482` | https://download.qemu.org/qemu-11.1.1.tar.xz |
 <!-- END generated pins table -->
 
 ## Patches
 
 Every patch is applied in name order to the pinned source by the component's
 build script. Each file's header says what it fixes and which prior-art
-finding it comes from. `build/mesa/README.md` and `build/d3d12/README.md`
-list what was left out of the prior art's changes and why.
+finding or document it comes from; the last column links the document that
+explains it. `build/mesa/README.md` and `build/d3d12/README.md` list what was
+left out of the prior art's changes and why. The `host/` rows are host
+components, not part of the guest package ([Host patches](#host-patches)).
+The Mesa series skips 0018 and 0019; no patch with either number was ever
+committed.
 
 <!-- BEGIN generated patches table: scripts/pins-table.py --write -->
-| Upstream | Patches | Patch | What it does |
-| --- | --- | --- | --- |
-| dxil-spirv | 0 | — | None; see [`patches/dxil-spirv/`](../patches/dxil-spirv/) |
-| dxvk | 1 | [`0001`](../patches/dxvk/0001-dxgi-Keep-the-swap-chain-description-when-a-resize-fails.patch) | dxgi: Keep the swap-chain description when a resize fails. |
-| kmd | 1 | [`0001`](../patches/kmd/0001-kmd-r10-copy.patch) | Convert R10G10B10A2 sources to 8-bit RGBA or BGRA in the KMD's CPU present blit (the prior art's r10 KMD) |
-| mesa | 11 | [`0001`](../patches/mesa/0001-build-winddk-includes-and-x86-atomics.patch) | build: add the WDK include path and drop x86-unsafe 64-bit Interlocked calls |
-| | | [`0002`](../patches/mesa/0002-util-xmlconfig-case-insensitive-exe-match.patch) | util/xmlconfig: match drirc executable names case-insensitively on Windows |
-| | | [`0003`](../patches/mesa/0003-util-u_queue-windows-loader-lock-join.patch) | util/u_queue: do not join worker threads under the loader lock on Windows |
-| | | [`0004`](../patches/mesa/0004-wgl-unbind-through-stw-on-delete.patch) | wgl: unbind the current context through stw_make_current on delete |
-| | | [`0005`](../patches/mesa/0005-yttrium-blend-max-rt.patch) | d3d10umd, yttrium: honour blend max_rt and ignore factors when blending is off |
-| | | [`0006`](../patches/mesa/0006-d3d9-rendering-fixes.patch) | d3d10umd/d3d9, yttrium: D3D9 sampler, depth-bias, format and D32F fixes |
-| | | [`0007`](../patches/mesa/0007-d3d11-wddm20-ddi.patch) | d3d10umd: negotiate the WDDM 2.0 D3D11 DDI and report typed UAV loads |
-| | | [`0008`](../patches/mesa/0008-shader-translation-fixes.patch) | tgsi_to_nir, d3d10umd: fix array gradients and UAV load component selection |
-| | | [`0009`](../patches/mesa/0009-yttrium-compute-and-coherence.patch) | d3d10umd, yttrium: compute, constant-buffer and resource-coherence fixes |
-| | | [`0010`](../patches/mesa/0010-dxgi-blt-scaled-srgb-safe.patch) | d3d10umd: make the DXGI Blt scale and keep sRGB data bit-exact |
-| | | [`0011`](../patches/mesa/0011-venus-win32-nt-memory.patch) | venus: opaque Win32 (NT handle) memory export and import on D3DKMT |
-| vkd3d-proton | 5 | [`0001`](../patches/vkd3d-proton/0001-vkd3d-Reject-root-signatures-with-overlapping-regist.patch) | vkd3d: Reject root signatures with overlapping register bindings. |
-| | | [`0002`](../patches/vkd3d-proton/0002-vkd3d-Report-FORMAT_INFO-plane-counts-without-a-Vulk.patch) | vkd3d: Report FORMAT_INFO plane counts without a Vulkan format mapping. |
-| | | [`0003`](../patches/vkd3d-proton/0003-vkd3d-Allow-depth-stencil-textures-in-CPU-visible-he.patch) | vkd3d: Allow depth-stencil textures in CPU-visible heaps. |
-| | | [`0004`](../patches/vkd3d-proton/0004-vkd3d-Default-the-Windows-shader-cache-to-LocalAppDa.patch) | vkd3d: Default the Windows shader cache to LocalAppData. |
-| | | [`0005`](../patches/vkd3d-proton/0005-d3d12-Build-a-system-wide-d3d12.dll-bridge.patch) | d3d12: Build a system-wide d3d12.dll bridge. |
+| Upstream | Patches | Patch | What it does | Explained in |
+| --- | --- | --- | --- | --- |
+| dxil-spirv | 0 | — | None; see [`patches/dxil-spirv/`](../patches/dxil-spirv/) | — |
+| dxvk | 1 | [`0001`](../patches/dxvk/0001-dxgi-Keep-the-swap-chain-description-when-a-resize-fails.patch) | dxgi: Keep the swap-chain description when a resize fails. | [`build/d3d12/README.md`](../build/d3d12/README.md) |
+| host/qemu | 1 | [`0001`](../patches/host/qemu/0001-ui-egl-headless-external-only-dmabuf-scanouts.patch) | ui/egl-headless: show LINEAR scanout dma-bufs that the host EGL imports as external only (NVIDIA) | [`docs/nvidia.md`](nvidia.md) |
+| host/virglrenderer | 1 | [`0001`](../patches/host/virglrenderer/0001-vkr-log-image-creation.patch) | vkr: log failed image creation and memory allocation, with the create-info (diagnostic render server) | [`docs/nvidia.md`](nvidia.md) |
+| host/virglrenderer/workaround | 1 | [`0002`](../patches/host/virglrenderer/workaround/0002-vkr-drop-unsupported-feedback-loop-usage.patch) | vkr: retry vkCreateImage and the image-format queries without feedback-loop usage (superseded by mesa/0020; built only with WITH_WORKAROUND=1) | [`docs/nvidia.md`](nvidia.md) |
+| kmd | 1 | [`0001`](../patches/kmd/0001-kmd-r10-copy.patch) | Convert R10G10B10A2 sources to 8-bit RGBA or BGRA in the KMD's CPU present blit (the prior art's r10 KMD) | [`build/kmd/README.md`](../build/kmd/README.md) |
+| mesa | 19 | [`0001`](../patches/mesa/0001-build-winddk-includes-and-x86-atomics.patch) | build: add the WDK include path and drop x86-unsafe 64-bit Interlocked calls | [`build/mesa/README.md`](../build/mesa/README.md) |
+| | | [`0002`](../patches/mesa/0002-util-xmlconfig-case-insensitive-exe-match.patch) | util/xmlconfig: match drirc executable names case-insensitively on Windows | [`build/mesa/README.md`](../build/mesa/README.md) |
+| | | [`0003`](../patches/mesa/0003-util-u_queue-windows-loader-lock-join.patch) | util/u_queue: do not join worker threads under the loader lock on Windows | [`build/mesa/README.md`](../build/mesa/README.md) |
+| | | [`0004`](../patches/mesa/0004-wgl-unbind-through-stw-on-delete.patch) | wgl: unbind the current context through stw_make_current on delete | [`build/mesa/README.md`](../build/mesa/README.md) |
+| | | [`0005`](../patches/mesa/0005-yttrium-blend-max-rt.patch) | d3d10umd, yttrium: honour blend max_rt and ignore factors when blending is off | [`build/mesa/README.md`](../build/mesa/README.md) |
+| | | [`0006`](../patches/mesa/0006-d3d9-rendering-fixes.patch) | d3d10umd/d3d9, yttrium: D3D9 sampler, depth-bias, format and D32F fixes | [`build/mesa/README.md`](../build/mesa/README.md) |
+| | | [`0007`](../patches/mesa/0007-d3d11-wddm20-ddi.patch) | d3d10umd: negotiate the WDDM 2.0 D3D11 DDI and report typed UAV loads | [`build/mesa/README.md`](../build/mesa/README.md) |
+| | | [`0008`](../patches/mesa/0008-shader-translation-fixes.patch) | tgsi_to_nir, d3d10umd: fix array gradients and UAV load component selection | [`build/mesa/README.md`](../build/mesa/README.md) |
+| | | [`0009`](../patches/mesa/0009-yttrium-compute-and-coherence.patch) | d3d10umd, yttrium: compute, constant-buffer and resource-coherence fixes | [`build/mesa/README.md`](../build/mesa/README.md) |
+| | | [`0010`](../patches/mesa/0010-dxgi-blt-scaled-srgb-safe.patch) | d3d10umd: make the DXGI Blt scale and keep sRGB data bit-exact | [`build/mesa/README.md`](../build/mesa/README.md) |
+| | | [`0011`](../patches/mesa/0011-venus-win32-nt-memory.patch) | venus: opaque Win32 (NT handle) memory export and import on D3DKMT | [`build/mesa/README.md`](../build/mesa/README.md) |
+| | | [`0012`](../patches/mesa/0012-d3d9-directdraw-hal-caps.patch) | d3d10umd: report the D3D7 and D3D8 caps DirectDraw asks the D3D9 UMD for | [`docs/dxdiag.md`](dxdiag.md) |
+| | | [`0013`](../patches/mesa/0013-d3d9-write-only-lock-keeps-contents.patch) | d3d10umd: keep a surface's contents across a write-only D3D9 lock | [`docs/dxdiag.md`](dxdiag.md) |
+| | | [`0014`](../patches/mesa/0014-d3d9-ddraw-surfaces-are-present-sources.patch) | d3d10umd: make DirectDraw surfaces display targets | [`docs/dxdiag.md`](dxdiag.md) |
+| | | [`0015`](../patches/mesa/0015-d3d10umd-hull-shader-vprim-and-indexed-patch-io.patch) | d3d10umd: hull shader vPrim, indexed patch constants and control points | [`docs/d3d11-apps.md`](d3d11-apps.md) |
+| | | [`0016`](../patches/mesa/0016-d3d10umd-immediate-constant-buffer-relative-offset.patch) | d3d10umd: keep the offset in dynamically indexed immediate constant buffer reads | [`docs/d3d11-apps.md`](d3d11-apps.md) |
+| | | [`0017`](../patches/mesa/0017-yttrium-honour-wireframe-fill-mode.patch) | yttrium: honour D3D11_FILL_WIREFRAME | [`docs/d3d11-apps.md`](d3d11-apps.md) |
+| | | [`0020`](../patches/mesa/0020-yttrium-gate-feedback-loop-usage-on-format-support.patch) | yttrium: gate feedback-loop image usage on the renderer's format support | [`docs/nvidia.md`](nvidia.md) |
+| | | [`0021`](../patches/mesa/0021-yttrium-d3d11-typed-uav-loads-without-formatless-read.patch) | d3d10umd, yttrium: create WDDM 2.0 D3D11 devices without formatless storage-image reads; R32 typed UAV loads only, and TypedUAVLoadAdditionalFormats from the host (Intel ANV) | [`docs/zeus.md`](zeus.md) |
+| vkd3d-proton | 5 | [`0001`](../patches/vkd3d-proton/0001-vkd3d-Reject-root-signatures-with-overlapping-regist.patch) | vkd3d: Reject root signatures with overlapping register bindings. | [`build/d3d12/README.md`](../build/d3d12/README.md) |
+| | | [`0002`](../patches/vkd3d-proton/0002-vkd3d-Report-FORMAT_INFO-plane-counts-without-a-Vulk.patch) | vkd3d: Report FORMAT_INFO plane counts without a Vulkan format mapping. | [`build/d3d12/README.md`](../build/d3d12/README.md) |
+| | | [`0003`](../patches/vkd3d-proton/0003-vkd3d-Allow-depth-stencil-textures-in-CPU-visible-he.patch) | vkd3d: Allow depth-stencil textures in CPU-visible heaps. | [`build/d3d12/README.md`](../build/d3d12/README.md) |
+| | | [`0004`](../patches/vkd3d-proton/0004-vkd3d-Default-the-Windows-shader-cache-to-LocalAppDa.patch) | vkd3d: Default the Windows shader cache to LocalAppData. | [`build/d3d12/README.md`](../build/d3d12/README.md) |
+| | | [`0005`](../patches/vkd3d-proton/0005-d3d12-Build-a-system-wide-d3d12.dll-bridge.patch) | d3d12: Build a system-wide d3d12.dll bridge. | [`build/d3d12/README.md`](../build/d3d12/README.md) |
+| vulkan-tools | 1 | [`0001`](../patches/vulkan-tools/0001-vulkaninfo-Load-user32-on-every-Windows-compiler.patch) | vulkaninfo: Load user32 on every Windows compiler | [`build/vulkan-sdk/README.md`](../build/vulkan-sdk/README.md) |
 <!-- END generated patches table -->
