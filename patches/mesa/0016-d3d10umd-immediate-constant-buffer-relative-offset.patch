@@ -1,0 +1,35 @@
+Subject: [PATCH] d3d10umd: keep the offset in dynamically indexed immediate constant buffer reads
+
+An operand icb[r + n] (D3D10_SB_OPERAND_INDEX_IMMEDIATE32_PLUS_RELATIVE on
+D3D10_SB_OPERAND_TYPE_IMMEDIATE_CONSTANT_BUFFER) added n to a copy of the
+immediate block register and then built the indirect source from the
+unmodified sx->imms, so the read returned icb[r] instead of icb[r + n].
+fxc packs several static const arrays into one immediate constant buffer
+and addresses the later ones with an offset: SubD11's SmoothPS keeps four
+light directions at icb[0..3] and four light colours at icb[4..7] and reads
+icb[r2.w + 4] in its light loop, so every light colour was a direction and
+the model rendered purple and speckled. Build the indirect source from the
+offset register.
+
+probes/d3d11-tess/tess_probe.exe (value 17) runs the same loop and compares
+it with the CPU result.
+
+Evidence: docs/d3d11-apps.md, docs/evidence/d3d11-apps/.
+Origin: vmlab-win3d fix-d3d11-apps worker.
+---
+diff --git a/src/gallium/frontends/d3d10umd/ShaderTGSI.c b/src/gallium/frontends/d3d10umd/ShaderTGSI.c
+--- a/src/gallium/frontends/d3d10umd/ShaderTGSI.c
++++ b/src/gallium/frontends/d3d10umd/ShaderTGSI.c
+@@ -2774,10 +2774,11 @@
+          break;
+       case D3D10_SB_OPERAND_INDEX_RELATIVE:
+       case D3D10_SB_OPERAND_INDEX_IMMEDIATE32_PLUS_RELATIVE:
++         /* icb[r + n]: keep the immediate offset n. */
+          reg = sx->imms;
+          reg.Index += operand->base.index[0].imm;
+          reg = ureg_src_indirect(
+-            sx->imms,
++            reg,
+             translate_relative_operand(sx, &operand->base.index[0].rel));
+          break;
+       default:

@@ -1,0 +1,161 @@
+       0.5 dxut_enum_probe: driver type HARDWARE, 64-bit
+       0.7 call CreateDXGIFactory1
+      12.1   -> 0x00000000 (11.2 ms) CreateDXGIFactory1
+      12.3 call IDXGIFactory1::EnumAdapters(0)
+      12.5   -> 0x00000000 (0.1 ms) IDXGIFactory1::EnumAdapters(0)
+      12.7   adapter 0: Hardsoft VirtIO GPU 3D controller vendor 0x1af4 device 0x1050 vram 0 MiB
+      12.8 call D3D11CreateDevice(HARDWARE, 6 levels) [EnumerateDevices]
+      46.4   -> 0x00000000 (33.3 ms) D3D11CreateDevice(HARDWARE, 6 levels) [EnumerateDevices]
+      46.9   feature level 0xb000
+      47.1 call ID3D11Device::QueryInterface(IDXGIDevice1)
+      47.3   -> 0x00000000 (0.0 ms) ID3D11Device::QueryInterface(IDXGIDevice1)
+      47.4 call IDXGIDevice1::GetAdapter
+      47.5   -> 0x00000000 (0.0 ms) IDXGIDevice1::GetAdapter
+      47.6   device adapter: Hardsoft VirtIO GPU 3D controller vendor 0x1af4 device 0x1050 luid 00000000:00006c5e
+      47.7 call device adapter EnumOutputs(0)
+      47.9   -> 0x00000000 (0.0 ms) device adapter EnumOutputs(0)
+      48.5     GetDisplayModeList(R8G8B8A8_UNORM_SRGB) 0x00000000, 38 modes
+      48.6 call device adapter EnumOutputs(1)
+      48.7   -> 0x887a0002 (0.0 ms) device adapter EnumOutputs(1)
+      48.8 call CheckFeatureSupport(D3D10_X_HARDWARE_OPTIONS)
+      49.0   -> 0x00000000 (0.0 ms) CheckFeatureSupport(D3D10_X_HARDWARE_OPTIONS)
+      49.1   ComputeShaders_Plus_RawAndStructuredBuffers_Via_Shader_4_x=1
+      52.5   release [EnumerateDevices]: context ref 0, device ref 0
+      52.6 call D3D11CreateDevice(WARP, 6 levels) [EnumerateDevices]
+      57.0   -> 0x00000000 (4.3 ms) D3D11CreateDevice(WARP, 6 levels) [EnumerateDevices]
+      57.1   feature level 0xb000
+      57.2 call ID3D11Device::QueryInterface(IDXGIDevice1)
+      57.4   -> 0x00000000 (0.0 ms) ID3D11Device::QueryInterface(IDXGIDevice1)
+      57.6 call IDXGIDevice1::GetAdapter
+      57.8   -> 0x00000000 (0.0 ms) IDXGIDevice1::GetAdapter
+      57.9   device adapter: Microsoft Basic Render Driver vendor 0x1414 device 0x008c luid 00000000:00006d6d
+      58.0 call device adapter EnumOutputs(0)
+      58.1   -> 0x887a0002 (0.0 ms) device adapter EnumOutputs(0)
+      58.2 call CheckFeatureSupport(D3D10_X_HARDWARE_OPTIONS)
+      58.4   -> 0x00000000 (0.0 ms) CheckFeatureSupport(D3D10_X_HARDWARE_OPTIONS)
+      58.5   ComputeShaders_Plus_RawAndStructuredBuffers_Via_Shader_4_x=1
+      62.0   release [EnumerateDevices]: context ref 0, device ref 0
+      62.1 call D3D11CreateDevice(REFERENCE, 6 levels) [EnumerateDevices]
+      62.5   -> 0x887a0004 (0.3 ms) D3D11CreateDevice(REFERENCE, 6 levels) [EnumerateDevices]
+      62.8 call IDXGIAdapter::EnumOutputs(0)
+      62.9   -> 0x00000000 (0.0 ms) IDXGIAdapter::EnumOutputs(0)
+      63.2   output 0: \\.\DISPLAY1 attached 1 desktop 0,0-1280,800
+      63.3 call IDXGIOutput::GetDisplayModeList(R8G8B8A8_UNORM_SRGB, SCALING, 512)
+      63.8   -> 0x00000000 (0.4 ms) IDXGIOutput::GetDisplayModeList(R8G8B8A8_UNORM_SRGB, SCALING, 512)
+      63.9   38 modes
+      64.1     640x480 148500000/2475000 scanline 1 scaling 0
+      64.2     640x480 148500000/2475000 scanline 1 scaling 1
+      64.4     800x600 148500000/2475000 scanline 1 scaling 0
+      64.5     800x600 148500000/2475000 scanline 1 scaling 1
+      64.6 call IDXGIOutput::GetDisplayModeList(R8G8B8A8_UNORM, SCALING, 512)
+      64.9   -> 0x00000000 (0.2 ms) IDXGIOutput::GetDisplayModeList(R8G8B8A8_UNORM, SCALING, 512)
+      65.0   38 modes
+      65.1     640x480 148500000/2475000 scanline 1 scaling 0
+      65.2     640x480 148500000/2475000 scanline 1 scaling 1
+      65.3     800x600 148500000/2475000 scanline 1 scaling 0
+      65.4     800x600 148500000/2475000 scanline 1 scaling 1
+      65.6 call IDXGIOutput::GetDisplayModeList(R16G16B16A16_FLOAT, SCALING, 512)
+      66.2   -> 0x00000000 (0.5 ms) IDXGIOutput::GetDisplayModeList(R16G16B16A16_FLOAT, SCALING, 512)
+      66.3   0 modes
+      66.4 call IDXGIOutput::GetDisplayModeList(R10G10B10A2_UNORM, SCALING, 512)
+      66.6   -> 0x00000000 (0.1 ms) IDXGIOutput::GetDisplayModeList(R10G10B10A2_UNORM, SCALING, 512)
+      66.9   0 modes
+      67.0 call IDXGIAdapter::EnumOutputs(1)
+      67.2   -> 0x887a0002 (0.0 ms) IDXGIAdapter::EnumOutputs(1)
+      67.3   adapter 0: 1 output(s) with modes
+      67.4 call IDXGIFactory1::EnumAdapters(1)
+      67.6   -> 0x00000000 (0.1 ms) IDXGIFactory1::EnumAdapters(1)
+      67.7   adapter 1: Microsoft Basic Render Driver vendor 0x1414 device 0x008c vram 0 MiB
+      68.0 call IDXGIAdapter::EnumOutputs(0)
+      68.1   -> 0x887a0002 (0.0 ms) IDXGIAdapter::EnumOutputs(0)
+      68.2   adapter 1: 0 output(s) with modes  <-- DXUT drops this adapter (EnumerateOutputs)
+      68.3 call IDXGIFactory1::EnumAdapters(2)
+      68.4   -> 0x887a0002 (0.0 ms) IDXGIFactory1::EnumAdapters(2)
+      68.5 call D3D11CreateDevice(HARDWARE, 1 levels) [BuildMultiSampleQualityList R8G8B8A8_UNORM_SRGB windowed=0]
+      96.3   -> 0x00000000 (27.6 ms) D3D11CreateDevice(HARDWARE, 1 levels) [BuildMultiSampleQualityList R8G8B8A8_UNORM_SRGB windowed=0]
+      96.5   feature level 0xb000
+      96.6   CheckMultisampleQualityLevels(R8G8B8A8_UNORM_SRGB) count:quality 1:1 2:1 4:1 8:1
+     100.2   release [BuildMultiSampleQualityList R8G8B8A8_UNORM_SRGB windowed=0]: context ref 0, device ref 0
+     100.4 call D3D11CreateDevice(HARDWARE, 1 levels) [BuildMultiSampleQualityList R8G8B8A8_UNORM_SRGB windowed=1]
+     123.8   -> 0x00000000 (23.2 ms) D3D11CreateDevice(HARDWARE, 1 levels) [BuildMultiSampleQualityList R8G8B8A8_UNORM_SRGB windowed=1]
+     123.9   feature level 0xb000
+     124.0   CheckMultisampleQualityLevels(R8G8B8A8_UNORM_SRGB) count:quality 1:1 2:1 4:1 8:1
+     128.7   release [BuildMultiSampleQualityList R8G8B8A8_UNORM_SRGB windowed=1]: context ref 0, device ref 0
+     129.0 call D3D11CreateDevice(HARDWARE, 1 levels) [BuildMultiSampleQualityList R8G8B8A8_UNORM windowed=0]
+     151.0   -> 0x00000000 (21.8 ms) D3D11CreateDevice(HARDWARE, 1 levels) [BuildMultiSampleQualityList R8G8B8A8_UNORM windowed=0]
+     151.1   feature level 0xb000
+     151.3   CheckMultisampleQualityLevels(R8G8B8A8_UNORM) count:quality 1:1 2:1 4:1 8:1
+     154.9   release [BuildMultiSampleQualityList R8G8B8A8_UNORM windowed=0]: context ref 0, device ref 0
+     155.1 call D3D11CreateDevice(HARDWARE, 1 levels) [BuildMultiSampleQualityList R8G8B8A8_UNORM windowed=1]
+     179.9   -> 0x00000000 (24.7 ms) D3D11CreateDevice(HARDWARE, 1 levels) [BuildMultiSampleQualityList R8G8B8A8_UNORM windowed=1]
+     180.0   feature level 0xb000
+     180.3   CheckMultisampleQualityLevels(R8G8B8A8_UNORM) count:quality 1:1 2:1 4:1 8:1
+     183.8   release [BuildMultiSampleQualityList R8G8B8A8_UNORM windowed=1]: context ref 0, device ref 0
+     183.9 call D3D11CreateDevice(HARDWARE, 1 levels) [BuildMultiSampleQualityList R16G16B16A16_FLOAT windowed=0]
+     202.6   -> 0x00000000 (18.5 ms) D3D11CreateDevice(HARDWARE, 1 levels) [BuildMultiSampleQualityList R16G16B16A16_FLOAT windowed=0]
+     202.7   feature level 0xb000
+     203.0   CheckMultisampleQualityLevels(R16G16B16A16_FLOAT) count:quality 1:1 2:1 4:1 8:1
+     206.3   release [BuildMultiSampleQualityList R16G16B16A16_FLOAT windowed=0]: context ref 0, device ref 0
+     206.4 call D3D11CreateDevice(HARDWARE, 1 levels) [BuildMultiSampleQualityList R16G16B16A16_FLOAT windowed=1]
+     232.2   -> 0x00000000 (25.6 ms) D3D11CreateDevice(HARDWARE, 1 levels) [BuildMultiSampleQualityList R16G16B16A16_FLOAT windowed=1]
+     232.3   feature level 0xb000
+     232.4   CheckMultisampleQualityLevels(R16G16B16A16_FLOAT) count:quality 1:1 2:1 4:1 8:1
+     236.1   release [BuildMultiSampleQualityList R16G16B16A16_FLOAT windowed=1]: context ref 0, device ref 0
+     236.2 call D3D11CreateDevice(HARDWARE, 1 levels) [BuildMultiSampleQualityList R10G10B10A2_UNORM windowed=0]
+     265.4   -> 0x00000000 (29.0 ms) D3D11CreateDevice(HARDWARE, 1 levels) [BuildMultiSampleQualityList R10G10B10A2_UNORM windowed=0]
+     265.5   feature level 0xb000
+     265.8   CheckMultisampleQualityLevels(R10G10B10A2_UNORM) count:quality 1:1 2:1 4:1 8:1
+     269.6   release [BuildMultiSampleQualityList R10G10B10A2_UNORM windowed=0]: context ref 0, device ref 0
+     269.7 call D3D11CreateDevice(HARDWARE, 1 levels) [BuildMultiSampleQualityList R10G10B10A2_UNORM windowed=1]
+     296.4   -> 0x00000000 (26.5 ms) D3D11CreateDevice(HARDWARE, 1 levels) [BuildMultiSampleQualityList R10G10B10A2_UNORM windowed=1]
+     296.5   feature level 0xb000
+     296.6   CheckMultisampleQualityLevels(R10G10B10A2_UNORM) count:quality 1:1 2:1 4:1 8:1
+     300.5   release [BuildMultiSampleQualityList R10G10B10A2_UNORM windowed=1]: context ref 0, device ref 0
+     303.8 call D3D11CreateDevice(HARDWARE, 1 levels) [DXUTCreate3DEnvironment11]
+     330.7   -> 0x00000000 (26.7 ms) D3D11CreateDevice(HARDWARE, 1 levels) [DXUTCreate3DEnvironment11]
+     330.9   feature level 0xb000
+     331.1 call IDXGIOutput::FindClosestMatchingMode(640x480 R8G8B8A8_UNORM_SRGB, device)
+     331.4   -> 0x00000000 (0.2 ms) IDXGIOutput::FindClosestMatchingMode(640x480 R8G8B8A8_UNORM_SRGB, device)
+     331.5   closest 640x480 148500000/2475000 R8G8B8A8_UNORM_SRGB
+     331.7   CheckFormatSupport(R8G8B8A8_UNORM_SRGB) 0x00000000 support 0x11fef3f0
+     331.8   CheckFormatSupport(R8G8B8A8_UNORM) 0x00000000 support 0x13fef3f3
+     331.9   CheckFormatSupport(R16G16B16A16_FLOAT) 0x00000000 support 0x12fef3f3
+     332.1   CheckFormatSupport(R10G10B10A2_UNORM) 0x00000000 support 0x13fef3f3
+     332.3   CheckFormatSupport(D32_FLOAT_S8X24_UINT) 0x00000000 support 0x003310b0
+     332.4   CheckFormatSupport(D32_FLOAT) 0x00000000 support 0x003310b0
+     332.5   CheckFormatSupport(D24_UNORM_S8_UINT) 0x00000000 support 0x003310b0
+     332.7   CheckFormatSupport(D16_UNORM) 0x00000000 support 0x003310b0
+     332.8 call IDXGIFactory1::CreateSwapChain(640x480 R8G8B8A8_UNORM_SRGB, 2 buffers, DISCARD, ALLOW_MODE_SWITCH)
+     334.0   -> 0x00000000 (1.1 ms) IDXGIFactory1::CreateSwapChain(640x480 R8G8B8A8_UNORM_SRGB, 2 buffers, DISCARD, ALLOW_MODE_SWITCH)
+     334.3 call IDXGISwapChain::GetFullscreenState
+     334.5   -> 0x00000000 (0.0 ms) IDXGISwapChain::GetFullscreenState
+     408.6 call IDXGISwapChain::GetBuffer(0)
+     409.0   -> 0x00000000 (0.1 ms) IDXGISwapChain::GetBuffer(0)
+     409.1 call CreateRenderTargetView(back buffer)
+     409.4   -> 0x00000000 (0.1 ms) CreateRenderTargetView(back buffer)
+     409.5 call CreateTexture2D(D24_UNORM_S8_UINT depth)
+     410.3   -> 0x00000000 (0.6 ms) CreateTexture2D(D24_UNORM_S8_UINT depth)
+     410.5 call CreateDepthStencilView
+     410.8   -> 0x00000000 (0.0 ms) CreateDepthStencilView
+     411.2 call IDXGISwapChain::Present(0, 0)
+     437.8   -> 0x00000000 (26.4 ms) IDXGISwapChain::Present(0, 0)
+     440.0 call IDXGISwapChain::Present(0, 0)
+     453.3   -> 0x00000000 (13.1 ms) IDXGISwapChain::Present(0, 0)
+     453.5 call IDXGISwapChain::ResizeBuffers(800x600)
+     454.8   -> 0x00000000 (1.1 ms) IDXGISwapChain::ResizeBuffers(800x600)
+     455.0 call IDXGISwapChain::GetBuffer(0)
+     455.1   -> 0x00000000 (0.0 ms) IDXGISwapChain::GetBuffer(0)
+     455.3 call CreateRenderTargetView(back buffer)
+     455.5   -> 0x00000000 (0.0 ms) CreateRenderTargetView(back buffer)
+     455.7 call CreateTexture2D(D24_UNORM_S8_UINT depth)
+     456.0   -> 0x00000000 (0.1 ms) CreateTexture2D(D24_UNORM_S8_UINT depth)
+     456.1 call CreateDepthStencilView
+     456.3   -> 0x00000000 (0.0 ms) CreateDepthStencilView
+     456.4 call IDXGISwapChain::Present(0, 0)
+     504.4   -> 0x00000000 (47.6 ms) IDXGISwapChain::Present(0, 0)
+     505.2 call IDXGISwapChain::Present(0, 0)
+     552.8   -> 0x00000000 (47.4 ms) IDXGISwapChain::Present(0, 0)
+     553.8   swap chain release ref 0
+     561.2   release [DXUTCreate3DEnvironment11]: context ref 0, device ref 0
+     601.4 factory release ref 0
+     602.1 done

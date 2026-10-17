@@ -1,0 +1,108 @@
+Opened log file 'C:\win3d\results\cdb-basic.txt'
+
+************* Preparing the environment for Debugger Extensions Gallery repositories **************
+   ExtensionRepository : Implicit
+   UseExperimentalFeatureForNugetShare : true
+   AllowNugetExeUpdate : true
+   NonInteractiveNuget : true
+   AllowNugetMSCredentialProviderInstall : true
+   AllowParallelInitializationOfLocalRepositories : true
+
+   -- Configuring repositories
+      ----> Repository : LocalInstalled, Enabled: true
+      ----> Repository : UserExtensions, Enabled: true
+
+>>>>>>>>>>>>> Preparing the environment for Debugger Extensions Gallery repositories completed, duration 0.000 seconds
+
+************* Waiting for Debugger Extensions Gallery to Initialize **************
+
+>>>>>>>>>>>>> Waiting for Debugger Extensions Gallery to Initialize completed, duration 0.000 seconds
+   ----> Repository : LocalInstalled, Enabled: true, Packages count: 0
+   ----> Repository : UserExtensions, Enabled: true, Packages count: 0
+
+Microsoft (R) Windows Debugger Version 10.0.29661.1004 AMD64
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+CommandLine: C:\apps\DXSDK\Samples\C++\Direct3D11\Bin\x64\BasicHLSL11.exe -windowed
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+Deferred                                       srv*
+Symbol search path is: srv*
+Executable search path is: 
+
++------------------------------------------------------------------------+
+| This target supports Hardware-enforced Stack Protection. A HW based    |
+| "Shadow Stack" may be available to assist in debugging and analysis.   |
+| See aka.ms/userhsp for more info.                                      |
+|                                                                        |
+| dps @ssp                                                               |
+|                                                                        |
++------------------------------------------------------------------------+
+
+(508.5e0): Break instruction exception - code 80000003 (first chance)
+ntdll!RtlGetReturnAddressHijackTarget+0x749:
+00007ffa`6c362239 cc              int     3
+0:000> .sympath srv*C:\sym*https://msdl.microsoft.com/download/symbols
+Symbol search path is: srv*C:\sym*https://msdl.microsoft.com/download/symbols
+Expanded Symbol search path is: srv*c:\sym*https://msdl.microsoft.com/download/symbols
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+Deferred                                       srv*C:\sym*https://msdl.microsoft.com/download/symbols
+0:000> sxe ld:d3d11.dll
+0:000> g
+ntdll!ZwMapViewOfSection+0x14:
+00007ffa`6c3a12c4 c3              ret
+0:000> bp user32!SetWindowPos ".printf \"SetWindowPos hwnd=%p after=%p x=%d y=%d cx=%d cy=%d flags=%x\\n\", @rcx, @rdx, @r8d, @r9d, dwo(@rsp+28), dwo(@rsp+30), dwo(@rsp+38); k 12; g"
+0:000> bp user32!MoveWindow ".printf \"MoveWindow hwnd=%p x=%d y=%d cx=%d cy=%d\\n\", @rcx, @edx, @r8d, @r9d, dwo(@rsp+28); k 12; g"
+0:000> bp user32!SetWindowPlacement ".printf \"SetWindowPlacement hwnd=%p\\n\", @rcx; dd @rdx L0b; k 12; g"
+0:000> bp user32!ShowWindow ".printf \"ShowWindow hwnd=%p cmd=%d\\n\", @rcx, @edx; k 6; g"
+0:000> bp user32!GetMonitorInfoW ".printf \"GetMonitorInfoW hmon=%p\\n\", @rcx; k 6; g"
+0:000> sxd av
+0:000> sxd eh
+0:000> g
+(508.5e0): C++ EH exception - code e06d7363 (first chance)
+(508.5e0): C++ EH exception - code e06d7363 (first chance)
+(508.5e0): C++ EH exception - code e06d7363 (first chance)
+GetMonitorInfoW hmon=0000000000000000
+Child-SP          RetAddr               Call Site
+00000000`005cf868 00007ff6`f1a384ad     USER32!GetMonitorInfoW
+00000000`005cf870 00007ff6`f1a2f128     BasicHLSL11+0x584ad
+00000000`005cf960 00007ff6`f1a2e007     BasicHLSL11+0x4f128
+00000000`005cfc00 00007ff6`f1a2797a     BasicHLSL11+0x4e007
+00000000`005cfda0 00007ff6`f1a50782     BasicHLSL11+0x4797a
+00000000`005cfdd0 00007ffa`6b3ecd87     BasicHLSL11+0x70782
+GetMonitorInfoW hmon=0000000000000000
+Child-SP          RetAddr               Call Site
+00000000`005cf868 00007ff6`f1a384ad     USER32!GetMonitorInfoW
+00000000`005cf870 00007ff6`f1a2f216     BasicHLSL11+0x584ad
+00000000`005cf960 00007ff6`f1a2e007     BasicHLSL11+0x4f216
+00000000`005cfc00 00007ff6`f1a2797a     BasicHLSL11+0x4e007
+00000000`005cfda0 00007ff6`f1a50782     BasicHLSL11+0x4797a
+00000000`005cfdd0 00007ffa`6b3ecd87     BasicHLSL11+0x70782
+GetMonitorInfoW hmon=0000000000010001
+Child-SP          RetAddr               Call Site
+00000000`005cf868 00007ff6`f1a384ad     USER32!GetMonitorInfoW
+00000000`005cf870 00007ff6`f1a2f235     BasicHLSL11+0x584ad
+00000000`005cf960 00007ff6`f1a2e007     BasicHLSL11+0x4f235
+00000000`005cfc00 00007ff6`f1a2797a     BasicHLSL11+0x4e007
+00000000`005cfda0 00007ff6`f1a50782     BasicHLSL11+0x4797a
+00000000`005cfdd0 00007ffa`6b3ecd87     BasicHLSL11+0x70782
+SetWindowPos hwnd=00000000000401f2 after=0000000000000000 x=32758 y=-2147483648 cx=-32758 cy=0 flags=4
+Child-SP          RetAddr               Call Site
+00000000`005cf958 00007ff6`f1a2f3b1     USER32!SetWindowPos
+00000000`005cf960 00007ff6`f1a2e007     BasicHLSL11+0x4f3b1
+00000000`005cfc00 00007ff6`f1a2797a     BasicHLSL11+0x4e007
+00000000`005cfda0 00007ff6`f1a50782     BasicHLSL11+0x4797a
+00000000`005cfdd0 00007ffa`6b3ecd87     BasicHLSL11+0x70782
+00000000`005cfe80 00007ffa`6c2ecaec     KERNEL32!BaseThreadInitThunk+0x17
+00000000`005cfeb0 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+ShowWindow hwnd=00000000000401f2 cmd=5
+Child-SP          RetAddr               Call Site
+00000000`005cf6b8 00007ff6`f1a2f5a4     USER32!ShowWindow
+00000000`005cf6c0 00007ff6`f1a2f52b     BasicHLSL11+0x4f5a4
+00000000`005cf960 00007ff6`f1a2e007     BasicHLSL11+0x4f52b
+00000000`005cfc00 00007ff6`f1a2797a     BasicHLSL11+0x4e007
+00000000`005cfda0 00007ff6`f1a50782     BasicHLSL11+0x4797a
+00000000`005cfdd0 00007ffa`6b3ecd87     BasicHLSL11+0x70782
