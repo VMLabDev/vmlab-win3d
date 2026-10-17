@@ -10,5 +10,5 @@ src Vulkan-Tools vulkan-sdk-1.4.363.0 6fe2055cf2fa921d52a4c6a31528cfc279a6977f 6
 epoch 1789748904
 # Toolchain: the image printed by build/toolchain/build.sh (llvm-mingw 20261006
 # ucrt, CMake, Ninja, Python). Its inputs are pinned in build/toolchain/
-# (see build/toolchain/PINS / Dockerfile).
+# (see build/toolchain/PINS).
 toolchain see build/toolchain/PINS

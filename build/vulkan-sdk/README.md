@@ -42,3 +42,17 @@ The loader is built with `USE_GAS=ON`, so clang assembles its trampolines for
 unknown device functions. vulkaninfo is built with cube, the mock ICD and the
 tests turned off, so it needs no other dependencies. The build never runs
 `update_deps.py`.
+
+## Reproducibility
+
+Bit-reproducible on this host. A first run, a second run on its leftovers, and
+a run from a fresh clone with an empty `out/` all gave the same sha256.
+No other machine was tried. Toolchain image
+`vmlab-win3d/toolchain:ab524e07f89c`, 2026-10-17:
+
+```
+eae9c602ce4705acda71dd74d3dec1636ea4dceba3a86c8e2f9f2bdefff6bc05  vulkan-sdk/x64/vulkan-1.dll
+db91a68b47786ee4fad4de0c24c6eee0fe568d1ec0dd49a1103e8e4c0ce5034c  vulkan-sdk/x64/vulkaninfo.exe
+1b8122e8f09a5d4e6c70e100537742dd6049c26ee3261fe17188fb39b03491a9  vulkan-sdk/x86/vulkan-1.dll
+de07ea7a6d344937cb1c0767b0b954b6b044f22d685e76fe6e28b71ea205e1fa  vulkan-sdk/x86/vulkaninfo.exe
+```

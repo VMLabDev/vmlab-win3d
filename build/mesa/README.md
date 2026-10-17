@@ -112,7 +112,27 @@ header.
 
 ## Reproducibility
 
-Two consecutive runs on the same host gave bit-identical outputs (all eight
-files). The second run started with the first run's leftovers in place. The
-build sets `SOURCE_DATE_EPOCH=0`, `-ffile-prefix-map=<work>=/mesa`,
-`--no-insert-timestamp` and a fixed mount path (`/w`).
+The build is bit-reproducible on this host. Three runs gave identical sha256
+for all eight outputs:
+
+1. the first run;
+2. a second run on top of the first run's leftovers;
+3. a run from a fresh `git clone` of the branch at another path, with an empty
+   `out/` (so every download was fetched again) and a re-run of
+   `build/toolchain/build.sh --force`.
+
+The build sets `SOURCE_DATE_EPOCH=0`, `-ffile-prefix-map=<work>=/mesa` and
+`--no-insert-timestamp`, and mounts the checkout at the fixed path `/w`.
+No other machine was tried. Toolchain image
+`vmlab-win3d/toolchain:ab524e07f89c`, 2026-10-17:
+
+```
+a417f90c7e82ffda1f88ef8365da2f3cc225bca282b7b320a365fb0b844df262  mesa/x64/libvulkan_virtio.dll
+d74ca3299119ebd886b793bca315bc245ab315e30ee4701c9e3bfa9ed704bc44  mesa/x64/viogpu_d3d10.dll
+759c38ea072be579f96a2daba3afcd1c5117f1f667ad4eb11f86909882021605  mesa/x64/viogpu_wgl.dll
+f67d39fde82a46dfdbb34581493632e164fe6694310ff125c0c180c91283304a  mesa/x64/virtio_icd.json
+a4b09b58804984d91719f75fdacdf69c7f9ff7c731f90a5f615be189d5360800  mesa/x86/libvulkan_virtio.dll
+f50cf4dd0b1804599bc6c72832bd07faefd93a7a25fe8b4585c07ff393a349e3  mesa/x86/viogpu_d3d10.dll
+eebe236cb7a97e2bdd540c9d68709f132e48aa887d39374b649c655df5691b3e  mesa/x86/viogpu_wgl.dll
+69e6a7c23226a0c1c854f9b8ac340cedc361ad2db66fe6aa7733c8e060e03151  mesa/x86/virtio_icd.json
+```
