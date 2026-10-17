@@ -39,7 +39,7 @@ while [ $# -gt 0 ]; do
     esac
 done
 case $GPU in
-    intel) PCI=0000:00:02.0; export VMLAB=vmlab ;;
+    intel) PCI=0000:00:02.0; export VMLAB=$HOME/.local/bin/vmlab ;;
     nvidia) PCI=0000:01:00.0; export VMLAB=$REPO/labs/zeus/vmlab-nv.sh ;;
     *) echo "--gpu intel|nvidia" >&2; exit 2 ;;
 esac
@@ -101,6 +101,7 @@ build() {
     bundle=$REPO/out/package/vmlab-win3d-$(cat "$REPO/installer/VERSION")
     {
         echo "mode: staged from helios"
+        echo "exit: 0"
         echo "command: scripts/build.sh (on helios)"
         echo "## manifest.json"; cat "$bundle/manifest.json" 2>/dev/null
         echo "## SHA256SUMS"; cat "$REPO/out/package/SHA256SUMS" 2>/dev/null
