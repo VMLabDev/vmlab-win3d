@@ -1,0 +1,11 @@
+# Display devices right after pnputil
+InstanceId:   PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18
+FriendlyName: Hardsoft VirtIO GPU 3D controller
+Status:       Error
+DEVPKEY_Device_ProblemCode:    43
+DEVPKEY_Device_DriverInfPath:  oem15.inf
+DEVPKEY_Device_DriverVersion:  100.6.101.58100
+DEVPKEY_Device_DriverProvider: Hardsoft Swed.
+DEVPKEY_Device_DriverDate:     9/26/2026 5:00:00 PM
+DEVPKEY_Device_Service:        VioGpu3D
+

@@ -1,0 +1,18 @@
+# Trust and boot policy
+## certutil -f -addstore Root
+Root "Trusted Root Certification Authorities"
+Signature matches Public Key
+Certificate "vmlab-win3d Test Driver Signing" added to store.
+CertUtil: -addstore command completed successfully.
+(exit 0)
+## certutil -f -addstore TrustedPublisher
+TrustedPublisher "Trusted Publishers"
+Signature matches Public Key
+Certificate "vmlab-win3d Test Driver Signing" added to store.
+CertUtil: -addstore command completed successfully.
+(exit 0)
+## bcdedit /set {current} testsigning on
+The operation completed successfully.
+(exit 0)
+## powercfg /hibernate off (Fast Startup hazard, decision 0001)
+(exit 0)

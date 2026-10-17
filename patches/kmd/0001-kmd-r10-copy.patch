@@ -1,0 +1,91 @@
+diff --git a/viogpu/common/virgl_hw.h b/viogpu/common/virgl_hw.h
+index 62b2582..d4607de 100644
+--- a/viogpu/common/virgl_hw.h
++++ b/viogpu/common/virgl_hw.h
+@@ -25,6 +25,7 @@
+ #define VIRGL_FORMAT_B8G8R8X8_UNORM           2
+ #define VIRGL_FORMAT_A8R8G8B8_UNORM           3
+ #define VIRGL_FORMAT_X8R8G8B8_UNORM           4
++#define VIRGL_FORMAT_R10G10B10A2_UNORM        8
+ #define VIRGL_FORMAT_R8G8B8A8_UNORM          67
+ #define VIRGL_FORMAT_X8B8G8R8_UNORM          68
+ #define VIRGL_FORMAT_B8G8R8A8_SRGB          100
+@@ -32,6 +33,15 @@
+ #define VIRGL_FORMAT_A8B8G8R8_UNORM         121
+ #define VIRGL_FORMAT_R8G8B8X8_UNORM         134
+ 
++static inline ULONG VirglR10G10B10A2ToR8G8B8A8(ULONG pixel)
++{
++    const ULONG r = ((pixel & 0x3ffu) * 255u + 511u) / 1023u;
++    const ULONG g = (((pixel >> 10) & 0x3ffu) * 255u + 511u) / 1023u;
++    const ULONG b = (((pixel >> 20) & 0x3ffu) * 255u + 511u) / 1023u;
++    const ULONG a = (pixel >> 30) * 85u;
++    return r | (g << 8) | (b << 16) | (a << 24);
++}
++
+ #define VIRGL_BIND_BUFFER_ONLY_MASK         (VIRGL_BIND_VERTEX_BUFFER | \
+                                              VIRGL_BIND_INDEX_BUFFER | \
+                                              VIRGL_BIND_CONSTANT_BUFFER | \
+diff --git a/viogpu/viogpu3d/viogpu_command.cpp b/viogpu/viogpu3d/viogpu_command.cpp
+index ebcb2a2..3ed4ca3 100644
+--- a/viogpu/viogpu3d/viogpu_command.cpp
++++ b/viogpu/viogpu3d/viogpu_command.cpp
+@@ -29,6 +29,7 @@ static UINT VioGpuBltBytesPerPixel(UINT format)
+         case VIRGL_FORMAT_A8B8G8R8_UNORM:
+         case VIRGL_FORMAT_R8G8B8X8_UNORM:
+         case VIRGL_FORMAT_R8G8B8A8_SRGB:
++        case VIRGL_FORMAT_R10G10B10A2_UNORM:
+             return 4;
+         default:
+             return 4;
+@@ -49,6 +50,8 @@ enum VIOGPU_BLT_COPY_MODE
+     VIOGPU_BLT_COPY_UNSUPPORTED = 0,
+     VIOGPU_BLT_COPY_DIRECT,
+     VIOGPU_BLT_COPY_SWAP_RB,
++    VIOGPU_BLT_COPY_R10_TO_RGBA8,
++    VIOGPU_BLT_COPY_R10_TO_BGRA8,
+ };
+ 
+ static VIOGPU_BLT_PIXEL_LAYOUT VioGpuBltPixelLayout(UINT format)
+@@ -82,6 +85,21 @@ static VIOGPU_BLT_COPY_MODE VioGpuBltCopyMode(UINT src_format,
+         return VIOGPU_BLT_COPY_DIRECT;
+     }
+ 
++    if (src_format == VIRGL_FORMAT_R10G10B10A2_UNORM)
++    {
++        switch (dst_format)
++        {
++            case VIRGL_FORMAT_R8G8B8A8_UNORM:
++            case VIRGL_FORMAT_R8G8B8X8_UNORM:
++                return VIOGPU_BLT_COPY_R10_TO_RGBA8;
++            case VIRGL_FORMAT_B8G8R8A8_UNORM:
++            case VIRGL_FORMAT_B8G8R8X8_UNORM:
++                return VIOGPU_BLT_COPY_R10_TO_BGRA8;
++            default:
++                return VIOGPU_BLT_COPY_UNSUPPORTED;
++        }
++    }
++
+     const VIOGPU_BLT_PIXEL_LAYOUT src_layout =
+         VioGpuBltPixelLayout(src_format);
+     const VIOGPU_BLT_PIXEL_LAYOUT dst_layout =
+@@ -529,7 +547,18 @@ static ULONGLONG VioGpuBltCopyRegion(VioGpuCommand *cmd,
+             ULONG *dst_pixel = (ULONG *)dst_row;
+             for (LONG x = 0; x < w; x++)
+             {
+-                dst_pixel[x] = VioGpuBltSwapRedBlue(src_pixel[x]);
++                ULONG pixel = src_pixel[x];
++                if (copy_mode == VIOGPU_BLT_COPY_R10_TO_RGBA8 ||
++                    copy_mode == VIOGPU_BLT_COPY_R10_TO_BGRA8)
++                {
++                    pixel = VirglR10G10B10A2ToR8G8B8A8(pixel);
++                }
++                if (copy_mode == VIOGPU_BLT_COPY_SWAP_RB ||
++                    copy_mode == VIOGPU_BLT_COPY_R10_TO_BGRA8)
++                {
++                    pixel = VioGpuBltSwapRedBlue(pixel);
++                }
++                dst_pixel[x] = pixel;
+             }
+         }
+     }
