@@ -22,7 +22,7 @@ file under `docs/evidence/zeus/`. Date: 2026-10-17.
 | OS | CachyOS, kernel 7.2.4-3-cachyos |
 | GPUs | Intel Iris Xe (Raptor Lake-P) `0000:00:02.0`, `renderD129`; NVIDIA RTX 4060 Max-Q (AD107M) `0000:01:00.0`, `renderD128`, driver 615.71.09 |
 | Host stack | QEMU 11.1.1, virglrenderer 1.3.0, Mesa 26.2.2 (`vulkan-intel`), the same as helios |
-| vmlab | 0.24.0-alpha. It was 0.21.2-alpha, and the user authorised the upgrade (below) |
+| vmlab | 0.24.0-alpha for every run on this page. It was 0.21.2-alpha, and the user authorised the upgrade (below). Zeus has no host config (`~/.config/vmlab/config.wcl`) yet |
 | Template | `x86_64/windows-11@26100.1742.5`, pulled for this work |
 
 `host.txt` in each evidence directory records these per run.
@@ -47,11 +47,31 @@ Everything else stays under `~/win3d-zeus/` on Zeus ([Cleanup](#cleanup)).
 
 ## Lab files and scripts (`labs/zeus/`)
 
+> **Update: vmlab 0.25 (2026-10-17).** The lab files below now use the
+> vmlab 0.25.0-alpha form, `gpu { mode = "vulkan" host_gpu = "<name>" }`,
+> which 0.24 does not accept (`docs/host.md`, "Update: vmlab 0.25"). Every run
+> on this page was taken on vmlab 0.24 with the earlier form,
+> `gpu { mode = "vulkan" address = "<PCI address>" }`; each evidence
+> directory keeps that copy as `lab-vmlab.wcl`. Zeus was not changed. Before
+> the next run on Zeus, upgrade it to vmlab 0.25.0-alpha or later and write
+> its host config, `~/.config/vmlab/config.wcl`:
+>
+> ```wcl
+> import <vmlab-host.wcl>
+>
+> gpu "Intel1"  { address = "0000:00:02.0" }                  // Iris Xe (ANV, renderD129)
+> gpu "Nvidia1" { address = "0000:01:00.0"  default = true }  // RTX 4060 Max-Q (renderD128)
+> ```
+>
+> `labs/zeus/README.md` repeats this. `labs/zeus/vmlab-iso.sh` changes only
+> the runtime and state directories, so its isolated supervisor reads the
+> same host config.
+
 | File | What it is |
 | --- | --- |
-| `intel/vmlab.wcl` | `win3d-zeus-intel`: `gpu { mode = "vulkan" address = "0000:00:02.0" }`, `secure_boot = false`, `agent_update = false`. vmlab 0.24 passes `virtio-vga-gl,venus=true,blob=true,hostmem=4G`, `-display egl-headless,rendernode=/dev/dri/renderD129` and `VK_LOADER_DRIVERS_SELECT=*intel*` (`intel/*/qemu-argv-env.txt`) |
-| `nvidia/vmlab.wcl` | `win3d-zeus-nvidia`, the same on `0000:01:00.0` (`renderD128`, `*nvidia*`) |
-| `amd/vmlab.wcl` | `win3d-zeus-amd`: `labs/probe/vmlab.wcl` with its own lab name, for the regression run on helios |
+| `intel/vmlab.wcl` | `win3d-zeus-intel`: `gpu { mode = "vulkan" host_gpu = "Intel1" }` (`0000:00:02.0` in Zeus's host config), `secure_boot = false`, `agent_update = false`. vmlab passes `virtio-vga-gl,venus=true,blob=true,hostmem=4G`, `-display egl-headless,rendernode=/dev/dri/renderD129` and `VK_LOADER_DRIVERS_SELECT=*intel*` (`intel/*/qemu-argv-env.txt`) |
+| `nvidia/vmlab.wcl` | `win3d-zeus-nvidia`, the same with `host_gpu = "Nvidia1"` (`0000:01:00.0`, `renderD128`, `*nvidia*`) |
+| `amd/vmlab.wcl` | `win3d-zeus-amd`: `labs/probe/vmlab.wcl` with its own lab name (`host_gpu = "AMD1"`), for the regression run on helios |
 | `stage.sh` | Copies what a run needs from helios to `~/win3d-zeus/repo` on Zeus: `out/package`, `out/probes`, `tests/guest`, `tests/e2e` from `main`, `scripts/install-into-vm.sh`, `labs/zeus`, `patches/host`, and the uavtest build |
 | `run.sh` | `tests/e2e/run.sh` adapted for Zeus. It brings up a fresh lab, installs with `scripts/install-into-vm.sh` (the documented command), then runs vulkaninfo, the 10 probes with `vmlab vm screenshot` captures, dxdiag and uavtest. `tests/e2e/check.py` judges the result. It does not build: the package comes from helios |
 | `vmlab-iso.sh` | Runs vmlab against an isolated supervisor under `~/win3d-zeus/`, whose `PATH` and environment give QEMU a patched QEMU (`patches/host/qemu/0001`, built on Zeus) or the diagnostic render server. `labs/nvidia/vmlab-nv.sh` does the same on helios |
@@ -67,7 +87,8 @@ labs/zeus/uavtest/build.sh         # out/labs-zeus/uavtest/uavtest.exe
 labs/zeus/stage.sh                 # to zeus:~/win3d-zeus/repo
 ```
 
-On Zeus, in `~/win3d-zeus/repo`:
+On Zeus, in `~/win3d-zeus/repo` (vmlab 0.25.0-alpha or later and the host
+config above; the recorded runs used vmlab 0.24 and the `address` form):
 
 ```sh
 labs/zeus/run.sh --gpu intel                       # user's supervisor, host QEMU
@@ -213,7 +234,7 @@ check.
 | --- | --- | --- |
 | Intel, `0021` | `intel/05-fix-0021/` | 12 of 12 Done checks; uavtest passes and reports the additional formats off (above) |
 | Intel, first version of `0021` | `intel/04-fix-0021-v1/` | 12 of 12; uavtest passes, but reports `TypedUAVLoadAdditionalFormats: 1` |
-| AMD on helios, `0021`, `labs/zeus/amd/vmlab.wcl` (the `labs/probe/vmlab.wcl` form on `0000:72:00.0`) | `amd/0021-v2/` | 12 of 12 Done checks; all 10 probes render, show on the console and animate; vulkaninfo lists Venus (RADV); dxdiag reports acceleration; uavtest passes with `TypedUAVLoadAdditionalFormats: 1` and `UAV_TYPED_LOAD` on R8G8B8A8_UNORM and R16G16B16A16_FLOAT, as before the patch |
+| AMD on helios, `0021`, `labs/zeus/amd/vmlab.wcl` (the `labs/probe/vmlab.wcl` form on `0000:72:00.0`, vmlab 0.24) | `amd/0021-v2/` | 12 of 12 Done checks; all 10 probes render, show on the console and animate; vulkaninfo lists Venus (RADV); dxdiag reports acceleration; uavtest passes with `TypedUAVLoadAdditionalFormats: 1` and `UAV_TYPED_LOAD` on R8G8B8A8_UNORM and R16G16B16A16_FLOAT, as before the patch |
 | AMD on helios, first version of `0021` | `amd/0021-v1/` | 12 of 12 (uavtest did not run: a `run.sh` bug, since fixed) |
 
 ## NVIDIA RTX 4060

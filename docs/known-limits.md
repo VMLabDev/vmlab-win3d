@@ -14,7 +14,7 @@ result depends on the host GPU. Four were tried:
 
 | Host GPU, driver | Host | Result | Needs | Evidence |
 | --- | --- | --- | --- | --- |
-| AMD Radeon iGPU (Granite Ridge), RADV, Mesa 26.2.2 | helios | **Full pass**: every Done check in `docs/brief.md` item 2, on `windows-11` and `windows-10` | A plain vmlab 0.24 lab | [`acceptance.md`](acceptance.md) |
+| AMD Radeon iGPU (Granite Ridge), RADV, Mesa 26.2.2 | helios | **Full pass**: every Done check in `docs/brief.md` item 2, on `windows-11` and `windows-10` | A plain vmlab lab that names the AMD GPU (`host_gpu = "AMD1"` on 0.25; the runs used 0.24's `gpu.address`) | [`acceptance.md`](acceptance.md) |
 | Intel Iris Xe (Raptor Lake-P), ANV, Mesa 26.2.2 | Zeus | **Full pass** on `windows-11`, 12 of 12 Done checks. Without `patches/mesa/0021`, dwm crash-loops and the console is black | `patches/mesa/0021` (in the package) | [`zeus.md`](zeus.md) |
 | NVIDIA RTX 5090, 610.57.04 | helios | **Partial**: all ten probes pass, vulkaninfo lists Venus, and the console shows the desktop and every probe. Not run through `tests/e2e/run.sh` | `patches/mesa/0020` (in the package) **and** the patched QEMU `patches/host/qemu/0001`, run through an isolated supervisor, until vmlab can name a QEMU binary (handoff `20261017-163910`, pending). The identical-GPU gap below applies | [`nvidia.md`](nvidia.md) |
 | NVIDIA RTX 4060 Max-Q (laptop), 615.71.09 | Zeus | **Unmet**: install, desktop and console worked; then the GPU fell off the bus (Xid 79) during vulkaninfo and QEMU aborted. Cause unknown | Not known | [`zeus.md`](zeus.md) |
@@ -31,8 +31,9 @@ but the console and `vmlab vm screenshot` stay black. Without
 
 **Two identical GPUs cannot be told apart.** On helios, vmlab's
 `VK_LOADER_DRIVERS_SELECT=*nvidia*` matches both RTX 5090s, so the guest sees
-two Venus devices with the same UUID. Applications picked GPU0, the one
-`gpu.address` names. One that picks GPU1 would render on the other card while
+two Venus devices with the same UUID. Applications picked GPU0, the one the
+lab names (`gpu.address` on vmlab 0.24, when this was measured;
+`host_gpu = "Nvidia1"` on 0.25). One that picks GPU1 would render on the other card while
 egl-headless reads from the first. Handoff `20261017-163910` asks vmlab for a
 way to pick one; it is pending.
 
@@ -45,16 +46,19 @@ way to pick one; it is pending.
 > anything else depends on, and watch any repeat run
 > (`docs/evidence/zeus/nvidia/kernel-nvrm.txt`).
 
-On a host with an AMD or Intel GPU and an NVIDIA GPU, name the AMD or Intel
-GPU in `gpu.address`. vmlab then puts egl-headless on its render node and
-filters QEMU's Vulkan loader to its driver.
+On a host with an AMD or Intel GPU and an NVIDIA GPU, declare both in the host
+config and name the AMD or Intel GPU in the lab with `host_gpu`. vmlab then
+puts egl-headless on its render node and filters QEMU's Vulkan loader to its
+driver. A lab that leaves out `host_gpu` gets the host's default GPU. On
+helios the default is `Nvidia1`, an RTX 5090, so the labs here name `AMD1`
+until NVIDIA works with the stock QEMU.
 
 The `docs/host.md` probe, on vmlab 0.23 with workarounds, first found the
 NVIDIA failure (`vkGetImageMemoryRequirements resulted in CS error` and a
 black console; `docs/evidence/host/good-none/`, `min-none/`). It is
 historical: `docs/nvidia.md` names the cause.
 
-### Requires vmlab 0.24.0-alpha or later
+### Requires vmlab 0.25.0-alpha or later
 
 vmlab 0.23 did not give a working Venus guest from `gpu { mode = "vulkan" }`.
 QEMU refused Venus without blob resources, and q35's extra VGA hid the Venus
@@ -63,13 +67,20 @@ screenshots failed on GL displays (`docs/host.md`). Handoff
 `20261017-142905` took those findings to vmlab, and 0.24.0-alpha fixes them.
 `docs/host.md`, "Update: vmlab 0.24", lists what replaced each workaround.
 
-With 0.24 or later, a lab needs only `secure_boot = false` and
-`gpu { mode = "vulkan" address = "<PCI address of an AMD or Intel GPU>" }`, as in
-`labs/probe/vmlab.wcl`. On an older vmlab, QEMU refuses to start that VM
-(`docs/evidence/host/up-plain.txt`).
+vmlab 0.25.0-alpha then moved the GPU's PCI address out of the lab file into
+the host config, `~/.config/vmlab/config.wcl`, and rejects `address` and
+`vulkan_icd` in a lab's `gpu {}` (`docs/host.md`, "Update: vmlab 0.25"). The
+lab files here use the 0.25 form, so they need 0.25.0-alpha or later. A lab
+needs only `secure_boot = false` and
+`gpu { mode = "vulkan" host_gpu = "<name of an AMD or Intel GPU>" }`, as in
+`labs/probe/vmlab.wcl`, and the host config must declare that name:
+`gpu "AMD1" { address = "0000:72:00.0" }` on helios. On vmlab 0.23, QEMU
+refuses to start that VM (`docs/evidence/host/up-plain.txt`).
 
 The evidence in `docs/evidence/host/` and `docs/evidence/package/` was taken
 on vmlab 0.23 with the workarounds (`docs/evidence/package/lab-vmlab.wcl`).
+The acceptance, NVIDIA and Zeus evidence was taken on vmlab 0.24, with the
+GPU named by `gpu.address` in the lab file.
 
 Two vmlab limits remain, with no fix:
 
