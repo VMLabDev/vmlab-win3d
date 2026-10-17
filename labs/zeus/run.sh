@@ -2,7 +2,10 @@
 # The tests/e2e/run.sh acceptance run (branch work/e2e), adapted to run ON
 # Zeus, the laptop, against one of its GPUs. docs/zeus.md explains it.
 #
-#   labs/zeus/run.sh --gpu intel|nvidia [--keep]
+#   labs/zeus/run.sh --gpu intel|nvidia|amd [--keep]
+#
+# --gpu amd is the regression run on helios (AMD iGPU 0000:72:00.0), from
+# this worktree: WIN3D_WORK=$PWD/.scratch/work WIN3D_E2E=<main's tests/e2e>.
 #
 # Run it from the staging tree labs/zeus/stage.sh writes to ~/win3d-zeus/repo
 # on Zeus: out/package, out/probes, tests/guest, tests/e2e (from work/e2e),
@@ -25,7 +28,8 @@
 # Exit status: 0 when every Done check passes, 1 otherwise, 2 on usage.
 set -uo pipefail
 REPO=$(cd "$(dirname "$0")/../.." && pwd)
-HERE=$REPO/tests/e2e
+# WIN3D_E2E: where tests/e2e is (the staging tree has it; this branch does not).
+HERE=${WIN3D_E2E:-$REPO/tests/e2e}
 export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
 export PATH=$HOME/.local/bin:$PATH
 GPU=
@@ -41,7 +45,8 @@ done
 case $GPU in
     intel) PCI=0000:00:02.0 ;;
     nvidia) PCI=0000:01:00.0 ;;
-    *) echo "--gpu intel|nvidia" >&2; exit 2 ;;
+    amd) PCI=0000:72:00.0 ;;  # helios' AMD iGPU: the regression run
+    *) echo "--gpu intel|nvidia|amd" >&2; exit 2 ;;
 esac
 # nvidia (or WIN3D_ISO=1) goes through the isolated supervisor.
 if [ "$GPU" = nvidia ] || [ "${WIN3D_ISO:-0}" = 1 ]; then ISO=1; export VMLAB=$REPO/labs/zeus/vmlab-iso.sh
@@ -52,7 +57,7 @@ vmlab_state() { # the XDG_STATE_HOME the lab's supervisor uses
 }
 LAB=win3d-zeus-$GPU
 VM=win
-WORK=$HOME/win3d-zeus/work/$GPU
+WORK=${WIN3D_WORK:-$HOME/win3d-zeus/work}/$GPU
 LABDIR=$WORK/lab
 # WIN3D_TAG puts the evidence in docs/evidence/zeus/<gpu>/<tag>/ instead.
 EV=$REPO/docs/evidence/zeus/$GPU${WIN3D_TAG:+/$WIN3D_TAG}
@@ -93,7 +98,7 @@ host_stack() {
         echo "template: $TEMPLATE"
         echo "qemu: $(command -v qemu-system-x86_64) $(qemu-system-x86_64 --version | head -1)"
         [ "$ISO" = 1 ] && echo "isolated supervisor: qemu $("$VMLAB" --which-qemu); render server ${WIN3D_RENDER_SERVER:-host}; extra env ${WIN3D_QEMU_ENV:-none}"
-        echo "packages: $(pacman -Q qemu-full qemu-base virglrenderer mesa vulkan-intel nvidia-utils 2>/dev/null | tr '\n' ' ')"
+        echo "packages: $(pacman -Q qemu-full qemu-base virglrenderer mesa vulkan-intel vulkan-radeon nvidia-utils 2>/dev/null | tr '\n' ' ')"
         echo "vmlab: $(vmlab --version)"
         local rn; rn=$(basename "$(ls -d /sys/bus/pci/devices/$PCI/drm/renderD* 2>/dev/null | head -1)")
         echo "venus gpu: /dev/dri/$rn $PCI $(lspci -s "$PCI" 2>/dev/null | cut -d' ' -f2-)"
