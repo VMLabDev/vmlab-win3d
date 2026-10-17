@@ -29,6 +29,8 @@ rsync -a "$REPO/scripts/install-into-vm.sh" "$ZEUS:$DEST/scripts/"
 rsync -a "$REPO/installer/VERSION" "$ZEUS:$DEST/installer/"
 rsync -a --delete "$REPO/labs/zeus/" "$ZEUS:$DEST/labs/zeus/"
 rsync -a --delete "$REPO/patches/host/" "$ZEUS:$DEST/patches/host/"
+# labs/zeus/uavtest/build.sh output, when built.
+[ ! -d "$REPO/out/labs-zeus" ] || rsync -a --delete "$REPO/out/labs-zeus/" "$ZEUS:$DEST/out/labs-zeus/"
 # The diagnostic render server, when built (patches/host/build-virglrenderer.sh).
 [ ! -d "$REPO/out/host/virglrenderer" ] || rsync -a --delete "$REPO/out/host/virglrenderer/" "$ZEUS:$DEST/out/host/virglrenderer/"
 {

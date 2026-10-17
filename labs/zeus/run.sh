@@ -284,6 +284,19 @@ tests() {
     say "5c dxdiag"
     gfile 900 'C:\win3d\guest\Get-Dxdiag.ps1' -OutDir 'C:\win3d\results\dxdiag' -AsUser >"$WORK/raw/dxdiag.out" 2>&1 || true
     tail -5 "$WORK/raw/dxdiag.out"
+
+    # Extra (not a Done item): D3D11 R32 typed UAV loads (labs/zeus/uavtest).
+    local uav=$REPO/out/labs-zeus/uavtest/uavtest.exe
+    if [ -f "$uav" ]; then
+        say "5d uavtest (D3D11 typed UAV loads)"
+        # In the user's session (Run-Probe.ps1), through a .cmd for the redirect.
+        in_lab vmlab cp "$uav" "$VM:C:/win3d/uavtest.exe" &&
+            gps 'New-Item -ItemType Directory -Force C:\win3d\results\uavtest | Out-Null
+                Set-Content -Encoding ascii C:\win3d\uavtest.cmd "C:\win3d\uavtest.exe > C:\win3d\results\uavtest\uavtest.txt 2>&1"' 60 >/dev/null &&
+            gfile 300 'C:\win3d\guest\Run-Probe.ps1' -Path 'C:\win3d\uavtest.cmd' -Raw -NoModules -Name uavtest \
+                -OutDir 'C:\win3d\results\uavtest' >"$WORK/raw/uavtest.out" 2>&1
+        gps 'Get-Content C:\win3d\results\uavtest\uavtest.txt' 60 | tee "$EV/uavtest.txt"
+    fi
 }
 
 collect() {
