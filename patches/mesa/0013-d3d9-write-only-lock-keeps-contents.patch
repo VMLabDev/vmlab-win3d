@@ -1,0 +1,40 @@
+Subject: [PATCH] d3d10umd: keep a surface's contents across a write-only D3D9 lock
+
+A WriteOnly lock without Discard mapped the GPU texture write-only, and
+the unmap uploaded the whole box from a staging copy that never held the
+surface's contents, so every texel the caller did not write was lost.
+DirectDraw's emulation layer does exactly that for blits the HAL does not
+offer (colour key, mirror): it locks the whole destination write-only and
+writes only the blitted rectangle. Such locks now take the readback path,
+which starts from the current contents.
+
+Evidence: docs/dxdiag.md, docs/evidence/dxdiag/ (ddcaps blit checks).
+Origin: vmlab-win3d, worker fix-dxdiag.
+---
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Resource.cpp b/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
+index 7c5554c..6f27d53 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
+@@ -3350,10 +3350,19 @@ D3D9Lock(HANDLE hDevice, D3DDDIARG_LOCK *data)
+           !D3D9UploadSubResource(device, resource, subresource_index))
+          return E_NOTIMPL;
+ 
+-      if ((usage & PIPE_MAP_READ) && D3D9PoolNeedsReadback(resource->pool)) {
++      /* A write-only lock without Discard still has to keep the texels the
++       * caller does not write.  DirectDraw's emulation layer relies on that:
++       * for a colour-key or mirror blit the HAL does not offer, it locks
++       * the whole destination write-only and stores only the blitted
++       * rectangle.  A plain write map of a GPU texture uploads the whole
++       * box from an uninitialised staging copy, so such locks go through
++       * the readback path, which starts from the current contents. */
++      const bool preserve_contents =
++         (usage & PIPE_MAP_READ) || !(usage & PIPE_MAP_DISCARD_RANGE);
++      if (preserve_contents && D3D9PoolNeedsReadback(resource->pool)) {
+          map = D3D9ReadbackTextureLock(device, resource, sub,
+-                                       subresource_index, usage, &box,
+-                                       data);
++                                       subresource_index,
++                                       usage | PIPE_MAP_READ, &box, data);
+       } else {
+          if (!device->pipe->texture_map)
+             return E_NOTIMPL;

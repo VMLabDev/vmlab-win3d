@@ -1,0 +1,11 @@
+createDevice 0
+fmt 44 tiling 1 usage 0x80017 flags 0x8 1280x800: formatprops -11 (maxExtent 0) createImage -11
+fmt 9 tiling 1 usage 0x80017 flags 0x8 32x32: formatprops -11 (maxExtent 0) createImage -11
+fmt 44 tiling 0 usage 0x80017 flags 0x8 16x16: formatprops 0 (maxExtent 32768) createImage 0
+fmt 44 tiling 1 usage 0x17 flags 0x8 1280x800: formatprops 0 (maxExtent 32768) createImage 0
+fmt 44 tiling 1 usage 0x80017 flags 0x0 1280x800: formatprops -11 (maxExtent 0) createImage -11
+fmt 44 tiling 1 usage 0x80007 flags 0x8 1280x800: formatprops -11 (maxExtent 0) createImage -11
+fmt 9 tiling 1 usage 0x17 flags 0x8 32x32: formatprops 0 (maxExtent 32768) createImage 0
+fmt 9 tiling 1 usage 0x80017 flags 0x0 32x32: formatprops -11 (maxExtent 0) createImage -11
+fmt 44 tiling 1 usage 0x80017 flags 0x408 1280x800: formatprops -11 (maxExtent 0) createImage -11
+fmt 44 tiling 1 usage 0x17 flags 0x408 1280x800: formatprops 0 (maxExtent 32768) createImage 0

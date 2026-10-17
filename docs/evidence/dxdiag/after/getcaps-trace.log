@@ -1,0 +1,130 @@
+[ddcaps.exe] 2026-10-17 06:38:10.149 pid=7192 tid=8540 d3d9ddi: OpenAdapter data=0000006be677d440 hAdapter=0000000040000000 funcs=0000024c089c2818 callbacks=0000006be677d4d0 version=0x00002003 runtimeInterface=0x00000007 runtimeVersion=0x00011000
+[ddcaps.exe] 2026-10-17 06:38:10.169 pid=7192 tid=8540 d3d9ddi: CreateDevice hAdapter=0000024c089a6d40 data=0000006be677d470 pDeviceFuncs=0000006be677d700 hRTDevice=0000024c089c1db0 interface=0x00000007 version=0x00011000 flags=0x00000000 cmd=0000000000000000/0 alloc=0000000000000000/0 patch=0000000000000000/0
+[ddcaps.exe] 2026-10-17 06:38:10.196 pid=7192 tid=8540 d3d9ddi: GetCaps enter hAdapter=0000024c089a6d40 data=0000006be677e568 type=1 pInfo=0000000000000000 pData=0000006be677e5f0 size=20
+[ddcaps.exe] 2026-10-17 06:38:10.196 pid=7192 tid=8540 d3d9ddi: GetCaps DDRAW caps=0x00000005 caps2=0x00000010
+[ddcaps.exe] 2026-10-17 06:38:10.196 pid=7192 tid=8540 d3d9ddi: GetCaps enter hAdapter=0000024c089a6d40 data=0000006be677e568 type=2 pInfo=0000000000000000 pData=0000006be677e608 size=28
+[ddcaps.exe] 2026-10-17 06:38:10.196 pid=7192 tid=8540 d3d9ddi: GetCaps DDRAW_MODE_SPECIFIC head=0
+[ddcaps.exe] 2026-10-17 06:38:10.196 pid=7192 tid=8540 d3d9ddi: GetCaps enter hAdapter=0000024c089a6d40 data=0000006be677e568 type=34 pInfo=0000000000000000 pData=0000006be677e564 size=4
+[ddcaps.exe] 2026-10-17 06:38:10.197 pid=7192 tid=8540 d3d9ddi: GetCaps GAMMA caps=0x00000001
+[ddcaps.exe] 2026-10-17 06:38:10.197 pid=7192 tid=8540 d3d9ddi: GetCaps enter hAdapter=0000024c089a6d40 data=0000006be677e568 type=3 pInfo=0000000000000000 pData=0000006be677e560 size=4
+[ddcaps.exe] 2026-10-17 06:38:10.197 pid=7192 tid=8540 d3d9ddi: GetCaps FORMATCOUNT count=46
+[ddcaps.exe] 2026-10-17 06:38:10.198 pid=7192 tid=8540 d3d9ddi: GetCaps enter hAdapter=0000024c089a6d40 data=0000006be677e568 type=4 pInfo=0000000000000000 pData=0000024c0cf0f360 size=920
+[ddcaps.exe] 2026-10-17 06:38:10.198 pid=7192 tid=8540 d3d9ddi: GetCaps FORMATDATA bytes=920 count=46 x8r8g8b8=0x008aec1f a8r8g8b8=0x00dae01f
+[ddcaps.exe] 2026-10-17 06:38:10.198 pid=7192 tid=8540 d3d9ddi: GetCaps enter hAdapter=0000024c089a6d40 data=0000006be677e568 type=8 pInfo=0000000000000000 pData=0000006be677eb60 size=200
+[ddcaps.exe] 2026-10-17 06:38:10.199 pid=7192 tid=8540 d3d9ddi: GetCaps D3D3 size=200 dev=0x000bbf51 render=0x00000500 z=0x00000700
+[ddcaps.exe] 2026-10-17 06:38:10.201 pid=7192 tid=8540 d3d9ddi: GetCaps enter hAdapter=0000024c089a6d40 data=0000006be677e568 type=1 pInfo=0000000000000000 pData=0000006be677e5f0 size=20
+[ddcaps.exe] 2026-10-17 06:38:10.201 pid=7192 tid=8540 d3d9ddi: GetCaps DDRAW caps=0x00000005 caps2=0x00000010
+[ddcaps.exe] 2026-10-17 06:38:10.201 pid=7192 tid=8540 d3d9ddi: GetCaps enter hAdapter=0000024c089a6d40 data=0000006be677e568 type=2 pInfo=0000000000000000 pData=0000006be677e608 size=28
+[ddcaps.exe] 2026-10-17 06:38:10.201 pid=7192 tid=8540 d3d9ddi: GetCaps DDRAW_MODE_SPECIFIC head=0
+[ddcaps.exe] 2026-10-17 06:38:10.201 pid=7192 tid=8540 d3d9ddi: GetCaps enter hAdapter=0000024c089a6d40 data=0000006be677e568 type=34 pInfo=0000000000000000 pData=0000006be677e564 size=4
+[ddcaps.exe] 2026-10-17 06:38:10.201 pid=7192 tid=8540 d3d9ddi: GetCaps GAMMA caps=0x00000001
+[ddcaps.exe] 2026-10-17 06:38:10.201 pid=7192 tid=8540 d3d9ddi: GetCaps enter hAdapter=0000024c089a6d40 data=0000006be677e568 type=8 pInfo=0000000000000000 pData=0000024c0cf0f7f0 size=200
+[ddcaps.exe] 2026-10-17 06:38:10.202 pid=7192 tid=8540 d3d9ddi: GetCaps D3D3 size=200 dev=0x000bbf51 render=0x00000500 z=0x00000700
+[ddcaps.exe] 2026-10-17 06:38:10.204 pid=7192 tid=8540 d3d9ddi: GetCaps enter hAdapter=0000024c089a6d40 data=0000006be677e180 type=3 pInfo=0000000000000000 pData=0000006be677e1d0 size=4
+[ddcaps.exe] 2026-10-17 06:38:10.204 pid=7192 tid=8540 d3d9ddi: GetCaps FORMATCOUNT count=46
+[ddcaps.exe] 2026-10-17 06:38:10.204 pid=7192 tid=8540 d3d9ddi: GetCaps enter hAdapter=0000024c089a6d40 data=0000006be677e180 type=4 pInfo=0000000000000000 pData=0000024c0cf0f8f0 size=920
+[ddcaps.exe] 2026-10-17 06:38:10.204 pid=7192 tid=8540 d3d9ddi: GetCaps FORMATDATA bytes=920 count=46 x8r8g8b8=0x008aec1f a8r8g8b8=0x00dae01f
+[ddcaps.exe] 2026-10-17 06:38:10.206 pid=7192 tid=8540 d3d9ddi: GetCaps enter hAdapter=0000024c089a6d40 data=0000006be677e6e0 type=11 pInfo=0000000000000000 pData=00007ffa7b903270 size=116
+[ddcaps.exe] 2026-10-17 06:38:10.206 pid=7192 tid=8540 d3d9ddi: GetCaps D3D7 size=116 max_tex=16384x16384 stages=8
+[ddcaps.exe] 2026-10-17 06:38:23.770 pid=768 tid=7884 d3d9ddi: OpenAdapter data=007ad690 hAdapter=40000000 funcs=0083a544 callbacks=007ad64c version=0x00002003 runtimeInterface=0x00000007 runtimeVersion=0x00011000
+[ddcaps.exe] 2026-10-17 06:38:23.787 pid=768 tid=7884 d3d9ddi: CreateDevice hAdapter=00833120 data=007ad658 pDeviceFuncs=007ad300 hRTDevice=00839d48 interface=0x00000007 version=0x00011000 flags=0x00000000 cmd=00000000/0 alloc=00000000/0 patch=00000000/0
+[ddcaps.exe] 2026-10-17 06:38:23.808 pid=768 tid=7884 d3d9ddi: GetCaps enter hAdapter=00833120 data=007adf00 type=1 pInfo=00000000 pData=007ae188 size=20
+[ddcaps.exe] 2026-10-17 06:38:23.808 pid=768 tid=7884 d3d9ddi: GetCaps DDRAW caps=0x00000005 caps2=0x00000010
+[ddcaps.exe] 2026-10-17 06:38:23.810 pid=768 tid=7884 d3d9ddi: GetCaps enter hAdapter=00833120 data=007adf00 type=2 pInfo=00000000 pData=007ae16c size=28
+[ddcaps.exe] 2026-10-17 06:38:23.810 pid=768 tid=7884 d3d9ddi: GetCaps DDRAW_MODE_SPECIFIC head=0
+[ddcaps.exe] 2026-10-17 06:38:23.810 pid=768 tid=7884 d3d9ddi: GetCaps enter hAdapter=00833120 data=007adf00 type=34 pInfo=00000000 pData=007adef8 size=4
+[ddcaps.exe] 2026-10-17 06:38:23.810 pid=768 tid=7884 d3d9ddi: GetCaps GAMMA caps=0x00000001
+[ddcaps.exe] 2026-10-17 06:38:23.810 pid=768 tid=7884 d3d9ddi: GetCaps enter hAdapter=00833120 data=007adf00 type=3 pInfo=00000000 pData=007adf1c size=4
+[ddcaps.exe] 2026-10-17 06:38:23.811 pid=768 tid=7884 d3d9ddi: GetCaps FORMATCOUNT count=46
+[ddcaps.exe] 2026-10-17 06:38:23.811 pid=768 tid=7884 d3d9ddi: GetCaps enter hAdapter=00833120 data=007adf00 type=4 pInfo=00000000 pData=011eb2b8 size=920
+[ddcaps.exe] 2026-10-17 06:38:23.811 pid=768 tid=7884 d3d9ddi: GetCaps FORMATDATA bytes=920 count=46 x8r8g8b8=0x008aec1f a8r8g8b8=0x00dae01f
+[ddcaps.exe] 2026-10-17 06:38:23.811 pid=768 tid=7884 d3d9ddi: GetCaps enter hAdapter=00833120 data=007adf00 type=8 pInfo=00000000 pData=007ae528 size=192
+[ddcaps.exe] 2026-10-17 06:38:23.812 pid=768 tid=7884 d3d9ddi: GetCaps D3D3 size=192 dev=0x000bbf51 render=0x00000500 z=0x00000700
+[ddcaps.exe] 2026-10-17 06:38:23.812 pid=768 tid=7884 d3d9ddi: GetCaps enter hAdapter=00833120 data=007adf00 type=1 pInfo=00000000 pData=007ae188 size=20
+[ddcaps.exe] 2026-10-17 06:38:23.813 pid=768 tid=7884 d3d9ddi: GetCaps DDRAW caps=0x00000005 caps2=0x00000010
+[ddcaps.exe] 2026-10-17 06:38:23.813 pid=768 tid=7884 d3d9ddi: GetCaps enter hAdapter=00833120 data=007adf00 type=2 pInfo=00000000 pData=007ae16c size=28
+[ddcaps.exe] 2026-10-17 06:38:23.813 pid=768 tid=7884 d3d9ddi: GetCaps DDRAW_MODE_SPECIFIC head=0
+[ddcaps.exe] 2026-10-17 06:38:23.813 pid=768 tid=7884 d3d9ddi: GetCaps enter hAdapter=00833120 data=007adf00 type=34 pInfo=00000000 pData=007adef8 size=4
+[ddcaps.exe] 2026-10-17 06:38:23.813 pid=768 tid=7884 d3d9ddi: GetCaps GAMMA caps=0x00000001
+[ddcaps.exe] 2026-10-17 06:38:23.814 pid=768 tid=7884 d3d9ddi: GetCaps enter hAdapter=00833120 data=007adf00 type=8 pInfo=00000000 pData=04f16d0c size=192
+[ddcaps.exe] 2026-10-17 06:38:23.814 pid=768 tid=7884 d3d9ddi: GetCaps D3D3 size=192 dev=0x000bbf51 render=0x00000500 z=0x00000700
+[ddcaps.exe] 2026-10-17 06:38:23.814 pid=768 tid=7884 d3d9ddi: GetCaps enter hAdapter=00833120 data=007adc74 type=3 pInfo=007adc58 pData=007adc90 size=4
+[ddcaps.exe] 2026-10-17 06:38:23.814 pid=768 tid=7884 d3d9ddi: GetCaps FORMATCOUNT count=46
+[ddcaps.exe] 2026-10-17 06:38:23.814 pid=768 tid=7884 d3d9ddi: GetCaps enter hAdapter=00833120 data=007adc74 type=4 pInfo=007adc58 pData=011ec018 size=920
+[ddcaps.exe] 2026-10-17 06:38:23.816 pid=768 tid=7884 d3d9ddi: GetCaps FORMATDATA bytes=920 count=46 x8r8g8b8=0x008aec1f a8r8g8b8=0x00dae01f
+[ddcaps.exe] 2026-10-17 06:38:23.816 pid=768 tid=7884 d3d9ddi: GetCaps enter hAdapter=00833120 data=007ae1a4 type=11 pInfo=00000000 pData=7454f630 size=116
+[ddcaps.exe] 2026-10-17 06:38:23.816 pid=768 tid=7884 d3d9ddi: GetCaps D3D7 size=116 max_tex=16384x16384 stages=8
+[dxdiag.exe] 2026-10-17 06:38:40.127 pid=8228 tid=8232 d3d9ddi: OpenAdapter data=00000010a3e8cea0 hAdapter=0000000080003200 funcs=0000011f2685faa0 callbacks=00000010a3e8cc70 version=0x00002003 runtimeInterface=0x00000009 runtimeVersion=0x00011000
+[dxdiag.exe] 2026-10-17 06:38:40.146 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801e40 data=00000010a3e8d4e8 type=13 pInfo=0000000000000000 pData=0000011f268de610 size=304
+[dxdiag.exe] 2026-10-17 06:38:40.147 pid=8228 tid=8232 d3d9ddi: GetCaps D3D9 caps=0x00020000 caps2=0xe0020000 dev=0x061bbff0 dev2=0x00000041 vs=0xfffe0300 ps=0xffff0300
+[dxdiag.exe] 2026-10-17 06:38:40.148 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801e40 data=00000010a3e8d4e8 type=3 pInfo=0000000000000000 pData=00000010a3e8d550 size=4
+[dxdiag.exe] 2026-10-17 06:38:40.148 pid=8228 tid=8232 d3d9ddi: GetCaps FORMATCOUNT count=46
+[dxdiag.exe] 2026-10-17 06:38:40.152 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801e40 data=00000010a3e8d4e8 type=6 pInfo=0000000000000000 pData=00000010a3e8d4d0 size=4
+[dxdiag.exe] 2026-10-17 06:38:40.152 pid=8228 tid=8232 d3d9ddi: GetCaps QUERYCOUNT count=2
+[dxdiag.exe] 2026-10-17 06:38:40.152 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801e40 data=00000010a3e8d4e8 type=34 pInfo=0000000000000000 pData=00000010a3e8d560 size=4
+[dxdiag.exe] 2026-10-17 06:38:40.152 pid=8228 tid=8232 d3d9ddi: GetCaps GAMMA caps=0x00000001
+[dxdiag.exe] 2026-10-17 06:38:40.155 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801e40 data=00000010a3e8d4e8 type=13 pInfo=0000000000000000 pData=0000011f268de610 size=304
+[dxdiag.exe] 2026-10-17 06:38:40.155 pid=8228 tid=8232 d3d9ddi: GetCaps D3D9 caps=0x00020000 caps2=0xe0020000 dev=0x061bbff0 dev2=0x00000041 vs=0xfffe0300 ps=0xffff0300
+[dxdiag.exe] 2026-10-17 06:38:40.155 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801e40 data=00000010a3e8d4e8 type=3 pInfo=0000000000000000 pData=00000010a3e8d550 size=4
+[dxdiag.exe] 2026-10-17 06:38:40.155 pid=8228 tid=8232 d3d9ddi: GetCaps FORMATCOUNT count=46
+[dxdiag.exe] 2026-10-17 06:38:40.155 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801e40 data=00000010a3e8d4e8 type=6 pInfo=0000000000000000 pData=00000010a3e8d4d0 size=4
+[dxdiag.exe] 2026-10-17 06:38:40.155 pid=8228 tid=8232 d3d9ddi: GetCaps QUERYCOUNT count=2
+[dxdiag.exe] 2026-10-17 06:38:40.155 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801e40 data=00000010a3e8d4e8 type=34 pInfo=0000000000000000 pData=00000010a3e8d560 size=4
+[dxdiag.exe] 2026-10-17 06:38:40.155 pid=8228 tid=8232 d3d9ddi: GetCaps GAMMA caps=0x00000001
+[dxdiag.exe] 2026-10-17 06:38:40.157 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801e40 data=00000010a3e8d4e8 type=4 pInfo=0000000000000000 pData=0000011f2681b840 size=920
+[dxdiag.exe] 2026-10-17 06:38:40.157 pid=8228 tid=8232 d3d9ddi: GetCaps FORMATDATA bytes=920 count=46 x8r8g8b8=0x008aec1f a8r8g8b8=0x00dae01f
+[dxdiag.exe] 2026-10-17 06:38:40.157 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801e40 data=00000010a3e8d4e8 type=7 pInfo=0000000000000000 pData=0000011f24e1fa40 size=8
+[dxdiag.exe] 2026-10-17 06:38:40.158 pid=8228 tid=8232 d3d9ddi: GetCaps QUERYDATA bytes=8 count=2
+[dxdiag.exe] 2026-10-17 06:38:40.261 pid=8228 tid=8232 d3d9ddi: OpenAdapter data=00000010a3e8cea0 hAdapter=00000000c0002cc0 funcs=0000011f268de090 callbacks=00000010a3e8cc70 version=0x00002003 runtimeInterface=0x00000009 runtimeVersion=0x00011000
+[dxdiag.exe] 2026-10-17 06:38:40.280 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f268015c0 data=00000010a3e8d4e8 type=13 pInfo=0000000000000000 pData=0000011f26816330 size=304
+[dxdiag.exe] 2026-10-17 06:38:40.281 pid=8228 tid=8232 d3d9ddi: GetCaps D3D9 caps=0x00020000 caps2=0xe0020000 dev=0x061bbff0 dev2=0x00000041 vs=0xfffe0300 ps=0xffff0300
+[dxdiag.exe] 2026-10-17 06:38:40.281 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f268015c0 data=00000010a3e8d4e8 type=3 pInfo=0000000000000000 pData=00000010a3e8d550 size=4
+[dxdiag.exe] 2026-10-17 06:38:40.281 pid=8228 tid=8232 d3d9ddi: GetCaps FORMATCOUNT count=46
+[dxdiag.exe] 2026-10-17 06:38:40.283 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f268015c0 data=00000010a3e8d4e8 type=6 pInfo=0000000000000000 pData=00000010a3e8d4d0 size=4
+[dxdiag.exe] 2026-10-17 06:38:40.283 pid=8228 tid=8232 d3d9ddi: GetCaps QUERYCOUNT count=2
+[dxdiag.exe] 2026-10-17 06:38:40.283 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f268015c0 data=00000010a3e8d4e8 type=34 pInfo=0000000000000000 pData=00000010a3e8d560 size=4
+[dxdiag.exe] 2026-10-17 06:38:40.283 pid=8228 tid=8232 d3d9ddi: GetCaps GAMMA caps=0x00000001
+[dxdiag.exe] 2026-10-17 06:38:40.284 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f268015c0 data=00000010a3e8d4e8 type=13 pInfo=0000000000000000 pData=0000011f26816330 size=304
+[dxdiag.exe] 2026-10-17 06:38:40.284 pid=8228 tid=8232 d3d9ddi: GetCaps D3D9 caps=0x00020000 caps2=0xe0020000 dev=0x061bbff0 dev2=0x00000041 vs=0xfffe0300 ps=0xffff0300
+[dxdiag.exe] 2026-10-17 06:38:40.284 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f268015c0 data=00000010a3e8d4e8 type=3 pInfo=0000000000000000 pData=00000010a3e8d550 size=4
+[dxdiag.exe] 2026-10-17 06:38:40.284 pid=8228 tid=8232 d3d9ddi: GetCaps FORMATCOUNT count=46
+[dxdiag.exe] 2026-10-17 06:38:40.284 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f268015c0 data=00000010a3e8d4e8 type=6 pInfo=0000000000000000 pData=00000010a3e8d4d0 size=4
+[dxdiag.exe] 2026-10-17 06:38:40.284 pid=8228 tid=8232 d3d9ddi: GetCaps QUERYCOUNT count=2
+[dxdiag.exe] 2026-10-17 06:38:40.285 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f268015c0 data=00000010a3e8d4e8 type=34 pInfo=0000000000000000 pData=00000010a3e8d560 size=4
+[dxdiag.exe] 2026-10-17 06:38:40.285 pid=8228 tid=8232 d3d9ddi: GetCaps GAMMA caps=0x00000001
+[dxdiag.exe] 2026-10-17 06:38:40.285 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f268015c0 data=00000010a3e8d4e8 type=4 pInfo=0000000000000000 pData=0000011f268642a0 size=920
+[dxdiag.exe] 2026-10-17 06:38:40.285 pid=8228 tid=8232 d3d9ddi: GetCaps FORMATDATA bytes=920 count=46 x8r8g8b8=0x008aec1f a8r8g8b8=0x00dae01f
+[dxdiag.exe] 2026-10-17 06:38:40.285 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f268015c0 data=00000010a3e8d4e8 type=7 pInfo=0000000000000000 pData=0000011f24e1f890 size=8
+[dxdiag.exe] 2026-10-17 06:38:40.285 pid=8228 tid=8232 d3d9ddi: GetCaps QUERYDATA bytes=8 count=2
+[dxdiag.exe] 2026-10-17 06:38:40.301 pid=8228 tid=8232 d3d9ddi: OpenAdapter data=00000010a3e8cdb0 hAdapter=0000000040001b80 funcs=0000011f26816d98 callbacks=00000010a3e8ce40 version=0x00002003 runtimeInterface=0x00000007 runtimeVersion=0x00011000
+[dxdiag.exe] 2026-10-17 06:38:40.320 pid=8228 tid=8232 d3d9ddi: CreateDevice hAdapter=0000011f26801a80 data=00000010a3e8cde0 pDeviceFuncs=00000010a3e8d070 hRTDevice=0000011f26816330 interface=0x00000007 version=0x00011000 flags=0x00000000 cmd=0000000000000000/0 alloc=0000000000000000/0 patch=0000000000000000/0
+[dxdiag.exe] 2026-10-17 06:38:40.343 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801a80 data=00000010a3e8ded8 type=1 pInfo=0000000000000000 pData=00000010a3e8df60 size=20
+[dxdiag.exe] 2026-10-17 06:38:40.344 pid=8228 tid=8232 d3d9ddi: GetCaps DDRAW caps=0x00000005 caps2=0x00000010
+[dxdiag.exe] 2026-10-17 06:38:40.344 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801a80 data=00000010a3e8ded8 type=2 pInfo=0000000000000000 pData=00000010a3e8df78 size=28
+[dxdiag.exe] 2026-10-17 06:38:40.344 pid=8228 tid=8232 d3d9ddi: GetCaps DDRAW_MODE_SPECIFIC head=0
+[dxdiag.exe] 2026-10-17 06:38:40.345 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801a80 data=00000010a3e8ded8 type=34 pInfo=0000000000000000 pData=00000010a3e8ded4 size=4
+[dxdiag.exe] 2026-10-17 06:38:40.345 pid=8228 tid=8232 d3d9ddi: GetCaps GAMMA caps=0x00000001
+[dxdiag.exe] 2026-10-17 06:38:40.345 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801a80 data=00000010a3e8ded8 type=3 pInfo=0000000000000000 pData=00000010a3e8ded0 size=4
+[dxdiag.exe] 2026-10-17 06:38:40.345 pid=8228 tid=8232 d3d9ddi: GetCaps FORMATCOUNT count=46
+[dxdiag.exe] 2026-10-17 06:38:40.345 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801a80 data=00000010a3e8ded8 type=4 pInfo=0000000000000000 pData=0000011f268649e0 size=920
+[dxdiag.exe] 2026-10-17 06:38:40.346 pid=8228 tid=8232 d3d9ddi: GetCaps FORMATDATA bytes=920 count=46 x8r8g8b8=0x008aec1f a8r8g8b8=0x00dae01f
+[dxdiag.exe] 2026-10-17 06:38:40.346 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801a80 data=00000010a3e8ded8 type=8 pInfo=0000000000000000 pData=00000010a3e8e4d0 size=200
+[dxdiag.exe] 2026-10-17 06:38:40.348 pid=8228 tid=8232 d3d9ddi: GetCaps D3D3 size=200 dev=0x000bbf51 render=0x00000500 z=0x00000700
+[dxdiag.exe] 2026-10-17 06:38:40.348 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801a80 data=00000010a3e8ded8 type=1 pInfo=0000000000000000 pData=00000010a3e8df60 size=20
+[dxdiag.exe] 2026-10-17 06:38:40.349 pid=8228 tid=8232 d3d9ddi: GetCaps DDRAW caps=0x00000005 caps2=0x00000010
+[dxdiag.exe] 2026-10-17 06:38:40.349 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801a80 data=00000010a3e8ded8 type=2 pInfo=0000000000000000 pData=00000010a3e8df78 size=28
+[dxdiag.exe] 2026-10-17 06:38:40.349 pid=8228 tid=8232 d3d9ddi: GetCaps DDRAW_MODE_SPECIFIC head=0
+[dxdiag.exe] 2026-10-17 06:38:40.349 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801a80 data=00000010a3e8ded8 type=34 pInfo=0000000000000000 pData=00000010a3e8ded4 size=4
+[dxdiag.exe] 2026-10-17 06:38:40.349 pid=8228 tid=8232 d3d9ddi: GetCaps GAMMA caps=0x00000001
+[dxdiag.exe] 2026-10-17 06:38:40.350 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801a80 data=00000010a3e8ded8 type=8 pInfo=0000000000000000 pData=0000011f2903a320 size=200
+[dxdiag.exe] 2026-10-17 06:38:40.350 pid=8228 tid=8232 d3d9ddi: GetCaps D3D3 size=200 dev=0x000bbf51 render=0x00000500 z=0x00000700
+[dxdiag.exe] 2026-10-17 06:38:40.350 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801a80 data=00000010a3e8daf0 type=3 pInfo=0000000000000000 pData=00000010a3e8db40 size=4
+[dxdiag.exe] 2026-10-17 06:38:40.350 pid=8228 tid=8232 d3d9ddi: GetCaps FORMATCOUNT count=46
+[dxdiag.exe] 2026-10-17 06:38:40.351 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801a80 data=00000010a3e8daf0 type=4 pInfo=0000000000000000 pData=0000011f26864d80 size=920
+[dxdiag.exe] 2026-10-17 06:38:40.351 pid=8228 tid=8232 d3d9ddi: GetCaps FORMATDATA bytes=920 count=46 x8r8g8b8=0x008aec1f a8r8g8b8=0x00dae01f
+[dxdiag.exe] 2026-10-17 06:38:40.351 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801a80 data=00000010a3e8e050 type=11 pInfo=0000000000000000 pData=00007ffa7e023270 size=116
+[dxdiag.exe] 2026-10-17 06:38:40.351 pid=8228 tid=8232 d3d9ddi: GetCaps D3D7 size=116 max_tex=16384x16384 stages=8
+[dxdiag.exe] 2026-10-17 06:38:40.353 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801a80 data=00000010a3e8eb20 type=14 pInfo=0000000000000000 pData=00000010a3e8eb90 size=4
+[dxdiag.exe] 2026-10-17 06:38:40.353 pid=8228 tid=8232 d3d9ddi: GetCaps unsupported type=14 size=4
+[dxdiag.exe] 2026-10-17 06:38:40.354 pid=8228 tid=8232 d3d9ddi: GetCaps enter hAdapter=0000011f26801a80 data=00000010a3e8ea80 type=14 pInfo=0000000000000000 pData=00000010a3e8eaf0 size=4
+[dxdiag.exe] 2026-10-17 06:38:40.354 pid=8228 tid=8232 d3d9ddi: GetCaps unsupported type=14 size=4

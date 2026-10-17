@@ -1,0 +1,149 @@
+Subject: [PATCH] yttrium: gate feedback-loop image usage on the renderer's format support
+
+The venus2 winsys adds VK_IMAGE_USAGE_ATTACHMENT_FEEDBACK_LOOP_BIT_EXT to
+every sampled colour or depth attachment once the device has
+VK_EXT_attachment_feedback_loop_layout, and creates images without a reply.
+NVIDIA's driver (610.57.04) rejects that usage on every LINEAR image with
+VK_ERROR_FORMAT_NOT_SUPPORTED, both in vkGetPhysicalDeviceImageFormatProperties2
+and in vkCreateImage; RADV accepts it. The shared colour images are LINEAR, so
+on NVIDIA the host never created them, the next vkGetImageMemoryRequirements
+named a missing object, the renderer context went fatal and dwm crashed with
+0x889800c0 before logon. The sampled-image check for shared textures failed
+the same way, which surfaced as CreateTexture2D E_OUTOFMEMORY in the Win32
+WSI and broke Vulkan and OpenGL presentation.
+
+Query vkGetPhysicalDeviceImageFormatProperties2 for the exact create-info
+before keeping the bit, in yttrium_venus_create_image_tiled and in
+yttrium_venus2_sampled_image_supported, and drop it when the driver refuses.
+The resource records the usage it was created with, and the draw path already
+refuses a feedback-loop layout for an image without the usage. Answers are
+cached per renderer, format, type, tiling, flags and usage.
+
+Evidence: docs/nvidia.md, docs/evidence/nvidia/ (host-tests/imgtest-*.txt,
+01-repro/qemu-render-server.log).
+Origin: vmlab-win3d nvidia worker.
+---
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_resource.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_resource.c
+index 7d33ea4..119f7f7 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_resource.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_resource.c
+@@ -7,6 +7,7 @@
+ #include <stdint.h>
+ #include <string.h>
+ 
++#include "util/simple_mtx.h"
+ #include "util/u_math.h"
+ 
+ #include "yttrium_options.h"
+@@ -61,6 +62,78 @@ yttrium_venus_feedback_loop_usage(const struct yttrium_venus *venus,
+    return usage;
+ }
+ 
++/* Whether the renderer's driver accepts VK_IMAGE_USAGE_ATTACHMENT_FEEDBACK_LOOP_BIT_EXT
++ * for this exact image.  Drivers may refuse it for some images (NVIDIA rejects
++ * it on every LINEAR image with VK_ERROR_FORMAT_NOT_SUPPORTED), and images are
++ * created without a reply, so a refusal must be found before vkCreateImage.
++ * Answers are cached: the queries are synchronous round trips.
++ */
++struct yttrium_venus_feedback_loop_query {
++   const struct yttrium_venus *venus;
++   VkFormat format;
++   VkImageType type;
++   VkImageTiling tiling;
++   VkImageCreateFlags flags;
++   VkImageUsageFlags usage;
++   bool supported;
++};
++
++static bool
++yttrium_venus_feedback_loop_supported(struct yttrium_venus *venus,
++                                      VkFormat format,
++                                      VkImageType type,
++                                      VkImageTiling tiling,
++                                      VkImageCreateFlags flags,
++                                      VkImageUsageFlags usage)
++{
++   static simple_mtx_t lock = SIMPLE_MTX_INITIALIZER;
++   static struct yttrium_venus_feedback_loop_query cache[64];
++   static unsigned cache_count, cache_next;
++
++   simple_mtx_lock(&lock);
++   for (unsigned i = 0; i < cache_count; i++) {
++      const struct yttrium_venus_feedback_loop_query *q = &cache[i];
++      if (q->venus == venus && q->format == format && q->type == type &&
++          q->tiling == tiling && q->flags == flags && q->usage == usage) {
++         const bool supported = q->supported;
++         simple_mtx_unlock(&lock);
++         return supported;
++      }
++   }
++   simple_mtx_unlock(&lock);
++
++   const VkPhysicalDeviceImageFormatInfo2 info = {
++      .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2,
++      .format = format,
++      .type = type,
++      .tiling = tiling,
++      .usage = usage,
++      .flags = flags,
++   };
++   VkImageFormatProperties2 props = {
++      .sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2,
++   };
++   const bool supported =
++      yttrium_venus_ensure_initialized(venus) &&
++      vn_call_vkGetPhysicalDeviceImageFormatProperties2(
++         &venus->vn_ring, venus->physical_device, &info, &props) == VK_SUCCESS;
++   if (!supported) {
++      YTTRIUM_WARN("yttrium: Venus renderer refuses feedback-loop usage for "
++                   "format=%u tiling=%u flags=0x%x usage=0x%x; creating the "
++                   "image without it\n",
++                   format, tiling, flags, usage);
++   }
++
++   simple_mtx_lock(&lock);
++   cache[cache_next] = (struct yttrium_venus_feedback_loop_query){
++      venus, format, type, tiling, flags, usage, supported,
++   };
++   cache_next = (cache_next + 1) % ARRAY_SIZE(cache);
++   cache_count = MIN2(cache_count + 1, ARRAY_SIZE(cache));
++   simple_mtx_unlock(&lock);
++   return supported;
++}
++
+ static void
+ yttrium_venus_discard_accepted_image(struct yttrium_venus *venus,
+                                      struct yttrium_venus_resource *resource,
+@@ -169,6 +242,11 @@ yttrium_venus_create_image_tiled(struct yttrium_venus *venus,
+       image_flags |=
+          VK_IMAGE_CREATE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT;
+ 
++   if ((usage & VK_IMAGE_USAGE_ATTACHMENT_FEEDBACK_LOOP_BIT_EXT) &&
++       !yttrium_venus_feedback_loop_supported(venus, vk_format, image_type,
++                                              tiling, image_flags, usage))
++      usage &= ~VK_IMAGE_USAGE_ATTACHMENT_FEEDBACK_LOOP_BIT_EXT;
++
+    const VkImageCreateInfo image_info = {
+       .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+       .flags = image_flags,
+@@ -1018,7 +1096,7 @@ yttrium_venus2_sampled_image_supported(struct yttrium_venus *venus,
+    VkFormatProperties2 format_props = {
+       .sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2,
+    };
+-   const VkPhysicalDeviceImageFormatInfo2 image_info = {
++   VkPhysicalDeviceImageFormatInfo2 image_info = {
+       .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2,
+       .format = vk_format,
+       .type = image_type,
+@@ -1026,6 +1104,11 @@ yttrium_venus2_sampled_image_supported(struct yttrium_venus *venus,
+       .usage = usage,
+       .flags = image_flags | VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT,
+    };
++   /* yttrium_venus_create_image_tiled drops a refused feedback-loop usage */
++   if ((usage & VK_IMAGE_USAGE_ATTACHMENT_FEEDBACK_LOOP_BIT_EXT) &&
++       !yttrium_venus_feedback_loop_supported(venus, vk_format, image_type,
++                                              tiling, image_info.flags, usage))
++      image_info.usage &= ~VK_IMAGE_USAGE_ATTACHMENT_FEEDBACK_LOOP_BIT_EXT;
+    VkImageFormatProperties2 image_props = {
+       .sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2,
+    };
