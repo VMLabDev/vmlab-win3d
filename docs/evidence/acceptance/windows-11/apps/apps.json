@@ -25,8 +25,8 @@
     "timed_out": true,
     "app_local_modules": [],
     "graphics_modules": [
-      "C:\\WINDOWS\\SYSTEM32\\d3dx11_43.dll [system32] 9.29.952.3111",
       "C:\\WINDOWS\\SYSTEM32\\d3dx9_43.dll [system32] 9.29.952.3111",
+      "C:\\WINDOWS\\SYSTEM32\\d3dx11_43.dll [system32] 9.29.952.3111",
       "C:\\WINDOWS\\SYSTEM32\\D3DCOMPILER_43.dll [system32] 9.29.952.3111",
       "C:\\WINDOWS\\SYSTEM32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
       "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",

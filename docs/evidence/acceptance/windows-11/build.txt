@@ -2,20 +2,20 @@ mode: built (no bundle in out/package)
 exit: 0
 command: scripts/build.sh
 ## stages
-==== toolchain (2026-10-17T20:46:37+10:00)
-==== mesa (2026-10-17T20:46:37+10:00)
-==== vulkan-sdk (2026-10-17T20:47:23+10:00)
-==== d3d12 (2026-10-17T20:47:43+10:00)
-==== kmd (2026-10-17T20:47:44+10:00)
-==== probes (2026-10-17T20:47:55+10:00)
-==== signing-cert (2026-10-17T20:47:55+10:00)
-==== package (2026-10-17T20:47:55+10:00)
+==== toolchain (2026-10-17T21:34:50+10:00)
+==== mesa (2026-10-17T21:34:50+10:00)
+==== vulkan-sdk (2026-10-17T21:35:32+10:00)
+==== d3d12 (2026-10-17T21:35:51+10:00)
+==== kmd (2026-10-17T21:35:52+10:00)
+==== probes (2026-10-17T21:36:04+10:00)
+==== signing-cert (2026-10-17T21:36:04+10:00)
+==== package (2026-10-17T21:36:04+10:00)
 ## manifest.json
 {
   "schema": 1,
   "name": "vmlab-win3d",
   "version": "0.1.0",
-  "commit": "82ec390e34e251f3e00d9da673ff917305a2740c",
+  "commit": "61058896dca41d5a2f6378eb66131de2a0c266c5",
   "driver_date": "09/27/2026",
   "driver_version": "100.6.101.58100",
   "hardware_id": "PCI\\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01",
@@ -164,5 +164,5 @@ command: scripts/build.sh
   ]
 }
 ## SHA256SUMS
-038437d96df204fff4c6c5d30fd4204e3278ebf3eefa06c2b80753f7af8704cd  vmlab-win3d-0.1.0.zip
-c191aaac13a890a6c9c26c92a3d39d7e61211d948ec4ebbd15af029c141ec79c  vmlab-win3d-0.1.0/manifest.json
+cdf39482b8b9a6fb9a08025651a5499c90e9e914da3eda50b2e6c630c04caffc  vmlab-win3d-0.1.0.zip
+39c243021699ada5ba69f49bbe31ec48a3cf1bac03989c1b5c609a3e80be6909  vmlab-win3d-0.1.0/manifest.json
