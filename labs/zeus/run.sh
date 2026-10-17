@@ -298,7 +298,7 @@ tests() {
         in_lab vmlab cp "$uav" "$VM:C:/win3d/uavtest.exe" &&
             gps 'New-Item -ItemType Directory -Force C:\win3d\results\uavtest | Out-Null
                 Set-Content -Encoding ascii C:\win3d\uavtest.cmd "C:\win3d\uavtest.exe > C:\win3d\results\uavtest\uavtest.txt 2>&1"' 60 >/dev/null &&
-            gfile 300 'C:\win3d\guest\Run-Probe.ps1' -Path 'C:\win3d\uavtest.cmd' -Raw -NoModules -Name uavtest \
+            gfile 300 'C:\win3d\guest\Run-Probe.ps1' -Path 'C:\win3d\uavtest.cmd' -Raw -NoModules -Name uavtest -ArgumentList run \
                 -OutDir 'C:\win3d\results\uavtest' >"$WORK/raw/uavtest.out" 2>&1
         gps 'Get-Content C:\win3d\results\uavtest\uavtest.txt' 60 | tee "$EV/uavtest.txt"
     fi
