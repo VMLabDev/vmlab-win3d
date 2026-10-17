@@ -5,6 +5,10 @@ Windows 11 guest from the local `windows-11` template gets a working Venus
 device and a visible console. Every claim cites a file under
 `docs/evidence/host/`. Probe date: 2026-10-17.
 
+The NVIDIA failures this probe recorded have since been explained and fixed
+in `docs/nvidia.md` (`patches/mesa/0020` and `patches/host/qemu/0001`). Read
+the NVIDIA results below as the state before those fixes.
+
 ## Update: vmlab 0.24 (2026-10-17)
 
 vmlab 0.24.0-alpha supersedes the workaround this page describes. It came
