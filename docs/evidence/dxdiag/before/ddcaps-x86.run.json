@@ -1,0 +1,27 @@
+﻿{
+    "name":  "ddcaps-x86",
+    "exe":  "C:\\win3d\\ddcaps\\x86\\ddcaps.exe",
+    "arguments":  "--seconds 5 --out C:\\win3d\\results\\before\\ddcaps-x86.json",
+    "user":  "VMLABVM-GGRUU48\\win3d",
+    "session_id":  1,
+    "pid":  2792,
+    "wow64":  null,
+    "started":  "2026-10-17T06:12:59.4340253-07:00",
+    "ended":  "2026-10-17T06:13:06.4746301-07:00",
+    "duration_s":  7,
+    "timed_out":  false,
+    "exit_code":  1,
+    "task_result":  1,
+    "probe_json":  "C:\\win3d\\results\\before\\ddcaps-x86.json",
+    "probe_result":  "fail",
+    "adapter":  null,
+    "software":  null,
+    "readback_ok":  null,
+    "module_count":  0,
+    "graphics_modules":  [
+
+                         ],
+    "app_local_modules":  [
+
+                          ]
+}

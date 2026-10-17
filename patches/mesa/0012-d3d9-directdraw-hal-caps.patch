@@ -1,0 +1,219 @@
+Subject: [PATCH] d3d10umd: report the D3D7 and D3D8 caps DirectDraw asks the D3D9 UMD for
+
+On WDDM, ddraw.dll builds its HAL on the D3D9 UMD. After DDRAW_CAPS, the
+mode caps, the format list and D3DDDICAPS_GETD3D3CAPS it asks for
+D3DDDICAPS_GETD3D7CAPS (D3DHAL_D3DEXTENDEDCAPS, 116 bytes). GetCaps
+returned E_NOTIMPL for it, so DirectDraw dropped the HAL and ran on the
+emulation layer only (DDCAPS_NOHARDWARE). dxdiag makes the same call and
+reported DirectDraw and AGP acceleration as "Not Available".
+
+GETD3D7CAPS now returns the extended caps derived from the D3D9 caps, and
+GETD3D8CAPS returns D3DCAPS8 (the D3DCAPS9 prefix, shaders capped at
+vs_1_1/ps_1_4). The D3D3 global driver data also gets its line and
+triangle caps, lighting and transform caps, which were all zero; the
+DirectDraw HAL now exposes the Direct3D 7 HAL and T&L HAL devices, and
+those read their primitive caps from there.
+
+Evidence: docs/dxdiag.md, docs/evidence/dxdiag/.
+Origin: vmlab-win3d, worker fix-dxdiag.
+---
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Adapter.cpp b/src/gallium/frontends/d3d10umd/D3D9Adapter.cpp
+index 56dfee1..888dbf3 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Adapter.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9Adapter.cpp
+@@ -317,6 +317,46 @@ static constexpr DWORD d3d9_legacy_dev_hw_transform_light = 0x00010000u;
+ static constexpr DWORD d3d9_legacy_dev_blit_sys_to_nonlocal = 0x00020000u;
+ static constexpr DWORD d3d9_legacy_dev_hw_rasterization = 0x00080000u;
+ 
++static constexpr DWORD d3d9_legacy_valid_transform_caps = 0x00000004u;
++static constexpr DWORD d3d9_legacy_valid_lighting_caps = 0x00000008u;
++static constexpr DWORD d3d9_legacy_valid_clipping = 0x00000010u;
++static constexpr DWORD d3d9_legacy_valid_line_caps = 0x00000020u;
++static constexpr DWORD d3d9_legacy_valid_tri_caps = 0x00000040u;
++static constexpr DWORD d3d9_legacy_transform_clip = 0x00000001u;
++static constexpr DWORD d3d9_legacy_light_point = 0x00000001u;
++static constexpr DWORD d3d9_legacy_light_spot = 0x00000002u;
++static constexpr DWORD d3d9_legacy_light_directional = 0x00000004u;
++static constexpr DWORD d3d9_legacy_lighting_model_rgb = 0x00000001u;
++
++/* Pre-DX6 texture filter and texture blend caps (D3DPTFILTERCAPS_NEAREST
++ * through LINEARMIPLINEAR, D3DPTBLENDCAPS_DECAL through ADD).  The DX6+
++ * filter bits share the field and keep their D3D9 values. */
++static constexpr DWORD d3d9_legacy_filter_caps = 0x0000003fu;
++static constexpr DWORD d3d9_legacy_texture_blend_caps = 0x000000cfu;
++
++/* D3DPRIMCAPS for the D3D3-D3D7 HAL device.  The legacy runtimes read the
++ * line and triangle caps from here, not from D3DCAPS9; the bit layouts of
++ * the shared fields are the same, so they come straight from the D3D9 caps.
++ */
++static void
++D3D9FillLegacyPrimitiveCaps(const D3DCAPS9 *caps, D3D9LegacyPrimitiveCaps *prim)
++{
++   memset(prim, 0, sizeof(*prim));
++   prim->dwSize = sizeof(*prim);
++   prim->dwMiscCaps = caps->PrimitiveMiscCaps & 0x0000007fu;
++   prim->dwRasterCaps = caps->RasterCaps;
++   prim->dwZCmpCaps = caps->ZCmpCaps;
++   prim->dwSrcBlendCaps = caps->SrcBlendCaps;
++   prim->dwDestBlendCaps = caps->DestBlendCaps;
++   prim->dwAlphaCmpCaps = caps->AlphaCmpCaps;
++   prim->dwShadeCaps = caps->ShadeCaps;
++   prim->dwTextureCaps = caps->TextureCaps;
++   prim->dwTextureFilterCaps =
++      caps->TextureFilterCaps | d3d9_legacy_filter_caps;
++   prim->dwTextureBlendCaps = d3d9_legacy_texture_blend_caps;
++   prim->dwTextureAddressCaps = caps->TextureAddressCaps;
++}
++
+ static void
+ D3D9FillLegacyCaps(const D3D9Adapter *adapter,
+                    D3D9LegacyGlobalDriverData *caps)
+@@ -331,6 +371,11 @@ D3D9FillLegacyCaps(const D3D9Adapter *adapter,
+    hw->dwSize = sizeof(*hw);
+    hw->dwFlags = d3d9_legacy_valid_color_model |
+                  d3d9_legacy_valid_dev_caps |
++                 d3d9_legacy_valid_transform_caps |
++                 d3d9_legacy_valid_lighting_caps |
++                 d3d9_legacy_valid_clipping |
++                 d3d9_legacy_valid_line_caps |
++                 d3d9_legacy_valid_tri_caps |
+                  d3d9_legacy_valid_render_bit_depth |
+                  d3d9_legacy_valid_z_bit_depth;
+    hw->dcmColorModel = d3d9_legacy_color_rgb;
+@@ -361,9 +406,16 @@ D3D9FillLegacyCaps(const D3D9Adapter *adapter,
+                       d3d9_legacy_dev_tl_vertex_video_memory);
+ 
+    hw->dtcTransformCaps.dwSize = sizeof(hw->dtcTransformCaps);
++   hw->dtcTransformCaps.dwCaps = d3d9_legacy_transform_clip;
++   hw->bClipping = TRUE;
+    hw->dlcLightingCaps.dwSize = sizeof(hw->dlcLightingCaps);
+-   hw->dpcLineCaps.dwSize = sizeof(hw->dpcLineCaps);
+-   hw->dpcTriCaps.dwSize = sizeof(hw->dpcTriCaps);
++   hw->dlcLightingCaps.dwCaps = d3d9_legacy_light_point |
++                                d3d9_legacy_light_spot |
++                                d3d9_legacy_light_directional;
++   hw->dlcLightingCaps.dwLightingModel = d3d9_legacy_lighting_model_rgb;
++   hw->dlcLightingCaps.dwNumLights = d3d9_caps.MaxActiveLights;
++   D3D9FillLegacyPrimitiveCaps(&d3d9_caps, &hw->dpcLineCaps);
++   D3D9FillLegacyPrimitiveCaps(&d3d9_caps, &hw->dpcTriCaps);
+    hw->dwDeviceRenderBitDepth = d3d9_legacy_depth_16 |
+                                 d3d9_legacy_depth_32;
+    hw->dwDeviceZBufferBitDepth = d3d9_legacy_depth_16 |
+@@ -371,6 +423,93 @@ D3D9FillLegacyCaps(const D3D9Adapter *adapter,
+                                  d3d9_legacy_depth_32;
+ }
+ 
++/* D3DDDICAPS_GETD3D7CAPS returns the documented D3DHAL_D3DEXTENDEDCAPS
++ * (d3dhal.h, see above for why it is mirrored here).  DirectDraw on WDDM asks
++ * for it while it builds its HAL; when the call fails it drops the HAL and
++ * runs on the emulation layer alone (DDCAPS_NOHARDWARE), which dxdiag shows
++ * as DirectDraw and AGP acceleration "Not Available".
++ */
++struct D3D9LegacyExtendedCaps {
++   DWORD dwSize;
++   DWORD dwMinTextureWidth, dwMaxTextureWidth;
++   DWORD dwMinTextureHeight, dwMaxTextureHeight;
++   DWORD dwMinStippleWidth, dwMaxStippleWidth;
++   DWORD dwMinStippleHeight, dwMaxStippleHeight;
++   DWORD dwMaxTextureRepeat;
++   DWORD dwMaxTextureAspectRatio;
++   DWORD dwMaxAnisotropy;
++   float dvGuardBandLeft;
++   float dvGuardBandTop;
++   float dvGuardBandRight;
++   float dvGuardBandBottom;
++   float dvExtentsAdjust;
++   DWORD dwStencilCaps;
++   DWORD dwFVFCaps;
++   DWORD dwTextureOpCaps;
++   WORD wMaxTextureBlendStages;
++   WORD wMaxSimultaneousTextures;
++   DWORD dwMaxActiveLights;
++   float dvMaxVertexW;
++   WORD wMaxUserClipPlanes;
++   WORD wMaxVertexBlendMatrices;
++   DWORD dwVertexProcessingCaps;
++   DWORD dwReserved1;
++   DWORD dwReserved2;
++   DWORD dwReserved3;
++   DWORD dwReserved4;
++};
++
++static_assert(sizeof(D3D9LegacyExtendedCaps) == 116);
++static_assert(offsetof(D3D9LegacyExtendedCaps, wMaxTextureBlendStages) == 80);
++
++static void
++D3D9FillExtendedCaps(const D3D9Adapter *adapter, D3D9LegacyExtendedCaps *ext)
++{
++   D3DCAPS9 caps;
++   D3D9FillCaps(adapter, &caps);
++
++   memset(ext, 0, sizeof(*ext));
++   ext->dwSize = sizeof(*ext);
++   ext->dwMinTextureWidth = 1;
++   ext->dwMaxTextureWidth = caps.MaxTextureWidth;
++   ext->dwMinTextureHeight = 1;
++   ext->dwMaxTextureHeight = caps.MaxTextureHeight;
++   ext->dwMaxTextureRepeat = caps.MaxTextureRepeat;
++   ext->dwMaxTextureAspectRatio = caps.MaxTextureAspectRatio;
++   ext->dwMaxAnisotropy = caps.MaxAnisotropy;
++   ext->dvGuardBandLeft = caps.GuardBandLeft;
++   ext->dvGuardBandTop = caps.GuardBandTop;
++   ext->dvGuardBandRight = caps.GuardBandRight;
++   ext->dvGuardBandBottom = caps.GuardBandBottom;
++   ext->dvExtentsAdjust = caps.ExtentsAdjust;
++   ext->dwStencilCaps = caps.StencilCaps;
++   ext->dwFVFCaps = caps.FVFCaps;
++   ext->dwTextureOpCaps = caps.TextureOpCaps;
++   ext->wMaxTextureBlendStages = (WORD)caps.MaxTextureBlendStages;
++   ext->wMaxSimultaneousTextures = (WORD)caps.MaxSimultaneousTextures;
++   ext->dwMaxActiveLights = caps.MaxActiveLights;
++   ext->dvMaxVertexW = caps.MaxVertexW;
++   ext->wMaxUserClipPlanes = (WORD)caps.MaxUserClipPlanes;
++   ext->wMaxVertexBlendMatrices = (WORD)caps.MaxVertexBlendMatrices;
++   ext->dwVertexProcessingCaps = caps.VertexProcessingCaps;
++}
++
++/* D3DDDICAPS_GETD3D8CAPS returns D3DCAPS8, which is D3DCAPS9 up to and
++ * including MaxPixelShaderValue (PixelShader1xMaxValue in D3DCAPS9).  The
++ * D3D8 shader models top out at vs_1_1 and ps_1_4. */
++static constexpr UINT d3d8_caps_size = offsetof(D3DCAPS9, DevCaps2);
++static_assert(d3d8_caps_size == 212);
++
++static void
++D3D9FillD3D8Caps(const D3D9Adapter *adapter, void *data)
++{
++   D3DCAPS9 caps;
++   D3D9FillCaps(adapter, &caps);
++   caps.VertexShaderVersion = D3DVS_VERSION(1, 1);
++   caps.PixelShaderVersion = D3DPS_VERSION(1, 4);
++   memcpy(data, &caps, d3d8_caps_size);
++}
++
+ static HRESULT
+ D3D9ValidateData(const D3DDDIARG_GETCAPS *data, UINT size)
+ {
+@@ -675,6 +814,23 @@ D3D9GetCaps(HANDLE hAdapter, const D3DDDIARG_GETCAPS *data)
+                  ((D3D9LegacyGlobalDriverData *)data->pData)
+                     ->hwCaps.dwDeviceZBufferBitDepth);
+       return S_OK;
++   case D3DDDICAPS_GETD3D7CAPS:
++      if (FAILED(D3D9ValidateData(data, sizeof(D3D9LegacyExtendedCaps))))
++         return E_INVALIDARG;
++      D3D9FillExtendedCaps(adapter, (D3D9LegacyExtendedCaps *)data->pData);
++      D3D9Tracef("GetCaps D3D7 size=%u max_tex=%lux%lu stages=%u\n",
++                 data->DataSize,
++                 ((D3D9LegacyExtendedCaps *)data->pData)->dwMaxTextureWidth,
++                 ((D3D9LegacyExtendedCaps *)data->pData)->dwMaxTextureHeight,
++                 ((D3D9LegacyExtendedCaps *)data->pData)
++                    ->wMaxTextureBlendStages);
++      return S_OK;
++   case D3DDDICAPS_GETD3D8CAPS:
++      if (FAILED(D3D9ValidateData(data, d3d8_caps_size)))
++         return E_INVALIDARG;
++      D3D9FillD3D8Caps(adapter, data->pData);
++      D3D9Tracef("GetCaps D3D8 size=%u\n", data->DataSize);
++      return S_OK;
+    case D3DDDICAPS_GETD3D9CAPS:
+       if (FAILED(D3D9ValidateData(data, sizeof(D3DCAPS9))))
+          return E_INVALIDARG;
