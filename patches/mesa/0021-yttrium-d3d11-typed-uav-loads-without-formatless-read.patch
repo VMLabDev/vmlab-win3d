@@ -15,16 +15,19 @@ diff -ruN a/src/gallium/frontends/d3d10umd/Adapter.cpp b/src/gallium/frontends/d
        break;
 diff -ruN a/src/gallium/frontends/d3d10umd/Device.cpp b/src/gallium/frontends/d3d10umd/Device.cpp
 --- a/src/gallium/frontends/d3d10umd/Device.cpp	2026-10-17 18:58:00.607579488 +1000
-+++ b/src/gallium/frontends/d3d10umd/Device.cpp	2026-10-17 19:59:16.935666386 +1000
-@@ -50,6 +50,7 @@
- 
++++ b/src/gallium/frontends/d3d10umd/Device.cpp	2026-10-17 19:59:58.158769149 +1000
+@@ -51,6 +51,10 @@
  #include "gdikmt/gdikmt.h"
  #include "gallium/winsys/yttrium/gdi/yttrium_gdi_public.h"
-+#include "gallium/winsys/yttrium/gdi/yttrium_venus.h"
  
++extern "C" {
++#include "gallium/winsys/yttrium/gdi/yttrium_venus.h"
++}
++
  EXTERN_C struct pipe_screen *
  d3d10_create_screen(gdikmt_device *device);
-@@ -869,33 +870,80 @@
+ 
+@@ -869,33 +873,80 @@
     return true;
  }
  
@@ -124,7 +127,7 @@ diff -ruN a/src/gallium/frontends/d3d10umd/Device.cpp b/src/gallium/frontends/d3
  static D3D11DDIARG_CREATESHADERRESOURCEVIEW
  ConvertShaderViewWDDM2_0(const D3DWDDM2_0DDIARG_CREATESHADERRESOURCEVIEW *source)
  {
-@@ -1308,13 +1356,18 @@
+@@ -1308,13 +1359,18 @@
     }
  
  #if SUPPORT_D3D_WDDM2_0
