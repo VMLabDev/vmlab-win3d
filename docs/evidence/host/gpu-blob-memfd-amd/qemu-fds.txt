@@ -1,0 +1,7 @@
+     17 /dev/nvidia1
+      2       1 <nvidia GL cache>
+      2 /dev/dri/renderD128
+      3 /dev/nvidia-modeset
+      4 /dev/dri/renderD130
+      5 /dev/nvidia0
+      6 /dev/nvidiactl

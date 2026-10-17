@@ -1,0 +1,5 @@
+Name                        : Hardsoft VirtIO GPU 3D controller
+DriverVersion               : 100.2026.9.1
+ConfigManagerErrorCode      : 0
+CurrentHorizontalResolution : 1280
+CurrentVerticalResolution   : 800

@@ -1,0 +1,8 @@
+      2 /dev/dri/renderD128
+      4 /dev/dri/renderD130
+      5 /dev/nvidia0
+     17 /dev/nvidia1
+      6 /dev/nvidiactl
+      3 /dev/nvidia-modeset
+      1 /home/wil/.cache/nvidia/GLCache/c901f22dc94fe1a25bc9d3faf4fb3341/fa9d1bc88abbd112/ab8be687e5e601e9.bin
+      1 /home/wil/.cache/nvidia/GLCache/c901f22dc94fe1a25bc9d3faf4fb3341/fa9d1bc88abbd112/ab8be687e5e601e9.toc

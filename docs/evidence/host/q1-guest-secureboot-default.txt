@@ -1,0 +1,21 @@
+True
+
+An error has occurred setting the element data.
+The value is protected by Secure Boot policy and cannot be modified or deleted.
+TpmPresent TpmReady
+---------- --------
+      True     True
+
+
+
+
+Name                   : Microsoft Basic Display Adapter
+PNPDeviceID            : PCI\VEN_1234&DEV_1111&SUBSYS_11001AF4&REV_02\3&11583659&0&08
+ConfigManagerErrorCode : 0
+
+Name                   : Red Hat VirtIO GPU DOD controller
+PNPDeviceID            : PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&20
+ConfigManagerErrorCode : 0
+
+
+

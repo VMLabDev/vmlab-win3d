@@ -1,0 +1,6 @@
+lines: 50
+     17  vkr: vkGetImageMemoryRequirements resulted in CS error
+     17  vkr: ring_submit_cmd: vn_dispatch_command failed
+     11  vkr: failed to look up object 25 of type 10
+      4  vkr: failed to look up object 11 of type 10
+      1  vkr: failed to look up object 26 of type 10
