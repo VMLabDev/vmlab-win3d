@@ -1,0 +1,67 @@
+# Build plan
+
+This plan comes from `docs/brief.md` and what `docs/prior-art.md` proves. The
+orchestrator owns it and updates it as slices land.
+
+## Target stack
+
+| Layer | Component | Source | Registered by |
+| --- | --- | --- | --- |
+| Kernel | Yttrium viogpu3d WDDM KMD (Venus, blob) | `arehnman/yttrium-virtio-gpu` @ tag `yttrium-experimental-2026-09-27` (`b99d951a`) + patches | PnP INF |
+| Vulkan | Mesa Venus ICD `libvulkan_virtio.dll` | `arehnman/virtio-win-mesa` @ `374c3022` + patches | INF: `HKLM\SOFTWARE\Khronos\Vulkan\Drivers` (+WOW6432Node) |
+| Vulkan loader | Khronos `vulkan-1.dll`, `vulkaninfo.exe` | Khronos Vulkan-Loader / Vulkan-Tools, built from source | Installer (System32/SysWOW64), only if absent or older |
+| D3D9/10/11 | **Proposed:** Yttrium Gallium UMD `viogpu_d3d10.dll` (Venus) | Same Mesa tree | INF: `UserModeDriverName[Wow]` |
+| OpenGL | Mesa WGL + Zink `viogpu_wgl.dll` on the Venus ICD | Same Mesa tree | INF: `OpenGLDriverName[Wow]` |
+| D3D12 | vkd3d-proton + DXVK DXGI, behind a `d3d12.dll` bridge | vkd3d-proton, dxil-spirv, DXVK, all pinned + codex bridge patch | Installer: replaces System32/SysWOW64 `d3d12.dll`, with backup and a repair task |
+
+Why the D3D9–11 row is not DXVK: Mesa's Win32 Vulkan WSI presents through the
+**system** `dxgi.dll` and `d3d11.dll`. Replacing those system-wide with DXVK hung
+even vkcube (prior-art §3, §4.5). Registering the UMD through the KMD is also
+the supported Windows mechanism, and it is what makes `dxdiag` report
+acceleration. This is pending the user's confirmation (open decision D1).
+
+## Host assumptions
+
+- Venus works on the AMD iGPU (RADV, `renderD129`), not on the RTX 5090.
+- vmlab's `gpu { mode = "vulkan" }` line lacks `blob=true`, the shared memfd
+  RAM backend and a render node / Vulkan ICD choice. Slice `host-probe` finds
+  the minimum set, and the orchestrator files a vmlab handoff. Until vmlab
+  ships the change, labs use `display`/`qemu_args`, as the prior art did.
+
+## Build layout contract
+
+Every component has `build/<component>/build.sh`, which runs in Docker
+(non-root, no sudo) and writes only to `out/<component>/`. Pins live in
+`build/<component>/PINS` (name, URL, tag/commit, sha256). The toolchain is
+llvm-mingw `20261006` (LLVM 23.1.3), ucrt, x86_64 Linux host build. 
+`scripts/build.sh` (orchestrator-owned) runs them all and assembles the package.
+
+```
+out/mesa/{x64,x86}/      viogpu_d3d10.dll viogpu_wgl.dll libvulkan_virtio.dll
+out/vulkan-sdk/{x64,x86}/ vulkan-1.dll vulkaninfo.exe
+out/d3d12/{x64,x86}/     d3d12.dll (bridge) vkd3dcore.dll dxgi-vulkan.dll
+out/kmd/x64/             viogpu3d.sys viogpu3d.inx-derived inf, helper exes
+out/probes/{x64,x86}/    test applications
+out/package/             the signed install bundle (later slice)
+```
+
+## Slices
+
+Wave 1 (parallel):
+
+| Worker | Delivers |
+| --- | --- |
+| `host-probe` | Minimum QEMU/vmlab line for Venus on this host, console screenshot method, template Secure Boot state; vmlab handoff draft |
+| `mesa-build` | Docker build of Mesa (x64, x86) and the Vulkan loader and vulkaninfo; codex Mesa fixes re-exported as patches |
+| `d3d12-build` | Docker build of vkd3d-proton, dxil-spirv, the DXGI-only DXVK, and the bridge |
+| `kmd-build` | KMD build and test signing, scripted from this repo; the signing decision record |
+| `probes` | Small D3D9/D3D11/D3D12/OpenGL/Vulkan test apps, cross-built, that prove GPU rendering, plus guest test scripts |
+
+Wave 2: `package` (INF, catalog, installer and uninstaller, `scripts/build.sh`),
+then `e2e` (fresh win11 lab, install, evidence for every Done item), then
+`docs`. Windows 10 runs after Windows 11 passes.
+
+## Open decisions
+
+- D1: D3D9–11 through the Yttrium UMD (proposed) or through system-wide DXVK.
+- D2: the signing approach (recorded by `kmd-build` in `docs/decisions/`).
