@@ -2,3 +2,11 @@
 # guest. Not committed; fetched into .scratch/e2e/cache/ and checked here.
 # name  sha256  url
 lunarg-vulkanrt-components  a25a927aa8b9f0371048f1861cf88ac3b9bc9b1fb332c42d897c8ab32695769a  https://sdk.lunarg.com/sdk/download/1.4.363.0/windows/VulkanRT-X64-1.4.363.0-Components.zip
+# Stretch (tests/e2e/apps.sh): unmodified third-party applications.
+# DirectX SDK (June 2010): prebuilt D3D9 and D3D11 samples, their Media, and
+# the D3DX/D3DCompiler_43 redistributable (DXSETUP) they need. Microsoft does
+# not publish a hash; this is the file Microsoft's URL served on 2026-10-17.
+dxsdk-jun2010  705271dc83bfee54d9b94e028426e288d5f070784b7446d164f48ecfbb2a02cb  https://download.microsoft.com/download/A/E/7/AE743F1F-632B-4809-87A9-AA1BB3458E31/DXSDK_Jun10.exe
+# Blender 4.2.3 LTS portable (GPL-2.0-or-later), OpenGL 4.3. The hash matches
+# https://download.blender.org/release/Blender4.2/blender-4.2.3.sha256
+blender-4.2.3  7f8be9b1dc904e7689b3112659791c29cc9ed9d46ce57c4ea5b31a0621489b3a  https://download.blender.org/release/Blender4.2/blender-4.2.3-windows-x64.zip
