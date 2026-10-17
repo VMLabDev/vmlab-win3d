@@ -54,7 +54,10 @@ LAB=win3d-zeus-$GPU
 VM=win
 WORK=$HOME/win3d-zeus/work/$GPU
 LABDIR=$WORK/lab
-EV=$REPO/docs/evidence/zeus/$GPU
+# WIN3D_TAG puts the evidence in docs/evidence/zeus/<gpu>/<tag>/ instead.
+EV=$REPO/docs/evidence/zeus/$GPU${WIN3D_TAG:+/$WIN3D_TAG}
+# WIN3D_BUNDLE installs another bundle (an experiment) instead of out/package's.
+BUNDLE=${WIN3D_BUNDLE:-$REPO/out/package/vmlab-win3d-$(cat "$REPO/installer/VERSION")}
 SECONDS_PER_PROBE=20
 TEMPLATE=$(sed -n 's/.*template = "\([^"]*\)".*/\1/p' "$REPO/labs/zeus/$GPU/vmlab.wcl")
 
@@ -100,14 +103,14 @@ host_stack() {
 
 build() {
     say "1 package (built on helios, staged by labs/zeus/stage.sh)"
-    local bundle
-    bundle=$REPO/out/package/vmlab-win3d-$(cat "$REPO/installer/VERSION")
+    local bundle=$BUNDLE
     {
         echo "mode: staged from helios"
+        echo "bundle: $bundle"
         echo "exit: 0"
         echo "command: scripts/build.sh (on helios)"
         echo "## manifest.json"; cat "$bundle/manifest.json" 2>/dev/null
-        echo "## SHA256SUMS"; cat "$REPO/out/package/SHA256SUMS" 2>/dev/null
+        echo "## SHA256SUMS"; cat "$(dirname "$bundle")/SHA256SUMS" 2>/dev/null
     } >"$EV/build.txt"
     [ -f "$bundle/manifest.json" ]
 }
@@ -182,7 +185,7 @@ session_tests() {
 install() {
     say "4 install: scripts/install-into-vm.sh $LABDIR $VM"
     local rc=0
-    "$REPO/scripts/install-into-vm.sh" "$LABDIR" "$VM" 2>&1 | tee "$EV/install.log"
+    "$REPO/scripts/install-into-vm.sh" --bundle "$BUNDLE" "$LABDIR" "$VM" 2>&1 | tee "$EV/install.log"
     rc=${PIPESTATUS[0]}
     echo "exit: $rc" >"$EV/install.rc"
     gps 'Get-Content C:\ProgramData\vmlab-win3d\journal.log' >"$EV/install-journal.log" 2>&1 || true
