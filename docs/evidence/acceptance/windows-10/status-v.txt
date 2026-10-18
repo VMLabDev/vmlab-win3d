@@ -1,4 +1,4 @@
-lab "win3d-e2e-windows-10"
+lab "win3d-rc-w10-amd1"
 
   NAME KIND      STATUS  IP TEMPLATE/IMAGE
   win  vm        running -  x86_64/windows-10@19045.2006.8

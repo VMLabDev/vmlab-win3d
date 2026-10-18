@@ -1,7 +1,7 @@
 {
-    "computer":  "VMLABVM-DGURRSJ",
+    "computer":  "VMLABVM-DRET32C",
     "os":  "Microsoft Windows 11 Enterprise Evaluation 10.0.26100",
-    "collected":  "2026-10-17T11:38:25.0191663-07:00",
+    "collected":  "2026-10-18T13:50:23.4606349-07:00",
     "display_devices":  [
                             {
                                 "name":  "Red Hat VirtIO GPU DOD controller",
