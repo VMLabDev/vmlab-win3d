@@ -1,0 +1,22 @@
+date: 2026-10-19T00:17:56+10:00
+device: 0000:01:00.0 VGA compatible controller: NVIDIA Corporation AD107M [GeForce RTX 4060 Max-Q / Mobile] (rev a1)
+power/control: auto
+Runtime D3 status:          Enabled (fine-grained)
+Video Memory:               Active
+DynamicPowerManagement: 2
+DynamicPowerManagementVideoMemoryThreshold: 200
+idle       active active active active active active active active active active active active active active active active active active active active active suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended
+           counts:  21 active 19 suspended 
+keepawake: pid 196488, 0000:01:00.0 (/dev/dri/renderD128), renderer "NVIDIA GeForce RTX 4060 Laptop GPU/PCIe/SSE2", holding a context only, runtime_status active
+hold-only  resuming active active active active active active active active active active active active active active active active active active active active active suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended
+           counts:  21 active 1 resuming 18 suspended 
+keepawake: stopped after 0 clears
+idle       active active active active active active active active active active active active active active active active suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended
+           counts:  16 active 24 suspended 
+keepawake: pid 197024, 0000:01:00.0 (/dev/dri/renderD128), renderer "NVIDIA GeForce RTX 4060 Laptop GPU/PCIe/SSE2", clearing every interval, runtime_status active
+keepawake: interval 100 ms
+clearing   resuming active active active active active active active active active active active active active active active active active active active active active active active active active active active active active active active active active active active active active active active
+           counts:  39 active 1 resuming 
+keepawake: stopped after 389 clears
+idle       active active active active active active active suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended suspended
+           counts:  7 active 33 suspended 
