@@ -6,18 +6,20 @@
 #                            (default ~/.local/opt/qemu-vmlab-egl)
 #   ./install.sh --check     only check that this host can run the binary
 #
-# Checks the host's shared libraries with ldd first, and stops with the
-# missing or too-old libraries named if the binary cannot run here. Then
-# copies bin/qemu-system-x86_64 to <prefix>/bin and the notes and licences
-# to <prefix>/share/doc/qemu-vmlab-egl, runs --version, and prints the
-# qemu_binary line for a GPU block in the vmlab host config. A QEMU that
-# is already running keeps its old binary until its VM restarts.
+# Checks first that this host can run the binary: that ldd finds every
+# shared library at a new enough version, that the CPU meets the x86-64 ISA
+# level the binary is marked as needing, and that --version runs. It stops
+# with the reason if not. Then copies bin/qemu-system-x86_64 to <prefix>/bin
+# and the notes and licences to <prefix>/share/doc/qemu-vmlab-egl, runs
+# --version, and prints the qemu_binary line for a GPU block in the vmlab
+# host config. A QEMU that is already running keeps its old binary until its
+# VM restarts.
 set -euo pipefail
 HERE=$(cd "$(dirname "$0")" && pwd)
 BIN=$HERE/bin/qemu-system-x86_64
 REPO_URL=https://github.com/VMLabDev/vmlab-win3d
 
-usage() { sed -n '3,14p' "$0" | sed 's/^# \{0,1\}//'; }
+usage() { sed -n '3,15p' "$0" | sed 's/^# \{0,1\}//'; }
 
 CHECK_ONLY=0
 case ${1:-} in
@@ -55,6 +57,45 @@ if [ -n "$missing$old" ]; then
     exit 1
 fi
 echo "ldd: every shared library the binary needs is present and new enough"
+
+# The x86-64 ISA level: the binary's .note.gnu.property says which levels it
+# needs (readelf, else the BUILDINFO line), and ld.so --help (glibc 2.33 and
+# later) lists the levels this CPU supports. ld.so refuses a binary whose
+# level is higher with "CPU ISA level is lower than required".
+if command -v readelf >/dev/null; then
+    need=$(LC_ALL=C readelf -n "$BIN" | sed -n 's/^.*x86 ISA needed: //p')
+else
+    need=$(sed -n 's/^needs ISA: *//p' "$HERE/BUILDINFO")
+fi
+need=$(printf '%s\n' "$need" | grep -o 'x86-64-v[234]' | sort -V | tail -1)
+need=${need:-x86-64-baseline}
+LDSO=/lib64/ld-linux-x86-64.so.2
+have=$(LC_ALL=C "$LDSO" --help 2>/dev/null | sed -n 's/^ *\(x86-64-v[234]\) (supported.*/\1/p' | sort -V | tail -1) || true
+if ! LC_ALL=C "$LDSO" --help 2>/dev/null | grep -q 'glibc-hwcaps'; then
+    echo "ISA: the binary needs $need; $LDSO does not list this CPU's level (glibc older than 2.33), so not checked"
+else
+    have=${have:-x86-64-baseline}
+    if [ "$(printf '%s\n%s\n' "$need" "$have" | sort -V | tail -1)" != "$have" ]; then
+        {
+            echo "error: this CPU cannot run the QEMU in this tarball."
+            echo "The binary needs x86-64 ISA level $need; this CPU supports up to $have"
+            echo "($LDSO --help lists the levels). Rebuild QEMU on this host with"
+            echo "patches/host/build-qemu.sh from $REPO_URL (docs/release.md)."
+        } >&2
+        exit 1
+    fi
+    echo "ISA: the binary needs $need; this CPU supports up to $have"
+fi
+
+# Last, run it: this catches anything ldd and the ISA check do not.
+if ! ver=$(LC_ALL=C "$BIN" --version 2>&1); then
+    {
+        echo "error: $BIN --version failed on this host:"
+        printf '%s\n' "$ver" | sed 's/^/  /'
+    } >&2
+    exit 1
+fi
+echo "run: $(printf '%s\n' "$ver" | head -1)"
 [ "$CHECK_ONLY" = 0 ] || exit 0
 
 case $PREFIX in /*) ;; *) PREFIX=$PWD/$PREFIX ;; esac

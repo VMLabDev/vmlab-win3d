@@ -30,7 +30,9 @@ second is for the person who installs one.
   development files of glib, pixman, epoxy, gbm, virglrenderer and the other
   libraries QEMU links). An Arch or CachyOS host with the `qemu-full`
   package has them. The binary links this host's libraries, so it suits
-  hosts like this one; `BUILDINFO` in the tarball records them.
+  hosts like this one; `BUILDINFO` in the tarball records them. Whatever
+  the build host's CPU, the binary is built for x86-64-v2 ("CPU and library
+  baseline of the QEMU binary", below).
 - The shared test-signing directory, made once by
   `build/signing/make-test-cert.sh` and kept outside every checkout. Every
   release signs with the same certificate, so a guest that trusts one
@@ -101,6 +103,64 @@ out/release/<version>/
 Publish the four files as the assets of a release tagged with the version,
 and use `RELEASE-NOTES.md` as its description.
 
+### CPU and library baseline of the QEMU binary
+
+`build-qemu.sh` compiles for `-march=x86-64-v2 -mtune=generic`, QEMU's
+`--x86-version=2` and `-z x86-64-v2`, with `CFLAGS`, `CXXFLAGS`,
+`CPPFLAGS` and `LDFLAGS` cleared, so a makepkg-style `-march=native` cannot
+leak in. x86-64-v2 (SSE4.2 and POPCNT) covers every x86-64 CPU since about
+2009. QEMU picks its AVX2 and AVX-512 code at run time from CPUID, so it
+needs nothing higher. The binary's `.note.gnu.property` says
+`x86 ISA needed: x86-64-baseline, x86-64-v2`, and the script fails if it
+says more. `BUILDINFO` records it on its `needs ISA` line.
+
+One input needs special handling on a CachyOS build host. CachyOS builds its
+glibc for the CPU level of its repositories, and its start files `Scrt1.o`
+and `crt1.o` carry an `x86 ISA needed: ... x86-64-v4` note on a znver4 host,
+although their `_start` code is baseline x86-64. The linker merges every
+input's ISA-needed bits into the executable, and `ld.so` refuses to start a
+binary marked above the CPU's level. So the script links against copies of
+those two files with the note removed (`gcc -B`).
+
+The host's shared libraries are not in the tarball. On the target host,
+`ld.so` loads that host's own copies, so the build host's library builds
+do not limit where the binary runs. On helios, 124 of the 128 libraries
+QEMU loads, from CachyOS's repositories (most from the znver4 ones), have
+no ISA note. Only
+glibc's `libc`, `libm`, `libmvec` and `libresolv` are marked x86-64-v4
+(`docs/evidence/qemuisa/helios-libs.txt`). What limits the target host is
+the library versions: it needs every library in `BUILDINFO`'s `NEEDED`
+line at the same version or newer, and glibc 2.43 or later. In practice
+that is a current Arch Linux or CachyOS host, from any CachyOS repository
+level (v3, v4 or znver4), with any x86-64-v2 CPU.
+
+Evidence: `docs/evidence/qemuisa/helios.log` (`readelf -n` of the new
+binary and of 0.1.0-alpha's, and the staged `install.sh --check` on
+helios), and `docs/evidence/qemuisa/zeus.log`. On Zeus (i7-13700H,
+x86-64-v3, CachyOS v3 repositories) the new binary passes
+`install.sh --check`, installs into a temporary prefix, runs `--version`,
+and answers QMP under KVM. `install.sh --check` rejects 0.1.0-alpha's
+binary there.
+
+### Known issue in 0.1.0-alpha
+
+Paste this into the 0.1.0-alpha release notes:
+
+> **Known issue: the QEMU tarball needs an x86-64-v4 CPU.**
+> `qemu-11.1.1-vmlab-egl-0.1.0-alpha-x86_64-linux.tar.zst` was built on a
+> CachyOS znver4 host, and its `qemu-system-x86_64` is marked
+> `x86 ISA needed: x86-64-v4`, which comes from that host's glibc start
+> files. On a CPU without AVX-512 (most Intel desktop and laptop CPUs,
+> AMD before Zen 4), it fails to start with
+> `CPU ISA level is lower than required`. Its `install.sh --check` only
+> runs `ldd`, so it passes anyway. Check a host with
+> `/lib64/ld-linux-x86-64.so.2 --help`: if `x86-64-v4` is not
+> `(supported, searched)`, this binary does not run there. Workaround:
+> build QEMU on that host with `patches/host/build-qemu.sh` from this
+> repository at a commit after the fix, which builds for x86-64-v2. Later
+> releases' tarballs are built for x86-64-v2, and their `install.sh --check`
+> also checks the ISA level and runs `--version`.
+
 ## Install the driver package
 
 You need a Windows 10 or 11 x64 guest with Secure Boot off and a virtio-gpu
@@ -135,14 +195,22 @@ distribution's own QEMU package, whose firmware vmlab passes with `-L`.
 ```sh
 tar --zstd -xf qemu-vmlab-egl-<version>-x86_64-linux.tar.zst
 cd qemu-vmlab-egl-<version>
-./install.sh --check      # ldd check only
+./install.sh --check      # checks only: ldd, CPU ISA level, --version
 ./install.sh              # installs into ~/.local/opt/qemu-vmlab-egl
 ```
 
 `install.sh` needs no root. It takes an optional prefix instead of the
-default. It first checks the binary's shared libraries with `ldd`. If any is
-missing or too old, it names them and stops; then install those libraries,
-or build QEMU for this host with `patches/host/build-qemu.sh`. Otherwise it
+default. It first checks that this host can run the binary, and stops with
+the reason if it cannot:
+
+- `ldd` finds every shared library at a new enough version, or it names the
+  missing and too-old ones;
+- the CPU supports the x86-64 ISA level the binary needs (x86-64-v2), from
+  the levels `/lib64/ld-linux-x86-64.so.2 --help` lists;
+- `qemu-system-x86_64 --version` runs.
+
+If a check fails, install the missing libraries, or build QEMU for this
+host with `patches/host/build-qemu.sh`. Otherwise it
 copies the binary to `<prefix>/bin`, puts the notes and licences in
 `<prefix>/share/doc/qemu-vmlab-egl`, runs `--version`, and prints the line
 to add to each NVIDIA GPU block in `~/.config/vmlab/config.wcl`:

@@ -176,6 +176,22 @@ Evidence: `docs/host.md` Q6, `docs/evidence/host/q6-shutdown-crashes.txt`,
 `docs/evidence/qemu-master/stock-qemu-shutdown-cores.txt`, and for the fix
 `docs/evidence/qemu-master/cycles-amd1/cycles.log`.
 
+### The QEMU tarball suits current Arch-based hosts, and 0.1.0-alpha's needs AVX-512
+
+The vmlab QEMU tarball links the target host's shared libraries, built
+against helios's: it needs a current Arch Linux or CachyOS with glibc 2.43
+or later and every library in its `BUILDINFO` at the same version or
+newer. The CPU needs x86-64-v2. `install.sh --check` checks the libraries,
+the CPU's ISA level and `--version`. On other distributions, build QEMU on
+the host with `patches/host/build-qemu.sh`.
+
+0.1.0-alpha's tarball (`qemu-11.1.1-vmlab-egl-0.1.0-alpha-...`) is marked
+`x86 ISA needed: x86-64-v4`, so it does not start on a CPU without
+AVX-512. On Zeus (i7-13700H) it fails with
+`CPU ISA level is lower than required`, while its own `install.sh --check`
+passes. Later builds target x86-64-v2 (`docs/release.md`, "CPU and library
+baseline of the QEMU binary").
+
 ## Guest
 
 ### Test signing, Secure Boot off, and the Test Mode watermark

@@ -34,11 +34,22 @@ built on @BUILD_HOST@, against:
 
 BUILDINFO lists every library it needs (NEEDED). It runs on hosts that have
 all of them at the same or newer versions, which in practice means a
-current Arch Linux or CachyOS with the distribution's qemu-full package
-installed. install.sh checks this with ldd before it installs anything,
-and names any library that is missing or too old. On any other host,
-rebuild it with patches/host/build-qemu.sh from the vmlab-win3d
-repository, which builds the same commit against the host's own libraries.
+current Arch Linux or CachyOS (any repository level: v3, v4 or znver4)
+with the distribution's qemu-full package installed.
+
+The CPU needs x86-64-v2 (SSE4.2 and POPCNT, any x86-64 CPU since about
+2009). The binary is compiled with -march=x86-64-v2 -mtune=generic, and its
+ELF note says "x86 ISA needed: x86-64-baseline, x86-64-v2" (readelf -n).
+QEMU uses AVX2 and AVX-512 only where the CPU has them, chosen at run time.
+The build host's shared libraries are not included and do not matter: the
+binary loads the target host's own.
+
+install.sh checks all of this before it installs anything: ldd for missing
+or too-old libraries, the CPU's ISA level against the binary's (from
+/lib64/ld-linux-x86-64.so.2 --help), and that --version runs. It names
+what is wrong if a check fails. On any other host, rebuild it with
+patches/host/build-qemu.sh from the vmlab-win3d repository, which builds
+the same commit against the host's own libraries.
 
 Install and use with vmlab
 --------------------------
@@ -46,7 +57,7 @@ You need vmlab 0.26.0-alpha or later, for the host config's qemu_binary.
 
   tar --zstd -xf qemu-vmlab-egl-@VERSION@-x86_64-linux.tar.zst
   cd qemu-vmlab-egl-@VERSION@
-  ./install.sh --check          # only the ldd check
+  ./install.sh --check          # only the checks
   ./install.sh                  # into ~/.local/opt/qemu-vmlab-egl
   ./install.sh /some/prefix     # or anywhere else; no root needed
 
