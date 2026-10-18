@@ -156,7 +156,32 @@ NVIDIA rejects on pitch-linear targets.
 
 ## Proof
 
-PROOF-PLACEHOLDER
+All runs used fresh labs from `x86_64/windows-11@26100.1742.5`, on the
+host config with no debug variables. The bundle was built from this branch
+at `d58167a` (AMD1 Godot runs) or `d15ccaa` (the rest). The two differ only
+in a comment line of the diagnostic render-server patch, which no build
+applies. The patch series was main's (0001 to 0044) plus 0075. The Godot runs
+are `tests/apps/compat/run.sh --only godot-d3d12,godot-vulkan,godot-opengl`
+(150 s each, then closed with WM_CLOSE). The acceptance runs are
+`tests/e2e/run.sh --template windows-11`. Evidence is under
+`docs/evidence/godot/proof/<gpu>/`, with the driver log in `proof.log`.
+
+| Check | Nvidia1 (RTX 5090) | AMD1 (RADV) |
+| --- | --- | --- |
+| Godot Vulkan (Forward+) | clean exit, 58.4 fps, renders (`compat/godot-vulkan/`) | clean exit, 59.9 fps |
+| Godot D3D12 | clean exit, 59.7 fps | clean exit, 59.5 fps |
+| Godot OpenGL (Compatibility) | clean exit, 57.2 fps | clean exit, 64.7 fps |
+| `tests/e2e/run.sh` Done checks | 12 of 12 (`e2e/`) | 12 of 12 (`e2e/`) |
+| Host Xid during the runs | none (no Xid line in the kernel log from 06:40 to the end of the runs) | not applicable |
+
+Before the fix, every Godot Vulkan run that got as far as its first frame
+raised the Xid: twice on Nvidia2 in the compat sweep, and once on Nvidia1 in
+the diagnostic run. The two earlier diagnostic runs failed sooner, because
+BAR1 was full. In the AMD1 Godot frames the Windows Start menu was
+open over the demo window. The demo rendered and animated behind it, and the
+FPS figures come from Godot's own log.
+
+MERGED-PLACEHOLDER
 
 ## What remains
 

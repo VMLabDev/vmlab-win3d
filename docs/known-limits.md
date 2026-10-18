@@ -569,6 +569,18 @@ pixel for pixel ([`ddraw.md`](ddraw.md)). What remains:
 - **Still emulated.** Destination colour keys and rotated blits still run
   on the CPU.
 
+### Vulkan swapchains on NVIDIA cost one copy per present
+
+NVIDIA's driver does not support LINEAR images as colour attachments, and
+the Win32 WSI's swapchain images alias a LINEAR shared D3D11 texture. On
+such a device, `patches/mesa/0075` makes every Vulkan swapchain render into an
+OPTIMAL image, which the present copies into the LINEAR one. Before, Godot's
+first frame raised a host Xid 69 ([godot.md](godot.md)). The copy is one
+full-size image copy per present, on NVIDIA only. AMD and Intel advertise
+linear colour attachments and keep the zero-copy path. Yttrium's own D3D
+back buffers are still LINEAR on NVIDIA. Draws into them without depth work,
+outside what the driver advertises ([xid69.md](xid69.md)).
+
 ### Other limits
 
 - Only x64 Windows. The KMD is built for x64 only. 32-bit applications are
