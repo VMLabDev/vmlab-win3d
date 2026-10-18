@@ -1,0 +1,1 @@
+4116 window=0x80182 title=[Fatal Error - GZDoom g4.14.2 (2025-01-29 01:31:37 -0300)] closed=True

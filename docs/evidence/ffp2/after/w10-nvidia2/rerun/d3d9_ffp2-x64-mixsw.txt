@@ -1,0 +1,9 @@
+d3d9_ffp2 device=hal vp=mixed-sw arch=x64
+caps DevCaps=0x001baff0 TextureOpCaps=0x03ffffff TextureCaps=0x0001ecc5 VertexProcessingCaps=0x0000017b MaxVertexBlendMatrices=4 MaxVertexBlendMatrixIndex=8 MaxTextureBlendStages=8 MaxSimultaneousTextures=8 CubeTextureFilterCaps=0x07030700 VolumeTextureFilterCaps=0x07030700 VS=fffe0300 PS=ffff0300
+format V8U8 texture=0x00000000
+format L6V5U5 texture=0x00000000
+format X8L8V8U8 texture=0x00000000
+format Q8W8V8U8 texture=0x00000000
+CASE cm_normal tol=4 hr=0x00000000 px=ffce46ea,ffb04cea,ff984eea,ff824eea,ff6e4eea,ff564cea,ff3a48ea,ff1440ea,ffca5cea,ffae5eea,ff9860ea,ff8260ea,ff6e60ea,ff585eea,ff3e5cea,ff1c58ea,ffc86eea,ffae6eea,ff9870ea,ff8270ea,ff6e70ea,ff5870ea,ff406eea,ff1e6cea,ffc880ea,ffae80ea,ff9680ea,ff8280ea,ff6e80ea,ff5a80ea,ff4080ea,ff2080ea,ffc890ea,ffae90ea,ff988eea,ff828eea,ff6e8eea,ff5890ea,ff4090ea,ff1e92ea,ffcaa4ea,ffaea0ea,ff989eea,ff829eea,ff6e9eea,ff58a0ea,ff3ea2ea,ff1ca6ea,ffd0b8ea,ffb0b4ea,ff98b0ea,ff82b0ea,ff6eb0ea,ff56b2ea,ff3ab6ea,ff16beea,ffd6d2ea,ffb4caea,ff9ac6ea,ff84c4ea,ff6cc4ea,ff54c8ea,ff36ceea,ff0adcea
+CASE cm_normal_count3 tol=4 hr=0x00000000 px=ff684ec0,ff4e4cc0,ff3246c0,ff1040c0,ffea4042,ffc84842,ffac4c42,ff904e42,ff6460c0,ff4c5ec0,ff305ac0,ff1056c0,ffea5642,ffca5c42,ffb05e42,ff946042,ff6270c0,ff4a6ec0,ff306ec0,ff106cc0,ffea6c42,ffcc6e42,ffb06e42,ff967042,ff6280c0,ff4a80c0,ff3080c0,ff1080c0,ffea8042,ffcc8042,ffb28042,ff988042,ff628ec0,ff4a90c0,ff3092c0,ff1094c0,ffea9442,ffcc9042,ffb09042,ff968e42,ff64a0c0,ff4ca0c0,ff30a4c0,ff10a8c0,ffeaa842,ffcaa442,ffb0a042,ff949e42,ff68b0c0,ff4eb4c0,ff32b8c0,ff10c0c0,ffeabe42,ffc8b842,ffacb242,ff90b042,ff6cc4c0,ff50c8c0,ff34cec0,ff10dac0,ffe8d842,ffc6ce42,ffa8c842,ff8ac442
+RESULT ran=2 failed_hr=0

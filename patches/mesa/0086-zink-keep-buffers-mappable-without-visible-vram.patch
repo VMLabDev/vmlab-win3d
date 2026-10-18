@@ -1,0 +1,70 @@
+Subject: [PATCH] zink: keep buffers mappable when CPU-visible VRAM is missing or full
+
+Zink places PIPE_USAGE_DEFAULT and DYNAMIC buffers, and persistent and
+coherent buffers, in ZINK_HEAP_DEVICE_LOCAL_VISIBLE, and zink_buffer_map
+maps them directly for unsynchronized and plain write maps, without a
+staging buffer. Two paths put such buffers in memory that is not
+host-visible:
+
+- When the device has no device-local, host-visible type, the screen filled
+  the heap with the DEVICE_LOCAL types.
+- When an allocation from the heap fails, allocate_bo() retried in
+  ZINK_HEAP_DEVICE_LOCAL unless the buffer was coherent or dynamic.
+
+On Venus, vkMapMemory of such memory asks the host for a mappable blob of
+memory it did not allocate exportable ("vkr: mem is not exportable", then
+"ctrl 0x10c, error 0x1200"). The map fails, and the application crashes:
+Unigine Heaven with OpenGL took an access violation in viogpu_wgl.dll on an
+RTX 5090 without resizable BAR, whose 246 MiB visible heap runs out. The
+first path is a Venus guest with nvva's patch 0070 (which hides that heap).
+The second is the out-of-memory fallback that 0085 makes reachable.
+
+Fill a missing visible-VRAM heap with the HOST_VISIBLE_COHERENT types, and
+demote a failed visible-VRAM allocation to HOST_VISIBLE_COHERENT whenever
+the resource's memoryTypeBits allow it. Images that cannot use those types
+still go to DEVICE_LOCAL. Devices whose visible VRAM is all of VRAM (AMD
+APUs, resizable BAR) do not reach either path in normal use.
+
+Evidence: docs/unigl.md, docs/evidence/unigl/.
+Origin: vmlab-win3d unigl worker.
+---
+diff --git a/src/gallium/drivers/zink/zink_resource.c b/src/gallium/drivers/zink/zink_resource.c
+index 106d126..c76ca67 100644
+--- a/src/gallium/drivers/zink/zink_resource.c
++++ b/src/gallium/drivers/zink/zink_resource.c
+@@ -1078,8 +1078,12 @@ allocate_bo(struct zink_screen *screen, const struct pipe_resource *templ,
+       if (obj->bo || heap != ZINK_HEAP_DEVICE_LOCAL_VISIBLE)
+          break;
+ 
+-      /* demote BAR allocations to a different heap on failure to avoid oom */
+-      if (templ->flags & PIPE_RESOURCE_FLAG_MAP_COHERENT || templ->usage == PIPE_USAGE_DYNAMIC)
++      /* demote BAR allocations to a different heap on failure to avoid oom.
++       * Whatever is placed in the BAR heap may be mapped directly
++       * (zink_buffer_map maps unsynchronized and plain write maps without a
++       * staging buffer), so stay host-visible when the resource allows it.
++       */
++      if (zink_mem_type_idx_from_types(screen, ZINK_HEAP_HOST_VISIBLE_COHERENT, reqs->memoryTypeBits) != UINT32_MAX)
+           heap = ZINK_HEAP_HOST_VISIBLE_COHERENT;
+       else
+           heap = ZINK_HEAP_DEVICE_LOCAL;
+diff --git a/src/gallium/drivers/zink/zink_screen.c b/src/gallium/drivers/zink/zink_screen.c
+index 9084c91..87739f6 100644
+--- a/src/gallium/drivers/zink/zink_screen.c
++++ b/src/gallium/drivers/zink/zink_screen.c
+@@ -3521,6 +3521,16 @@ zink_internal_create_screen(const struct pipe_screen_config *config, int64_t dev
+          if (i == ZINK_HEAP_HOST_VISIBLE_COHERENT_CACHED) {
+             memcpy(screen->heap_map[i], screen->heap_map[ZINK_HEAP_HOST_VISIBLE_COHERENT], screen->heap_count[ZINK_HEAP_HOST_VISIBLE_COHERENT]);
+             screen->heap_count[i] = screen->heap_count[ZINK_HEAP_HOST_VISIBLE_COHERENT];
++         } else if (i == ZINK_HEAP_DEVICE_LOCAL_VISIBLE) {
++            /* No CPU-visible VRAM. Buffers in this heap are mapped directly
++             * (persistent and coherent maps, unsynchronized and plain write
++             * maps), so the heap must stay host-visible: use host memory.
++             * Images that cannot live there are demoted to DEVICE_LOCAL by
++             * their memoryTypeBits.
++             */
++            memcpy(screen->heap_map[i], screen->heap_map[ZINK_HEAP_HOST_VISIBLE_COHERENT], screen->heap_count[ZINK_HEAP_HOST_VISIBLE_COHERENT]);
++            screen->heap_count[i] = screen->heap_count[ZINK_HEAP_HOST_VISIBLE_COHERENT];
++            maybe_has_rebar = false;
+          } else {
+             memcpy(screen->heap_map[i], screen->heap_map[ZINK_HEAP_DEVICE_LOCAL], screen->heap_count[ZINK_HEAP_DEVICE_LOCAL]);
+             screen->heap_count[i] = screen->heap_count[ZINK_HEAP_DEVICE_LOCAL];

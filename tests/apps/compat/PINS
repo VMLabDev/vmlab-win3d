@@ -1,0 +1,27 @@
+# Third-party applications tests/apps/compat/run.sh downloads and runs
+# unmodified in the guest (docs/compat.md). Not committed; fetched into
+# .scratch/compat/cache/ and checked against the sha256 here.
+# name  sha256  url
+#
+# UNIGINE Heaven 4.0 and Valley 1.0, free (Basic) editions. EULA
+# (https://benchmark.unigine.com/policies/heaven-eula, valley-eula, updated
+# 2025-09-15): any number of copies "for educational and evaluation
+# purposes"; it says nothing against automation. UNIGINE publishes no hash;
+# these are the files its URLs served on 2026-10-19. Inno Setup installers.
+# Superposition is not here: its EULA limits the Basic edition to private
+# individuals' personal use (organisations need Pro), docs/compat.md.
+unigine-heaven-4.0  497865a09af205a7d2e8812bfc2dd54870216cc1e95541b63cef89a4433b0e5f  https://assets.unigine.com/d/Unigine_Heaven-4.0.exe
+unigine-valley-1.0  312b2a4363da3e7e4401ab97a3329d656cb0c00a9ae4e84b189653676c5eed75  https://assets.unigine.com/d/Unigine_Valley-1.0.exe
+# Godot 4.7.2 (MIT). The sha256 is of the file whose sha512 matches the
+# release's SHA512-SUMS.txt.
+godot-4.7.2  731980f9608d61333e5baf54a2ef17210acc7a538446c0cb9969f002aca1e953  https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_win64.exe.zip
+# Godot's official demo projects (MIT), release 4.7-6ad6167; the sha256
+# matches that release's demos.checksums. 3D Particles: GPU and CPU particles,
+# collision SDF, Forward+/Mobile/Compatibility.
+godot-demo-particles  cf3fbb235d20783de55924c40467896f43dd8ee1c24e05a77f35c7b28ab1edd7  https://github.com/godotengine/godot-demo-projects/releases/download/4.7-6ad6167/3d_particles.zip
+# GZDoom 4.14.2 (GPL-3.0), OpenGL and Vulkan renderers.
+gzdoom-4.14.2  6d01c5bb48610cebfa9dfd0b7705a1e20bfd56032a74484ac256d8c4e3c51bee  https://github.com/ZDoom/gzdoom/releases/download/g4.14.2/gzdoom-4-14-2-windows.zip
+# Crispy Doom 7.2.0 (GPL-2.0), SDL renderer.
+crispy-doom-7.2.0  c04feca63c00fd4c381c53cce8444a2bb520020be38368ce80da60484c94f2ab  https://github.com/fabiangreffrath/crispy-doom/releases/download/crispy-doom-7.2/crispy-doom-7.2.0-win64.zip
+# Freedoom 0.13.0 (BSD-3-Clause), the game data both Doom engines run.
+freedoom-0.13.0  3f9b264f3e3ce503b4fb7f6bdcb1f419d93c7b546f4df3e874dd878db9688f59  https://github.com/freedoom/freedoom/releases/download/v0.13.0/freedoom-0.13.0.zip

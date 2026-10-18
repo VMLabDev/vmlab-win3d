@@ -1,0 +1,53 @@
+== Application log (errors, last 15 min)
+2026-10-18T10:18:44.6125731-07:00 Application Error 1000: Faulting application name: gzdoom.exe, version: 4.14.2.0, time stamp: 0x6814f959 Faulting module name: ucrtbase.dll, version: 10.0.26100.9444, time stamp: 0x2bbefd73 Exception code: 0xc0000409 Fault offset: 0x00000000000a527e Faulting process id: 0x223C Faulting application start time: 0x1DD5F24B9CF9C51 Faulting application path: C:\apps\gzdoom\gzdoom.exe Faulting module path: C:\WINDOWS\System32\ucrtbase.dll Report Id: 9f460be3-a063-4980-8c81-f708ccd6feb0 Faulting package full name: Faulting package-relative application ID: 
+== System log (errors and warnings, last 15 min)
+2026-10-18T16:25:35.2384188-07:00 Microsoft-Windows-Time-Service 134: NtpClient was unable to set a manual peer to use as a time source because of DNS resolution error on 'time.windows.com,0x9'. NtpClient will try again in 15 minutes and double the reattempt interval thereafter. The error was: No such host is known. (0x80072AF9)
+2026-10-18T16:25:26.8684956-07:00 Microsoft-Windows-Wininit 15: Credential Guard and/or VBS Key Isolation are configured but the secure kernel is not running; continuing without them.
+2026-10-18T16:25:24.8195750-07:00 Microsoft-Windows-HAL 18: The performance counter is not readable from user mode. System performance may be degraded.
+2026-10-18T16:25:24.8195678-07:00 Microsoft-Windows-HAL 17: The clock interrupt is backed by a platform timer instead of a per-processor source. System performance may be degraded.
+2026-10-18T16:24:03.4292273-07:00 Service Control Manager 7023: The netprofm service terminated with the following error: The device is not ready.
+2026-10-18T16:23:45.7332997-07:00 Microsoft-Windows-Wininit 15: Credential Guard and/or VBS Key Isolation are configured but the secure kernel is not running; continuing without them.
+2026-10-18T16:23:33.0176911-07:00 Microsoft-Windows-HAL 18: The performance counter is not readable from user mode. System performance may be degraded.
+2026-10-18T16:23:33.0176842-07:00 Microsoft-Windows-HAL 17: The clock interrupt is backed by a platform timer instead of a per-processor source. System performance may be degraded.
+== Yttrium UMD log
+2026-10-18 09:58:48.106 [warning pid=2756 process=Valley.exe] yttrium: ordered worker direct upload backing create failed owner=yttrium_resource reason=guest_allocation_map_failed resource=aff00a20 hAllocation=0xc001d9c0 size=0x100000
+2026-10-18 09:58:48.121 [warning pid=2756 process=Valley.exe] yttrium: allocation map failed label=buffer status=0x8007000e hAllocation=0x80020880 size=0x3a000 user_va=0x0
+2026-10-18 09:58:48.123 [warning pid=2756 process=Valley.exe] yttrium: buffer allocation map failed hAllocation=0x80020880 size=0x3a000 bind=0x10
+2026-10-18 09:58:48.196 [warning pid=2756 process=Valley.exe] yttrium: allocation map failed label=buffer status=0x8007000e hAllocation=0x4001d580 size=0x3a000 user_va=0x0
+2026-10-18 09:58:48.197 [warning pid=2756 process=Valley.exe] yttrium: buffer allocation map failed hAllocation=0x4001d580 size=0x3a000 bind=0x10
+2026-10-18 10:00:22.889 [warning pid=7640 process=Valley.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:00:22.903 [warning pid=7640 process=Valley.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-18 10:01:04.159 [warning pid=6660 process=Godot_v4.7.2-stable_win64.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:01:04.178 [warning pid=6660 process=Godot_v4.7.2-stable_win64.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-18 10:01:09.936 [warning pid=6660 process=Godot_v4.7.2-stable_win64.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:01:09.943 [warning pid=6660 process=Godot_v4.7.2-stable_win64.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-18 10:03:48.836 [warning pid=836 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=9 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:03:49.066 [warning pid=836 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:03:49.778 [warning pid=836 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:04:11.397 [warning pid=6352 process=Godot_v4.7.2-stable_win64.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:04:11.423 [warning pid=6352 process=Godot_v4.7.2-stable_win64.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-18 10:04:39.569 [warning pid=392 process=Godot_v4.7.2-stable_win64.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:04:39.584 [warning pid=392 process=Godot_v4.7.2-stable_win64.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-18 10:04:40.328 [warning pid=392 process=Godot_v4.7.2-stable_win64.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:04:40.338 [warning pid=392 process=Godot_v4.7.2-stable_win64.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-18 10:07:30.656 [warning pid=5848 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=9 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:07:30.838 [warning pid=5848 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:07:31.409 [warning pid=5848 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:11:18.506 [warning pid=8704 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=9 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:11:18.623 [warning pid=8704 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:11:19.112 [warning pid=8704 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:12:58.895 [warning pid=10136 process=crispy-doom.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:12:58.928 [warning pid=10136 process=crispy-doom.exe] d3d9ddi: unsupported D3D9 tessellation state owner=d3d9-state reason=patch-tessellation-not-implemented fallback=ignore-unadvertised-state state=164 value=0x00000000
+2026-10-18 10:12:58.929 [warning pid=10136 process=crispy-doom.exe] d3d9ddi: D3D9 runtime reserved render state owner=d3d9-state reason=unassigned-ddi-slot fallback=ignore-runtime-metadata state=196 value=0xffffffff
+2026-10-18 10:12:58.970 [warning pid=10136 process=crispy-doom.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-18 10:15:39.276 [warning pid=1200 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=9 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:15:39.498 [warning pid=1200 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:15:40.554 [warning pid=1200 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:19:04.661 [warning pid=5012 process=crispy-doom.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:19:04.710 [warning pid=5012 process=crispy-doom.exe] d3d9ddi: unsupported D3D9 tessellation state owner=d3d9-state reason=patch-tessellation-not-implemented fallback=ignore-unadvertised-state state=164 value=0x00000000
+2026-10-18 10:19:04.714 [warning pid=5012 process=crispy-doom.exe] d3d9ddi: D3D9 runtime reserved render state owner=d3d9-state reason=unassigned-ddi-slot fallback=ignore-runtime-metadata state=196 value=0xffffffff
+2026-10-18 10:19:04.745 [warning pid=5012 process=crispy-doom.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-18 10:22:00.399 [warning pid=2488 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=9 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:22:00.833 [warning pid=2488 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:22:02.476 [warning pid=2488 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+== windows on the user desktop

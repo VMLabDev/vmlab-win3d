@@ -1,0 +1,178 @@
+35,36c35,68
+< RESULT hs-join FAIL (could not run)
+< RESULT hs-join-tf FAIL (could not run)
+---
+>   sel 0 quad 0: got (1, 1, 0, 1) want (1, 1, 0, 1) ok
+>   sel 0 quad 1: got (1, 1, 0, 1) want (1, 1, 0, 1) ok
+>   sel 0 quad 2: got (1, 1, 0, 1) want (1, 1, 0, 1) ok
+>   sel 0 quad 3: got (1, 1, 0, 1) want (1, 1, 0, 1) ok
+>   sel 1 quad 0: got (2, 2, 0, 1) want (2, 2, 0, 1) ok
+>   sel 1 quad 1: got (2, 2, 0, 1) want (2, 2, 0, 1) ok
+>   sel 1 quad 2: got (2, 2, 0, 1) want (2, 2, 0, 1) ok
+>   sel 1 quad 3: got (2, 2, 0, 1) want (2, 2, 0, 1) ok
+>   sel 2 quad 0: got (1, 1, 0, 1) want (1, 1, 0, 1) ok
+>   sel 2 quad 1: got (1, 1, 0, 1) want (1, 1, 0, 1) ok
+>   sel 2 quad 2: got (1, 1, 0, 1) want (1, 1, 0, 1) ok
+>   sel 2 quad 3: got (1, 1, 0, 1) want (1, 1, 0, 1) ok
+>   sel 3 quad 0: got (2, 2, 0, 1) want (2, 2, 0, 1) ok
+>   sel 3 quad 1: got (2, 2, 0, 1) want (2, 2, 0, 1) ok
+>   sel 3 quad 2: got (2, 2, 0, 1) want (2, 2, 0, 1) ok
+>   sel 3 quad 3: got (2, 2, 0, 1) want (2, 2, 0, 1) ok
+> RESULT hs-join PASS
+>   sel 0 quad 0: got (11, 1, 0, 1) want (11, 1, 0, 1) ok
+>   sel 0 quad 1: got (11, 1, 0, 1) want (11, 1, 0, 1) ok
+>   sel 0 quad 2: got (11, 1, 0, 1) want (11, 1, 0, 1) ok
+>   sel 0 quad 3: got (11, 1, 0, 1) want (11, 1, 0, 1) ok
+>   sel 1 quad 0: got (22, 2, 0, 1) want (22, 2, 0, 1) ok
+>   sel 1 quad 1: got (22, 2, 0, 1) want (22, 2, 0, 1) ok
+>   sel 1 quad 2: got (22, 2, 0, 1) want (22, 2, 0, 1) ok
+>   sel 1 quad 3: got (22, 2, 0, 1) want (22, 2, 0, 1) ok
+>   sel 2 quad 0: got (11, 1, 0, 1) want (11, 1, 0, 1) ok
+>   sel 2 quad 1: got (11, 1, 0, 1) want (11, 1, 0, 1) ok
+>   sel 2 quad 2: got (11, 1, 0, 1) want (11, 1, 0, 1) ok
+>   sel 2 quad 3: got (11, 1, 0, 1) want (11, 1, 0, 1) ok
+>   sel 3 quad 0: got (22, 2, 0, 1) want (22, 2, 0, 1) ok
+>   sel 3 quad 1: got (22, 2, 0, 1) want (22, 2, 0, 1) ok
+>   sel 3 quad 2: got (22, 2, 0, 1) want (22, 2, 0, 1) ok
+>   sel 3 quad 3: got (22, 2, 0, 1) want (22, 2, 0, 1) ok
+> RESULT hs-join-tf PASS
+54,58c86,218
+< RESULT vs-out FAIL (could not run)
+< RESULT hs-cp-out FAIL (could not run)
+< RESULT ds-out FAIL (could not run)
+< RESULT gs-out FAIL (could not run)
+< RESULT ps-out FAIL (could not run)
+---
+>   sel 0 quad 0: got (1, 1, 1, 1) want (1, 1, 1, 1) ok
+>   sel 0 quad 1: got (20, 10, 20, 10) want (20, 10, 20, 10) ok
+>   sel 0 quad 2: got (300, 100, 300, 100) want (300, 100, 300, 100) ok
+>   sel 0 quad 3: got (4000, 1000, 4000, 1000) want (4000, 1000, 4000, 1000) ok
+>   sel 1 quad 0: got (10, 20, 20, 10) want (10, 20, 20, 10) ok
+>   sel 1 quad 1: got (200, 200, 300, 100) want (200, 200, 300, 100) ok
+>   sel 1 quad 2: got (3000, 2000, 4000, 1000) want (3000, 2000, 4000, 1000) ok
+>   sel 1 quad 3: got (4, 2, 1, 1) want (4, 2, 1, 1) ok
+>   sel 2 quad 0: got (100, 300, 300, 100) want (100, 300, 300, 100) ok
+>   sel 2 quad 1: got (2000, 3000, 4000, 1000) want (2000, 3000, 4000, 1000) ok
+>   sel 2 quad 2: got (3, 3, 1, 1) want (3, 3, 1, 1) ok
+>   sel 2 quad 3: got (40, 30, 20, 10) want (40, 30, 20, 10) ok
+>   sel 3 quad 0: got (1000, 4000, 4000, 1000) want (1000, 4000, 4000, 1000) ok
+>   sel 3 quad 1: got (2, 4, 1, 1) want (2, 4, 1, 1) ok
+>   sel 3 quad 2: got (30, 40, 20, 10) want (30, 40, 20, 10) ok
+>   sel 3 quad 3: got (400, 400, 300, 100) want (400, 400, 300, 100) ok
+> RESULT vs-out PASS
+>   sel 0 quad 0: got (1, 1, 1, 1) want (1, 1, 1, 1) ok
+>   sel 0 quad 1: got (20, 10, 20, 10) want (20, 10, 20, 10) ok
+>   sel 0 quad 2: got (300, 100, 300, 100) want (300, 100, 300, 100) ok
+>   sel 0 quad 3: got (4000, 1000, 4000, 1000) want (4000, 1000, 4000, 1000) ok
+>   sel 1 quad 0: got (10, 20, 20, 10) want (10, 20, 20, 10) ok
+>   sel 1 quad 1: got (200, 200, 300, 100) want (200, 200, 300, 100) ok
+>   sel 1 quad 2: got (3000, 2000, 4000, 1000) want (3000, 2000, 4000, 1000) ok
+>   sel 1 quad 3: got (4, 2, 1, 1) want (4, 2, 1, 1) ok
+>   sel 2 quad 0: got (100, 300, 300, 100) want (100, 300, 300, 100) ok
+>   sel 2 quad 1: got (2000, 3000, 4000, 1000) want (2000, 3000, 4000, 1000) ok
+>   sel 2 quad 2: got (3, 3, 1, 1) want (3, 3, 1, 1) ok
+>   sel 2 quad 3: got (40, 30, 20, 10) want (40, 30, 20, 10) ok
+>   sel 3 quad 0: got (1000, 4000, 4000, 1000) want (1000, 4000, 4000, 1000) ok
+>   sel 3 quad 1: got (2, 4, 1, 1) want (2, 4, 1, 1) ok
+>   sel 3 quad 2: got (30, 40, 20, 10) want (30, 40, 20, 10) ok
+>   sel 3 quad 3: got (400, 400, 300, 100) want (400, 400, 300, 100) ok
+> RESULT hs-cp-out PASS
+>   sel 0 quad 0: got (1, 1, 1, 1) want (1, 1, 1, 1) ok
+>   sel 0 quad 1: got (20, 10, 20, 10) want (20, 10, 20, 10) ok
+>   sel 0 quad 2: got (300, 100, 300, 100) want (300, 100, 300, 100) ok
+>   sel 0 quad 3: got (4000, 1000, 4000, 1000) want (4000, 1000, 4000, 1000) ok
+>   sel 1 quad 0: got (10, 20, 20, 10) want (10, 20, 20, 10) ok
+>   sel 1 quad 1: got (200, 200, 300, 100) want (200, 200, 300, 100) ok
+>   sel 1 quad 2: got (3000, 2000, 4000, 1000) want (3000, 2000, 4000, 1000) ok
+>   sel 1 quad 3: got (4, 2, 1, 1) want (4, 2, 1, 1) ok
+>   sel 2 quad 0: got (100, 300, 300, 100) want (100, 300, 300, 100) ok
+>   sel 2 quad 1: got (2000, 3000, 4000, 1000) want (2000, 3000, 4000, 1000) ok
+>   sel 2 quad 2: got (3, 3, 1, 1) want (3, 3, 1, 1) ok
+>   sel 2 quad 3: got (40, 30, 20, 10) want (40, 30, 20, 10) ok
+>   sel 3 quad 0: got (1000, 4000, 4000, 1000) want (1000, 4000, 4000, 1000) ok
+>   sel 3 quad 1: got (2, 4, 1, 1) want (2, 4, 1, 1) ok
+>   sel 3 quad 2: got (30, 40, 20, 10) want (30, 40, 20, 10) ok
+>   sel 3 quad 3: got (400, 400, 300, 100) want (400, 400, 300, 100) ok
+> RESULT ds-out PASS
+>   sel 0 quad 0: got (1, 1, 1, 1) want (1, 1, 1, 1) ok
+>   sel 0 quad 1: got (20, 10, 20, 10) want (20, 10, 20, 10) ok
+>   sel 0 quad 2: got (300, 100, 300, 100) want (300, 100, 300, 100) ok
+>   sel 0 quad 3: got (4000, 1000, 4000, 1000) want (4000, 1000, 4000, 1000) ok
+>   sel 1 quad 0: got (10, 20, 20, 10) want (10, 20, 20, 10) ok
+>   sel 1 quad 1: got (200, 200, 300, 100) want (200, 200, 300, 100) ok
+>   sel 1 quad 2: got (3000, 2000, 4000, 1000) want (3000, 2000, 4000, 1000) ok
+>   sel 1 quad 3: got (4, 2, 1, 1) want (4, 2, 1, 1) ok
+>   sel 2 quad 0: got (100, 300, 300, 100) want (100, 300, 300, 100) ok
+>   sel 2 quad 1: got (2000, 3000, 4000, 1000) want (2000, 3000, 4000, 1000) ok
+>   sel 2 quad 2: got (3, 3, 1, 1) want (3, 3, 1, 1) ok
+>   sel 2 quad 3: got (40, 30, 20, 10) want (40, 30, 20, 10) ok
+>   sel 3 quad 0: got (1000, 4000, 4000, 1000) want (1000, 4000, 4000, 1000) ok
+>   sel 3 quad 1: got (2, 4, 1, 1) want (2, 4, 1, 1) ok
+>   sel 3 quad 2: got (30, 40, 20, 10) want (30, 40, 20, 10) ok
+>   sel 3 quad 3: got (400, 400, 300, 100) want (400, 400, 300, 100) ok
+> RESULT gs-out PASS
+>   sel 0 rt 0 quad 0: got (1, 1, 1, 1) want (1, 1, 1, 1) ok
+>   sel 0 rt 0 quad 1: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 0 rt 0 quad 2: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 0 rt 0 quad 3: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 0 rt 1 quad 0: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 0 rt 1 quad 1: got (2, 1, 2, 1) want (2, 1, 2, 1) ok
+>   sel 0 rt 1 quad 2: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 0 rt 1 quad 3: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 0 rt 2 quad 0: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 0 rt 2 quad 1: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 0 rt 2 quad 2: got (3, 1, 3, 1) want (3, 1, 3, 1) ok
+>   sel 0 rt 2 quad 3: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 0 rt 3 quad 0: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 0 rt 3 quad 1: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 0 rt 3 quad 2: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 0 rt 3 quad 3: got (4, 1, 4, 1) want (4, 1, 4, 1) ok
+>   sel 1 rt 0 quad 0: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 1 rt 0 quad 1: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 1 rt 0 quad 2: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 1 rt 0 quad 3: got (4, 2, 1, 1) want (4, 2, 1, 1) ok
+>   sel 1 rt 1 quad 0: got (1, 2, 2, 1) want (1, 2, 2, 1) ok
+>   sel 1 rt 1 quad 1: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 1 rt 1 quad 2: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 1 rt 1 quad 3: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 1 rt 2 quad 0: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 1 rt 2 quad 1: got (2, 2, 3, 1) want (2, 2, 3, 1) ok
+>   sel 1 rt 2 quad 2: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 1 rt 2 quad 3: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 1 rt 3 quad 0: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 1 rt 3 quad 1: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 1 rt 3 quad 2: got (3, 2, 4, 1) want (3, 2, 4, 1) ok
+>   sel 1 rt 3 quad 3: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 2 rt 0 quad 0: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 2 rt 0 quad 1: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 2 rt 0 quad 2: got (3, 3, 1, 1) want (3, 3, 1, 1) ok
+>   sel 2 rt 0 quad 3: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 2 rt 1 quad 0: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 2 rt 1 quad 1: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 2 rt 1 quad 2: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 2 rt 1 quad 3: got (4, 3, 2, 1) want (4, 3, 2, 1) ok
+>   sel 2 rt 2 quad 0: got (1, 3, 3, 1) want (1, 3, 3, 1) ok
+>   sel 2 rt 2 quad 1: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 2 rt 2 quad 2: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 2 rt 2 quad 3: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 2 rt 3 quad 0: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 2 rt 3 quad 1: got (2, 3, 4, 1) want (2, 3, 4, 1) ok
+>   sel 2 rt 3 quad 2: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 2 rt 3 quad 3: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 3 rt 0 quad 0: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 3 rt 0 quad 1: got (2, 4, 1, 1) want (2, 4, 1, 1) ok
+>   sel 3 rt 0 quad 2: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 3 rt 0 quad 3: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 3 rt 1 quad 0: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 3 rt 1 quad 1: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 3 rt 1 quad 2: got (3, 4, 2, 1) want (3, 4, 2, 1) ok
+>   sel 3 rt 1 quad 3: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 3 rt 2 quad 0: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 3 rt 2 quad 1: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 3 rt 2 quad 2: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 3 rt 2 quad 3: got (4, 4, 3, 1) want (4, 4, 3, 1) ok
+>   sel 3 rt 3 quad 0: got (1, 4, 4, 1) want (1, 4, 4, 1) ok
+>   sel 3 rt 3 quad 1: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 3 rt 3 quad 2: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+>   sel 3 rt 3 quad 3: got (0, 0, 0, 0) want (0, 0, 0, 0) ok
+> RESULT ps-out PASS

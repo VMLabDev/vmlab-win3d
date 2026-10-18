@@ -13,12 +13,12 @@
         "blue",
         "green"
       ],
-      "crc": "cb58079a"
+      "crc": "8c065e38"
     }
   },
   "x86-d3d9_probe": {
-    "frames": 13,
-    "frames_with_window": 8,
+    "frames": 12,
+    "frames_with_window": 9,
     "visible": true,
     "animating": true,
     "png": "console-x86-d3d9_probe.png",
@@ -30,7 +30,7 @@
         "blue",
         "green"
       ],
-      "crc": "11b4f587"
+      "crc": "b7900f08"
     }
   },
   "x64-d3d11_probe": {
@@ -47,7 +47,7 @@
         "blue",
         "green"
       ],
-      "crc": "39a84c00"
+      "crc": "5cc72fe2"
     }
   },
   "x86-d3d11_probe": {
@@ -64,7 +64,7 @@
         "blue",
         "green"
       ],
-      "crc": "8482c425"
+      "crc": "6a627a5f"
     }
   },
   "x64-d3d12_probe": {
@@ -81,7 +81,7 @@
         "blue",
         "green"
       ],
-      "crc": "10f95853"
+      "crc": "0ab016fc"
     }
   },
   "x86-d3d12_probe": {
@@ -98,12 +98,12 @@
         "blue",
         "green"
       ],
-      "crc": "0a7a2366"
+      "crc": "e3d48bbf"
     }
   },
   "x64-opengl_probe": {
-    "frames": 14,
-    "frames_with_window": 9,
+    "frames": 13,
+    "frames_with_window": 8,
     "visible": true,
     "animating": true,
     "png": "console-x64-opengl_probe.png",
@@ -115,12 +115,12 @@
         "blue",
         "green"
       ],
-      "crc": "14535282"
+      "crc": "49d966e5"
     }
   },
   "x86-opengl_probe": {
     "frames": 13,
-    "frames_with_window": 8,
+    "frames_with_window": 9,
     "visible": true,
     "animating": true,
     "png": "console-x86-opengl_probe.png",
@@ -132,12 +132,12 @@
         "blue",
         "green"
       ],
-      "crc": "f492da25"
+      "crc": "4ef2d682"
     }
   },
   "x64-vulkan_probe": {
     "frames": 13,
-    "frames_with_window": 9,
+    "frames_with_window": 8,
     "visible": true,
     "animating": true,
     "png": "console-x64-vulkan_probe.png",
@@ -149,7 +149,7 @@
         "blue",
         "green"
       ],
-      "crc": "efea1679"
+      "crc": "56f2bff9"
     }
   },
   "x86-vulkan_probe": {
@@ -166,7 +166,7 @@
         "blue",
         "green"
       ],
-      "crc": "0117a22f"
+      "crc": "3288c67c"
     }
   }
 }

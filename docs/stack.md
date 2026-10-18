@@ -321,7 +321,7 @@ committed.
 | host/virglrenderer/workaround | 1 | [`0002`](../patches/host/virglrenderer/workaround/0002-vkr-drop-unsupported-feedback-loop-usage.patch) | vkr: retry vkCreateImage and the image-format queries without feedback-loop usage (superseded by mesa/0020; built only with WITH_WORKAROUND=1) | [`docs/nvidia.md`](nvidia.md) |
 | kmd | 2 | [`0001`](../patches/kmd/0001-kmd-r10-copy.patch) | Convert R10G10B10A2 sources to 8-bit RGBA or BGRA in the KMD's CPU present blit (the prior art's r10 KMD) | [`build/kmd/README.md`](../build/kmd/README.md) |
 | | | [`0002`](../patches/kmd/0002-kmd-cache-gdi-shadow-and-staging-surfaces.patch) | viogpu3d: map GDI shadow and staging surfaces cached | [`docs/present.md`](present.md) |
-| mesa | 33 | [`0001`](../patches/mesa/0001-build-winddk-includes-and-x86-atomics.patch) | build: add the WDK include path and drop x86-unsafe 64-bit Interlocked calls | [`build/mesa/README.md`](../build/mesa/README.md) |
+| mesa | 39 | [`0001`](../patches/mesa/0001-build-winddk-includes-and-x86-atomics.patch) | build: add the WDK include path and drop x86-unsafe 64-bit Interlocked calls | [`build/mesa/README.md`](../build/mesa/README.md) |
 | | | [`0002`](../patches/mesa/0002-util-xmlconfig-case-insensitive-exe-match.patch) | util/xmlconfig: match drirc executable names case-insensitively on Windows | [`build/mesa/README.md`](../build/mesa/README.md) |
 | | | [`0003`](../patches/mesa/0003-util-u_queue-windows-loader-lock-join.patch) | util/u_queue: do not join worker threads under the loader lock on Windows | [`build/mesa/README.md`](../build/mesa/README.md) |
 | | | [`0004`](../patches/mesa/0004-wgl-unbind-through-stw-on-delete.patch) | wgl: unbind the current context through stw_make_current on delete | [`build/mesa/README.md`](../build/mesa/README.md) |
@@ -347,17 +347,24 @@ committed.
 | | | [`0026`](../patches/mesa/0026-d3d9-ddraw-present-sources-in-host-cached-memory.patch) | d3d9: put DirectDraw present sources in host-cached memory | [`docs/present.md`](present.md) |
 | | | [`0027`](../patches/mesa/0027-wgl-present-windows-opaque.patch) | wgl: present windows opaque through kopper | [`docs/present.md`](present.md) |
 | | | [`0030`](../patches/mesa/0030-d3d10umd-domain-shader-indexed-patch-constants.patch) | d3d10umd: domain shaders read patch constants with a register index | [`docs/ds.md`](ds.md) |
+| | | [`0031`](../patches/mesa/0031-d3d10umd-output-index-ranges-in-every-stage.patch) | d3d10umd: output index ranges in every shader stage | [`docs/shaders2.md`](shaders2.md) |
+| | | [`0032`](../patches/mesa/0032-d3d10umd-hull-shader-join-phases-read-fork-phase-outputs.patch) | d3d10umd, yttrium: hull shader join phases read fork phase outputs | [`docs/shaders2.md`](shaders2.md) |
 | | | [`0035`](../patches/mesa/0035-d3d9-hardware-colour-key-and-mirror-blits.patch) | d3d9: hardware source colour-key and mirror blits for DirectDraw | [`docs/ddraw.md`](ddraw.md) |
 | | | [`0040`](../patches/mesa/0040-d3d9-swvp-processed-vertices-keep-declaration-vs.patch) | d3d9: keep the declaration-built vertex shader for software-processed vertices | [`docs/ffp.md`](ffp.md) |
 | | | [`0041`](../patches/mesa/0041-d3d9-fixed-function-fog.patch) | d3d9: fixed-function fog for perspective table fog, vertex fog clamping and pre-transformed vertices | [`docs/ffp.md`](ffp.md) |
 | | | [`0042`](../patches/mesa/0042-d3d9-fixed-function-points.patch) | d3d9: point expansion keeps vertex attributes, perspective size and per-vertex PSIZE | [`docs/ffp.md`](ffp.md) |
+| | | [`0043`](../patches/mesa/0043-d3d9-bump-luminance-formats.patch) | d3d9: L6V5U5 and X8L8V8U8 bump maps for BUMPENVMAPLUMINANCE | [`docs/ffp2.md`](ffp2.md) |
+| | | [`0044`](../patches/mesa/0044-d3d9-indexed-vertex-blend-palette.patch) | d3d9: report the runtime's matrix palette for indexed vertex blending | [`docs/ffp2.md`](ffp2.md) |
 | | | [`0065`](../patches/mesa/0065-venus-feedback-buffers-in-host-cached-memory.patch) | venus: feedback buffers in host-cached memory | [`docs/nvfb.md`](nvfb.md) |
 | | | [`0066`](../patches/mesa/0066-venus-disable-feedback-when-writes-do-not-arrive.patch) | venus: disable feedback for a device whose feedback writes do not arrive | [`docs/nvfb.md`](nvfb.md) |
 | | | [`0067`](../patches/mesa/0067-venus-back-uncached-host-memory-with-cached-when-gpu-writes-do-not-arrive.patch) | venus: back uncached host memory with cached memory when GPU writes do not arrive | [`docs/nvfb.md`](nvfb.md) |
-| vkd3d-proton | 5 | [`0001`](../patches/vkd3d-proton/0001-vkd3d-Reject-root-signatures-with-overlapping-regist.patch) | vkd3d: Reject root signatures with overlapping register bindings. | [`build/d3d12/README.md`](../build/d3d12/README.md) |
+| | | [`0070`](../patches/mesa/0070-venus-hide-host-access-to-small-bar-heap.patch) | venus: hide host access to a small BAR heap | [`docs/nvva.md`](nvva.md) |
+| | | [`0086`](../patches/mesa/0086-zink-keep-buffers-mappable-without-visible-vram.patch) | zink: keep buffers mappable when CPU-visible VRAM is missing or full | [`docs/nvva.md`](nvva.md) |
+| vkd3d-proton | 6 | [`0001`](../patches/vkd3d-proton/0001-vkd3d-Reject-root-signatures-with-overlapping-regist.patch) | vkd3d: Reject root signatures with overlapping register bindings. | [`build/d3d12/README.md`](../build/d3d12/README.md) |
 | | | [`0002`](../patches/vkd3d-proton/0002-vkd3d-Report-FORMAT_INFO-plane-counts-without-a-Vulk.patch) | vkd3d: Report FORMAT_INFO plane counts without a Vulkan format mapping. | [`build/d3d12/README.md`](../build/d3d12/README.md) |
 | | | [`0003`](../patches/vkd3d-proton/0003-vkd3d-Allow-depth-stencil-textures-in-CPU-visible-he.patch) | vkd3d: Allow depth-stencil textures in CPU-visible heaps. | [`build/d3d12/README.md`](../build/d3d12/README.md) |
 | | | [`0004`](../patches/vkd3d-proton/0004-vkd3d-Default-the-Windows-shader-cache-to-LocalAppDa.patch) | vkd3d: Default the Windows shader cache to LocalAppData. | [`build/d3d12/README.md`](../build/d3d12/README.md) |
 | | | [`0005`](../patches/vkd3d-proton/0005-d3d12-Build-a-system-wide-d3d12.dll-bridge.patch) | d3d12: Build a system-wide d3d12.dll bridge. | [`build/d3d12/README.md`](../build/d3d12/README.md) |
+| | | [`0006`](../patches/vkd3d-proton/0006-vkd3d-Emulate-state-changing-ExecuteIndirect-without.patch) | vkd3d: Emulate state-changing ExecuteIndirect without EXT_dgc. | [`docs/ei.md`](ei.md) |
 | vulkan-tools | 1 | [`0001`](../patches/vulkan-tools/0001-vulkaninfo-Load-user32-on-every-Windows-compiler.patch) | vulkaninfo: Load user32 on every Windows compiler | [`build/vulkan-sdk/README.md`](../build/vulkan-sdk/README.md) |
 <!-- END generated patches table -->

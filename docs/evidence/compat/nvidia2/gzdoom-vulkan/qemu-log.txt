@@ -1,0 +1,10 @@
+virtio_gpu_virgl_process_cmd: ctrl 0x10c, error 0x1200
+virgl_render_server[3196434]: vkr: failed to look up object 76 of type 8
+virgl_render_server[3196434]: vkr: vkFreeMemory resulted in CS error
+virgl_render_server[3196434]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3196434]: vkr: vkWaitRingSeqnoMESA resulted in CS error
+virgl_render_server[3196434]: vkr: submit_cmd: vn_dispatch_command failed
+virgl_render_server[3196434]: failed to dispatch context op 5
+virgl_render_server[3196434]: vkr: destroying context 101 (VulkanDrv) with a valid instance
+virgl_render_server[3196434]: vkr: destroying device with valid objects
+virtio_gpu_virgl_process_cmd: ctrl 0x10c, error 0x1200

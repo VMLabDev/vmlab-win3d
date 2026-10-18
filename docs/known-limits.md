@@ -87,6 +87,23 @@ NVIDIA failure (`vkGetImageMemoryRequirements resulted in CS error` and a
 black console; `docs/evidence/host/good-none/`, `min-none/`). It is
 historical: `docs/nvidia.md` names the cause.
 
+### Two Windows VMs per RTX 5090 without resizable BAR
+
+Helios's RTX 5090s run with resizable BAR off, so each card has a 256 MiB
+BAR1 aperture that every process and VM on the card shares. Venus guests
+fill it. Each Windows VM takes about 40 MiB at an idle desktop and 60 MiB
+while it renders, mostly for the Yttrium UMD's shared images. With three VMs
+on a card, BAR1 runs out: the host kernel logs `NVRM: dmaAllocMapping_GM107:
+can't alloc VA space for mapping`, and guest Venus contexts die (dwm or
+applications report ring timeouts, often in `vkGetImageSubresourceLayout`).
+`patches/mesa/0070` (with `0086`) keeps Vulkan, DXVK, vkd3d-proton and Zink
+memory out of BAR1, but not the UMD's images.
+
+Run at most two Windows VMs per RTX 5090, counting the host desktop on
+`Nvidia1` as part of the load, or turn on resizable BAR in the host's
+firmware. Integrated GPUs and resizable-BAR hosts are not affected. Cause,
+numbers and the dropped UMD change: [nvva.md](nvva.md).
+
 ### Requires vmlab 0.27.0-alpha or later
 
 vmlab 0.23 did not give a working Venus guest from `gpu { mode = "vulkan" }`.
@@ -149,6 +166,45 @@ they are missing, logging `autologon fallback fired` and writing
 `autologon-fallback.txt`. In the five runs since, on `Nvidia1` and
 `Nvidia2`, the wait ended at once or within 5 s, and the fallback did not
 fire. This affects only the tests, not the package.
+
+### Evaluation templates need the lab NIC and `slmgr /ato`
+
+The local `windows-11` and `windows-10` templates are Enterprise
+Evaluation editions, and their clones boot in notification mode (`slmgr /dlv`: `License Status:
+Notification`, `0xC004F009 (grace time expired)`). In that mode the license
+monitor, `wlms.exe`, shuts the VM down an hour after each boot, with "The
+license period for this installation of Windows has expired". A lab with no
+NIC cannot activate, so a kept lab dies within the hour.
+
+The lab files therefore give the VM a NAT NIC, `nic { nat = true }`
+(`labs/acceptance/vmlab.wcl`, `labs/probe/vmlab.wcl`). The NIC alone is not
+enough. A clone left alone with it was not activated by Windows, and
+`wlms.exe` shut it down 60 minutes after it booted. Activation needs an
+explicit `slmgr /ato`, which takes about a minute:
+
+```
+cscript //nologo C:\Windows\System32\slmgr.vbs /ato
+```
+
+After that, `slmgr /dlv` shows `License Status: Licensed` and
+`slmgr /xpr` shows the evaluation's end date, 90 days later (`Timebased
+activation will expire 1/16/2027`). Activation survives a reboot, and the
+activated clone ran for over an hour without shutting down. `tests/e2e/run.sh` runs
+`slmgr /ato` as soon as the lab is up and writes the result to
+`activation.txt` in the run's evidence; a failed activation is reported but
+does not fail the run. For a lab brought up by hand, run the command above
+once.
+
+The NIC changes what the guest can reach: it has internet egress through
+vmlab's NAT, and the lab's guests can reach each other. The template's
+Windows Update policies stay in place, so the NIC does not turn Windows
+Update on. The rearm count is 1, so `slmgr /rearm` is not a lasting
+alternative. Tried on `windows-11@26100.1742.5` and, for `slmgr /ato`
+only, `windows-10@19045.2006.8`.
+
+Evidence: `docs/evidence/wu/activation/` (`no-ato-shutdown.txt`, the
+unactivated clone's shutdown events; `ato.txt`, activation and the
+reboot; `windows-10-ato.txt`), and the `activation` report of each run in `docs/evidence/wu/`.
 
 ### QEMU crashes on shutdown
 
@@ -343,12 +399,22 @@ OpenGL and Vulkan, x64 and x86), two diagnostic probes (`probes/dxut-enum`,
   (D3D11) render after `patches/mesa/0015` to `0017`, with the window
   caveat below;
 - Blender 4.2.3 (OpenGL 4.3) renders its UI and viewport.
+- The compatibility sweep ([compat.md](compat.md)) runs Unigine Heaven and
+  Valley (D3D11, D3D9, OpenGL), Godot 4.7.2 (D3D12, Vulkan, OpenGL), GZDoom
+  (Vulkan, OpenGL) and Crispy Doom (D3D9), each for about 3 minutes on AMD1
+  and Nvidia2:
+  - AMD1: 10 of 12 runs pass. Valley D3D9 hangs, and GZDoom cannot create
+    an OpenGL context. Heaven D3D11 crashed once with heap corruption.
+  - Nvidia2: 5 of 12 runs pass. Godot's Vulkan renderer causes a host Xid 69
+    (ErrorCode `0x13d`). GZDoom Vulkan and both Unigine OpenGL runs crash.
+    Unigine D3D9 skips its draws that use depth bias, because the device
+    lacks the float depth-bias representation.
 
 D3D9 fixed function goes through the shaders that the Windows runtime
 generates; its coverage and what it still lacks are in the next section.
 
 D3D10 has no probe here. Five unmodified Microsoft D3D12 samples have run
-([d3d12app.md](d3d12app.md); four render, `D3D12ExecuteIndirect` does not, see below). The prior art ran real applications on its own builds of the
+([d3d12app.md](d3d12app.md); all five render, `D3D12ExecuteIndirect` with `patches/vkd3d-proton/0006`, [ei.md](ei.md)). The prior art ran real applications on its own builds of the
 same components:
 
 - GravityMark (D3D11, D3D12, OpenGL), Unigine Heaven (D3D9, D3D11, OpenGL),
@@ -379,16 +445,24 @@ processing ([`ffp.md`](ffp.md)). With `patches/mesa/0040` to `0042` every
 case matches on `Nvidia2` and `AMD1` except two spotlight cases, where the
 Windows runtime's own vertex processing differs from the reference's by up
 to 12/255 on a few pixels; the reference fed by the runtime's software
-vertex processing matches the driver exactly. Not tested:
+vertex processing matches the driver exactly. Not tested: `PREMODULATE`,
+W-buffering, multisampling and wide lines.
 
-- vertex blending with more than one weight, indexed vertex blending and
-  tweening;
-- bump-environment-map stage operations (`BUMPENVMAP`, `BUMPENVMAPLUMINANCE`)
-  and `PREMODULATE`;
-- texture coordinate generation into cube and volume textures;
-- W-buffering, multisampling and wide lines;
-- `D3DCREATE_MIXED_VERTEXPROCESSING` switching between the two modes;
-- Windows 10 (the UMD is the same DLL).
+`docs/evidence/ffp2/src/d3d9_ffp2.cpp` adds 49 cases ([`ffp2.md`](ffp2.md)):
+vertex blending with up to three weights, indexed blending and tweening,
+bump environment mapping, cube and volume texture coordinates, and mixed
+devices that switch between hardware and software vertex processing. Both
+probes also ran on Windows 10. With `patches/mesa/0043` (the `L6V5U5` and
+`X8L8V8U8` bump maps) every case matches on `Nvidia2` and `AMD1`. The
+exception is `vb_indexed_color`, where the reference's own vertex
+processing loses the device. Limits:
+
+- with hardware vertex processing, indexed vertex blending works for matrix
+  indices 0 to 8 only. That is the palette of the runtime's generated
+  shader, and `MaxVertexBlendMatrixIndex` reports 8 (`0044`). Larger
+  palettes need software or mixed vertex processing;
+- a dynamic `D3DPOOL_DEFAULT` texture in `L6V5U5` or `X8L8V8U8` shows
+  `Lock` the converted `R8G8B8A8_SNORM` layout.
 
 Table fog chooses W fog from the projection's W range, which the runtime
 reports through `UpdateWInfo`; a perspective projection reported with
@@ -408,21 +482,23 @@ samples still render on the hardware device either way. `D3D11Ref.dll` is not
 redistributable, so the package cannot ship it. Evidence:
 `docs/d3d11-apps.md`, "BasicHLSL11: a DXUT bug on Windows 8 and later".
 
-### Indexed outputs outside hull shaders are not translated
+### Indexed shader inputs and outputs: what is covered
 
-Shaders may index their inputs with a register: `patches/mesa/0015` covers
-hull shaders and `0030` covers patch constants in domain shaders
-(`dcl_indexrange vpc6.xyz 4`, which removed the device before). Domain,
-geometry and pixel shader input ranges match WARP
-([`ds.md`](ds.md)). A `dcl_indexrange` over outputs still fails the
-translation everywhere except a hull shader's fork and join phases.
-d3dcompiler_47 never emits one: indexing an output with a register in a
-vertex, domain or geometry shader is a compile error (X3500). Only bytecode
-written by hand or by another compiler would hit it. Vertex shader input
-ranges and domain shader ranges over tessellation factors were not tested
-([`ds.md`](ds.md#what-remains)).
+Shaders may index their inputs and outputs with a register
+(`dcl_indexrange`). `patches/mesa/0015` covers hull shader patch phases,
+`0030` patch constants in domain shaders ([`ds.md`](ds.md)), `0031` output
+ranges in every other stage and in a hull shader's control-point phase, and
+`0032` hull shader join phases that read their fork phases' outputs
+([`shaders2.md`](shaders2.md)). Before `0032`, any such join phase removed
+the device, even with immediate indices; d3dcompiler_47 emits one whenever a
+patch-constant function computes one output from another. Vertex, domain,
+geometry and pixel shader input ranges, tessellation-factor ranges, and
+output ranges in every stage match WARP on AMD1 and Nvidia1. What remains is
+in [`shaders2.md`](shaders2.md#what-remains): a range over a geometry
+shader's packed scalar system values is still rejected, and indexed reads of
+ordinary patch constants in a join phase were not run.
 
-### D3D12: ExecuteIndirect that changes state draws wrongly, and an NVIDIA first-boot dwm crash
+### D3D12: ExecuteIndirect with vertex or index buffer arguments, and an NVIDIA first-boot dwm crash
 
 Five unmodified Microsoft DirectX-Graphics-Samples D3D12 samples now build
 with clang-cl and the MSVC CRT (`build/d3d12-samples/`) and run through the
@@ -431,15 +507,17 @@ installed package with no app-local DLLs (`docs/d3d12app.md`).
 `D3D12nBodyGravity` render and exit 0 on AMD1 and Nvidia1. Two failures
 remain:
 
-- **`ExecuteIndirect` with a command signature that changes state** draws
-  wrongly, with no error. Such a signature changes root constants, root
-  descriptors, or vertex or index buffers. vkd3d-proton implements it with
-  `VK_EXT_device_generated_commands`. RADV and the NVIDIA driver on the host
-  have that extension, but Venus (guest Mesa 26.1.0 and virglrenderer 1.3.0)
-  does not pass it through. vkd3d-proton then drops the state arguments and
-  issues only the draws. `D3D12ExecuteIndirect` shows the clear colour and
-  none of its triangles. Plain indirect draws and dispatches are not
-  affected.
+- **`ExecuteIndirect` with a command signature that sets vertex or index
+  buffer views** draws wrongly, with no error. Venus (guest Mesa 26.1.0 and
+  virglrenderer 1.3.0) does not forward `VK_EXT_device_generated_commands`,
+  which vkd3d-proton uses for state-changing signatures.
+  `patches/vkd3d-proton/0006` emulates signatures that set root constants
+  or root CBV, SRV or UAV addresses: one GPU-patched indirect draw or
+  dispatch per sequence. With it, `D3D12ExecuteIndirect` renders as on WARP
+  on AMD1 and Nvidia1 ([ei.md](ei.md)). Vertex and index buffer view
+  arguments are still dropped. The emulation also moves every root
+  signature's root parameters into a push UBO and root CBVs to raw VAs,
+  with unmeasured cost per draw.
 - **On NVIDIA, dwm.exe can crash in the first boot after the install.** The
   crash is heap corruption, `0xc0000374`, with `viogpu_d3d10.dll` loaded,
   during the first D3D12 sample. D3D12 programs then fail until the next

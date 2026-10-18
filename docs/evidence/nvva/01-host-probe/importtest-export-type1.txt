@@ -1,0 +1,9 @@
+$ importtest 05 1
+exporter: image memoryTypeBits 0xf size 4096000, allocating type 1 (flags 0x1)
+exporter: vkAllocateMemory 0
+exporter: vkBindImageMemory 0
+exporter: vkGetMemoryFdKHR 0
+importer: fd memoryTypeBits 0x3 (vk 0), image bits 0xf, both 0x3, importing as type 1
+importer: import vkAllocateMemory 0
+importer: vkBindImageMemory 0
+child exit 0

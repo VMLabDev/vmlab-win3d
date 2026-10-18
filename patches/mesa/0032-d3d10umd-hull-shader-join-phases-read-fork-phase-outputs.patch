@@ -1,0 +1,176 @@
+Subject: [PATCH] d3d10umd, yttrium: hull shader join phases read fork phase outputs
+
+A hull shader's join phase reads the patch constants and tessellation
+factors that its fork phases wrote, as vpcN. d3dcompiler_47 emits this for
+any patch-constant function that computes a value from another output, for
+example
+
+    o.c = float4(o.e[idx], ...);   // join phase:
+                                   //   mov r1.y, vpc1.x ... dp4 o6.x, r1, icb[r0.x]
+
+The translation keeps those reads in TGSI's output file (0015 and earlier),
+but three things stopped them:
+
+1. yttrium_shader_preflight_tgsi_for_nir refused every TGSI output read
+   outside a fragment shader (reason=unsupported_tgsi_output_read), so the
+   hull shader had no NIR, CreateHullShader failed through pfnSetErrorCb
+   and the D3D11 runtime removed the device. Allow direct reads of a hull
+   shader's patch outputs (PATCH, TESSOUTER, TESSINNER); tgsi_to_nir
+   already stores those directly to the shared patch outputs and loads them
+   back.
+2. tgsi_to_nir loaded a tessellation level output as element 0 of its
+   scalar array. Rebuild the packed vector, as it already does for TES
+   tessellation-level inputs, so a TGSI swizzle picks the right factor.
+3. ShaderTGSI.c mapped vpcN to the whole TESSOUTER/TESSINNER register,
+   without the component of factor N (vpc1.x read TESSOUTER.x, factor 0).
+   Remember each factor's component across phases
+   (tcs_tess_factor_component_mask; tcs_tess_factor_writemask is reset per
+   phase) and select it, for immediate and for indexed reads
+   (vpc[r + 0], vpc[r + 4] with dcl_indexrange over the factors).
+
+docs/evidence/shaders2/src/d3d11_index2.cpp checks both: hs-join is
+d3dcompiler_47's own join phase, hs-join-tf an assembled join phase that
+indexes the factors.
+
+Evidence: docs/shaders2.md, docs/evidence/shaders2/.
+Origin: vmlab-win3d shaders2 worker.
+---
+diff --git a/src/gallium/auxiliary/nir/tgsi_to_nir.c b/src/gallium/auxiliary/nir/tgsi_to_nir.c
+index 7d41b4c..3bb86a5 100644
+--- a/src/gallium/auxiliary/nir/tgsi_to_nir.c
++++ b/src/gallium/auxiliary/nir/tgsi_to_nir.c
+@@ -923,6 +923,27 @@ ttn_src_for_file_and_index(struct ttn_compile *c, unsigned file, unsigned index,
+          nir_variable *var = c->outputs[index];
+          nir_deref_instr *deref;
+ 
++         /* Tessellation levels are scalar arrays in NIR, but one packed
++          * TGSI register. Reconstruct it before applying TGSI swizzles,
++          * padding the two-component inner levels with zeroes, as for TES
++          * inputs. */
++         if (var->data.location == VARYING_SLOT_TESS_LEVEL_OUTER ||
++             var->data.location == VARYING_SLOT_TESS_LEVEL_INNER) {
++            nir_def *components[4];
++            const unsigned component_count =
++               MIN2(glsl_get_length(var->type), ARRAY_SIZE(components));
++
++            assert(!indirect);
++            deref = nir_build_deref_var(&c->build, var);
++            for (unsigned i = 0; i < ARRAY_SIZE(components); i++)
++               components[i] = nir_imm_float(b, 0.0f);
++            for (unsigned i = 0; i < component_count; i++)
++               components[i] = nir_load_deref(
++                  b, nir_build_deref_array_imm(b, deref, i));
++            return nir_src_for_ssa(nir_vec(b, components,
++                                           ARRAY_SIZE(components)));
++         }
++
+          if (glsl_type_is_array(var->type)) {
+             deref = ttn_array_deref(c, var, c->output_regs[index].offset,
+                                     indirect);
+diff --git a/src/gallium/frontends/d3d10umd/ShaderTGSI.c b/src/gallium/frontends/d3d10umd/ShaderTGSI.c
+index 7f82f53..f3c7fab 100644
+--- a/src/gallium/frontends/d3d10umd/ShaderTGSI.c
++++ b/src/gallium/frontends/d3d10umd/ShaderTGSI.c
+@@ -464,6 +464,11 @@ struct Shader_xlate {
+    } outputs[SHADER_MAX_OUTPUTS];
+    bool has_gs_scalar_outputs;
+    unsigned tcs_tess_factor_writemask[SHADER_MAX_OUTPUTS];
++   /* The TESSOUTER/TESSINNER component of each tessellation factor
++    * register.  Unlike tcs_tess_factor_writemask, which is per phase, this
++    * stays set for the join phases that read the factors back.
++    */
++   unsigned tcs_tess_factor_component_mask[SHADER_MAX_OUTPUTS];
+    unsigned tcs_tess_factor_range_first[SHADER_MAX_OUTPUTS];
+    unsigned tcs_tess_factor_range_end[SHADER_MAX_OUTPUTS];
+    struct {
+@@ -1152,6 +1157,20 @@ tessellation_translation_unsupported(struct Shader_xlate *sx,
+    sx->translation_failed = true;
+ }
+ 
++/* Patch constant vpcN in a hull shader's join phase: the output an earlier
++ * fork phase wrote.  A tessellation factor is one component of TESSOUTER or
++ * TESSINNER, so select it; vpc1.x is TESSOUTER.y for a quad.
++ */
++static struct ureg_src
++tcs_prior_patch_output(struct Shader_xlate *sx, unsigned output)
++{
++   struct ureg_src reg = ureg_src(sx->outputs[output].reg[0]);
++   if (sx->tcs_tess_factor_component_mask[output])
++      reg = ureg_scalar(reg,
++                        ffs(sx->tcs_tess_factor_component_mask[output]) - 1);
++   return reg;
++}
++
+ static void
+ dcl_tess_input(struct Shader_xlate *sx,
+                struct ureg_program *ureg,
+@@ -1209,8 +1228,7 @@ dcl_tess_input(struct Shader_xlate *sx,
+              * lower it to a TCS output load instead of declaring a second
+              * shader input interface.
+              */
+-            sx->patch_inputs[input].reg =
+-               ureg_src(sx->outputs[input].reg[0]);
++            sx->patch_inputs[input].reg = tcs_prior_patch_output(sx, input);
+          } else {
+             sx->patch_inputs[input].reg =
+                ureg_DECL_input(ureg, TGSI_SEMANTIC_PATCH, input, 0, 1);
+@@ -1412,6 +1430,7 @@ dcl_tcs_tess_factor_output(struct Shader_xlate *sx,
+    for (unsigned i = 0; i < 4; ++i)
+       sx->outputs[output].reg[i] = reg;
+    sx->tcs_tess_factor_writemask[output] = writemask;
++   sx->tcs_tess_factor_component_mask[output] = writemask;
+ }
+ 
+ static void
+@@ -2264,7 +2283,7 @@ patch_input_reg(struct Shader_xlate *sx, uint input)
+             sx, "patch-input-has-no-prior-output");
+          return ureg_src(sx->outputs[0].reg[0]);
+       }
+-      sx->patch_inputs[input].reg = ureg_src(sx->outputs[input].reg[0]);
++      sx->patch_inputs[input].reg = tcs_prior_patch_output(sx, input);
+    } else {
+       sx->patch_inputs[input].reg =
+          ureg_DECL_input(sx->ureg, TGSI_SEMANTIC_PATCH, input, 0, 1);
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_shader.c b/src/gallium/winsys/yttrium/gdi/yttrium_shader.c
+index e4a778d..c4d7c10 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_shader.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_shader.c
+@@ -1391,6 +1391,23 @@ yttrium_tgsi_explicit_sview_src_supported_for_ttn(
+           opcode == TGSI_OPCODE_SAMPLE_C_LZ;
+ }
+ 
++static bool
++yttrium_tgsi_tcs_patch_output_read_supported(
++   const struct yttrium_shader_state *shader,
++   const struct tgsi_full_src_register *src)
++{
++   if (shader->stage != MESA_SHADER_TESS_CTRL || src->Register.Indirect ||
++       src->Register.Dimension ||
++       src->Register.Index >= PIPE_MAX_SHADER_OUTPUTS)
++      return false;
++
++   const unsigned semantic =
++      shader->info.output_semantic_name[src->Register.Index];
++   return semantic == TGSI_SEMANTIC_PATCH ||
++          semantic == TGSI_SEMANTIC_TESSOUTER ||
++          semantic == TGSI_SEMANTIC_TESSINNER;
++}
++
+ static bool
+ yttrium_shader_preflight_tgsi_for_nir(
+    const struct yttrium_shader_state *shader,
+@@ -1513,8 +1530,13 @@ yttrium_shader_preflight_tgsi_for_nir(
+             goto out;
+          }
+ 
++         /* A hull shader's join phase reads the patch constants and
++          * tessellation factors that its fork phases wrote; TTN loads those
++          * from the patch outputs, which it stores directly.
++          */
+          if (src->Register.File == TGSI_FILE_OUTPUT &&
+-             shader->stage != MESA_SHADER_FRAGMENT) {
++             shader->stage != MESA_SHADER_FRAGMENT &&
++             !yttrium_tgsi_tcs_patch_output_read_supported(shader, src)) {
+             ok = yttrium_tgsi_log_unsupported_use(
+                shader, inst_no, opcode, i, "unsupported_tgsi_output_read",
+                "src", src->Register.File, src->Register.Index);

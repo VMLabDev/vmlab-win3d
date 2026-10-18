@@ -1,0 +1,19 @@
+-- AppCrash_Heaven.exe_ec641479eba3e0a95f350c0c752999d9df1ba_eb1cd854_6969b19d-d8d3-4166-87fe-e27a58fb3363 2026-10-18T09:22:38.6362347-07:00
+EventType=APPCRASH
+Sig[0].Name=Application Name
+Sig[0].Value=Heaven.exe
+Sig[1].Name=Application Version
+Sig[1].Value=1.0.0.0
+Sig[2].Name=Application Timestamp
+Sig[2].Value=511b9e02
+Sig[3].Name=Fault Module Name
+Sig[3].Value=StackHash_196c
+Sig[4].Name=Fault Module Version
+Sig[4].Value=10.0.26100.9444
+Sig[5].Name=Fault Module Timestamp
+Sig[5].Value=427cc5bd
+Sig[6].Name=Exception Code
+Sig[6].Value=c0000374
+Sig[7].Name=Exception Offset
+Sig[7].Value=PCH_7D_FROM_ntdll+0x0007A15C
+AppPath=C:\apps\heaven\bin\Heaven.exe

@@ -1,0 +1,25 @@
+0cf4:info:vkd3d_instance_apply_application_workarounds: Program name: "ei_repro.exe" (hash: 194f663f4b5f2224)
+0cf4:info:vkd3d_instance_deduce_config_flags_from_environment: shader_cache is used, global_pipeline_cache is enforced.
+0cf4:info:vkd3d_config_flags_init_once: VKD3D_CONFIG=''.
+0cf4:info:vkd3d_get_vk_version: vkd3d-proton - applicationVersion: 3.0.1.
+0cf4:info:vkd3d_instance_init: vkd3d-proton - build: 3b10bd7a7ec6a73+.
+0cf4:info:vkd3d_init_device_caps: Not all relevant pipeline stages are supported by EXT_dgc. Skipping.
+0cf4:info:vkd3d_memory_info_decide_hvv_usage: Topology: Device heaps are split. Assuming small BAR situation.
+0cf4:info:vkd3d_memory_info_upload_hvv_memory_properties: Topology: HVV usage is not allowed, using HOST_COHERENT for UPLOAD.
+0cf4:info:vkd3d_bindless_state_get_bindless_flags: Device supports VK_EXT_mutable_descriptor_type.
+0cf4:info:d3d12_device_caps_init_shader_model: Enabling support for SM 6.6.
+0cf4:info:d3d12_device_caps_init_shader_model: Enabling support for SM 6.7.
+0cf4:info:d3d12_device_caps_init_shader_model: Enabling support for SM 6.8.
+0cf4:info:d3d12_device_determine_ray_tracing_tier: DXR support enabled.
+0cf4:info:d3d12_device_determine_ray_tracing_tier: DXR 1.1 support enabled.
+0cf4:info:d3d12_device_caps_init_feature_level: DX Ultimate supported!
+0cf4:info:vkd3d_pipeline_library_init_disk_cache: Remapping VKD3D_SHADER_CACHE to: C:\Users\win3d\AppData\Local\vkd3d-proton\vkd3d-proton.ei_repro.exe.cache.
+0cf4:info:vkd3d_pipeline_library_init_disk_cache: Attempting to load disk cache from: C:\Users\win3d\AppData\Local\vkd3d-proton\vkd3d-proton.ei_repro.exe.cache.
+07a8:info:vkd3d_pipeline_library_disk_thread_main: Performing async setup of stream archive ...
+07a8:info:vkd3d_pipeline_library_disk_cache_merge: No write cache exists. No need to merge any disk caches.
+07a8:info:vkd3d_pipeline_library_disk_cache_initial_setup: Merging pipeline libraries took 0.498 ms.
+07a8:info:vkd3d_pipeline_library_disk_cache_initial_setup: Failed to map read-only cache: C:\Users\win3d\AppData\Local\vkd3d-proton\vkd3d-proton.ei_repro.exe.cache.
+07a8:info:vkd3d_pipeline_library_disk_thread_main: Done performing async setup of stream archive.
+07a8:info:vkd3d_pipeline_library_disk_thread_main: Pipeline cache marked dirty. Flush is scheduled.
+0cf4:info:d3d12_command_signature_init_state_template_emulated: Emulating ExecuteIndirect state (10 patch words, slot stride 256) without EXT_dgc.
+0cf4:info:d3d12_command_signature_init_state_template_emulated: Emulating ExecuteIndirect state (4 patch words, slot stride 256) without EXT_dgc.

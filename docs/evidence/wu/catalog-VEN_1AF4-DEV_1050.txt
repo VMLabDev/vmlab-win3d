@@ -1,0 +1,28 @@
+# Microsoft Update Catalog search for VEN_1AF4&DEV_1050, fetched 2026-10-19T00:26:39+10:00
+# https://www.catalog.update.microsoft.com/Search.aspx?q=VEN_1AF4%26DEV_1050
+# update id | title | products | classification | last updated | size
+eebac677-e794-44bb-b5fe-1e32a22c3b42 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 12/30/2024 | 374 KB
+6259fc2a-a9e9-451a-a527-f1cb18a4d0e3 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 11/24/2024 | 1.0 MB
+b89bad10-308e-4754-9fbe-49873b1c3e67 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 11/14/2024 | 125 KB
+30146384-8bae-4dbb-8832-57d9d7495f21 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 7/24/2024 | 56 KB
+5a6d6b54-a3d5-47ef-982e-17a3013c0428 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 7/11/2024 | 665 KB
+f87a196c-3842-4943-b925-bca25b97d281 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 7/9/2024 | 941 KB
+6822adfd-30d1-4b1b-9ed3-c4b86ae1afb9 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 6/25/2024 | 125 KB
+73b1ea18-fc47-4290-90fa-32961356b2a6 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 6/3/2024 | 231 KB
+29f1b6ea-efe7-4f4b-ac1d-6c80fcd5af96 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 6/3/2024 | 11.6 MB
+c29d698d-2069-4b86-8f57-ee6dbbccfe01 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 6/3/2024 | 231 KB
+fa8865f8-b94f-4853-bdbe-ae487e187c8a | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 5/26/2024 | 126 KB
+6c5bca8c-efb3-4c39-8a63-f1632aa102f3 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 5/23/2024 | 126 KB
+9dba5dbf-ba7a-4083-b2b1-b3dc253a5fa9 | Red Hat, Inc. - Display - 18.14.55.988 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 5/23/2024 | 148 KB
+26162c5d-04ca-414b-afb7-c7d46f7f7131 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 4/18/2024 | 140 KB
+16a701a5-9795-419c-962b-17d7eef9d3ae | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 4/6/2024 | 144 KB
+3cc23bb1-3c29-499e-9bbe-78397c389b07 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 1/26/2024 | 55 KB
+8776bc99-62c4-475a-bf5d-d6e836b63a17 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 1/26/2024 | 55 KB
+3870f869-ffea-4a9e-b0a3-43df48c75e65 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 9/19/2023 | 141 KB
+f50695f4-df22-4ffb-ba4e-87f5dd720167 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 8/28/2023 | 143 KB
+cffde546-1448-4f9e-824a-6842374a3235 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 8/20/2023 | 141 KB
+982f19d2-7441-4240-9829-fa8f6b17ee9f | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 8/20/2023 | 141 KB
+cae0f912-19e0-4417-a577-33d53468c857 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 8/20/2023 | 142 KB
+3a76bb55-a1b3-4d50-8cf2-dda6ba710f73 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 8/9/2023 | 17.4 MB
+60c0e280-e20b-46ce-9228-91410a1afa06 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 8/8/2023 | 141 KB
+18b3f291-93f5-46ed-b728-515c90018714 | Red Hat, Inc. - Display - 100.6.101.58000 | Windows - Client, version 21H2 and later, Servicing Drivers | Drivers (Video) | 8/8/2023 | 140 KB

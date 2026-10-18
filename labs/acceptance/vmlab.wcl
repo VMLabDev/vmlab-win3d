@@ -17,6 +17,10 @@ lab "win3d-e2e-windows-11" {
     // AMD1 is the host config's AMD iGPU (0000:72:00.0, RADV, renderD129).
     // run.sh --host-gpu Nvidia1 or Nvidia2 picks an RTX 5090, which needs
     // qemu_binary on its host GPU profile (docs/nvidia.md).
+    // The templates are Windows evaluation editions. They activate online,
+    // and without a NIC they stay unactivated and wlms.exe shuts the VM down
+    // about an hour after boot. NAT gives the guest internet egress only.
+    nic { nat = true }
     gpu {
       mode     = "vulkan"
       host_gpu = "AMD1"

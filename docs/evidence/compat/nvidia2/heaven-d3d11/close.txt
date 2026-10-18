@@ -1,0 +1,1 @@
+8700 window=0x90020 title=[Unigine Heaven Benchmark 4.0 Basic (Direct3D11)] closed=True
