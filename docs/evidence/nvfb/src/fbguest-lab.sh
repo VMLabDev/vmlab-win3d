@@ -68,6 +68,10 @@ EOF
     done
 fi
 vmlab cp "$REPO/out/nvfb/guest" "$VM:C:/win3d/fbguest" >/dev/null
+# The repo's probes, for repeat-probe.sh (the template carries older ones).
+for a in x64 x86; do
+    [ ! -d "$REPO/out/probes/$a" ] || vmlab cp "$REPO/out/probes/$a" "$VM:C:/win3d/probes/$a" >/dev/null
+done
 gps 'New-Item -ItemType Directory -Force C:\win3d\results\fbguest | Out-Null; Get-ChildItem Env: | Where-Object Name -like "VN_*" | Format-Table -HideTableHeaders | Out-String' >"$OUT/guest-vn-env.txt"
 # In the autologon user's session, as the probes run (Run-Probe.ps1):
 # Vulkan does not enumerate devices from SYSTEM's session 0. A .cmd wrapper
