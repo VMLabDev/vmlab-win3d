@@ -19,7 +19,8 @@
 # D3D12, OpenGL and Vulkan probes (x64 and x86) with `vmlab vm screenshot`
 # console captures of each, and dxdiag. The evidence goes to
 # docs/evidence/zeus/<gpu>/ in the staging tree; tests/e2e/check.py judges it.
-# The lab is destroyed unless --keep.
+# The lab is destroyed unless --keep. WIN3D_SMOKE=1 runs only vulkaninfo and
+# the x64 D3D11 probe after the install (a short first test of a new GPU).
 #
 # Both GPUs use the user's supervisor. On vmlab >= 0.26 the host config's
 # qemu_binary gives Nvidia1 the patched QEMU (patches/host/build-qemu.sh or
@@ -298,6 +299,11 @@ tests() {
     gfile 600 'C:\win3d\e2e\Invoke-Vulkaninfo.ps1' >"$WORK/raw/vulkaninfo.out" 2>&1 || true
     grep -E 'deviceName|deviceType|driverName|exit' "$WORK/raw/vulkaninfo.out" || true
 
+    if [ "${WIN3D_SMOKE:-0}" = 1 ]; then
+        say "5b smoke: the x64 D3D11 probe only (WIN3D_SMOKE=1)"
+        probe x64 d3d11
+        return 0
+    fi
     say "5b probes"
     for api in d3d9 d3d11 d3d12 opengl vulkan; do
         for arch in x64 x86; do probe "$arch" "$api"; done
