@@ -1,0 +1,1 @@
+7780 window=0x40274 title=[Unigine Heaven Benchmark 4.0 Basic (OpenGL)] closed=True

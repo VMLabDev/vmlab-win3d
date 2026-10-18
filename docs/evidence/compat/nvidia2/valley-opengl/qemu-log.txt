@@ -1,0 +1,5 @@
+virgl_render_server[3011589]: vkr: failed to look up object 11110 of type 8
+virgl_render_server[3011589]: vkr: vkBindBufferMemory2 resulted in CS error
+virgl_render_server[3011589]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3011589]: vkr: vkCreateGraphicsPipelines resulted in CS error
+virgl_render_server[3011589]: vkr: ring_submit_cmd: vn_dispatch_command failed

@@ -1,0 +1,36 @@
+﻿{
+    "name":  "gzdoom-opengl",
+    "exe":  "C:\\apps\\gzdoom\\gzdoom.exe",
+    "arguments":  "-iwad C:\\apps\\freedoom\\freedoom-0.13.0\\freedoom2.wad -config C:\\apps\\gzdoom\\compat-0.ini -nosound -width 1280 -height 720 +vid_fps 1 +logfile C:\\apps\\gzdoom\\gzdoom-opengl.log",
+    "user":  "VMLABVM-R6FVTAC\\win3d",
+    "session_id":  1,
+    "pid":  4116,
+    "wow64":  false,
+    "started":  "2026-10-18T10:08:23.7123946-07:00",
+    "ended":  "2026-10-18T10:11:23.8964524-07:00",
+    "duration_s":  180.2,
+    "timed_out":  false,
+    "exit_code":  -1,
+    "exit_code_hex":  "0xFFFFFFFF",
+    "task_result":  4294967295,
+    "probe_json":  null,
+    "probe_result":  null,
+    "adapter":  null,
+    "software":  null,
+    "readback_ok":  null,
+    "module_count":  70,
+    "graphics_modules":  [
+                             "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\system32\\viogpu_wgl.dll [system32] ",
+                             "C:\\WINDOWS\\SYSTEM32\\vulkan-1.dll [system32] 1.4.363.0",
+                             "C:\\WINDOWS\\system32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\system32\\libvulkan_virtio.dll [system32] ",
+                             "C:\\WINDOWS\\SYSTEM32\\OpenGL32.DLL [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\GLU32.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)"
+                         ],
+    "app_local_modules":  [
+                              "C:\\apps\\gzdoom\\zmusic.dll",
+                              "C:\\apps\\gzdoom\\sndfile.dll"
+                          ]
+}

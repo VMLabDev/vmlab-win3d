@@ -1,0 +1,21 @@
+-- AppCrash_Godot_v4.7.2-sta_ba518ffe109799f4a51d46a463924359ff4e48b_c38cbb91_f7623927-24f1-454f-b61e-99c53c969fa3 2026-10-18T10:04:21.1609122-07:00
+EventType=BEX64
+Sig[0].Name=Application Name
+Sig[0].Value=Godot_v4.7.2-stable_win64.exe
+Sig[1].Name=Application Version
+Sig[1].Value=4.7.2.0
+Sig[2].Name=Application Timestamp
+Sig[2].Value=6a826550
+Sig[3].Name=Fault Module Name
+Sig[3].Value=ucrtbase.dll
+Sig[4].Name=Fault Module Version
+Sig[4].Value=10.0.26100.9444
+Sig[5].Name=Fault Module Timestamp
+Sig[5].Value=2bbefd73
+Sig[6].Name=Exception Offset
+Sig[6].Value=00000000000a527e
+Sig[7].Name=Exception Code
+Sig[7].Value=c0000409
+Sig[8].Name=Exception Data
+Sig[8].Value=0000000000000007
+AppPath=C:\apps\godot\Godot_v4.7.2-stable_win64.exe
