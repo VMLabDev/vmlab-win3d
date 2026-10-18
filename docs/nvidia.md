@@ -353,6 +353,62 @@ builds, the name 0.1.0-alpha's `install.sh` chose; later builds default to
 binary links the host's own glib, epoxy, gbm and virglrenderer, so rebuild it
 when those packages change.
 
+### The patched render server on the GPU's profile
+
+Each NVIDIA GPU block also names the vmlab render server, through
+`qemu_env`:
+
+```wcl
+gpu "Nvidia1" {
+  address     = "0000:01:00.0"
+  default     = true
+  qemu_binary = "/home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64"
+  qemu_env    = { RENDER_SERVER_EXEC_PATH: "/home/wil/.local/opt/virglrenderer-vmlab/libexec/virgl_render_server" }
+}
+```
+
+Without it, every Venus fence on NVIDIA takes at least 10 ms, and windowed
+D3D9 runs at about 20 to 40 frames per second instead of the refresh rate.
+[`n5.md`](n5.md) has the cause: virglrenderer creates the fences its queue
+threads wait on as exportable SYNC_FD fences, and NVIDIA 610.57 wakes
+`vkWaitForFences` on those up to 10 ms late.
+[`patches/host/virglrenderer/0002`](../patches/host/virglrenderer/0002-vkr-do-not-create-queue-sync-fences-exportable.patch)
+creates them plain.
+
+The server is virglrenderer 1.3.0's `virgl_render_server` with
+`patches/host/virglrenderer/0001` and `0002`. Only the server is replaced.
+QEMU keeps the host's own `libvirglrenderer` 1.3.0, which forks the
+program named by `RENDER_SERVER_EXEC_PATH` instead of
+`/usr/lib/virgl_render_server`. Venus runs entirely in the server, and the
+socket protocol between the two is the one of the same release, 1.3.0. A
+host whose virglrenderer package moves to another version needs the server
+rebuilt from that version.
+
+To get it, either:
+
+- install the release asset `virglrenderer-vmlab-<version>-x86_64-linux.tar.zst`
+  ([`release.md`](release.md#install-the-render-server-for-nvidia-hosts)),
+  whose `install.sh` checks the host and prints the `qemu_env` line; or
+- run `patches/host/build-virglrenderer.sh --install`, which builds it
+  natively for the x86-64-v2 baseline against this host's libraries and
+  installs it into `~/.local/opt/virglrenderer-vmlab`.
+
+To check what a VM got:
+
+- the `vmlab: env:` line at the top of the VM's `qemu.log` ends with
+  `RENDER_SERVER_EXEC_PATH=<path>`;
+- `ps -C virgl_render_server -o pid,args` (or `pgrep -af virgl_render_server`)
+  lists `<prefix>/libexec/virgl_render_server --socket-fd N` for the VM,
+  not `/usr/lib/virgl_render_server`.
+
+`vmlab status -v` (0.28.0-alpha) names the `host_gpu` and `qemu_binary` but
+not `qemu_env`; a vmlab request to show it was drafted.
+
+`AMD1` does not use it. RADV wakes exportable and plain fences alike
+([`n5.md`](n5.md#cause)), and the A/B in
+[`docs/evidence/hostvirgl/`](evidence/hostvirgl/README.md) found no
+difference on AMD.
+
 ### One GPU per guest: the PCI-filter layer
 
 `VK_LOADER_DRIVERS_SELECT=*nvidia*` matches both RTX 5090s on helios, and
@@ -386,9 +442,9 @@ wrapper took:
 
 | Purpose | `qemu_env` entry |
 | --- | --- |
-| A diagnostic render server (`patches/host/build-virglrenderer.sh`) | `RENDER_SERVER_EXEC_PATH: "/abs/path/virgl_render_server"` |
+| Another render server, for example one built with `WITH_WORKAROUND=1` or with extra logging | `RENDER_SERVER_EXEC_PATH: "/abs/path/virgl_render_server"` (replaces the vmlab render server above) |
 | The Vulkan validation layer on the render server | `VKR_DEBUG: "validate"`, plus `VK_ADD_LAYER_PATH` for a layer outside the system path |
-| Log every image the render server creates | `VKR_LOG_IMAGES: "1"` (diagnostic render server only) |
+| Log every image the render server creates | `VKR_LOG_IMAGES: "1"` (the vmlab render server has the logging patch, 0001) |
 
 vmlab reads the host config when a VM starts, so stop the VM after changing
 it. The validation layer used in the diagnosis came from Arch's

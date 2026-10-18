@@ -171,6 +171,14 @@ captures). What Blender does differently was not found. `gl_alpha` stays in
 the repro as a check that an alpha-0 GL window is opaque, and the Blender
 A/B above is the reproduction of bug 3.
 
+A second attempt (`docs/evidence/hostvirgl/gl_alpha/`) had GDI paint the
+GL window's own redirection surface magenta as well, and judged by
+console captures every 3 s instead of `GetPixel` alone. With a WGL built
+without 0027, the window was still opaque on Windows 10 (`AMD1`) and
+Windows 11 (`Nvidia1`), at alpha 0 and 0.5. DXGI Desktop Duplication, as an
+in-guest reading of DWM's output, fails with `DXGI_ERROR_ACCESS_LOST` on
+this display stack.
+
 ## The repro
 
 `docs/evidence/present/src/` has two probes, built for x64 and x86 by
@@ -186,7 +194,8 @@ A/B above is the reproduction of bug 3.
 - `gl_alpha.exe <seconds> <out> [alpha]` puts a GL window, with an 8-bit
   alpha pixel format and cleared to alpha 0, over a magenta window. It then
   reads the composed desktop at its centre with `GetPixel`. It passes when
-  every sample is the clear colour. It passed before 0027 as well, so it
+  every sample is the clear colour. GDI paints the GL window's own
+  background magenta first. It passed before 0027 as well, so it
   guards the opaque case but does not reproduce bug 3 (see
   [Windows 10](#windows-10-and-blender)).
 

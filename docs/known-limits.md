@@ -271,9 +271,12 @@ whatever the window size, with the CPU idle. The cause is on the host
 exportable, and NVIDIA 610.57.04 wakes `vkWaitForFences` on such fences up to
 about 10 ms late. Every guest DMA buffer therefore completes at least 10 ms
 after submission, and a D3D9 Present waits for two of them. A one-line
-virglrenderer patch removes the delay (ring fences 10.2 ms to 1.2 ms, the
-D3D9 probe 37 to 47 fps on a shared GPU), but it is not deployed: helios
-runs the stock render server (decision D3). Presentation only has
+virglrenderer patch removes the delay (ring fences 10.2 ms to 1.2 ms). The
+vmlab render server carries it, and an NVIDIA GPU's host config block
+selects it with `qemu_env` ([`nvidia.md`](nvidia.md#the-patched-render-server-on-the-gpus-profile));
+with it the D3D9 repro runs vblank-paced at about 55 per second on
+`Nvidia1`, against 22 with the stock server in the same lab. A host
+without it keeps the 10 ms floor. Presentation only has
 to make a game watchable on the console (`docs/brief.md`); deeper
 frame-pacing work is out of scope.
 

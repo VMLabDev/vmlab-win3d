@@ -1,16 +1,23 @@
-/* Window-alpha repro for docs/present.md (the translucent Blender window).
+/* Window-alpha probe for docs/present.md (the translucent Blender window).
  *
  *   gl_alpha.exe <seconds> <out.txt> [alpha]
  *
  * Opens a solid magenta GDI window, then an OpenGL window on top of it at the
- * same place, with a pixel format that has 8 alpha bits. Every frame clears
- * to RGB (204, 51, 51) with the given alpha (default 0) and swaps. After a
- * second it reads the composed desktop at the window's centre with
- * GetPixel on the screen DC. Windows presents a GL window opaque unless the
- * application asks for transparency through DWM, so the pixel must be the
- * clear colour. If the framebuffer's alpha reaches the compositor, the
- * magenta shows through. "result: PASS" when every sample is within 3 of
- * the clear colour. */
+ * same place, with a pixel format that has 8 alpha bits. GDI paints the GL
+ * window's own background magenta as well, before GL draws into it, so that
+ * neither what is behind the window nor the window's own redirection surface
+ * is black. Every frame clears to RGB (204, 51, 51) with the given alpha
+ * (default 0) and swaps. After a second it reads the composed desktop at the
+ * window's centre with GetPixel on the screen DC, every half second. Windows
+ * presents a GL window opaque unless the application asks for transparency
+ * through DWM, so the pixel must be the clear colour; if the framebuffer's
+ * alpha reached the compositor, magenta would show. "result: PASS" when
+ * every sample is within 3 of the clear colour.
+ *
+ * It does not reproduce bug 3: with the WGL from before mesa 0027 the window
+ * is opaque too, on Windows 10 and 11, in the GetPixel samples and in the
+ * vmlab console captures (docs/present.md, "Windows 10 and Blender"). It
+ * guards the opaque case. */
 #include <windows.h>
 #include <GL/gl.h>
 #include <stdio.h>
@@ -63,9 +70,12 @@ int wmain(int argc, wchar_t **argv)
                                X - 40, Y - 40, W + 80, H + 80, NULL, NULL, wc.hInstance, NULL);
    SetPropW(back, L"magenta", (HANDLE)1);
    InvalidateRect(back, NULL, TRUE);
-   HWND hwnd = CreateWindowExW(0, L"gl_alpha", L"gl_alpha", WS_POPUP | WS_VISIBLE,
+   HWND hwnd = CreateWindowExW(0, L"gl_alpha", L"gl_alpha", WS_POPUP,
                                X, Y, W, H, NULL, NULL, wc.hInstance, NULL);
+   SetPropW(hwnd, L"magenta", (HANDLE)1);
+   ShowWindow(hwnd, SW_SHOW);
    SetWindowPos(hwnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+   UpdateWindow(hwnd);
    pump();
 
    HDC dc = GetDC(hwnd);
@@ -111,7 +121,7 @@ int wmain(int argc, wchar_t **argv)
          samples++;
          bad += !ok;
          if (samples <= 3 || !ok)
-            fprintf(out, "sample %d: %d %d %d %s\n", samples, r, g, b, ok ? "opaque" : "NOT the clear colour");
+            fprintf(out, "sample %d: gdi %d %d %d %s\n", samples, r, g, b, ok ? "opaque" : "NOT the clear colour");
       }
    }
    fprintf(out, "frames: %d\nsamples: %d\nbad_samples: %d\n", frames, samples, bad);

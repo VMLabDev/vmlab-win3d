@@ -1,0 +1,14 @@
+# scripts/release/virgl-install.sh from a test tarball (scripts/release.sh's
+# "render server tarball" stage, version 0.0.0-test) on Zeus (i7-13700H,
+# x86-64-v3), 2026-10-19, in a temporary ~/win3d-hostvirgl/ (deleted after)
+$ ./install.sh --check
+host virglrenderer: 1.3.0
+ldd: every shared library the server needs is present and new enough
+ISA: the server needs x86-64-v2; this CPU supports up to x86-64-v3
+run: the server starts
+rc=0
+$ ./install.sh ~/win3d-hostvirgl/prefix | tail -2
+
+  qemu_env = { RENDER_SERVER_EXEC_PATH: "/home/wil/win3d-hostvirgl/prefix/libexec/virgl_render_server" }
+$ pacman -Q virglrenderer
+virglrenderer 1.3.0-2.1
