@@ -172,7 +172,12 @@ lab_up() {
 qemu_log_lines() {
     # vmlab (>= 0.24) starts qemu.log with the argv and environment it gave
     # QEMU; its PCI-filter layer (>= 0.27) logs the device it kept.
-    [ -f "$QLOG" ] && grep -aE '^vmlab: (argv|env):|vmlab-pci-filter:' "$QLOG" >"$EV/qemu-argv-env.txt"
+    # The filter line repeats once per render context; keep each distinct one with its count.
+    [ -f "$QLOG" ] || return 0
+    {
+        grep -aE '^vmlab: (argv|env):' "$QLOG"
+        grep -aE 'vmlab-pci-filter:' "$QLOG" | sort | uniq -c | sed 's/^ *\([0-9]*\) \(.*\)/\2  (x\1)/'
+    } >"$EV/qemu-argv-env.txt"
 }
 
 prepare_guest() {
@@ -334,11 +339,13 @@ tests() {
     say "5c dxdiag"
     gfile 900 'C:\win3d\guest\Get-Dxdiag.ps1' -OutDir 'C:\win3d\results\dxdiag' -AsUser >"$WORK/raw/dxdiag.out" 2>&1 || true
     tail -5 "$WORK/raw/dxdiag.out"
+}
 
-    if [ "$APPS" = 1 ]; then
-        say "5d stretch: third-party applications"
-        "$HERE/apps.sh" "$LABDIR" "$VM" "$EV" || note "apps.sh failed"
-    fi
+apps() {
+    # After collect, so an application that takes the guest down (Xid 69 on
+    # NVIDIA, docs/known-limits.md) cannot cost the Done evidence.
+    say "6b stretch: third-party applications"
+    "$HERE/apps.sh" "$LABDIR" "$VM" "$EV" || note "apps.sh failed"
 }
 
 collect() {
@@ -391,6 +398,7 @@ else
     elif ! install; then STAGE="install failed"; session_tests; collect
     else session_tests; collect || STAGE="collect failed"
     fi
+    [ "$APPS" = 1 ] && apps
 fi
 teardown
 say "result ($STAGE)"
