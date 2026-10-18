@@ -346,14 +346,19 @@ samples still render on the hardware device either way. `D3D11Ref.dll` is not
 redistributable, so the package cannot ship it. Evidence:
 `docs/d3d11-apps.md`, "BasicHLSL11: a DXUT bug on Windows 8 and later".
 
-### Domain shaders cannot index patch constants dynamically
+### Indexed outputs outside hull shaders are not translated
 
-A domain shader that indexes its patch constants with a register
-(`dcl_indexrange vpc6.xyz 4`) is rejected by the UMD's shader translation
-(`dcl_input_index_range` unsupported), and the D3D11 runtime then removes the
-device. `patches/mesa/0015` added indexed patch constants and control points
-for hull shaders only. SubD11 does not need it; the first version of
-`probes/d3d11-tess` did (`docs/d3d11-apps.md`, "Not covered").
+Shaders may index their inputs with a register: `patches/mesa/0015` covers
+hull shaders and `0030` covers patch constants in domain shaders
+(`dcl_indexrange vpc6.xyz 4`, which removed the device before). Domain,
+geometry and pixel shader input ranges match WARP
+([`ds.md`](ds.md)). A `dcl_indexrange` over outputs still fails the
+translation everywhere except a hull shader's fork and join phases.
+d3dcompiler_47 never emits one: indexing an output with a register in a
+vertex, domain or geometry shader is a compile error (X3500). Only bytecode
+written by hand or by another compiler would hit it. Vertex shader input
+ranges and domain shader ranges over tessellation factors were not tested
+([`ds.md`](ds.md#what-remains)).
 
 ### No D3D12 application besides the probe
 
