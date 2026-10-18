@@ -168,15 +168,41 @@ one-element list that PowerShell's JSON writes as a string, and a
 `stage-newer` match that also caught `control-stage-newer`. The checker was
 fixed and run again on the same reports; `checks.txt` is that second run.
 
+## Windows Update
+
+The repro above could not run a real Windows Update scan: the template
+disables the service, and the lab had no network. With the lab NIC
+(`docs/wu.md`), `docs/evidence/wu/src/repro.sh` turns Windows Update on in
+a test VM and scans with the Windows Update Agent COM API
+(`Microsoft.Update.Session`, against Windows Update itself, driver updates
+included). It downloads and installs every driver update offered, runs
+UsoClient's scans and reboots. It searches in three device states:
+
+| Device state | Drivers Windows Update offers | Driver bound afterwards |
+| --- | --- | --- |
+| Template `viogpudo` (2025-07-09) | None | `viogpudo` |
+| No driver (Microsoft Basic Display, `viogpudo` deleted) | None | Microsoft Basic Display |
+| This package, pinned | None | `viogpu3d`, rank `00E00000`, pinned, after the driver install, UsoClient's scans and a reboot |
+
+Windows Update offers no driver for `PCI\VEN_1AF4&DEV_1050`, and no
+driver for any other device in the VM. It offers the 2026-10 cumulative
+update, a .NET update, MSRT and a Defender definition update. The Microsoft
+Update Catalog does list Red Hat display drivers for the device, but all
+are older than the template's `viogpudo` (`docs/wu.md`). `UsoClient` on build
+26100 accepts only its scan verbs. `StartDownload` and `StartInstall` exit
+`0x80070057`, as a made-up verb does, so the COM API does the install.
+
+Results: `docs/evidence/wu/windows-11-nvidia1/checks.txt` and
+`docs/evidence/wu/windows-11-amd1/checks.txt`, 16 of 16 checks each.
+
 ## What remains
 
-- **The Windows Update scan did not run.** The vmlab templates disable the
-  Windows Update service, so `UsoClient StartScan` exits `0x80070422`
-  (`11-scan.json`), and no real `viogpudo` newer than 09/27/2026 exists yet
-  to be offered. The repro uses the step that Windows Update ends in instead:
-  a PnP install of a staged package, `pnputil /add-driver /install`. The
-  device installation restrictions apply to every PnP device install,
-  whatever started it.
+- **No real newer `viogpudo` exists to be offered.** A real Windows Update
+  scan offers no driver for the device ([Windows Update](#windows-update)),
+  so the guards have been exercised only by the simulated update above.
+  Windows Update installs a driver through the same PnP device install that
+  `pnputil /add-driver /install` uses, and the device installation
+  restrictions apply to every PnP device install, whatever started it.
 - **The simulated update is test-signed, not WHQL-signed.** Only Microsoft
   can sign a modified `viogpudo` with WHQL. The rank lists show that PnP
   gives both signatures the same signer byte.

@@ -57,7 +57,7 @@ What Windows Update offers this VM (`checks.txt` of each run):
 | Device state | Updates offered | Drivers offered |
 | --- | --- | --- |
 | Template `viogpudo` (2025-07-09, 100.101.104.28500) | MSRT KB890830, a Defender definition update KB2267602, the 2026-10 cumulative update KB5127648 (26100.9711), the 2026-10 .NET Framework update KB5127690 | None |
-| No driver (Microsoft Basic Display, `viogpudo` deleted) | RESULT-BASIC | RESULT-BASIC-DRIVERS |
+| No driver (Microsoft Basic Display, `viogpudo` deleted) | The same four | None |
 | This package (`viogpu3d`, 2026-09-27, rank `00E00000`, pinned) | The same four | None |
 
 Windows Update offers a driver only when it outranks the installed one.
@@ -66,7 +66,8 @@ The Microsoft Update Catalog lists 25 Red Hat "Display" driver entries for
 version 100.6.101.58000 and one is 18.14.55.988, last updated between
 August 2023 and December 2024, filed under "Servicing Drivers". None is
 newer than the template's `viogpudo`, and the search with no driver on the
-device shows whether Windows Update offers any of them to a general device.
+device shows that Windows Update does not offer any of them to this VM.
+The entries are most likely targeted at particular machines.
 
 So on 2026-10-19 the case that `docs/installer.md` guards against, a newer
 `viogpudo` arriving through Windows Update, does not arise. The guards were
@@ -99,7 +100,23 @@ The steps (`repro.sh`):
 
 ### Results
 
-RESULTS-TABLE
+`checks.txt` in each run directory judges the reports.
+
+| Step | Nvidia1 (`windows-11-nvidia1/`) | AMD1 (`windows-11-amd1/`) |
+| --- | --- | --- |
+| 1 Activation | Notification, then `Licensed`, ends 1/16/2027 | AMD1-1 |
+| 2 Baseline | `oem7.inf` `viogpudo` 2025-07-09, rank `00F90000` | AMD1-2 |
+| 4 Search, template driver | 4 updates, no driver; 953 s | AMD1-4 |
+| 5 Search, no driver | `display.inf`, rank `00FB2006`; 4 updates, no driver; 13 s | AMD1-5 |
+| 6 Install the bundle (0.1.1) | `viogpu3d` 2026-09-27, rank `00E00000`, pinned | AMD1-6 |
+| 7 Search, download, install drivers | 4 updates, 0 drivers, nothing to install; `viogpu3d`, pinned | AMD1-7 |
+| 8 UsoClient | `StartScan`, `StartInteractiveScan` exit 0; `StartDownload`, `StartInstall` and the made-up verb `0x80070057`; Windows Update logged "found 2 updates"; `viogpu3d`, pinned | AMD1-8 |
+| 9 Reboot | `viogpu3d`, pinned; still `Licensed` | AMD1-9 |
+| Checks | 16 of 16 | AMD1-CHECKS |
+
+An earlier Nvidia1 run, before step 5 existed and while the UsoClient check
+still expected the download and install verbs to work, had the same driver
+results with bundle 0.1.0 (git history of `windows-11-nvidia1/`).
 
 The full acceptance run, `tests/e2e/run.sh --template windows-11`, with
 the NIC and the activation step, passes 12 of 12 on Nvidia2

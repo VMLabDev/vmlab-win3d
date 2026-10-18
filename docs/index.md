@@ -67,6 +67,7 @@ or Intel GPU as declared in the host config, `~/.config/vmlab/config.wcl`
 | [nvtex.md](nvtex.md) | See why mipmapped textures were black on NVIDIA, and the fixed-function and 16-bit format fixes `patches/mesa/0023` to `0025` |
 | [ds.md](ds.md) | See why D3D11 domain shaders that index patch constants removed the device, and the fix `patches/mesa/0030` |
 | [installer.md](installer.md) | See how the package keeps its driver bound when Windows Update offers a newer Red Hat `viogpudo` (FeatureScore, forced install, device pin) |
+| [wu.md](wu.md) | See why labs have a NAT NIC and run `slmgr /ato` (the evaluation templates shut down unactivated), and what a real Windows Update driver scan offers the device: nothing, and the package stays bound |
 | [ddraw.md](ddraw.md) | See DirectDraw fullscreen exclusive mode, 16 bpp modes, and the hardware colour-key and mirror blits of `patches/mesa/0035` |
 | [dd16.md](dd16.md) | See why 64-bit DirectDraw programs get no 16 bpp modes: the trace through `ddraw.dll`, win32k, CDD and `dxgkrnl.sys`, and the R5G6B5 KMD run |
 | [present.md](present.md) | See why presents were slow (CPU reads of write-combined memory) and why Blender was translucent on Windows 10, and the fixes `patches/kmd/0002` and `patches/mesa/0026`, `0027` |
