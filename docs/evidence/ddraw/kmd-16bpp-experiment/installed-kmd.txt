@@ -1,0 +1,1 @@
+8ccc45034d7f289316340375933161f7dce393802c76e52ea365f7a7bf707f4b  driver/viogpu3d.sys (signed, with this patch; matched the installed DriverStore copy)

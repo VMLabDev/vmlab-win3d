@@ -1,0 +1,134 @@
+Subject: [PATCH] viogpu3d: offer R5G6B5 source modes (experiment, not applied)
+
+An experiment, kept as evidence and not in patches/kmd. It adds
+D3DDDIFMT_R5G6B5 to every source mode the VidPN offers, accepts it in the
+source-mode check, and maps R5G6B5 standard allocations to
+VIRGL_FORMAT_B5G6R5_UNORM. Installed on Nvidia1 (signed driver hash in
+installed-kmd.txt), it changed nothing that a program sees: a 64-bit
+process still listed no 16-bit mode in EnumDisplayModes or
+EnumDisplaySettings, and SetDisplayMode(640, 480, 16) still failed with
+DDERR_UNSUPPORTED. Windows does not pass sub-32-bit source modes from this
+driver to programs; 32-bit programs get 8 and 16 bpp from the WOW64
+DirectDraw emulation either way. See docs/ddraw.md, "16 bpp modes".
+Applies after patches/kmd/0001.
+---
+diff --git a/viogpu/common/virgl_hw.h b/viogpu/common/virgl_hw.h
+index d4607de..3a1c90b 100644
+--- a/viogpu/common/virgl_hw.h
++++ b/viogpu/common/virgl_hw.h
+@@ -25,6 +25,7 @@
+ #define VIRGL_FORMAT_B8G8R8X8_UNORM           2
+ #define VIRGL_FORMAT_A8R8G8B8_UNORM           3
+ #define VIRGL_FORMAT_X8R8G8B8_UNORM           4
++#define VIRGL_FORMAT_B5G6R5_UNORM             7
+ #define VIRGL_FORMAT_R10G10B10A2_UNORM        8
+ #define VIRGL_FORMAT_R8G8B8A8_UNORM          67
+ #define VIRGL_FORMAT_X8B8G8R8_UNORM          68
+diff --git a/viogpu/viogpu3d/viogpu_allocation.cpp b/viogpu/viogpu3d/viogpu_allocation.cpp
+index d330c4e..2e51cd4 100644
+--- a/viogpu/viogpu3d/viogpu_allocation.cpp
++++ b/viogpu/viogpu3d/viogpu_allocation.cpp
+@@ -157,6 +157,8 @@ UINT VioGpuAllocation::GetStride(void) const
+         case VIRGL_FORMAT_A8B8G8R8_UNORM:
+         case VIRGL_FORMAT_R8G8B8X8_UNORM:
+             return m_options.width * 4;
++        case VIRGL_FORMAT_B5G6R5_UNORM:
++            return m_options.width * 2;
+         default:
+             DbgPrint(TRACE_LEVEL_WARNING,
+                      ("%s unsupported scanout format=%u, assuming 4 bytes per pixel\n",
+@@ -619,6 +621,11 @@ void VioGpuAllocation::FlushToScreen(UINT scan_id,
+ 
+ PAGED_CODE_SEG_BEGIN
+ 
++static UINT VioGpuD3DDDIBytesPerPixel(D3DDDIFORMAT format)
++{
++    return format == D3DDDIFMT_R5G6B5 ? 2 : 4;
++}
++
+ static ULONG VioGpuD3DDDIToVirglColorFormat(D3DDDIFORMAT format)
+ {
+     PAGED_CODE();
+@@ -633,6 +640,8 @@ static ULONG VioGpuD3DDDIToVirglColorFormat(D3DDDIFORMAT format)
+             return VIRGL_FORMAT_R8G8B8A8_UNORM;
+         case D3DDDIFMT_X8B8G8R8:
+             return VIRGL_FORMAT_R8G8B8X8_UNORM;
++        case D3DDDIFMT_R5G6B5:
++            return VIRGL_FORMAT_B5G6R5_UNORM;
+     }
+     DbgPrint(TRACE_LEVEL_ERROR,
+              ("%s ERROR owner=viogpu3d component=standard-allocation reason=unsupported_d3dddi_format format=%u action=reject\n",
+@@ -656,6 +665,8 @@ D3DDDIFORMAT VioGpuToD3DDDIColorFormat(ULONG format)
+             return D3DDDIFMT_A8B8G8R8;
+         case VIRGL_FORMAT_R8G8B8X8_UNORM:
+             return D3DDDIFMT_X8B8G8R8;
++        case VIRGL_FORMAT_B5G6R5_UNORM:
++            return D3DDDIFMT_R5G6B5;
+     }
+     DbgPrint(TRACE_LEVEL_ERROR, ("---> %s Unsupported color format %d\n", __FUNCTION__, format));
+     return D3DDDIFMT_X8B8G8R8;
+@@ -712,8 +723,9 @@ NTSTATUS VioGpuAllocation::GetStandardAllocationDriverData(DXGKARG_GETSTANDARDAL
+                 {
+                     return STATUS_NOT_SUPPORTED;
+                 }
+-                allocationExchange->Stride = surfaceData->Width * 4;
+-                allocationExchange->Size = (ULONGLONG)surfaceData->Width * (ULONGLONG)surfaceData->Height * 4;
++                allocationExchange->Stride = surfaceData->Width * VioGpuD3DDDIBytesPerPixel(surfaceData->Format);
++                allocationExchange->Size = (ULONGLONG)surfaceData->Width * (ULONGLONG)surfaceData->Height *
++                                           VioGpuD3DDDIBytesPerPixel(surfaceData->Format);
+ 
+                 DbgPrint(TRACE_LEVEL_INFORMATION,
+                          ("<--- %s shared primary surface: width=%d, height=%d, format=%d\n",
+@@ -739,12 +751,13 @@ NTSTATUS VioGpuAllocation::GetStandardAllocationDriverData(DXGKARG_GETSTANDARDAL
+                 {
+                     return STATUS_NOT_SUPPORTED;
+                 }
+-                allocationExchange->Stride = surfaceData->Width * 4;
+-                allocationExchange->Size = (ULONGLONG)surfaceData->Width * (ULONGLONG)surfaceData->Height * 4;
++                allocationExchange->Stride = surfaceData->Width * VioGpuD3DDDIBytesPerPixel(surfaceData->Format);
++                allocationExchange->Size = (ULONGLONG)surfaceData->Width * (ULONGLONG)surfaceData->Height *
++                                           VioGpuD3DDDIBytesPerPixel(surfaceData->Format);
+ 
+                 allocationExchange->ResourceOptions.flags |= VIRGL_RESOURCE_FLAG_MAP_COHERENT;
+ 
+-                surfaceData->Pitch = surfaceData->Width * 4;
++                surfaceData->Pitch = surfaceData->Width * VioGpuD3DDDIBytesPerPixel(surfaceData->Format);
+                 DbgPrint(TRACE_LEVEL_INFORMATION,
+                          ("<--- %s shadow surface: width=%d, height=%d, format=%d\n",
+                           __FUNCTION__,
+diff --git a/viogpu/viogpu3d/viogpu_vidpn.cpp b/viogpu/viogpu3d/viogpu_vidpn.cpp
+index 6c161f1..b8529bd 100644
+--- a/viogpu/viogpu3d/viogpu_vidpn.cpp
++++ b/viogpu/viogpu3d/viogpu_vidpn.cpp
+@@ -516,7 +516,8 @@ NTSTATUS VioGpuVidPN::IsVidPnSourceModeFieldsValid(CONST D3DKMDT_VIDPN_SOURCE_MO
+     else
+     {
+         if (pSourceMode->Format.Graphics.PixelFormat == D3DDDIFMT_A8R8G8B8 ||
+-            pSourceMode->Format.Graphics.PixelFormat == D3DDDIFMT_A8B8G8R8)
++            pSourceMode->Format.Graphics.PixelFormat == D3DDDIFMT_A8B8G8R8 ||
++            pSourceMode->Format.Graphics.PixelFormat == D3DDDIFMT_R5G6B5)
+         {
+             return STATUS_SUCCESS;
+         }
+@@ -915,7 +916,10 @@ NTSTATUS VioGpuVidPN::AddSingleSourceMode(_In_ CONST DXGK_VIDPNSOURCEMODESET_INT
+         PVIDEO_MODE_INFORMATION pModeInfo = &m_ModeInfo[idx];
+         // Expose both BGRA and RGBA source formats so DXGI callers asking
+         // for DXGI_FORMAT_R8G8B8A8_UNORM can receive non-empty mode lists.
+-        D3DDDIFORMAT pixelFormats[] = {D3DDDIFMT_A8R8G8B8, D3DDDIFMT_A8B8G8R8};
++        // R5G6B5 is for fullscreen DirectDraw and D3D programs that ask for
++        // 16 bpp. The scanout stays 32 bpp (CreateFrameBufferObj ignores the
++        // source format); 16-bit primaries are converted when they are shown.
++        D3DDDIFORMAT pixelFormats[] = {D3DDDIFMT_A8R8G8B8, D3DDDIFMT_A8B8G8R8, D3DDDIFMT_R5G6B5};
+ 
+         for (UINT fmtIdx = 0; fmtIdx < (sizeof(pixelFormats) / sizeof(pixelFormats[0])); ++fmtIdx)
+         {
+@@ -935,7 +939,8 @@ NTSTATUS VioGpuVidPN::AddSingleSourceMode(_In_ CONST DXGK_VIDPNSOURCEMODESET_INT
+             pVidPnSourceModeInfo->Format.Graphics.PrimSurfSize.cx = pModeInfo->VisScreenWidth;
+             pVidPnSourceModeInfo->Format.Graphics.PrimSurfSize.cy = pModeInfo->VisScreenHeight;
+             pVidPnSourceModeInfo->Format.Graphics.VisibleRegionSize = pVidPnSourceModeInfo->Format.Graphics.PrimSurfSize;
+-            pVidPnSourceModeInfo->Format.Graphics.Stride = pModeInfo->ScreenStride;
++            pVidPnSourceModeInfo->Format.Graphics.Stride =
++                pixelFormats[fmtIdx] == D3DDDIFMT_R5G6B5 ? pModeInfo->VisScreenWidth * 2 : pModeInfo->ScreenStride;
+             pVidPnSourceModeInfo->Format.Graphics.PixelFormat = pixelFormats[fmtIdx];
+             pVidPnSourceModeInfo->Format.Graphics.ColorBasis = D3DKMDT_CB_SCRGB;
+             pVidPnSourceModeInfo->Format.Graphics.PixelValueAccessMode = D3DKMDT_PVAM_DIRECT;

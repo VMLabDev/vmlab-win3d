@@ -1,0 +1,343 @@
+{
+    "probe": "ddblit",
+    "arch": "x64",
+    "hal_create_hr": "0x00000000",
+    "hel_create_hr": "0x00000000",
+    "hal_dwCaps": "0x949007c1",
+    "hal_dwCKeyCaps": "0x00000000",
+    "hal_dwFXCaps": "0x00015420",
+    "hal_colorkey_srcblt": false,
+    "hal_mirror_lr": false,
+    "hal_mirror_ud": false,
+    "formats": [
+        {
+            "format": "X8R8G8B8",
+            "create_hr": [
+                "0x00000000",
+                "0x00000000",
+                "0x00000000",
+                "0x00000000"
+            ],
+            "hal_surface_in_vidmem": true,
+            "cases": {
+                "copy": {
+                    "hal_caps": true,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "colorkey": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "colorkey_full": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "colorkey_stretch2x": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "colorkey_shrink2x": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "colorkey_odd": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "mirror_lr": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "mirror_ud": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "mirror_both": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "mirror_lr_stretch2x": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "mirror_lr_colorkey": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "mirror_ud_colorkey_odd": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "colorkey_same_surface": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                }
+            },
+            "timing": {
+                "blits": 50,
+                "hal_ms": 463.5,
+                "hel_ms": 0.2
+            },
+            "pass": true
+        },
+        {
+            "format": "R5G6B5",
+            "create_hr": [
+                "0x00000000",
+                "0x00000000",
+                "0x00000000",
+                "0x00000000"
+            ],
+            "hal_surface_in_vidmem": true,
+            "cases": {
+                "copy": {
+                    "hal_caps": true,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "colorkey": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "colorkey_full": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "colorkey_stretch2x": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "colorkey_shrink2x": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "colorkey_odd": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "mirror_lr": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "mirror_ud": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "mirror_both": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "mirror_lr_stretch2x": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "mirror_lr_colorkey": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "mirror_ud_colorkey_odd": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "colorkey_same_surface": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                }
+            },
+            "timing": {
+                "blits": 50,
+                "hal_ms": 437.7,
+                "hel_ms": 0.2
+            },
+            "pass": true
+        },
+        {
+            "format": "A8R8G8B8",
+            "create_hr": [
+                "0x00000000",
+                "0x00000000",
+                "0x00000000",
+                "0x00000000"
+            ],
+            "hal_surface_in_vidmem": true,
+            "cases": {
+                "copy": {
+                    "hal_caps": true,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "colorkey": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "colorkey_full": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "colorkey_stretch2x": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "colorkey_shrink2x": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "colorkey_odd": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "mirror_lr": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "mirror_ud": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "mirror_both": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "mirror_lr_stretch2x": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "mirror_lr_colorkey": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "mirror_ud_colorkey_odd": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                },
+                "colorkey_same_surface": {
+                    "hal_caps": false,
+                    "hal_hr": "0x00000000",
+                    "hel_hr": "0x00000000",
+                    "mismatches": 0,
+                    "ok": true
+                }
+            },
+            "timing": {
+                "blits": 50,
+                "hal_ms": 446.9,
+                "hel_ms": 0.2
+            },
+            "pass": true
+        }
+    ],
+    "pass": true,
+    "result": "pass"
+}

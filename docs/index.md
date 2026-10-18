@@ -67,6 +67,7 @@ or Intel GPU as declared in the host config, `~/.config/vmlab/config.wcl`
 | [nvtex.md](nvtex.md) | See why mipmapped textures were black on NVIDIA, and the fixed-function and 16-bit format fixes `patches/mesa/0023` to `0025` |
 | [ds.md](ds.md) | See why D3D11 domain shaders that index patch constants removed the device, and the fix `patches/mesa/0030` |
 | [installer.md](installer.md) | See how the package keeps its driver bound when Windows Update offers a newer Red Hat `viogpudo` (FeatureScore, forced install, device pin) |
+| [ddraw.md](ddraw.md) | See DirectDraw fullscreen exclusive mode, 16 bpp modes, and the hardware colour-key and mirror blits of `patches/mesa/0035` |
 
 ## Building
 

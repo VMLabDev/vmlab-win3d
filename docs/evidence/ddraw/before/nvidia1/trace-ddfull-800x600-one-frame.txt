@@ -1,0 +1,34 @@
+# D3D9 UMD trace (D3D10UMD_D3D9_TRACE=1) of ddfull x64, 800x600x32, one frame of the 300-frame run before 0035
+# (package b4b8c3f, Nvidia1). The emulated colour-key blit reads the back buffer back (Lock flags 0x2) and writes it whole; Flip reaches the UMD as Present flags=0x1 (Blt), dst=0.
+2026-10-18 09:37:45.53876 tid=7568 d3d9ddi: ColorFill hr=0x00000000
+2026-10-18 09:37:45.53976 tid=7568 d3d9ddi: ColorFill data=0000009114efec40 resource=0000027bf6dd5650 sub=0 color=0x0000ffff
+2026-10-18 09:37:45.53976 tid=7568 d3d9ddi: ColorFill hr=0x00000000
+2026-10-18 09:37:45.53976 tid=7568 d3d9ddi: ColorFill data=0000009114efec40 resource=0000027bf6dd5650 sub=0 color=0x00ff0000
+2026-10-18 09:37:45.54076 tid=7568 d3d9ddi: ColorFill hr=0x00000000
+2026-10-18 09:37:45.54076 tid=7568 d3d9ddi: Lock resource=0000027bf6dd5650 sub=0 flags=0x00000002
+2026-10-18 09:37:45.54576 tid=7568 d3d9ddi: ReadbackTextureLock resource=0000027bf6dd5650 sub=0 box=0,0,0 800x600x1 usage=0x3
+2026-10-18 09:37:45.54676 tid=7568 d3d9ddi: Lock maps pipe resource resource=0000027bf6dd5650 sub=0 flags=0x00000002 box=0,0,0 800x600x1
+2026-10-18 09:37:45.54676 tid=7568 d3d9ddi: Lock resource=0000027bf6dd5a50 sub=0 flags=0x00000001
+2026-10-18 09:37:45.54976 tid=7568 d3d9ddi: ReadbackTextureLock resource=0000027bf6dd5a50 sub=0 box=0,0,0 64x64x1 usage=0x1
+2026-10-18 09:37:45.54976 tid=7568 d3d9ddi: Lock maps pipe resource resource=0000027bf6dd5a50 sub=0 flags=0x00000001 box=0,0,0 64x64x1
+2026-10-18 09:37:45.54976 tid=7568 d3d9ddi: Unlock resource=0000027bf6dd5650 sub=0
+2026-10-18 09:37:45.54976 tid=7568 d3d9ddi: Unlock pipe resource=0000027bf6dd5650 sub=0
+2026-10-18 09:37:45.54976 tid=7568 d3d9ddi: Unlock resource=0000027bf6dd5a50 sub=0
+2026-10-18 09:37:45.54976 tid=7568 d3d9ddi: Unlock pipe resource=0000027bf6dd5a50 sub=0
+2026-10-18 09:37:45.54976 tid=7568 d3d9ddi: Lock resource=0000027bf6dd5650 sub=0 flags=0x00000022
+2026-10-18 09:37:45.55876 tid=7568 d3d9ddi: ReadbackTextureLock resource=0000027bf6dd5650 sub=0 box=200,100,0 16x16x1 usage=0x3
+2026-10-18 09:37:45.55876 tid=7568 d3d9ddi: Lock maps pipe resource resource=0000027bf6dd5650 sub=0 flags=0x00000022 box=200,100,0 16x16x1
+2026-10-18 09:37:45.55876 tid=7568 d3d9ddi: Unlock resource=0000027bf6dd5650 sub=0
+2026-10-18 09:37:45.55876 tid=7568 d3d9ddi: Unlock pipe resource=0000027bf6dd5650 sub=0
+2026-10-18 09:37:45.55976 tid=7568 d3d9ddi: Flush hDevice=0000027bf8db4aa0 pipe=0000027bfb624040
+2026-10-18 09:37:45.55976 tid=7568 d3d9ddi: Present data=0000009114efec50 src=0000027bf6dd5650/0 dst=0000000000000000/0 flags=0x00000001
+2026-10-18 09:37:45.55976 tid=7568 d3d9ddi: Present flush_frontbuffer src=0x40000400 dst=0x0 pipe=0000027bf6dd7c40
+2026-10-18 09:37:45.82476 tid=7568 d3d9ddi: Present hr=0x00000000
+2026-10-18 09:37:45.82476 tid=7568 d3d9ddi: Lock resource=0000027bf6dd5650 sub=0 flags=0x00000001
+2026-10-18 09:37:45.83076 tid=7568 d3d9ddi: ReadbackTextureLock resource=0000027bf6dd5650 sub=0 box=0,0,0 800x600x1 usage=0x1
+2026-10-18 09:37:45.83076 tid=7568 d3d9ddi: Lock maps pipe resource resource=0000027bf6dd5650 sub=0 flags=0x00000001 box=0,0,0 800x600x1
+2026-10-18 09:37:45.83176 tid=7568 d3d9ddi: Unlock resource=0000027bf6dd5650 sub=0
+2026-10-18 09:37:45.83176 tid=7568 d3d9ddi: Unlock pipe resource=0000027bf6dd5650 sub=0
+2026-10-18 09:37:45.83176 tid=7568 d3d9ddi: Flush hDevice=0000027bf8db4aa0 pipe=0000027bfb624040
+2026-10-18 09:37:45.83176 tid=7568 d3d9ddi: Present data=0000009114efed20 src=0000027bf6dd5650/0 dst=0000000000000000/0 flags=0x00000001
+2026-10-18 09:37:45.83176 tid=7568 d3d9ddi: Present flush_frontbuffer src=0x40000400 dst=0x0 pipe=0000027bf6dd7c40
