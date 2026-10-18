@@ -1,7 +1,7 @@
 {
   "x64-d3d9_probe": {
     "frames": 13,
-    "frames_with_window": 9,
+    "frames_with_window": 8,
     "visible": true,
     "animating": true,
     "png": "console-x64-d3d9_probe.png",
@@ -13,12 +13,12 @@
         "blue",
         "green"
       ],
-      "crc": "5dcd3e47"
+      "crc": "cb58079a"
     }
   },
   "x86-d3d9_probe": {
     "frames": 13,
-    "frames_with_window": 9,
+    "frames_with_window": 8,
     "visible": true,
     "animating": true,
     "png": "console-x86-d3d9_probe.png",
@@ -30,7 +30,7 @@
         "blue",
         "green"
       ],
-      "crc": "93322785"
+      "crc": "11b4f587"
     }
   },
   "x64-d3d11_probe": {
@@ -47,11 +47,11 @@
         "blue",
         "green"
       ],
-      "crc": "76cd6466"
+      "crc": "39a84c00"
     }
   },
   "x86-d3d11_probe": {
-    "frames": 13,
+    "frames": 12,
     "frames_with_window": 9,
     "visible": true,
     "animating": true,
@@ -64,7 +64,7 @@
         "blue",
         "green"
       ],
-      "crc": "a0feabb3"
+      "crc": "8482c425"
     }
   },
   "x64-d3d12_probe": {
@@ -81,7 +81,7 @@
         "blue",
         "green"
       ],
-      "crc": "4b781e7e"
+      "crc": "10f95853"
     }
   },
   "x86-d3d12_probe": {
@@ -98,11 +98,11 @@
         "blue",
         "green"
       ],
-      "crc": "63587ea5"
+      "crc": "0a7a2366"
     }
   },
   "x64-opengl_probe": {
-    "frames": 12,
+    "frames": 14,
     "frames_with_window": 9,
     "visible": true,
     "animating": true,
@@ -115,12 +115,12 @@
         "blue",
         "green"
       ],
-      "crc": "eec40c30"
+      "crc": "14535282"
     }
   },
   "x86-opengl_probe": {
-    "frames": 12,
-    "frames_with_window": 9,
+    "frames": 13,
+    "frames_with_window": 8,
     "visible": true,
     "animating": true,
     "png": "console-x86-opengl_probe.png",
@@ -132,11 +132,11 @@
         "blue",
         "green"
       ],
-      "crc": "8fcc3259"
+      "crc": "f492da25"
     }
   },
   "x64-vulkan_probe": {
-    "frames": 12,
+    "frames": 13,
     "frames_with_window": 9,
     "visible": true,
     "animating": true,
@@ -149,7 +149,7 @@
         "blue",
         "green"
       ],
-      "crc": "dc7132b7"
+      "crc": "efea1679"
     }
   },
   "x86-vulkan_probe": {
@@ -166,7 +166,7 @@
         "blue",
         "green"
       ],
-      "crc": "e1e5f6f1"
+      "crc": "0117a22f"
     }
   }
 }

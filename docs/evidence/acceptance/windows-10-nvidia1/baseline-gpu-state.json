@@ -1,7 +1,7 @@
 {
-    "computer":  "VMLABVM-7U5IQU5",
+    "computer":  "VMLABVM-JBO5SQV",
     "os":  "Microsoft Windows 10 Enterprise Evaluation 10.0.19045",
-    "collected":  "2026-10-18T01:53:19.0858810-07:00",
+    "collected":  "2026-10-18T15:21:37.1422829-07:00",
     "display_devices":  [
                             {
                                 "name":  "Red Hat VirtIO GPU DOD controller",
