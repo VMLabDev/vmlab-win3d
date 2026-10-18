@@ -1,0 +1,2 @@
+d99dbcae9078461ab31555518aa91711b429130222bd6a428ea7c23bf997b5fc  .scratch/ffp-ref/x64/d3dref9.dll
+465d4eb3fc938d0090d5c9a6817e73de605c5cf9bfe51590e3181d44d8910c01  .scratch/ffp-ref/x86/d3dref9.dll

@@ -156,6 +156,7 @@ Which patches have run in a guest, and where:
 | Zeus Intel and the helios AMD regression, Windows 11 | 0001 to 0014, 0020, 0021 | `docs/zeus.md` |
 | nvtex proof, Windows 11, `Nvidia1` and `AMD1` (e2e, probes, SDK samples) | 0001 to 0017, 0020 to 0025 | `docs/nvtex.md` |
 | ffp proof, Windows 11, `Nvidia2` and `AMD1` (e2e, probes, `d3d9_ffp`, `Text3D`) | 0001 to 0017, 0020 to 0025, 0030, 0040 to 0042 | `docs/ffp.md` |
+| ffp2 proof, Windows 11 on `Nvidia2` and `AMD1`, Windows 10 on `Nvidia2` (e2e, `d3d9_ffp2`, `d3d9_ffp`) | 0001 to 0017, 0020 to 0027, 0030, 0035, 0040 to 0044 | `docs/ffp2.md` |
 
 The nvtex proof run (2026-10-18) has the full series, 0001 to 0025, built by
 `scripts/build.sh` at commit `e428846`. Before it, no recorded run had 0015

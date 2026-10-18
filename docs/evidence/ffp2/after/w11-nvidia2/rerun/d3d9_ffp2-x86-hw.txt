@@ -1,0 +1,8 @@
+d3d9_ffp2 device=hal vp=hw arch=x86
+caps DevCaps=0x001baff0 TextureOpCaps=0x03ffffff TextureCaps=0x0001ecc5 VertexProcessingCaps=0x0000017b MaxVertexBlendMatrices=4 MaxVertexBlendMatrixIndex=8 MaxTextureBlendStages=8 MaxSimultaneousTextures=8 CubeTextureFilterCaps=0x07030700 VolumeTextureFilterCaps=0x07030700 VS=fffe0300 PS=ffff0300
+format V8U8 texture=0x00000000
+format L6V5U5 texture=0x00000000
+format X8L8V8U8 texture=0x00000000
+format Q8W8V8U8 texture=0x00000000
+CASE bm_texgen tol=4 hr=0x00000000 px=ff416840,ff536840,ff666840,ff786840,ff8b6840,ff9d6840,ffaf6840,ffc26840,ff416e40,ff536e40,ff666e40,ff786e40,ff8b6e40,ff9d6e40,ffaf6e40,ffc26e40,ff417540,ff537540,ff667540,ff787540,ff8b7540,ff9d7540,ffaf7540,ffc27540,ff417b40,ff537b40,ff667b40,ff787b40,ff8b7b40,ff9d7b40,ffaf7b40,ffc27b40,ff418140,ff538140,ff668140,ff788140,ff8b8140,ff9d8140,ffaf8140,ffc28140,ff418840,ff538840,ff668840,ff788840,ff8b8840,ff9d8840,ffaf8840,ffc28840,ff418e40,ff538e40,ff668e40,ff788e40,ff8b8e40,ff9d8e40,ffaf8e40,ffc28e40,ff419440,ff539440,ff669440,ff789440,ff8b9440,ff9d9440,ffaf9440,ffc29440
+RESULT ran=1 failed_hr=0

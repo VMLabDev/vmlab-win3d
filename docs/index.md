@@ -70,6 +70,7 @@ or Intel GPU as declared in the host config, `~/.config/vmlab/config.wcl`
 | [ddraw.md](ddraw.md) | See DirectDraw fullscreen exclusive mode, 16 bpp modes, and the hardware colour-key and mirror blits of `patches/mesa/0035` |
 | [present.md](present.md) | See why presents were slow (CPU reads of write-combined memory) and why Blender was translucent on Windows 10, and the fixes `patches/kmd/0002` and `patches/mesa/0026`, `0027` |
 | [ffp.md](ffp.md) | See how D3D9 fixed function was tested against the reference rasterizer, and the software-vertex-processing, fog and point fixes `patches/mesa/0040` to `0042` |
+| [ffp2.md](ffp2.md) | See D3D9 vertex blending, bump mapping, cube texgen, mixed devices and Windows 10 tested against the reference, and the bump-format and blend-palette changes `patches/mesa/0043` and `0044` |
 
 ## Building
 

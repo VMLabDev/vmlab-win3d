@@ -1,0 +1,54 @@
+d3d9_ffp2-x64-hw             exit 5  RESULT ran=49 failed_hr=5
+d3d9_ffp2-x86-hw             exit 5  RESULT ran=49 failed_hr=5
+d3d9_ffp2-x64-swvp           exit 5  RESULT ran=49 failed_hr=5
+d3d9_ffp2-x64-mixhw          exit 5  RESULT ran=49 failed_hr=5
+d3d9_ffp2-x64-mixsw          exit 5  RESULT ran=49 failed_hr=5
+d3d9_ffp2-x64-ref            exit 1  RESULT ran=49 failed_hr=1
+d3d9_ffp2-x86-ref            exit 1  RESULT ran=49 failed_hr=1
+d3d9_ffp2-x64-refswvp        exit 0  RESULT ran=49 failed_hr=0
+vs x64-ref: x64-hw: 43 of 49 pass
+vs x86-ref: x86-hw: 43 of 49 pass
+vs x64-refswvp: x64-swvp: 44 of 49 pass
+vs x64-ref: x64-mixhw: 43 of 49 pass
+vs x64-refswvp: x64-mixsw: 44 of 49 pass
+vs x64-refswvp: x64-hw: 44 of 49 pass
+d3d9_ffp-x64-hw              exit 0  RESULT ran=168 failed_hr=0
+d3d9_ffp-x86-hw              exit 0  RESULT ran=168 failed_hr=0
+d3d9_ffp-x64-swvp            exit 0  RESULT ran=168 failed_hr=0
+d3d9_ffp-x64-mixhw           exit 0  RESULT ran=168 failed_hr=0
+d3d9_ffp-x64-mixsw           exit 0  RESULT ran=168 failed_hr=0
+d3d9_ffp-x64-ref             exit 0  RESULT ran=168 failed_hr=0
+win: agent channel closed during exec `powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command & C:\win3d\guest\Run-Probe.ps1 -Path C:\win3d\ffp2\x86\d3d9_ffp.exe -Raw -NoModules -Name d3d9_ffp-x86-ref -OutDir C:\win3d\results\ffp2 -TimeoutSec 900 -ArgumentList @('--log','C:\win3d\results\ffp2\d3d9_ffp-x86-ref.txt','--ref') | Out-Null; (Get-Content C:\win3d\results\ffp2\d3d9_ffp-x86-ref.run.json -Raw | ConvertFrom-Json).exit_code`
+d3d9_ffp-x86-ref             exit   no log
+win: not running
+d3d9_ffp-x64-refswvp         exit   no log
+vs x64-ref: x64-hw: 166 of 168 pass
+Traceback (most recent call last):
+  File "/home/wil/dev/vmlab-win3d-wt/ffp2/docs/evidence/ffp/src/compare.py", line 94, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/wil/dev/vmlab-win3d-wt/ffp2/docs/evidence/ffp/src/compare.py", line 84, in main
+    w = max(len(c) for c, _ in rows)
+ValueError: max() iterable argument is empty
+Traceback (most recent call last):
+  File "/home/wil/dev/vmlab-win3d-wt/ffp2/docs/evidence/ffp/src/compare.py", line 94, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/wil/dev/vmlab-win3d-wt/ffp2/docs/evidence/ffp/src/compare.py", line 84, in main
+    w = max(len(c) for c, _ in rows)
+ValueError: max() iterable argument is empty
+vs x64-ref: x64-mixhw: 166 of 168 pass
+Traceback (most recent call last):
+  File "/home/wil/dev/vmlab-win3d-wt/ffp2/docs/evidence/ffp/src/compare.py", line 94, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/wil/dev/vmlab-win3d-wt/ffp2/docs/evidence/ffp/src/compare.py", line 84, in main
+    w = max(len(c) for c, _ in rows)
+ValueError: max() iterable argument is empty
+Traceback (most recent call last):
+  File "/home/wil/dev/vmlab-win3d-wt/ffp2/docs/evidence/ffp/src/compare.py", line 94, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/wil/dev/vmlab-win3d-wt/ffp2/docs/evidence/ffp/src/compare.py", line 84, in main
+    w = max(len(c) for c, _ in rows)
+ValueError: max() iterable argument is empty
