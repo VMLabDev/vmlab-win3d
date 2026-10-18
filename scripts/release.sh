@@ -5,11 +5,12 @@
 #   scripts/release.sh <version>          for example 0.1.0-alpha
 #
 # Refuses a dirty tree. Runs scripts/build.sh (every component, then the
-# signed package) and patches/host/build-qemu.sh (the QEMU commit pinned in
-# patches/host/PINS), then writes
-# out/release/<version>/:
-#   vmlab-win3d-<version>-windows-x64.zip              guest package + README.txt
-#   qemu-vmlab-egl-<version>-x86_64-linux.tar.zst      vmlab QEMU + install.sh
+# signed package), patches/host/build-qemu.sh (the QEMU commit pinned in
+# patches/host/PINS) and patches/host/build-virglrenderer.sh (the render
+# server), then writes out/release/<version>/:
+#   vmlab-win3d-<version>-windows-x64.zip                  guest package + README.txt
+#   qemu-vmlab-egl-<version>-x86_64-linux.tar.zst          vmlab QEMU + install.sh
+#   virglrenderer-vmlab-<version>-x86_64-linux.tar.zst     vmlab render server + install.sh
 #   RELEASE-NOTES.md
 #   SHA256SUMS
 #
@@ -76,6 +77,8 @@ stage "build the package (scripts/build.sh)"
 scripts/build.sh
 stage "build QEMU (patches/host/build-qemu.sh)"
 patches/host/build-qemu.sh
+stage "build the render server (patches/host/build-virglrenderer.sh)"
+WITH_WORKAROUND=0 patches/host/build-virglrenderer.sh
 clean_or_die "after the build (a build script wrote into the tree)"
 
 OUT=$REPO/out/release/$VERSION
@@ -119,10 +122,34 @@ find "$Q" -exec touch -h -d "@$EPOCH" {} +
 tar --sort=name --mtime="@$EPOCH" --owner=0 --group=0 --numeric-owner --format=gnu \
     -C "$STAGE" -cf - "$QNAME" | zstd -19 -T0 -q -o "$TARBALL"
 
+stage "render server tarball"
+VNAME=virglrenderer-vmlab-$VERSION
+V=$STAGE/$VNAME
+VTARBALL=$OUT/$VNAME-x86_64-linux.tar.zst
+VB=out/host/virglrenderer
+read -r VIRGL_URL VIRGL_VERSION VIRGL_SHA < <(awk '$1 == "virglrenderer" { print $2, $4, $6 }' patches/host/PINS)
+grep -q "^sha256: *$VIRGL_SHA\$" "$VB/BUILDINFO" || { echo "error: $VB/BUILDINFO is not from the pinned virglrenderer $VIRGL_SHA" >&2; exit 1; }
+! grep -q '^patch: *workaround/' "$VB/BUILDINFO" || { echo "error: $VB was built WITH_WORKAROUND=1" >&2; exit 1; }
+mkdir -p "$V/libexec"
+cp "$VB/libexec/virgl_render_server" "$V/libexec/"
+cp "$VB/BUILDINFO" "$V/"
+cp -r "$VB/licenses" "$V/"
+cp "$HERE/virgl-install.sh" "$V/install.sh"
+chmod 755 "$V/install.sh" "$V/libexec/virgl_render_server"
+python3 "$HERE/assemble.py" fill "$HERE/virgl-README.txt" "$V/README.txt" \
+    VERSION="$VERSION" COMMIT="$COMMIT" \
+    VIRGL_VERSION="$VIRGL_VERSION" VIRGL_URL="$VIRGL_URL" VIRGL_SHA="$VIRGL_SHA" \
+    PATCHES="$(sed -n 's/^patch: *\([^ ]*\).*/  \1/p' "$VB/BUILDINFO")" \
+    BUILD_HOST="$(sed -n 's/^build host: *//p' "$VB/BUILDINFO")" \
+    BUILDINFO="$(grep -E '^(compiler|needs ISA|glibc|needs GLIBC|lib )' "$VB/BUILDINFO" | sed 's/^/  /')"
+find "$V" -exec touch -h -d "@$EPOCH" {} +
+tar --sort=name --mtime="@$EPOCH" --owner=0 --group=0 --numeric-owner --format=gnu \
+    -C "$STAGE" -cf - "$VNAME" | zstd -19 -T0 -q -o "$VTARBALL"
+
 stage "release notes and checksums"
 python3 "$HERE/assemble.py" notes "$OUT/RELEASE-NOTES.md" "$VERSION" "$COMMIT" "$EPOCH" \
-    "$SIGNING/CERT-INFO.txt" out/host/qemu/BUILDINFO "$ZIP" "$TARBALL"
-(cd "$OUT" && sha256sum "$(basename "$ZIP")" "$(basename "$TARBALL")" RELEASE-NOTES.md >SHA256SUMS)
+    "$SIGNING/CERT-INFO.txt" out/host/qemu/BUILDINFO "$ZIP" "$TARBALL" "$VTARBALL"
+(cd "$OUT" && sha256sum "$(basename "$ZIP")" "$(basename "$TARBALL")" "$(basename "$VTARBALL")" RELEASE-NOTES.md >SHA256SUMS)
 rm -rf "$STAGE"
 clean_or_die "after the release (the release wrote into the tree)"
 

@@ -103,7 +103,8 @@ def notes(out, version, commit, epoch, cert_info, buildinfo, *assets):
     for a in assets:
         p = Path(a)
         what = "Guest driver package for Windows 10 and 11 x64" if p.suffix == ".zip" else \
-            "Patched QEMU for NVIDIA hosts (x86_64 Linux)"
+            "Patched virglrenderer render server for NVIDIA hosts (x86_64 Linux)" \
+            if p.name.startswith("virglrenderer-") else "Patched QEMU for NVIDIA hosts (x86_64 Linux)"
         rows.append(f"| `{p.name}` | {what} | {p.stat().st_size} | `{sha256(p)}` |")
 
     text = f"""# vmlab-win3d {version}
@@ -127,6 +128,10 @@ explains how to install each asset.
 - **QEMU.** Only NVIDIA host GPUs need it. Extract the tarball and run
   `./install.sh`, then put the `qemu_binary` line it prints into the GPU's
   block in the vmlab host config (vmlab 0.26.0-alpha or later).
+- **Render server.** Only NVIDIA host GPUs need it: it removes a 10 ms
+  floor from every Venus fence there, which held windowed D3D9 to about
+  40 frames per second. Extract the tarball and run `./install.sh`, then
+  put the `qemu_env` line it prints into the same GPU block.
 
 ## Test-signing certificate
 
@@ -164,6 +169,15 @@ every patch this repository applies.
 
 ```
 {Path(buildinfo).read_text().strip()}
+```
+"""
+    virgl = REPO / "out/host/virglrenderer/BUILDINFO"
+    if any(Path(a).name.startswith("virglrenderer-") for a in assets):
+        text += f"""
+## Render server build
+
+```
+{virgl.read_text().strip()}
 ```
 """
     Path(out).write_text(text)
