@@ -1,0 +1,63 @@
+viogpudo.cat: OK
+viogpudo.inf: OK
+viogpudo.sys: OK
+== sign PE files
+  signed viogpudo.sys
+== catalog viogpudo.cat
+  hwids pci\ven_1af4&dev_1050,pci\ven_1af4&dev_1050&subsys_11001af4&rev_01
+  member viogpudo.inf:3B11EEE46D280DB1E66AAAB37322FEAE0EB045C5
+  member viogpudo.sys:FFFBC99277DB86FDC778FF65E4CE512FC40F6DA4:PE
+== verify
+  ok viogpudo.sys
+  ok viogpudo.cat
+== sign PE files
+  signed viogpudo.sys
+== catalog viogpudo.cat
+  hwids pci\ven_1af4&dev_1050,pci\ven_1af4&dev_1050&subsys_11001af4&rev_01
+  member viogpudo.inf:C6061683B3F718F6DAAB744496E3C44DF6749107
+  member viogpudo.sys:FFFBC99277DB86FDC778FF65E4CE512FC40F6DA4:PE
+== verify
+  ok viogpudo.sys
+  ok viogpudo.cat
+== sign PE files
+  signed vgpusrv.exe
+  signed viogpu3d.sys
+  signed viogpuap.exe
+  signed x64/libvulkan_virtio_x64.dll
+  signed x64/viogpu_d3d10_x64.dll
+  signed x64/viogpu_wgl_x64.dll
+  signed x86/libvulkan_virtio_x86.dll
+  signed x86/viogpu_d3d10_x86.dll
+  signed x86/viogpu_wgl_x86.dll
+== catalog viogpu3d.cat
+  hwids pci\ven_1af4&dev_1050&subsys_11001af4&rev_01
+  member viogpu3d.inf:00CB543D30BF53B53FD9554579899AE0E9703B7F
+  member virtio_icd.x86_64.json:048C4ADC640BB43942E388DB65DBE5D209742F5A
+  member viogpu_wgl_x86.dll:0B4D01E7D582975869CE76F6CC44D9E91FB89078:PE
+  member virtio_icd.x86.json:10165D394F94441B3DD2581313EDA5CA44CD8F15
+  member libvulkan_virtio_x86.dll:66E34A6BCA95EB511F699FB7D8DE0CC3941B4562:PE
+  member vgpusrv.exe:6742D719E97A81B2757771D4376C8C6BEE7417A9:PE
+  member viogpu_d3d10_x64.dll:6E7F52EC37BFACB7C640855F0E8064094974412E:PE
+  member libvulkan_virtio_x64.dll:9A07C23FFDF4D800D01C9E5C10752616C1A084DE:PE
+  member viogpuap.exe:B0CDEC194B8EFB2E7E6F393AA826150C323F6F55:PE
+  member viogpu_d3d10_x86.dll:BF74A11A73D393054D217EFE845DB1EE1B2FC6D5:PE
+  member viogpu3d.sys:C2DAAEB4FE00347A1DD3B261AA1907395256A779:PE
+  member viogpu_wgl_x64.dll:CBACF48BA303706EBE8DFE8F0D683090B8FF7947:PE
+== verify
+  ok vgpusrv.exe
+  ok viogpu3d.sys
+  ok viogpuap.exe
+  ok x64/libvulkan_virtio_x64.dll
+  ok x64/viogpu_d3d10_x64.dll
+  ok x64/viogpu_wgl_x64.dll
+  ok x86/libvulkan_virtio_x86.dll
+  ok x86/viogpu_d3d10_x86.dll
+  ok x86/viogpu_wgl_x86.dll
+  ok viogpu3d.cat
+manifest: 28 files, driver 100.6.101.58100, PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+c9d15c056ff78916e3e2948b91fd5721a32f3533e66de523e94dcf504cdb6804  ./control-bundle/driver/viogpu3d.cat
+21663f174a674056804b138f6b1cc7d3f6f31c30921f7c466793bd80eeefa627  ./control-bundle/driver/viogpu3d.inf
+bd8ce08af7a3f187a83180ce132df003d754c271eb53221c9fd3ff406f71521c  ./hostile-viogpudo/viogpudo.cat
+9fe77cbaa06bac7717dd63cd36e9ac3bb46676e9aa56cf76846775180c78604c  ./hostile-viogpudo/viogpudo.inf
+0cc84d2d186bff5186c62fbc6efed514202f2a4341b694b2268281bd2c9e566e  ./newer-viogpudo/viogpudo.cat
+d1eb89b028cf6feec73ea4b20af199fcf98daed01493890475d6aaa05eaa87fb  ./newer-viogpudo/viogpudo.inf

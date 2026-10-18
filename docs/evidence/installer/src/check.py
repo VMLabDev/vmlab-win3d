@@ -46,7 +46,10 @@ def ours(label):
 def pinned(label):
     r = reports.get(label, {})
     p = r.get("policy") or {}
-    ids = [x.split("=", 1)[1] for x in (p.get("deny_instance_ids") or [])]
+    ids = p.get("deny_instance_ids") or []
+    if isinstance(ids, str):  # ConvertTo-Json writes a one-element list as its element
+        ids = [ids]
+    ids = [x.split("=", 1)[1] for x in ids]
     return (p.get("values") or {}).get("DenyInstanceIDs") == 1 and r.get("instance_id") in ids
 
 
@@ -73,7 +76,7 @@ inf = bound("fixed-installed").get("inf")
 for label in ("after-stage", "after-scan", "after-reboot"):
     check(f"{label}: still viogpu3d ({inf})", ours(label) and bound(label).get("inf") == inf and pinned(label), desc(label))
 for name in ("stage-newer", "stage-hostile"):
-    p = os.path.join(ev, next(iter(sorted(f for f in os.listdir(ev) if f.endswith(f"-{name}.json"))), ""))
+    p = os.path.join(ev, next(iter(sorted(f for f in os.listdir(ev) if re.fullmatch(rf"\d\d-{name}\.json", f))), ""))
     try:
         s = json.load(open(p, encoding="utf-8-sig"))
         check(f"{name}: pnputil staged it and the device kept viogpu3d",

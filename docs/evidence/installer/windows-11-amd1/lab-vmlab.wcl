@@ -1,0 +1,12 @@
+import <vmlab.wcl>
+
+lab "win3d-installer-amd1" {
+  vm "win" {
+    template = "x86_64/windows-11@26100.1742.5"
+    secure_boot = false
+    gpu {
+      mode     = "vulkan"
+      host_gpu = "AMD1"
+    }
+  }
+}
