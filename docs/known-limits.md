@@ -417,11 +417,12 @@ Fullscreen exclusive DirectDraw works: the mode change, the flip chain,
 colour-key and mirror blits on the GPU, matching DirectDraw's emulation
 pixel for pixel ([`ddraw.md`](ddraw.md)). What remains:
 
-- **16 bpp in 64-bit programs.** The KMD offers only 32-bit display modes.
-  Windows' 32-bit `ddraw.dll` emulates 8 and 16 bpp, so 32-bit games get
-  their 16-bit modes. A 64-bit DirectDraw program gets `DDERR_UNSUPPORTED`
-  for 16 bpp. Offering R5G6B5 source modes from the KMD does not change
-  that: Windows does not pass them on (an experiment, in `ddraw.md`).
+- **16 bpp in 64-bit programs.** Windows' 32-bit `user32.dll` and
+  `ddraw.dll` emulate 8 and 16 bpp, so 32-bit games get their 16-bit modes.
+  A 64-bit DirectDraw program gets `DDERR_UNSUPPORTED` for 16 bpp, and no
+  driver can change that: `dxgkrnl.sys` drops low-colour source modes from
+  every WDDM driver's mode list, and 64-bit Windows has no low-colour
+  emulation ([`dd16.md`](dd16.md)).
 - **Speed.** Each `Flip` is a Blt-model present with the same cost as a
   D3D9 present: 2 to 8 flips per second on Nvidia1 and 9 to 29 on AMD1,
   without the present fixes

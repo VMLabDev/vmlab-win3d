@@ -1,0 +1,11 @@
+# sha256, path under C:\Windows, PDB name. From x86_64/windows-11@26100.1742.5 (the vmlab template the labs use).
+bf254d03be6e7756799de9f9602df062c49d7aaafade781c9769b2360c752f64  System32/ddraw.dll  ddraw.pdb
+93a4310e66a47fa359f588c2ebda64fe3651771c6f9ff30d462a77215a2e558e  System32/user32.dll  user32.pdb
+bff75906f4abcc050cf85e38e20090ea0edf7dc33e0ed60cb74cf9e1bc007527  SysWOW64/user32.dll  wuser32.pdb
+7148095368dd3c133c44d6055ef7eb99c732a0632d05b70ee902fea3e3ef2b3e  System32/wow64win.dll  wow64win.pdb
+a78ed89e69a0a12809af16da7da8bece1609e9acffc297b962c24245b745443d  System32/win32kbase.sys  win32kbase.pdb
+3d4c2db1b1da4872d102bcc3ec093694d3263226c6173124020344f64a22ba68  System32/cdd.dll  cdd.pdb
+87e157e78536c66fc413ed202296e39053cc9e14dc8d8381f8a3d18f444a4c0d  System32/d3d9.dll  d3d9.pdb
+ab420f6672308ead7fae9698bd7a5597a4f32213f32766b8e78c49210d6ad6b2  System32/drivers/dxgkrnl.sys  dxgkrnl.pdb
+6915f018bd5261cccbbda0f50d8585a0d86172e8aac54b2642cdd3efeca75e74  System32/apphelp.dll  apphelp.pdb
+a8109618c3bf3623be23e8e18f1e7184538600c953169297fd0009ed77564c6e  SysWOW64/apphelp.dll  apphelp.pdb
