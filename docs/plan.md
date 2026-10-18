@@ -82,3 +82,7 @@ then `e2e` (fresh win11 lab, install, evidence for every Done item), then
 - D3 (decided): no host system updates during this work; the host stack stays
   QEMU 11.1.1, virglrenderer 1.3.0, Mesa 26.2.2.
 - D2: the signing approach (recorded by `kmd-build` in `docs/decisions/`).
+- D4 (decided 2026-10-18): our Mesa, vkd3d-proton, DXVK and Vulkan-Tools
+  patches are not sent upstream for now. We keep them as our own maintained
+  patch series (and later as forks), rebased when we move pins. QEMU is the
+  exception: its fix lives on the VMLabDev/qemu branch for upstreaming.
