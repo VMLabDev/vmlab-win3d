@@ -11,7 +11,8 @@ failures:
 
 F3 was a bug in the WGL ICD, `viogpu_wgl.dll`, and is fixed by
 `patches/mesa/0080`. F2 is the BAR1 exhaustion that worker `nvva` diagnosed
-(nvva.md, on branch `work/nvva`), not a GZDoom-specific bug. The work was done on
+([`nvva.md`](nvva.md)), not a GZDoom-specific bug. `nvva`'s `0070` and
+`0086` fix it, and GZDoom Vulkan now runs on NVIDIA. The work was done on
 2026-10-19 on helios: RADV (Mesa 26.2.2) on `AMD1`, NVIDIA 610.57.04,
 vmlab 0.28.0-alpha and virglrenderer 1.3.0. The evidence is in
 `docs/evidence/gzdoom/`.
@@ -20,8 +21,8 @@ vmlab 0.28.0-alpha and virglrenderer 1.3.0. The evidence is in
 
 | Finding | Cause | Change | Status |
 | --- | --- | --- | --- |
-| F3, GZDoom OpenGL, both GPUs | `opengl32.dll` lost the pixel format of GZDoom's dummy window, so `wglCreateContext` failed with `ERROR_INVALID_PIXEL_FORMAT` (2000) before it reached the ICD | `0080`: the ICD pins `opengl32.dll` | Fixed on `AMD1` (GZDoom renders at 35 fps, exits cleanly). NVIDIA run: see [What remains](#what-remains) |
-| F2, GZDoom Vulkan, `Nvidia2` | The render-server lines are `nvva`'s "allocation refused" failure: the host refused a `vkAllocateMemory` on the 246 MiB BAR1 heap, which the guest had sent asynchronously | none here; `nvva`'s `0070` and `0071` | See [What remains](#what-remains) |
+| F3, GZDoom OpenGL, both GPUs | `opengl32.dll` lost the pixel format of GZDoom's dummy window, so `wglCreateContext` failed with `ERROR_INVALID_PIXEL_FORMAT` (2000) before it reached the ICD | `0080`: the ICD pins `opengl32.dll` | Fixed. GZDoom renders and exits cleanly on `AMD1` and `Nvidia1`, at 35 fps |
+| F2, GZDoom Vulkan, `Nvidia2` | The render-server lines are `nvva`'s "allocation refused" failure: the host refused a `vkAllocateMemory` on the 246 MiB BAR1 heap, which the guest had sent asynchronously | none here; `nvva`'s `0070` and `0086` | Fixed by those. GZDoom Vulkan runs clean on `Nvidia1`, at 35 fps, with no CS error in the render-server log |
 
 ## F3: why `wglCreateContext` failed
 
@@ -107,14 +108,21 @@ loads both anyway.
 
 ## Evidence
 
+Two packages were used, both built by `scripts/build.sh` from this branch.
+"Base" is `main` at `5781598` plus `0080` (manifest commit `4d879bb`).
+"Merged" adds `main` at `b74ea3c`, which brought `nvva`'s `0070` and `0086`
+(manifest commit `d0c6c3e`). Neither has the dropped `0071`.
+
 | What | Where |
 | --- | --- |
 | Repro: GZDoom's start-up, call for call, with `opengl32.dll` loaded late as GZDoom loads it | `docs/evidence/gzdoom/src/gzgl.c`, built by `src/build.sh`, run by `src/run-repro.sh` (x64 and x86, through `tests/guest/Run-Probe.ps1`) |
 | Repro on the 0.1.1 package at `5781598`: fails at step 1 (x64 and x86) | `repro/amd1-before/` |
-| Repro with `0080`: passes all four steps, a 4.6 core context and the cleared frame read back (x64 and x86) | `repro/amd1-after/` |
+| Repro with `0080` (its `viogpu_wgl.dll` copied over the installed one): passes all four steps, a 4.6 core context and the cleared frame read back (x64 and x86) | `repro/amd1-after/` |
 | The WGL call trace of a GZDoom run with the logging `opengl32.dll` | `repro/gltrace-gzdoom-amd1.txt`, from `src/gltrace/` |
-| GZDoom OpenGL and Vulkan through `tests/apps/compat/run.sh`, fresh lab, package built at this branch: both clean at 35 fps | `amd1/` (`results.json`, `gzdoom-opengl/console-2.png`) |
-| `tests/e2e/run.sh --template windows-11` on `AMD1` with this branch's package: 12 of 12 | `e2e-amd1/` (`results.txt`) |
+| GZDoom OpenGL and Vulkan through `tests/apps/compat/run.sh` on `AMD1`, fresh lab, base package: both clean at 35 fps | `amd1/` (`results.json`, `gzdoom-opengl/console-2.png`) |
+| The same on `Nvidia1`, merged package: both clean, no Xid. The counter reads 35 fps, but the Start menu was open over the window in every frame, so the OCR found no counter. The render-server log of the run has no CS error | `nvidia1/` (`results.json`, `qemu-log.txt`, `host-nvrm.txt`) |
+| `tests/e2e/run.sh --template windows-11` on `AMD1`, base package: 12 of 12 | `e2e-amd1/` (`results.txt`) |
+| `tests/e2e/run.sh --template windows-11` on `Nvidia1`, merged package: 12 of 12 | `e2e-nvidia1/` (`results.txt`) |
 
 `tests/apps/compat/run.sh` now takes `COMPAT_LAB` and `COMPAT_EV` from the
 environment, so a worker can run it in a lab of its own name and keep the
@@ -152,23 +160,20 @@ Read in order:
    the `0xC0000409` in `ucrtbase.dll`.
 
 Type 8 is `VK_OBJECT_TYPE_DEVICE_MEMORY`. This is the "allocation refused"
-failure in `nvva`'s nvva.md: the host refuses allocations from the
+failure in [`nvva.md`](nvva.md): the host refuses allocations from the
 246 MiB `DEVICE_LOCAL | HOST_VISIBLE` heap, the RTX 5090's BAR1, when the
 card's BAR1 is nearly full, and it counts card-wide. GZDoom's Vulkan backend
 allocates through VMA, which can place buffers the CPU writes in a
 device-local, host-visible type. Which GZDoom allocation was refused is
 not known: the render server does not log the failed `vkAllocateMemory`. The same demo
-passes on `AMD1`, where the heap is not small. `0070` and `0071` keep guests
-off that heap.
+passes on `AMD1`, where the heap is not small. `0070` keeps guests off that
+heap, and `0086` keeps Zink's mapped buffers working without it.
 
 ## What remains
 
-- **F3 on NVIDIA.** 0080 is in the WGL frontend and does not depend on the
-  GPU: the failure happened in `opengl32.dll` before any GPU work, on both
-  GPUs. A GZDoom OpenGL run on an NVIDIA card is still to be made. On
-  2026-10-19 `Nvidia2` was reserved for `nvva` and `Nvidia1` was at its
-  two-VM limit.
-- **F2.** GZDoom Vulkan on NVIDIA still has to be run with `nvva`'s `0070`
-  and `0071` on a quiet card.
-- `tests/e2e/run.sh` 12 of 12 on an NVIDIA card with `0080`: not run, for
-  the same reason.
+- `host-nvrm.txt` has eight `can't alloc VA space for mapping` lines during
+  the `Nvidia1` GZDoom runs. The kernel does not say which process caused
+  them, and the card is not named either. Other workers' VMs were running on the NVIDIA cards at the time. Both GZDoom runs were
+  clean, and this lab's render-server log has no error.
+- GZDoom was not rerun on `Nvidia2`. `Nvidia1` and `Nvidia2` are the same
+  card model with the same driver.
