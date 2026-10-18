@@ -1,7 +1,7 @@
 Subject: [PATCH] vkr: record the Venus command stream and wait on every submission (diagnostics)
 
 Diagnostics only; not applied by patches/host/build-virglrenderer.sh.
-Applies on 1.3.0 after 0001 and 0002.
+Applies on 1.3.0 after 0001 (and after hostvirgl's 0002 where present).
 
 - VKR_TRACE=<dir> writes every Venus command a context dispatches, as the
   guest encoded it, to <dir>/vkr-<pid>.bin (one render-server process per
