@@ -1,0 +1,203 @@
+{
+    "computer":  "VMLABVM-3NVGS9V",
+    "os":  "Microsoft Windows 11 Enterprise Evaluation 10.0.26100",
+    "collected":  "2026-10-18T09:09:18.2858584-07:00",
+    "display_devices":  [
+                            {
+                                "name":  "Red Hat VirtIO GPU DOD controller",
+                                "instance_id":  "PCI\\VEN_1AF4\u0026DEV_1050\u0026SUBSYS_11001AF4\u0026REV_01\\3\u002611583659\u00260\u002620",
+                                "status":  "OK",
+                                "present":  true,
+                                "problem_code":  0,
+                                "problem_status":  null,
+                                "hardware_ids":  [
+                                                     "PCI\\VEN_1AF4\u0026DEV_1050\u0026SUBSYS_11001AF4\u0026REV_01",
+                                                     "PCI\\VEN_1AF4\u0026DEV_1050\u0026SUBSYS_11001AF4",
+                                                     "PCI\\VEN_1AF4\u0026DEV_1050\u0026CC_030000",
+                                                     "PCI\\VEN_1AF4\u0026DEV_1050\u0026CC_0300"
+                                                 ],
+                                "driver_inf":  "oem7.inf",
+                                "driver_inf_section":  "VioGpuDod_Inst",
+                                "driver_version":  "100.101.104.28500",
+                                "driver_provider":  "Red Hat, Inc.",
+                                "driver_date":  "07/08/2025 17:00:00",
+                                "driver_desc":  "Red Hat VirtIO GPU DOD controller",
+                                "driver_key":  "{4d36e968-e325-11ce-bfc1-08002be10318}\\0000",
+                                "service":  "VioGpuDod",
+                                "registry_path":  "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Class\\{4d36e968-e325-11ce-bfc1-08002be10318}\\0000",
+                                "registry":  {
+                                                 "DriverDesc":  "Red Hat VirtIO GPU DOD controller",
+                                                 "ProviderName":  "Red Hat, Inc.",
+                                                 "DriverVersion":  "100.101.104.28500",
+                                                 "InfPath":  "oem7.inf",
+                                                 "InfSection":  "VioGpuDod_Inst",
+                                                 "FeatureScore":  249
+                                             }
+                            }
+                        ],
+    "vulkan_registry":  {
+                            "native":  {
+                                           "Drivers":  {
+
+                                                       },
+                                           "ImplicitLayers":  {
+
+                                                              },
+                                           "ExplicitLayers":  {
+
+                                                              }
+                                       },
+                            "wow6432":  {
+                                            "Drivers":  {
+
+                                                        },
+                                            "ImplicitLayers":  {
+
+                                                               },
+                                            "ExplicitLayers":  {
+
+                                                               }
+                                        }
+                        },
+    "vulkan_adapter_registry":  [
+
+                                ],
+    "system_dlls":  [
+                        {
+                            "path":  "C:\\WINDOWS\\system32\\d3d9.dll",
+                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "87E157E78536C66FC413ED202296E39053CC9E14DC8D8381F8A3D18F444A4C0D"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\system32\\d3d10.dll",
+                            "version":  "10.0.26100.1150 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "61A1020E5BAC18C2DED229329CBE4314CB8FDE3D773E219D4C7F8991C16EE57C"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\system32\\d3d10_1.dll",
+                            "version":  "10.0.26100.1882 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "AC338412D2B50F4B29E80D33A1ACF6F25D80D80DB684625D76BF8DB43B4A6821"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\system32\\d3d11.dll",
+                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "AE2777002F5A0FF543B5B9BEC5124746559FD01D6C7C0C216D3194632F084502"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\system32\\d3d12.dll",
+                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "6B32181599D4D6373F0B49905236B122ED5545C5D061AB4350A80CC095DC15E4"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\system32\\D3D12Core.dll",
+                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "70710DE807F188A85A3F5AD3A729A41BFA7A92B7621CEEAF38059F5640399267"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\system32\\dxgi.dll",
+                            "version":  "10.0.26100.9444 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "B12AEBF0F077D6C1394B50E2EECDD5E16072C9A0C871F30887B5D170CBF2EAAE"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\system32\\opengl32.dll",
+                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "659BE03CF2B88B5063A35B2637D9EF38122D7F6F30DAFFF118FA41B273AA5ECE"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\system32\\vulkan-1.dll",
+                            "version":  "1.3.300.0",
+                            "company":  "",
+                            "sha256":  "591D4C316A0A39F96792979CE5EBB1BB380F0015C30707BA7AC611B35AE01CFC"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\system32\\d3dcompiler_47.dll",
+                            "version":  "10.0.26100.9457 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "2E3526354DBCD9CF013F7B741C549DF2170FE6AF607628442216A21E7D584883"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\SysWOW64\\d3d9.dll",
+                            "version":  "10.0.26100.8972 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "F4757445D75D619BC5695294EE5CA6BFA0AD8763C6604A8E884739F605A6DF28"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\SysWOW64\\d3d10.dll",
+                            "version":  "10.0.26100.1 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "81C121D84A791BB65588086035ABA3B74C3AA9E01AB05AB63FE18ABF79094527"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\SysWOW64\\d3d10_1.dll",
+                            "version":  "10.0.26100.1882 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "AA2FECB249118CFCF9D9F35E5E08F964037338A6B73968D8FFC8D7AA10B3682A"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\SysWOW64\\d3d11.dll",
+                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "24D1B3A7C832EA3DC1883371AFECF666650BF8A20E64D8CBD0A77E89039EDF98"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\SysWOW64\\d3d12.dll",
+                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "A43885B075B8043D9FE99F03B26B056B426E1B7D73FAB8D420F4E4FFCB5100AF"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\SysWOW64\\D3D12Core.dll",
+                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "6463E2309D1A6F1CC8D7739FF7502AD1668217BFB2F2D74FC55D20C1B63421F0"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\SysWOW64\\dxgi.dll",
+                            "version":  "10.0.26100.9444 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "2E4A6E4B43F31EFFAAE8EEC1BC43D9398A4302F0CBFDFACA67EA2CBA3C24A0D6"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\SysWOW64\\opengl32.dll",
+                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "A03F6C001C4CAE7361CF744A1F1E05567AA431D27FAE048281E13E3356487978"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\SysWOW64\\vulkan-1.dll",
+                            "version":  "1.3.300.0",
+                            "company":  "",
+                            "sha256":  "411A6F91D4E925DBD380CC3C4FA5810B9895A87B6D3072E16707551A2EAC311E"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\SysWOW64\\d3dcompiler_47.dll",
+                            "version":  "10.0.26100.9168 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "570437AC865210F03DA802637310BAA7765AC44C0F451A874CE2FA512CD33DB9"
+                        }
+                    ],
+    "boot":  {
+                 "testsigning":  null,
+                 "nointegritychecks":  null,
+                 "secure_boot":  "unknown: Variable is currently undefined: 0xC0000100",
+                 "hiberboot_enabled":  1
+             },
+    "video_controllers":  [
+                              {
+                                  "name":  "Red Hat VirtIO GPU DOD controller",
+                                  "driver_version":  "100.101.104.28500",
+                                  "installed_display_drivers":  null,
+                                  "status":  "OK",
+                                  "current_mode":  "1280x800x32"
+                              }
+                          ]
+}
+

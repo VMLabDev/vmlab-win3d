@@ -149,6 +149,45 @@ they are missing, logging `autologon fallback fired` and writing
 `Nvidia2`, the wait ended at once or within 5 s, and the fallback did not
 fire. This affects only the tests, not the package.
 
+### Evaluation templates need the lab NIC and `slmgr /ato`
+
+The local `windows-11` and `windows-10` templates are Enterprise
+Evaluation editions, and their clones boot in notification mode (`slmgr /dlv`: `License Status:
+Notification`, `0xC004F009 (grace time expired)`). In that mode the license
+monitor, `wlms.exe`, shuts the VM down an hour after each boot, with "The
+license period for this installation of Windows has expired". A lab with no
+NIC cannot activate, so a kept lab dies within the hour.
+
+The lab files therefore give the VM a NAT NIC, `nic { nat = true }`
+(`labs/acceptance/vmlab.wcl`, `labs/probe/vmlab.wcl`). The NIC alone is not
+enough. A clone left alone with it was not activated by Windows, and
+`wlms.exe` shut it down 60 minutes after it booted. Activation needs an
+explicit `slmgr /ato`, which takes about a minute:
+
+```
+cscript //nologo C:\Windows\System32\slmgr.vbs /ato
+```
+
+After that, `slmgr /dlv` shows `License Status: Licensed` and
+`slmgr /xpr` shows the evaluation's end date, 90 days later (`Timebased
+activation will expire 1/16/2027`). Activation survives a reboot, and the
+activated clone ran for over an hour without shutting down. `tests/e2e/run.sh` runs
+`slmgr /ato` as soon as the lab is up and writes the result to
+`activation.txt` in the run's evidence; a failed activation is reported but
+does not fail the run. For a lab brought up by hand, run the command above
+once.
+
+The NIC changes what the guest can reach: it has internet egress through
+vmlab's NAT, and the lab's guests can reach each other. The template's
+Windows Update policies stay in place, so the NIC does not turn Windows
+Update on. The rearm count is 1, so `slmgr /rearm` is not a lasting
+alternative. Tried on `windows-11@26100.1742.5` and, for `slmgr /ato`
+only, `windows-10@19045.2006.8`.
+
+Evidence: `docs/evidence/wu/activation/` (`no-ato-shutdown.txt`, the
+unactivated clone's shutdown events; `ato.txt`, activation and the
+reboot; `windows-10-ato.txt`), and the `activation` report of each run in `docs/evidence/wu/`.
+
 ### QEMU crashes on shutdown
 
 QEMU 11.1.1 sometimes dies with SIGSEGV in `libgallium` while tearing down

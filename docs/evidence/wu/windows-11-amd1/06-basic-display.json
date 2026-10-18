@@ -1,0 +1,66 @@
+{
+    "label":  "basic-display",
+    "time":  "2026-10-18T12:29:26.9800896-07:00",
+    "instance_id":  "PCI\\VEN_1AF4\u0026DEV_1050\u0026SUBSYS_11001AF4\u0026REV_01\\3\u002611583659\u00260\u002620",
+    "status":  "OK",
+    "bound":  {
+                  "inf":  "display.inf",
+                  "original":  null,
+                  "provider":  "Microsoft",
+                  "date":  "2006-06-21",
+                  "version":  "10.0.26100.1",
+                  "rank":  "00FB2006",
+                  "matching_id":  "PCI\\CC_0300",
+                  "problem_code":  0
+              },
+    "policy":  {
+                   "restrictions":  null,
+                   "deny_instance_ids":  null
+               },
+    "installer_state":  null,
+    "windows_update":  {
+                           "services":  [
+                                            {
+                                                "name":  "BITS",
+                                                "status":  "Stopped",
+                                                "start":  "Manual"
+                                            },
+                                            {
+                                                "name":  "CryptSvc",
+                                                "status":  "Running",
+                                                "start":  "Automatic"
+                                            },
+                                            {
+                                                "name":  "TrustedInstaller",
+                                                "status":  "Stopped",
+                                                "start":  "Automatic"
+                                            },
+                                            {
+                                                "name":  "UsoSvc",
+                                                "status":  "Running",
+                                                "start":  "Manual"
+                                            },
+                                            {
+                                                "name":  "WaaSMedicSvc",
+                                                "status":  "Stopped",
+                                                "start":  "Manual"
+                                            },
+                                            {
+                                                "name":  "wuauserv",
+                                                "status":  "Running",
+                                                "start":  "Manual"
+                                            }
+                                        ],
+                           "policy":  {
+
+                                      },
+                           "policy_au":  {
+
+                                         },
+                           "driver_searching":  {
+                                                    "SearchOrderConfig":  1
+                                                },
+                           "driver_searching_policy":  null
+                       },
+    "ranked":  "Microsoft PnP Utility\r\n\r\nInstance ID:                PCI\\VEN_1AF4\u0026DEV_1050\u0026SUBSYS_11001AF4\u0026REV_01\\3\u002611583659\u00260\u002620\r\nDevice Description:         Microsoft Basic Display Adapter\r\nClass Name:                 Display\r\nClass GUID:                 {4d36e968-e325-11ce-bfc1-08002be10318}\r\nManufacturer Name:          (Standard display types)\r\nStatus:                     Started\r\nDriver Name:                display.inf\r\nMatching Drivers:\r\n    Driver Name:            display.inf\r\n    Provider Name:          Microsoft\r\n    Class Name:             Display\r\n    Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}\r\n    Driver Version:         06/21/2006 10.0.26100.1\r\n    Signer Name:            Microsoft Windows\r\n    Matching Device ID:     PCI\\CC_0300\r\n    Driver Rank:            00FB2006\r\n    Driver Status:          Best Ranked / Installed"
+}
