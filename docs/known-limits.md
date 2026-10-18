@@ -366,13 +366,22 @@ needs MSVC or clang-cl with the Windows SDK, so it was skipped
 (`docs/acceptance.md`, "Stretch"). D3D12 has run only as the probe here; the
 prior art's D3D12 application results are listed above.
 
-### DirectDraw fullscreen exclusive mode is untested
+### DirectDraw: 16 bpp only for 32-bit programs, and slow flips
 
-`patches/mesa/0012` to `0014` gave DirectDraw a hardware HAL, and `ddcaps`
-checked it in windowed mode only. Fullscreen exclusive DirectDraw
-(`DDSCL_EXCLUSIVE`, `Flip`) has not been tried. The UMD also offers no
-hardware colour-key or mirror blits, so DirectDraw emulates them on the CPU
-(`docs/dxdiag.md`, "Not covered").
+Fullscreen exclusive DirectDraw works: the mode change, the flip chain,
+`Flip`, and restoring the desktop mode. `patches/mesa/0035` draws source
+colour-key and mirror blits on the GPU, matching DirectDraw's emulation
+pixel for pixel ([`ddraw.md`](ddraw.md)). What remains:
+
+- **16 bpp in 64-bit programs.** The KMD offers only 32-bit display modes.
+  Windows' 32-bit `ddraw.dll` emulates 8 and 16 bpp, so 32-bit games get
+  their 16-bit modes. A 64-bit DirectDraw program gets `DDERR_UNSUPPORTED`
+  for 16 bpp.
+- **Speed.** Each `Flip` is a Blt-model present with the same cost as a
+  D3D9 present: 2 to 8 flips per second on Nvidia1 without the present fixes
+  ("Presentation pacing" above).
+- **Still emulated.** Destination colour keys and rotated blits still run
+  on the CPU.
 
 ### Other limits
 
