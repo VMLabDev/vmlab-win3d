@@ -13,8 +13,8 @@ remains. Evidence is in `docs/evidence/nvfb/`. Investigated on 2026-10-19.
 | --- | --- |
 | Cause | In the guest, the host GPU's writes to NVIDIA memory type 2 (`HOST_VISIBLE` and `HOST_COHERENT`, uncached system memory) are not visible to the guest CPU. The guest reads a stale line from the CPU cache, and the GPU's write never invalidates that line. Venus put its feedback buffer (fence, semaphore, event and query status) in that type. The host itself sees the same writes |
 | Owner | The guest Venus driver chose the memory type. The underlying behaviour belongs to the host platform, an Intel CPU host with this NVIDIA GPU. On helios (an AMD CPU) the RTX 5090s pass with feedback in type 2; fbguest was not run in a helios guest |
-| Fix | `patches/mesa/0065`: Venus feedback buffers use a `HOST_COHERENT` and `HOST_CACHED` type (NVIDIA type 3), where the GPU's writes reach the guest. `patches/mesa/0066`: at device creation Venus checks that one fence feedback write lands, and disables feedback for that device if it does not |
-| Zeus Nvidia1, `tests/e2e/run.sh --template windows-11`, package defaults Runs 1 and 3 **12 of 12**; run 2 **11 of 12**: one OpenGL readback came back black. That readback fault is older and separate from feedback ([below](#the-black-opengl-readback)) |
+| Fix | `patches/mesa/0065`: Venus feedback buffers use a `HOST_COHERENT` and `HOST_CACHED` type (NVIDIA type 3), where the GPU's writes reach the guest. `patches/mesa/0066`: at device creation Venus checks that one fence feedback write lands, and disables feedback for that device if it does not. `patches/mesa/0067`: the same check tests the uncached type, and where the GPU's writes do not arrive, Venus backs that type with the cached one for every application (this also fixes the black OpenGL readback) |
+| Zeus Nvidia1, `tests/e2e/run.sh --template windows-11`, package defaults | With 0065 and 0066 (`6dabb22`): runs 1 and 3 **12 of 12**, run 2 **11 of 12**, a black OpenGL readback. With 0067 as well (`0b26b36`, `main` merged): ZEUSFINAL |
 | Regressions | See [Proof](#proof) |
 
 ## The symptom
@@ -122,7 +122,7 @@ the package uses the host's own virglrenderer (decision D3).
 | Zeus Nvidia1, fbguest with feedback on, `6dabb22` | `zeus/12-fixed-feedback-on/` | Fence waits work (Venus feedback now in type 3). Type 2 still misses for the test's own reads: that is the host's behaviour, and no package component reads GPU-written type-2 memory |
 | Zeus Nvidia1, 0066 without 0065 (an experimental bundle, built from this branch with 0065 removed), feedback on | `zeus/14-selftest-only-feedback-on/` | The self-test fallback works. fbguest's fence waits all complete, where `main`'s timed out (`01-main-feedback-on/`). The Vulkan probe passes (56 fps, x64 and x86), and D3D12 passes at 51 fps, as fast as with `VN_PERF` set. The first D3D12 run of each architecture in the fresh lab ran at only 0.06 and 0.18 fps (x64 also read back only the clear colour); later runs did not. OpenGL hit the black readback below |
 | helios AMD1, `tests/e2e/run.sh --template windows-11`, `6dabb22` | `helios/amd1-e2e/` | **12 of 12** |
-| Zeus Nvidia1, e2e run 3, the same | on Zeus only (below) | **12 of 12** (the run's summary line). Zeus's SSH then began asking for a Tailscale re-authentication, so this run's evidence directory was not fetched. It is on Zeus in `~/win3d-nvfb/e2e/docs/evidence/acceptance/windows-11-nvidia1/` |
+| Zeus Nvidia1, e2e run 3, the same | `zeus/16-e2e-run3/` | **12 of 12** |
 | helios Nvidia1, e2e | — | **Not run**: Nvidia1 stayed at the two-VM limit for our labs (the 2026-10-19 BAR1 rule) until the time box ran out |
 | Zeus Intel1, `tests/e2e/run.sh --template windows-11 --host-gpu Intel1`, `6dabb22` | `zeus/15-e2e-intel1/` | **12 of 12** |
 
@@ -138,13 +138,13 @@ passes. No separate timing was taken on helios.
 ## The black OpenGL readback
 
 In about one OpenGL probe run in three on Zeus Nvidia1, `glReadPixels` of
-the back buffer returns 0, 0, 0 at all three markers. The clear colour is
-not black, so the readback holds no rendered data at all. The same run
-renders more than 1,000 frames at about 62 fps and shows them on the
+the back buffer returned 0, 0, 0 at all three markers. The clear colour is
+not black, so the readback held no rendered data at all. The same run
+rendered more than 1,000 frames at about 62 fps and showed them on the
 console. This is older than 0065: it happened with all feedback off on
 2026-10-19 ([`zeus.md`](zeus.md#with-the-feedback-off-11-of-12)), and it
-does not happen on the RTX 5090s, AMD1 or Intel1. Repeated in a kept lab
-(`zeus/20-gl-repeat/repeat.txt`, 8-second runs):
+did not happen on the RTX 5090s, AMD1 or Intel1. Repeated in a kept lab
+with 0065 and 0066 (`zeus/20-gl-repeat/repeat.txt`, 8-second runs):
 
 | Setting (probe process only) | Black readbacks |
 | --- | --- |
@@ -155,29 +155,73 @@ does not happen on the RTX 5090s, AMD1 or Intel1. Repeated in a kept lab
 | `ZINK_DEBUG=sync` (a full memory barrier before every copy, blit and draw) | **8 of 8** |
 | `ZINK_DEBUG=noreorder,sync` | 3 of 6 |
 
-So it is neither feedback nor Zink's command reordering, and `ZINK_DEBUG=sync`
-reproduces it every time. Zink's readback goes through a staging buffer in
-the cached type (`PIPE_USAGE_STAGING`), and fbguest saw every GPU write
-there. The cause is not found. The next step is a GL test that reads the
-back buffer and an FBO with `ZINK_DEBUG=sync`, to separate the swapchain
-image from the copy.
+It is neither feedback nor Zink's command reordering.
+
+**Which memory.** A diagnostic build (`src/diag/0099-venus-nvfb-memlog.patch`,
+built by `src/diag/build.sh`; not in the package) logs every Venus
+`vkAllocateMemory`. Under `ZINK_DEBUG=sync` the GL probe allocates
+(`zeus/30-memlog/gl/memlog-sync.txt`):
+
+| Allocation | Type |
+| --- | --- |
+| The readback staging buffer, 2,621,440 bytes (1024 × 640 × 4) | 3, cached |
+| Four 2 MiB buffers: Zink's stream and upload buffers (`PIPE_USAGE_STREAM`, `HOST_VISIBLE` only) | **2, uncached** |
+| Images and device-local buffers | 1 |
+
+So the readback buffer the CPU reads is in the cached type, and the GPU's
+copy into it is visible. The data the CPU writes for the GPU (vertices and
+constants, including the blit that `glReadPixels` uses to convert the back
+buffer into the staging texture) goes through type 2. The same coherence
+gap applies in that direction: the guest's write stays in a CPU cache line
+that the GPU's read does not snoop, so the GPU can read stale data. A blit
+drawn from stale vertices writes nothing, and the staging buffer stays
+zero. `ZINK_DEBUG=sync` adds barriers that change the timing so that the
+blit's few bytes are always still in the cache.
+
+**The fix.** `patches/mesa/0067` extends 0066's check to every uncached
+`HOST_COHERENT` type that has a cached counterpart: same heap, and a
+superset of the flags plus `HOST_CACHED` (NVIDIA type 2, counterpart type
+3). The check puts a 4 KiB buffer in that type, writes and reads its first
+word on the CPU, and has the GPU fill it in the same submission as the fence
+feedback check. If the fill is not visible after the fence and 20 ms, every
+later allocation of that type on the device is backed by the cached type.
+Exported memory and dedicated allocations whose resource cannot use the
+cached type are not remapped. Both types are `HOST_COHERENT`, so the
+application's view does not change; the host GPU then accesses the memory
+coherently with the CPU caches, in both directions.
+
+A stale read needs the line to still be in the cache when the GPU writes.
+The first version checked once, and in 2 of 10 GL processes and in one
+fbguest device, the line had been evicted, so the check passed and nothing
+was remapped (`zeus/31-r67/`). The check now re-reads the words just
+before each submission and runs up to three rounds, stopping at the first
+stale read. With that (`zeus/32-r67b/`):
+
+| Run (Zeus Nvidia1, 6 each) | Black readbacks | Processes with type 2 backed by type 3 |
+| --- | --- | --- |
+| x64, `ZINK_DEBUG=sync` | 0 of 6 | 6 of 6 |
+| x64, defaults | 0 of 6 | 6 of 6 |
+| x86, `ZINK_DEBUG=sync` | 0 of 6 | 6 of 6 |
+| x86, defaults | 0 of 6 | 6 of 6 |
+
+fbguest's own type-2 buffer now sees every GPU write as well (0 misses in
+all three variants, x64 and x86), because its allocation is backed by type
+3.
+
+On a host where the check fails (Zeus Nvidia1) it costs the failed round's
+20 ms wait plus the extra buffer: fbguest's median `vkCreateDevice` went
+from 62 to 64 ms to 95 to 112 ms (`zeus/32-r67b/fbguest-*.txt`). On a host
+where the writes arrive it is three short rounds; HELIOSCOST
 
 ## What remains
 
-- The black OpenGL readback above, which keeps Zeus Nvidia1 from passing
-  12 of 12 every time.
-- On this host, any application that reads GPU-written data from an
-  uncached `HOST_COHERENT` type (type 2) reads stale data. DXVK,
-  vkd3d-proton and Zink use cached memory for readbacks, and nothing in
-  the package does this, but a native Vulkan application could. A fix
-  for that belongs on the host (vkr could back such allocations with the
-  cached type) or in KVM, not in the guest.
-- 0065 and 0066 belong upstream in Mesa's Venus driver.
-- The regression run on helios Nvidia1 (an RTX 5090, where feedback worked
-  in type 2) was not run; AMD1 and Zeus Intel1 passed.
-- Zeus cleanup: the labs are destroyed, but `~/win3d-nvfb/` (the staging
-  tree, run 3's evidence) is still on Zeus. Zeus's Tailscale SSH asks for a
-  browser re-authentication, which needs the user.
+- 0065 to 0067 belong upstream in Mesa's Venus driver.
+- Why this host's GPU writes bypass the guest's cache coherence (an alias
+  the host keeps cacheable, or the CPU's self-snoop on uncached accesses) is
+  not established. KVM or the host's virglrenderer could fix it for every
+  guest driver; the package cannot change either (decision D3).
+- Yttrium's D3D9/D3D10/D3D11 driver has its own Venus transport and is not
+  covered by 0067. It passed every check on Zeus Nvidia1.
 
 ## Files
 
@@ -187,5 +231,6 @@ image from the copy.
 | `src/guest-fbtest/fbguest.c`, `build.sh` | The guest test (shared llvm-mingw toolchain), with the `primed`, `flushed` and `clflush` variants and a median of 11 `vkCreateDevice` calls |
 | `src/fbguest-lab.sh` | Brings up `win3d-nvfb-<gpu>`, installs a bundle, runs fbguest x64 and x86 in the autologon session with `VN_PERF` set for the test only |
 | `src/repeat-probe.sh` | Runs one probe N times in a kept lab with extra environment variables |
+| `src/diag/0099-venus-nvfb-memlog.patch`, `src/diag/build.sh` | The allocation log (`VN_NVFB_MEMLOG=<file>`), and the script that builds a bundle with extra or fewer Mesa patches in a scratch copy of the tree (the memlog, r67 and 0066-only bundles) |
 | `host/` | fbtest output: Zeus RTX 4060 and Intel Iris Xe, helios RTX 5090 |
 | `zeus/` | Guest runs and e2e evidence, numbered as in the tables above |

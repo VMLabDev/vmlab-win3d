@@ -10,17 +10,19 @@ stale cache line.
 type that has a host-cached counterpart (same heap, a superset of its
 flags): a 4 KiB buffer in that type, written and read by the CPU, then
 filled by the GPU in the same submission as the fence feedback check. A
-stale read needs the CPU's line to survive until the GPU writes, so the
-check re-reads the words just before submitting and runs up to three
-rounds. If a fill is not visible after the fence and 20 ms, the device backs every
-later allocation of that type with the cached type, unless the memory is
-exported, or dedicated to a resource whose memory type bits exclude it.
-Both types are HOST_COHERENT, so the application's mapping semantics are
-unchanged; the GPU then writes the memory coherently with the CPU caches.
+stale read needs the CPU's line to still be cached when the GPU writes, and
+other work can evict it, so the check no longer blocks on the fence: it
+polls the fence and reads the test words on every iteration, which keeps
+their lines cached. If a fill is not visible after the fence and 2 ms
+(0066 allowed 20 ms), the device backs every later allocation of that type
+with the cached type, unless the memory is exported, or dedicated to a
+resource whose memory type bits exclude it. Both types are HOST_COHERENT,
+so the application's mapping semantics are unchanged; the GPU then
+accesses the memory coherently with the CPU caches.
 
 On a host where the writes arrive nothing changes. The check adds one
 buffer, one 4 KiB allocation and its mapping to device creation, in the
-same submissions and fence waits as 0066 (three rounds on such a host).
+same submission and fence wait as 0066.
 
 Evidence: docs/nvfb.md, docs/evidence/nvfb/.
 Origin: vmlab-win3d nvfb worker.
@@ -99,7 +101,7 @@ index 5487eb2..d2c0c37 100644
     const bool host_visible =
        mem_type->propertyFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 diff --git a/src/virtio/vulkan/vn_feedback.c b/src/virtio/vulkan/vn_feedback.c
-index b9fb710..b8e806e 100644
+index b9fb710..b7d326f 100644
 --- a/src/virtio/vulkan/vn_feedback.c
 +++ b/src/virtio/vulkan/vn_feedback.c
 @@ -7,6 +7,7 @@
@@ -110,7 +112,7 @@ index b9fb710..b8e806e 100644
  #include "vn_command_buffer.h"
  #include "vn_device.h"
  #include "vn_physical_device.h"
-@@ -904,22 +905,172 @@ vn_feedback_cmd_pools_fini(struct vn_device *dev)
+@@ -904,22 +905,170 @@ vn_feedback_cmd_pools_fini(struct vn_device *dev)
     vk_free(alloc, dev->fb_cmd_pools);
  }
  
@@ -273,10 +275,8 @@ index b9fb710..b8e806e 100644
 + *   type reads stale data. On failure, the device backs allocations of
 + *   that type with the cached type (vn_device_memory_alloc).
 + *
-+ * The commands go in one submission, waited for through the renderer with
-+ * a fence that has no feedback of its own (the renderer refuses the
-+ * blocking vkQueueWaitIdle), repeated up to three times while every write
-+ * arrives.
++ * The commands go in one submission, with a fence that has no feedback of
++ * its own (the renderer refuses the blocking vkQueueWaitIdle).
   */
  void
  vn_feedback_self_test(struct vn_device *dev)
@@ -293,7 +293,7 @@ index b9fb710..b8e806e 100644
        return;
  
     struct vn_queue *queue = NULL;
-@@ -939,70 +1090,144 @@ vn_feedback_self_test(struct vn_device *dev)
+@@ -939,70 +1088,143 @@ vn_feedback_self_test(struct vn_device *dev)
     }
     if (!queue)
        return;
@@ -385,25 +385,22 @@ index b9fb710..b8e806e 100644
 -   };
 -   result = vn_call_vkQueueSubmit(dev->primary_ring, queue_handle, 1, &submit,
 -                                  fence_handle);
--   if (result == VK_SUCCESS) {
--      result = vn_WaitForFences(dev_handle, 1, &fence_handle, VK_TRUE,
--                                5ull * 1000 * 1000 * 1000);
--   }
-+   /* A stale read needs the line to still be in the CPU cache when the GPU
-+    * writes, and other work can evict it first, so a clean round proves
-+    * little. Up to three rounds, each re-reading the words just before the
-+    * submission; the first stale read decides.
++   /* A stale read needs the line to be in the CPU cache when the GPU writes;
++    * other work can evict it first and hide the fault. So instead of a
++    * blocking wait, poll the fence and read the words on every iteration,
++    * which keeps their lines cached until the GPU has written them.
 +    */
 +   bool feedback_stale = false;
 +   bool type_stale[VK_MAX_MEMORY_TYPES] = { 0 };
-+   for (uint32_t round = 0; round < 3 && result == VK_SUCCESS; round++) {
-+      if (slot)
-+         vn_feedback_set_status(slot, VK_NOT_READY);
-+      for (uint32_t i = 0; i < check_count; i++) {
-+         *checks[i].ptr = 0;
-+         (void)*checks[i].ptr;
-+      }
-+
++   if (slot)
++      vn_feedback_set_status(slot, VK_NOT_READY);
++   for (uint32_t i = 0; i < check_count; i++) {
++      *checks[i].ptr = 0;
++      (void)*checks[i].ptr;
++   }
+    if (result == VK_SUCCESS) {
+-      result = vn_WaitForFences(dev_handle, 1, &fence_handle, VK_TRUE,
+-                                5ull * 1000 * 1000 * 1000);
 +      const VkSubmitInfo submit = {
 +         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
 +         .commandBufferCount = cmd_count,
@@ -412,47 +409,49 @@ index b9fb710..b8e806e 100644
 +      result = vn_call_vkQueueSubmit(dev->primary_ring,
 +                                     vn_queue_to_handle(queue), 1, &submit,
 +                                     fence_handle);
-+      if (result == VK_SUCCESS) {
-+         result = vn_WaitForFences(dev_handle, 1, &fence_handle, VK_TRUE,
-+                                   5ull * 1000 * 1000 * 1000);
-+      }
-+      if (result == VK_SUCCESS)
-+         result = vn_ResetFences(dev_handle, 1, &fence_handle);
-+      if (result != VK_SUCCESS)
-+         break;
++   }
++   if (result == VK_SUCCESS) {
++      const int64_t deadline = os_time_get_nano() + 5ll * 1000 * 1000 * 1000;
++      do {
++         if (slot)
++            (void)vn_feedback_get_status(slot);
++         for (uint32_t i = 0; i < check_count; i++)
++            (void)*checks[i].ptr;
++         result = vn_GetFenceStatus(dev_handle, fence_handle);
++      } while (result == VK_NOT_READY && os_time_get_nano() < deadline);
+    }
  
--   if (result == VK_SUCCESS) {
+    if (result == VK_SUCCESS) {
 -      /* The renderer saw the command complete. Allow the write a little
 -       * time to land before giving up on it.
-+      /* The renderer saw the commands complete. Allow the writes a little
-+       * time to land before calling them stale.
++      /* The renderer saw the commands complete. Allow the writes a moment
++       * to land before calling them stale.
         */
-       const int64_t end = os_time_get_nano() + 20 * 1000 * 1000;
+-      const int64_t end = os_time_get_nano() + 20 * 1000 * 1000;
 -      while (vn_feedback_get_status(slot) != VK_SUCCESS &&
 -             os_time_get_nano() < end)
+-         os_time_sleep(100);
+-
+-      if (vn_feedback_get_status(slot) != VK_SUCCESS) {
+-         vn_log(dev->instance,
+-                "feedback writes by the host GPU do not reach the guest; "
+-                "disabling fence, semaphore, event and query feedback");
+-         dev->feedback_disabled = true;
++      const int64_t end = os_time_get_nano() + 2 * 1000 * 1000;
 +      for (;;) {
 +         bool all = !slot || vn_feedback_get_status(slot) == VK_SUCCESS;
 +         for (uint32_t i = 0; i < check_count; i++)
 +            all = all && *checks[i].ptr == VN_HOST_WRITE_CHECK_VALUE;
 +         if (all || os_time_get_nano() >= end)
 +            break;
-          os_time_sleep(100);
-+      }
- 
--      if (vn_feedback_get_status(slot) != VK_SUCCESS) {
--         vn_log(dev->instance,
--                "feedback writes by the host GPU do not reach the guest; "
--                "disabling fence, semaphore, event and query feedback");
--         dev->feedback_disabled = true;
-+      bool stale = false;
+       }
++
 +      if (slot && vn_feedback_get_status(slot) != VK_SUCCESS)
-+         stale = feedback_stale = true;
++         feedback_stale = true;
 +      for (uint32_t i = 0; i < check_count; i++) {
 +         if (*checks[i].ptr != VN_HOST_WRITE_CHECK_VALUE)
-+            stale = type_stale[i] = true;
-       }
-+      if (stale)
-+         break;
++            type_stale[i] = true;
++      }
 +   }
 +
 +   if (feedback_stale) {
