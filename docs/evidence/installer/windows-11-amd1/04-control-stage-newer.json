@@ -1,0 +1,28 @@
+{
+    "action":  "stage C:\\win3d-repro\\newer-viogpudo\\viogpudo.inf",
+    "pnputil":  {
+                    "args":  "/add-driver C:\\win3d-repro\\newer-viogpudo\\viogpudo.inf /install",
+                    "exit":  0,
+                    "output":  "Microsoft PnP Utility\r\n\r\nAdding driver package:  viogpudo.inf\r\nDriver package added successfully.\r\nPublished Name:         oem16.inf\r\nDriver package installed on device: PCI\\VEN_1AF4\u0026DEV_1050\u0026SUBSYS_11001AF4\u0026REV_01\\3\u002611583659\u00260\u002618\r\n\r\nTotal driver packages:  1\r\nAdded driver packages:  1"
+                },
+    "before":  {
+                   "inf":  "oem15.inf",
+                   "original":  "viogpu3d.inf",
+                   "provider":  "Hardsoft Swed.",
+                   "date":  "2026-09-27",
+                   "version":  "100.6.101.58100",
+                   "rank":  "00F90000",
+                   "matching_id":  "pci\\ven_1af4\u0026dev_1050\u0026subsys_11001af4\u0026rev_01",
+                   "problem_code":  0
+               },
+    "after":  {
+                  "inf":  "oem16.inf",
+                  "original":  "viogpudo.inf",
+                  "provider":  "Red Hat, Inc.",
+                  "date":  "2026-12-31",
+                  "version":  "100.101.104.29900",
+                  "rank":  "00F90000",
+                  "matching_id":  "PCI\\VEN_1AF4\u0026DEV_1050\u0026SUBSYS_11001AF4\u0026REV_01",
+                  "problem_code":  0
+              }
+}

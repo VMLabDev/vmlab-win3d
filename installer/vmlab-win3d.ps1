@@ -14,7 +14,9 @@ Modes:
   Resume     Continue an install or uninstall after a reboot. Run by the
              vmlab-win3d-resume startup task.
   Repair     Put the D3D12 bridge back if Windows servicing replaced
-             d3d12.dll. Run by the vmlab-win3d-repair startup task.
+             d3d12.dll, and the device back on this package's driver if
+             another driver replaced it. Run by the vmlab-win3d-repair
+             startup task.
   Status     Print state.json.
 
 State lives in C:\ProgramData\vmlab-win3d:
@@ -267,16 +269,147 @@ function Get-Device([string]$HardwareId) {
 function Get-DeviceDriver([string]$InstanceId) {
     $p = @{}
     foreach ($k in 'DEVPKEY_Device_DriverInfPath', 'DEVPKEY_Device_DriverVersion', 'DEVPKEY_Device_DriverProvider',
-        'DEVPKEY_Device_ProblemCode', 'DEVPKEY_Device_Driver') {
+        'DEVPKEY_Device_ProblemCode', 'DEVPKEY_Device_Driver', 'DEVPKEY_Device_MatchingDeviceId', 'DEVPKEY_Device_DriverDate') {
         $p[$k] = (Get-PnpDeviceProperty -InstanceId $InstanceId -KeyName $k -ErrorAction SilentlyContinue).Data
     }
     return [ordered]@{
         inf = $p['DEVPKEY_Device_DriverInfPath']
         version = $p['DEVPKEY_Device_DriverVersion']
+        date = $(if ($p['DEVPKEY_Device_DriverDate']) { ([datetime]$p['DEVPKEY_Device_DriverDate']).ToUniversalTime().ToString('yyyy-MM-dd') } else { $null })
         provider = $p['DEVPKEY_Device_DriverProvider']
         problem_code = $p['DEVPKEY_Device_ProblemCode']
         driver_key = $p['DEVPKEY_Device_Driver']
+        matching_id = $p['DEVPKEY_Device_MatchingDeviceId']
     }
+}
+
+# ---------------------------------------------------------- driver pinning
+#
+# Another driver for the same hardware ID can take the device over: Windows
+# Update or pnputil adding a newer-dated viogpudo, for example. Three layers
+# keep this package bound (docs/installer.md):
+#   1. the INF's FeatureScore (E0) outranks the usual display score (F9);
+#   2. Install-DriverForced installs this package even when PnP ranks
+#      another one higher;
+#   3. the device installation policy "Prevent installation of devices that
+#      match any of these device instance IDs" (DenyInstanceIDs) names this
+#      one device instance, so PnP installs no other driver on it. Steps that
+#      change the device's driver lift it first (Unpin-Device), and uninstall
+#      puts it back as the baseline had it.
+
+$PolicyRoot = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall'
+$PolicyKey = "$PolicyRoot\Restrictions"
+$PolicyList = "$PolicyKey\DenyInstanceIDs"
+
+function Get-PinPolicy([string]$InstanceId) {
+    $r = Get-Item -LiteralPath $PolicyKey -ErrorAction SilentlyContinue
+    $l = Get-Item -LiteralPath $PolicyList -ErrorAction SilentlyContinue
+    $names = @()
+    if ($l) { $names = @($l.GetValueNames() | Where-Object { [string]$l.GetValue($_) -ieq $InstanceId }) }
+    return [ordered]@{
+        root_existed = Test-Path -LiteralPath $PolicyRoot
+        key_existed = [bool]$r
+        list_existed = [bool]$l
+        deny = $(if ($r -and ($r.GetValueNames() -contains 'DenyInstanceIDs')) { [int]$r.GetValue('DenyInstanceIDs') } else { $null })
+        listed = ($names.Count -gt 0)
+    }
+}
+
+# Record the policy as it was before the first pin. baseline.json from an
+# older package has no device_policy; it is added here, before any change.
+function Save-PolicyBaseline([string]$InstanceId) {
+    $b = Read-Json $BaselinePath
+    if (-not $b -or ($b.PSObject.Properties.Name -contains 'device_policy')) { return }
+    $b | Add-Member -NotePropertyName device_policy -NotePropertyValue (Get-PinPolicy $InstanceId)
+    Write-Json $BaselinePath $b
+    Write-Journal 'baseline: device installation policy recorded'
+}
+
+function Get-PolicyBaseline($Baseline) {
+    if ($Baseline -and ($Baseline.PSObject.Properties.Name -contains 'device_policy') -and $Baseline.device_policy) { return $Baseline.device_policy }
+    return [pscustomobject]@{ root_existed = $false; key_existed = $false; list_existed = $false; deny = $null; listed = $false }
+}
+
+function Pin-Device([string]$InstanceId) {
+    foreach ($k in $PolicyRoot, $PolicyKey, $PolicyList) {
+        # Not New-Item -Force on an existing key: that erases its values.
+        if (-not (Test-Path -LiteralPath $k)) { New-Item -Path $k | Out-Null }
+    }
+    $l = Get-Item -LiteralPath $PolicyList
+    if (-not @($l.GetValueNames() | Where-Object { [string]$l.GetValue($_) -ieq $InstanceId }).Count) {
+        $n = 1
+        while ($l.GetValueNames() -contains [string]$n) { $n++ }
+        New-ItemProperty -LiteralPath $PolicyList -Name ([string]$n) -PropertyType String -Value $InstanceId | Out-Null
+        Write-Journal "policy: DenyInstanceIDs\$n = $InstanceId"
+    }
+    $r = Get-Item -LiteralPath $PolicyKey
+    if (-not ($r.GetValueNames() -contains 'DenyInstanceIDs') -or [int]$r.GetValue('DenyInstanceIDs') -ne 1) {
+        New-ItemProperty -LiteralPath $PolicyKey -Name DenyInstanceIDs -PropertyType DWord -Value 1 -Force | Out-Null
+        Write-Journal 'policy: DenyInstanceIDs = 1'
+    }
+}
+
+# Take this device out of the policy and put the policy switch and keys back
+# as the baseline had them. Other entries in the list are left alone.
+function Unpin-Device([string]$InstanceId, $Saved) {
+    $l = Get-Item -LiteralPath $PolicyList -ErrorAction SilentlyContinue
+    if ($l) {
+        foreach ($n in @($l.GetValueNames() | Where-Object { [string]$l.GetValue($_) -ieq $InstanceId })) {
+            Remove-ItemProperty -LiteralPath $PolicyList -Name $n
+            Write-Journal "policy: removed DenyInstanceIDs\$n ($InstanceId)"
+        }
+    }
+    $r = Get-Item -LiteralPath $PolicyKey -ErrorAction SilentlyContinue
+    if ($r) {
+        $has = $r.GetValueNames() -contains 'DenyInstanceIDs'
+        if ($null -eq $Saved.deny -and $has) {
+            Remove-ItemProperty -LiteralPath $PolicyKey -Name DenyInstanceIDs
+            Write-Journal 'policy: removed DenyInstanceIDs'
+        } elseif ($null -ne $Saved.deny -and (-not $has -or [int]$r.GetValue('DenyInstanceIDs') -ne [int]$Saved.deny)) {
+            New-ItemProperty -LiteralPath $PolicyKey -Name DenyInstanceIDs -PropertyType DWord -Value ([int]$Saved.deny) -Force | Out-Null
+            Write-Journal "policy: DenyInstanceIDs = $($Saved.deny)"
+        }
+    }
+    foreach ($k in @(@($PolicyList, $Saved.list_existed), @($PolicyKey, $Saved.key_existed), @($PolicyRoot, $Saved.root_existed))) {
+        $item = Get-Item -LiteralPath $k[0] -ErrorAction SilentlyContinue
+        if ($item -and -not $k[1] -and -not $item.GetValueNames() -and -not $item.SubKeyCount) {
+            Remove-Item -LiteralPath $k[0]
+            Write-Journal "policy: removed key $($k[0])"
+        }
+    }
+}
+
+# Install $Inf on every device with $HardwareId even when PnP ranks another
+# driver higher: UpdateDriverForPlugAndPlayDevices with INSTALLFLAG_FORCE.
+function Install-DriverForced([string]$HardwareId, [string]$Inf) {
+    if (-not ('VmlabWin3d.NewDev' -as [type])) {
+        Add-Type -Namespace VmlabWin3d -Name NewDev -MemberDefinition @'
+[DllImport("newdev.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+[return: MarshalAs(UnmanagedType.Bool)]
+public static extern bool UpdateDriverForPlugAndPlayDevicesW(System.IntPtr hwnd, string hardwareId, string fullInfPath,
+    uint installFlags, [MarshalAs(UnmanagedType.Bool)] out bool rebootRequired);
+'@
+    }
+    $reboot = $false
+    $ok = [VmlabWin3d.NewDev]::UpdateDriverForPlugAndPlayDevicesW([IntPtr]::Zero, $HardwareId, $Inf, 1, [ref]$reboot) # INSTALLFLAG_FORCE
+    $err = [Runtime.InteropServices.Marshal]::GetLastWin32Error()
+    Write-Journal ("UpdateDriverForPlugAndPlayDevices {0} {1} FORCE -> {2} (error 0x{3:X8}, reboot {4})" -f $HardwareId, $Inf, $ok, $err, $reboot)
+    if (-not $ok) { throw ("UpdateDriverForPlugAndPlayDevices failed for {0} with {1}: error 0x{2:X8}" -f $HardwareId, $Inf, $err) }
+}
+
+# The drivers PnP considers for the device and their ranks, for the journal.
+function Write-DriverRanks([string]$InstanceId) {
+    try { Invoke-Native 'pnputil.exe' @('/enum-devices', '/instanceid', $InstanceId, '/drivers') @(0, 1, 87) | Out-Null }
+    catch { Write-Journal "could not list driver ranks: $($_.Exception.Message)" }
+}
+
+# The driver store INF of a published package (oemNN.inf), or $null.
+function Get-StoreInf([string]$Published) {
+    $d = @(Get-WindowsDriver -Online | Where-Object Driver -eq $Published)
+    if ($d.Count) { return $d[0].OriginalFileName }
+    $inbox = Join-Path $env:SystemRoot ('INF\' + $Published)
+    if (Test-Path -LiteralPath $inbox) { return $inbox }
+    return $null
 }
 
 # Our driver packages in the driver store: published name, store directory,
@@ -383,6 +516,7 @@ function New-Baseline($Bundle, $Device) {
             trusted_publisher = Test-CertInStore 'TrustedPublisher' $Bundle.Thumbprint
         }
         device = [ordered]@{ instance_id = $Device.InstanceId; driver = Get-DeviceDriver $Device.InstanceId }
+        device_policy = Get-PinPolicy $Device.InstanceId
         class_values = @(Get-RegValues (Get-DeviceKeys $Device.InstanceId).class $ClassValues)
         msi_values = @(Get-RegValues (Get-DeviceKeys $Device.InstanceId).msi $MsiValues)
         files = @($files)
@@ -510,32 +644,43 @@ function Step-Trust($Bundle) {
     }
 }
 
+# Bind the device to this package and pin it there (see "driver pinning").
 # Returns $true when the device's driver changed.
 function Step-Driver($Bundle, $Device) {
-    $changed = $false
-    foreach ($p in Get-OurPackages $Bundle.CatHash) {
-        if (-not $p.Current) {
-            Write-Journal "removing older package $($p.Published) ($($p.Directory))"
-            Invoke-Native 'pnputil.exe' @('/delete-driver', $p.Published, '/uninstall', '/force') @(0, 3010) | Out-Null
-            $changed = $true
-        }
-    }
+    $id = $Device.InstanceId
+    Save-PolicyBaseline $id
+    $older = @(Get-OurPackages $Bundle.CatHash | Where-Object { -not $_.Current })
     $ours = @(Get-OurPackages $Bundle.CatHash | Where-Object Current)
-    $bound = (Get-DeviceDriver $Device.InstanceId).inf
-    if ($ours.Count -eq 1 -and $bound -eq $ours[0].Published) {
-        Write-Journal "driver $bound already installed on $($Device.InstanceId)"
-        return $changed
+    $bound = (Get-DeviceDriver $id).inf
+    if (-not $older.Count -and $ours.Count -eq 1 -and $bound -eq $ours[0].Published) {
+        Write-Journal "driver $bound already installed on $id"
+        Pin-Device $id
+        return $false
+    }
+    # The policy would stop this step's own driver changes too.
+    Unpin-Device $id (Get-PolicyBaseline (Read-Json $BaselinePath))
+    foreach ($p in $older) {
+        Write-Journal "removing older package $($p.Published) ($($p.Directory))"
+        Invoke-Native 'pnputil.exe' @('/delete-driver', $p.Published, '/uninstall', '/force') @(0, 3010) | Out-Null
     }
     # 259: the package is in the store already and no device needed it.
     Invoke-Native 'pnputil.exe' @('/add-driver', $Bundle.Inf, '/install') @(0, 259, 3010) | Out-Null
     $ours = @(Get-OurPackages $Bundle.CatHash | Where-Object Current)
     if ($ours.Count -ne 1) { throw "pnputil did not publish the package (found $($ours.Count))" }
-    $drv = Get-DeviceDriver $Device.InstanceId
+    $drv = Get-DeviceDriver $id
     if ($drv.inf -ne $ours[0].Published) {
-        throw ("The display device uses {0} {1}, not this package's {2}. A better-ranked driver for {3} is in the driver store; remove it with 'pnputil /delete-driver {0} /uninstall' and run Install.cmd again." -f
-            $drv.inf, $drv.version, $ours[0].Published, $Bundle.HardwareId)
+        Write-Journal ("PnP chose {0} ({1} {2} {3}) over {4}; installing {4} with INSTALLFLAG_FORCE" -f
+            $drv.inf, $drv.provider, $drv.date, $drv.version, $ours[0].Published)
+        Write-DriverRanks $id
+        Install-DriverForced $Bundle.HardwareId (Join-Path $ours[0].Directory 'viogpu3d.inf')
+        $drv = Get-DeviceDriver $id
+        if ($drv.inf -ne $ours[0].Published) {
+            throw ("The display device still uses {0} {1} after a forced install of {2}." -f $drv.inf, $drv.version, $ours[0].Published)
+        }
     }
-    Write-Journal "driver $($drv.inf) $($drv.version) installed on $($Device.InstanceId)"
+    Pin-Device $id
+    Write-DriverRanks $id
+    Write-Journal "driver $($drv.inf) $($drv.version) installed on $id and pinned"
     return $true
 }
 
@@ -662,6 +807,8 @@ function Test-Installed($Bundle, $Device) {
     $drv = Get-DeviceDriver $Device.InstanceId
     if ($ours.Count -ne 1 -or $drv.inf -ne $ours[0].Published) { $problems += "device driver is $($drv.inf), not this package" }
     if ($drv.problem_code -ne 0) { $problems += "device problem code $($drv.problem_code)" }
+    $pin = Get-PinPolicy $Device.InstanceId
+    if (-not $pin.listed -or $pin.deny -ne 1) { $problems += "device is not pinned (DenyInstanceIDs $($pin.deny), listed $($pin.listed))" }
     if ($drv.driver_key) {
         $k = Get-Item -LiteralPath ("HKLM:\SYSTEM\CurrentControlSet\Control\Class\" + $drv.driver_key)
         $umd = @($k.GetValue('UserModeDriverName'))
@@ -781,21 +928,32 @@ function Invoke-Remove($Baseline) {
         }
     }
 
-    # The driver package. Deleting it with /uninstall puts the next best
-    # driver (the template's viogpudo) back on the device.
+    # The driver package. The pin goes first: while it is in place PnP
+    # installs no driver on the device once this package is gone. Deleting
+    # the package with /uninstall puts the best remaining driver on the
+    # device; when that is not the baseline driver (a newer viogpudo that
+    # arrived after the install, say), the baseline driver is forced back.
+    $id = $Baseline.device.instance_id
+    $policy = Get-PolicyBaseline $Baseline
+    Unpin-Device $id $policy
     foreach ($p in Get-OurPackages '-') {
         Invoke-Native 'pnputil.exe' @('/delete-driver', $p.Published, '/uninstall', '/force') @(0, 3010) | Out-Null
     }
-    $device = Get-PnpDevice -InstanceId $Baseline.device.instance_id -ErrorAction SilentlyContinue
-    if ($device -and (Get-DeviceDriver $device.InstanceId).inf -ne $Baseline.device.driver.inf) {
+    $device = Get-PnpDevice -InstanceId $id -ErrorAction SilentlyContinue
+    if ($device -and (Get-DeviceDriver $id).inf -ne $Baseline.device.driver.inf) {
         Invoke-Native 'pnputil.exe' @('/scan-devices') | Out-Null
     }
-    if ($device -and (Get-DeviceDriver $device.InstanceId).inf -ne $Baseline.device.driver.inf) {
-        $prev = Join-Path $env:SystemRoot ('INF\' + $Baseline.device.driver.inf)
-        $store = @(Get-WindowsDriver -Online | Where-Object Driver -eq $Baseline.device.driver.inf)
-        if ($store.Count) { $prev = $store[0].OriginalFileName }
-        Invoke-Native 'pnputil.exe' @('/add-driver', $prev, '/install') @(0, 259, 3010) | Out-Null
+    if ($device -and (Get-DeviceDriver $id).inf -ne $Baseline.device.driver.inf) {
+        $now = Get-DeviceDriver $id
+        Write-Journal "device uses $($now.inf) $($now.date) $($now.version), baseline $($Baseline.device.driver.inf); restoring the baseline driver"
+        Write-DriverRanks $id
+        $prev = Get-StoreInf $Baseline.device.driver.inf
+        if (-not $prev) { throw "The baseline driver $($Baseline.device.driver.inf) is no longer in the driver store" }
+        $match = $(if ($Baseline.device.driver.PSObject.Properties.Name -contains 'matching_id' -and $Baseline.device.driver.matching_id) {
+            $Baseline.device.driver.matching_id } else { $bundle.HardwareId })
+        Install-DriverForced $match $prev
     }
+    if ($policy.listed) { Pin-Device $id }
     # Values the INF wrote into the class and hardware keys, which the
     # restored driver reuses.
     if ($device) {
@@ -868,6 +1026,11 @@ function Test-Removed($Baseline) {
     if ((Test-CertInStore 'TrustedPublisher' $Baseline.certificates.thumbprint) -ne $Baseline.certificates.trusted_publisher) { $problems += 'TrustedPublisher certificate not restored' }
     if ((Get-HibernateState).hibernate_enabled -ne $Baseline.power.hibernate_enabled) { $problems += 'hibernation not restored' }
     foreach ($a in $Arches) { if (Test-Path -LiteralPath (Join-Path $a.Dir 'vmlab-win3d')) { $problems += "$($a.Dir)\vmlab-win3d remains" } }
+    $want = Get-PolicyBaseline $Baseline
+    $pin = Get-PinPolicy $Baseline.device.instance_id
+    foreach ($k in 'root_existed', 'key_existed', 'list_existed', 'deny', 'listed') {
+        if ($pin[$k] -ne $want.$k) { $problems += "device installation policy $k is $($pin[$k]), baseline $($want.$k)" }
+    }
     if (@(Get-OurPackages '-').Count) { $problems += 'a viogpu3d package remains in the driver store' }
     return $problems
 }
@@ -956,6 +1119,20 @@ try {
             $baseline = Read-Json $BaselinePath
             foreach ($a in $Arches) {
                 if (Install-Bridge $bundle $baseline $a) { Write-Journal "repair: re-applied the D3D12 bridge for $($a.Name)" }
+            }
+            # Put the device back on this package if something replaced its
+            # driver (a policy refresh that dropped the pin, for example),
+            # and the pin back if it is gone.
+            $id = $baseline.device.instance_id
+            $ours = @(Get-OurPackages $bundle.CatHash | Where-Object Current)
+            if ((Get-PnpDevice -InstanceId $id -ErrorAction SilentlyContinue) -and $ours.Count -eq 1) {
+                $drv = Get-DeviceDriver $id
+                if ($drv.inf -ne $ours[0].Published) {
+                    Write-Journal "repair: device uses $($drv.inf) $($drv.date) $($drv.version); reinstalling $($ours[0].Published)"
+                    Unpin-Device $id (Get-PolicyBaseline $baseline)
+                    Install-DriverForced $bundle.HardwareId (Join-Path $ours[0].Directory 'viogpu3d.inf')
+                }
+                Pin-Device $id
             }
             Clear-Trash
         }

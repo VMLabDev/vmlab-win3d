@@ -386,7 +386,11 @@ hardware colour-key or mirror blits, so DirectDraw emulates them on the CPU
 - The installer accepts only the hardware ID
   `PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01`, the virtio-gpu device QEMU
   presents.
-- If Windows Update brings a newer Red Hat `viogpudo` with a later driver
-  date, it outranks this package for the same device. The installer then
-  stops with the `pnputil /delete-driver` command to run (`docs/install.md`,
-  "Troubleshooting").
+- While the package is installed, no other driver can be installed on the
+  display device. The installer pins the device instance with the device
+  installation policy `DenyInstanceIDs`, so a newer Red Hat `viogpudo` from
+  Windows Update cannot replace this package. Windows Update reports that
+  install as failed, and Device Manager's "Update driver" is refused. The
+  INF's `FeatureScore=E0` already outranks `viogpudo` whatever its date, and
+  the installer forces the package on when PnP prefers another driver.
+  Uninstall removes the pin ([installer.md](installer.md)).

@@ -1,0 +1,28 @@
+{
+    "action":  "stage C:\\win3d-repro\\hostile-viogpudo\\viogpudo.inf",
+    "pnputil":  {
+                    "args":  "/add-driver C:\\win3d-repro\\hostile-viogpudo\\viogpudo.inf /install",
+                    "exit":  -536870328,
+                    "output":  "Microsoft PnP Utility\r\n\r\nAdding driver package:  viogpudo.inf\r\nDriver package added successfully.\r\nPublished Name:         oem17.inf\r\nUnable to install driver package: The installation of this device is forbidden by system policy. Contact your system administrator.\r\n\r\nTotal driver packages:  1\r\nAdded driver packages:  0"
+                },
+    "before":  {
+                   "inf":  "oem15.inf",
+                   "original":  "viogpu3d.inf",
+                   "provider":  "Hardsoft Swed.",
+                   "date":  "2026-09-27",
+                   "version":  "100.6.101.58100",
+                   "rank":  "00E00000",
+                   "matching_id":  "pci\\ven_1af4\u0026dev_1050\u0026subsys_11001af4\u0026rev_01",
+                   "problem_code":  0
+               },
+    "after":  {
+                  "inf":  "oem15.inf",
+                  "original":  "viogpu3d.inf",
+                  "provider":  "Hardsoft Swed.",
+                  "date":  "2026-09-27",
+                  "version":  "100.6.101.58100",
+                  "rank":  "00E00000",
+                  "matching_id":  "pci\\ven_1af4\u0026dev_1050\u0026subsys_11001af4\u0026rev_01",
+                  "problem_code":  0
+              }
+}

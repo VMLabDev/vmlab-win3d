@@ -1,0 +1,40 @@
+{
+    "action":  "scan",
+    "pnputil":  {
+                    "args":  "/scan-devices",
+                    "exit":  0,
+                    "output":  "Microsoft PnP Utility\r\n\r\nScanning for device hardware changes.\r\nScan complete."
+                },
+    "usoclient_exit":  -2147023838,
+    "seconds":  240,
+    "wu_events":  [
+                      "2026-10-06T02:19:50 26 Windows Update successfully found 0 updates.",
+                      "2026-10-06T02:19:47 26 Windows Update successfully found 0 updates.",
+                      "2026-10-06T02:07:55 41 An update was downloaded.",
+                      "2026-10-06T02:07:43 41 An update was downloaded.",
+                      "2026-10-06T02:07:29 41 An update was downloaded."
+                  ],
+    "before":  {
+                   "inf":  "oem15.inf",
+                   "original":  "viogpu3d.inf",
+                   "provider":  "Hardsoft Swed.",
+                   "date":  "2026-09-27",
+                   "version":  "100.6.101.58100",
+                   "rank":  "00E00000",
+                   "matching_id":  "pci\\ven_1af4\u0026dev_1050\u0026subsys_11001af4\u0026rev_01",
+                   "problem_code":  0
+               },
+    "after":  {
+                  "inf":  "oem15.inf",
+                  "original":  "viogpu3d.inf",
+                  "provider":  "Hardsoft Swed.",
+                  "date":  "2026-09-27",
+                  "version":  "100.6.101.58100",
+                  "rank":  "00E00000",
+                  "matching_id":  "pci\\ven_1af4\u0026dev_1050\u0026subsys_11001af4\u0026rev_01",
+                  "problem_code":  0
+              },
+    "changes":  [
+
+                ]
+}

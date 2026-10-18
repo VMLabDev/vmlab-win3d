@@ -1,0 +1,80 @@
+
+[19:47:30] == lab win3d-installer-nvidia2 on Nvidia2 (template windows-11@26100.1742.5)
+first-boot: provisioning win...
+first-boot: agent busy (win: no vmlab-agent answered on the agent channel — the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: specialize complete; clearing marker
+first-boot: settling staged AppX (LKG) before first logon
+first-boot: appx: removed MicrosoftWindows.Client.AIX_1000.26100.29.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.AccountsService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.IrisService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.Search_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed NcsiUwpApp_1000.25128.1000.0_neutral_neutral_8wekyb3d8bbwe
+removed MdOdrMcpFilterPackage_1.0.0.0_neutral__cw5n1h2txyewy
+first-boot: rebooting once to settle shell reconciliation
+warning: agent: could not update "win" (agent=f1e4515 → agent=817cfd4): "win": the pushed agent is installed at C:\ProgramData\vmlab\vmlab-agent.exe but the agent answering is still agent=f1e4515 — the service did not restart onto it; `vmlab vm restart win` loads it; set agent_update = false on the vm to stop trying
+first-boot: win ready
+lab "win3d-installer-nvidia2" is up
+pushed 6264 bytes to win:C:/win3d-repro/Test-DriverPin.ps1
+
+[19:51:30] == 1 baseline
+  baseline: oem7.inf (viogpudo.inf, Red Hat, Inc., 2025-07-09, 100.101.104.28500, rank 00F90000, problem 0); policy None None; installer NotInstalled
+
+[19:51:38] == pull the template's viogpudo and build the repro inputs
+pulled 11886 bytes to /home/wil/dev/vmlab-win3d-wt/installer/.scratch/installer-repro/nvidia2/viogpudo/viogpudo.cat
+pulled 2889 bytes to /home/wil/dev/vmlab-win3d-wt/installer/.scratch/installer-repro/nvidia2/viogpudo/viogpudo.inf
+pulled 109736 bytes to /home/wil/dev/vmlab-win3d-wt/installer/.scratch/installer-repro/nvidia2/viogpudo/viogpudo.sys
+pushed 3 file(s), 107381 bytes to win:C:/win3d-repro/newer-viogpudo
+pushed 3 file(s), 107381 bytes to win:C:/win3d-repro/hostile-viogpudo
+
+[19:51:51] == 2 control: the installer and INF before the fix
+  install-into-vm.sh --bundle /home/wil/dev/vmlab-win3d-wt/installer/out/installer-repro/control-bundle -> 0
+  control-installed: oem15.inf (viogpu3d.inf, Hardsoft Swed., 2026-09-27, 100.6.101.58100, rank 00F90000, problem 0); policy None None; installer Installed 
+  control-after-newer: oem16.inf (viogpudo.inf, Red Hat, Inc., 2026-12-31, 100.101.104.29900, rank 00F90000, problem 0); policy None None; installer Installed 
+
+[19:56:15] == 3 fix: install this bundle (upgrade)
+  install-into-vm.sh  -> 0
+  fixed-installed: oem15.inf (viogpu3d.inf, Hardsoft Swed., 2026-09-27, 100.6.101.58100, rank 00E00000, problem 0); policy {'DenyInstanceIDs': 1} 1=PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18; installer Installed 
+
+[19:57:32] == 4 stage the newer and the hostile viogpudo again
+  after-stage: oem15.inf (viogpu3d.inf, Hardsoft Swed., 2026-09-27, 100.6.101.58100, rank 00E00000, problem 0); policy {'DenyInstanceIDs': 1} 1=PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18; installer Installed 
+
+[19:57:42] == 5 pnputil /scan-devices and Windows Update scan
+  after-scan: oem15.inf (viogpu3d.inf, Hardsoft Swed., 2026-09-27, 100.6.101.58100, rank 00E00000, problem 0); policy {'DenyInstanceIDs': 1} 1=PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18; installer Installed 
+
+[20:01:52] == 6 reboot
+  after-reboot: oem15.inf (viogpu3d.inf, Hardsoft Swed., 2026-09-27, 100.6.101.58100, rank 00E00000, problem 0); policy {'DenyInstanceIDs': 1} 1=PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18; installer Installed 
+
+[20:04:01] == 7 uninstall
+  install-into-vm.sh --uninstall -> 0
+  removed: oem7.inf (viogpudo.inf, Red Hat, Inc., 2025-07-09, 100.101.104.28500, rank 00F90000, problem 0); policy None None; installer Removed 
+
+[20:07:04] == 8 reinstall with both fakes in the store, then rerun
+  install-into-vm.sh  -> 0
+  reinstalled: oem15.inf (viogpu3d.inf, Hardsoft Swed., 2026-09-27, 100.6.101.58100, rank 00E00000, problem 0); policy {'DenyInstanceIDs': 1} 1=PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18; installer Installed 
+  install-into-vm.sh  -> 0
+  rerun: oem15.inf (viogpu3d.inf, Hardsoft Swed., 2026-09-27, 100.6.101.58100, rank 00E00000, problem 0); policy {'DenyInstanceIDs': 1} 1=PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18; installer Installed 
+
+[20:10:22] == 9 uninstall again
+  install-into-vm.sh --uninstall -> 0
+  removed-again: oem7.inf (viogpudo.inf, Red Hat, Inc., 2025-07-09, 100.101.104.28500, rank 00F90000, problem 0); policy None None; installer Removed 
+
+[20:12:03] == checks
+PASS  baseline: the template's viogpudo drives the device  (oem7.inf viogpudo.inf 2025-07-09 rank 00F90000 problem 0)
+PASS  control: the old installer binds viogpu3d  (oem15.inf viogpu3d.inf 2026-09-27 rank 00F90000 problem 0)
+PASS  control: a newer-dated viogpudo then takes the device (the bug)  (oem16.inf viogpudo.inf 2026-12-31 rank 00F90000 problem 0)
+PASS  fix: the upgrade binds viogpu3d again  (oem15.inf viogpu3d.inf 2026-09-27 rank 00E00000 problem 0)
+PASS  fix: the rank carries FeatureScore E0  (00E00000)
+Traceback (most recent call last):
+  File "/home/wil/dev/vmlab-win3d-wt/installer/docs/evidence/installer/src/check.py", line 71, in <module>
+    check("fix: the device is pinned (DenyInstanceIDs)", pinned("fixed-installed"), policy("fixed-installed"))
+                                                         ~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/wil/dev/vmlab-win3d-wt/installer/docs/evidence/installer/src/check.py", line 49, in pinned
+    ids = [x.split("=", 1)[1] for x in (p.get("deny_instance_ids") or [])]
+           ~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+lab "win3d-installer-nvidia2" destroyed
