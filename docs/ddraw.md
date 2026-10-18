@@ -13,12 +13,12 @@ egl-headless patch, and virglrenderer 1.3.0. The evidence is in
 
 | Item | Before | After |
 | --- | --- | --- |
-| Colour-key blits (`DDBLT_KEYSRC`) | The HAL reports no `DDCKEYCAPS_SRCBLT`, so DirectDraw emulates them on the CPU through `Lock`. 50 blits of 128×128 take 440 to 460 ms on Nvidia1 | Drawn on the GPU by `patches/mesa/0035`. The HAL reports `DDCAPS_COLORKEY` and `DDCKEYCAPS_SRCBLT`. 50 blits take 1.4 to 9 ms, including the final readback |
+| Colour-key blits (`DDBLT_KEYSRC`) | The HAL reports no `DDCKEYCAPS_SRCBLT`, so DirectDraw emulates them on the CPU through `Lock`. 50 blits of 128×128 take 440 to 460 ms on Nvidia1 | Drawn on the GPU by `patches/mesa/0035`. The HAL reports `DDCAPS_COLORKEY` and `DDCKEYCAPS_SRCBLT`. 50 blits take 1.4 to 10.4 ms, including the final readback |
 | Mirror blits (`DDBLTFX_MIRRORLEFTRIGHT`, `MIRRORUPDOWN`) | Not in the HAL's `dwFXCaps`, so emulated | Drawn on the GPU. The HAL reports `DDFXCAPS_BLTMIRRORLEFTRIGHT` and `BLTMIRRORUPDOWN` |
 | Pixel match with the emulation layer | — | Exact: 13 cases × 3 formats, x64 and x86, on Nvidia1 and AMD1 (`ddblit`) |
 | `ddcaps` (0012 to 0014) | Pass | Pass, with the colour-key and mirror steps now `"hal": true` |
 | Fullscreen exclusive, 32 bpp (640×480, 800×600, 1024×768), x64 and x86 | Works: the mode set, the flip chain, `Flip`, pixel checks on the front buffer, and restoring the desktop mode | The same |
-| Fullscreen exclusive, 16 bpp (640×480×16, 800×600×16), **32-bit (x86) program** | Works. Windows' 32-bit `ddraw.dll` offers 8 and 16 bpp modes and emulates them | The same: 300 flips per mode, every pixel check matching |
+| Fullscreen exclusive, 16 bpp (640×480×16, 800×600×16), **32-bit (x86) program** | Not run. The mode emulation is Windows' own: its 32-bit `ddraw.dll` offers 8 and 16 bpp modes | Works: 300 flips per mode, every pixel check matching |
 | Fullscreen exclusive, 16 bpp, **64-bit (x64) program** | `SetDisplayMode` fails with `DDERR_UNSUPPORTED`: no 16-bit mode is listed | Unchanged ([16 bpp modes](#16-bpp-modes)) |
 | Fullscreen frame rate | 2 to 8 flips per second on Nvidia1 | The same; 9 to 29 on AMD1. The Blt-model present limits it, and that present is shared with D3D9 ([Frame rate](#frame-rate)) |
 
