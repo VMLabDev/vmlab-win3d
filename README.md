@@ -37,8 +37,9 @@ off.
   as the GPU's `qemu_binary` ([nvidia](docs/nvidia.md),
   [acceptance](docs/acceptance.md#nvidia-rtx-5090)), on both cards. The
   DirectX SDK D3D9 samples render there too after `patches/mesa/0022` to
-  `0025` ([xid69](docs/xid69.md), [nvtex](docs/nvtex.md)). On a laptop RTX 4060 the GPU fell off the
-  bus during a run ([zeus](docs/zeus.md)).
+  `0025` ([xid69](docs/xid69.md), [nvtex](docs/nvtex.md)). On a laptop RTX 4060 (driver 615.71) Vulkan,
+  D3D12 and OpenGL clients hang because Venus feedback writes never reach the
+  guest; D3D9 and D3D11 work ([zeus](docs/zeus.md)).
 - Uninstall returns the guest to its state before the install
   ([evidence](docs/evidence/package/README.md)).
 

@@ -65,14 +65,14 @@ run on NVIDIA. The acceptance evidence that shows the hang is
 the Done evidence before the stretch applications, so a hang there costs only
 the application results.
 
-> **Warning: the RTX 4060 failure needed a host reboot.** On Zeus, the NVIDIA
-> GSP failed to boot during a Venus run (`Failed to boot GSP`, then Xid 119,
-> Xid 79 "GPU has fallen off the bus"). QEMU aborted, `nvidia-smi` found no
-> devices, and the GPU stayed unusable until Zeus rebooted. The evidence cannot
-> separate runtime power management, the laptop's power state and the
-> workload as the trigger. Do not run Venus on a laptop NVIDIA GPU that
-> anything else depends on, and watch any repeat run
-> (`docs/evidence/zeus/nvidia/kernel-nvrm.txt`).
+> **The RTX 4060 once needed a host reboot.** On 2026-10-17 the NVIDIA GSP
+> failed to boot during a Venus run on Zeus (Xid 119, then Xid 79 "GPU has
+> fallen off the bus"), and only a reboot recovered it
+> (`docs/evidence/zeus/nvidia/kernel-nvrm.txt`). It did not recur on
+> 2026-10-19 across 52 runtime-power resumes under Venus, with or without a
+> keep-awake helper. The 4060's remaining failure is a different one: Venus
+> feedback writes from the host GPU never reach the guest, so Vulkan, D3D12
+> and OpenGL clients hang ([zeus.md](zeus.md)).
 
 On a host with an AMD or Intel GPU and an NVIDIA GPU, declare both in the host
 config and name the AMD or Intel GPU in the lab with `host_gpu`. vmlab then
