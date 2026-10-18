@@ -66,6 +66,7 @@ or Intel GPU as declared in the host config, `~/.config/vmlab/config.wcl`
 | [xid69.md](xid69.md) | See why D3D9 depth draws into the back buffer hung the RTX 5090 (Xid 69) and how `patches/mesa/0022` fixed it |
 | [nvtex.md](nvtex.md) | See why mipmapped textures were black on NVIDIA, and the fixed-function and 16-bit format fixes `patches/mesa/0023` to `0025` |
 | [ds.md](ds.md) | See why D3D11 domain shaders that index patch constants removed the device, and the fix `patches/mesa/0030` |
+| [ffp.md](ffp.md) | See how D3D9 fixed function was tested against the reference rasterizer, and the software-vertex-processing, fog and point fixes `patches/mesa/0040` to `0042` |
 
 ## Building
 

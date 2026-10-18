@@ -303,13 +303,7 @@ OpenGL and Vulkan, x64 and x86), two diagnostic probes (`probes/dxut-enum`,
 - Blender 4.2.3 (OpenGL 4.3) renders its UI and viewport.
 
 D3D9 fixed function goes through the shaders that the Windows runtime
-generates. With `patches/mesa/0024`, pre-transformed (`XYZRHW`) vertices with
-any colour and texture-coordinate layout draw; before it, only two layouts
-did. `docs/evidence/nvtex/src/d3d9_tex.cpp` tests one texture stage,
-pre-transformed and transformed vertices, and one directional light.
-Multi-stage blending, texture transforms, texture-coordinate generation, fog
-and point sprites under fixed function have not been tested
-([`nvtex.md`](nvtex.md#what-fixed-function-still-lacks)).
+generates; its coverage and what it still lacks are in the next section.
 
 D3D10 has no probe here, and no D3D12 application other than the probe has
 run (see below). The prior art ran real applications on its own builds of the
@@ -331,6 +325,32 @@ issues from the prior art:
   graphics fault.
 - DXVK 3.1.1 has a clear-only black-frame bug in its D3D9/D3D11 path. This
   package uses only DXVK's DXGI, for D3D12, which the bug does not affect.
+
+### D3D9 fixed function: what is and is not covered
+
+`docs/evidence/ffp/src/d3d9_ffp.cpp` checks 168 fixed-function cases
+against Microsoft's reference rasterizer: texture-stage blending with up to
+four stages, texture transforms and coordinate generation, vertex and table
+fog, lighting, alpha test and blending, point sprites, and transformed and
+pre-transformed vertices, with hardware and with software vertex
+processing ([`ffp.md`](ffp.md)). With `patches/mesa/0040` to `0042` every
+case matches on `Nvidia2` and `AMD1` except two spotlight cases, where the
+Windows runtime's own vertex processing differs from the reference's by up
+to 12/255 on a few pixels; the reference fed by the runtime's software
+vertex processing matches the driver exactly. Not tested:
+
+- vertex blending with more than one weight, indexed vertex blending and
+  tweening;
+- bump-environment-map stage operations (`BUMPENVMAP`, `BUMPENVMAPLUMINANCE`)
+  and `PREMODULATE`;
+- texture coordinate generation into cube and volume textures;
+- W-buffering, multisampling and wide lines;
+- `D3DCREATE_MIXED_VERTEXPROCESSING` switching between the two modes;
+- Windows 10 (the UMD is the same DLL).
+
+Table fog chooses W fog from the projection's W range, which the runtime
+reports through `UpdateWInfo`; a perspective projection reported with
+`WNear == WFar` would get Z fog.
 
 ### DXUT (June 2010) D3D11 samples place their window off the screen
 

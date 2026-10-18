@@ -157,6 +157,10 @@ diffuse in the vertex) checks that.
 
 ### What fixed function still lacks
 
+Superseded by [`ffp.md`](ffp.md), which tests these and fixes what failed
+(`patches/mesa/0040` to `0042`, including `XYZRHW` vertices with `PSIZE`).
+As written for `0024`:
+
 The probe covers the vertex formats above, one texture stage, and lighting
 with one directional light. These are not covered and not tested:
 
