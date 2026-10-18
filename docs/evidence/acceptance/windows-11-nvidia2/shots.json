@@ -1,72 +1,172 @@
 {
   "x64-d3d9_probe": {
-    "frames": 12,
-    "frames_with_window": 0,
-    "visible": false,
-    "animating": false,
-    "png": null
+    "frames": 13,
+    "frames_with_window": 9,
+    "visible": true,
+    "animating": true,
+    "png": "console-x64-d3d9_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "5dcd3e47"
+    }
   },
   "x86-d3d9_probe": {
-    "frames": 12,
-    "frames_with_window": 0,
-    "visible": false,
-    "animating": false,
-    "png": null
+    "frames": 13,
+    "frames_with_window": 9,
+    "visible": true,
+    "animating": true,
+    "png": "console-x86-d3d9_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "93322785"
+    }
   },
   "x64-d3d11_probe": {
     "frames": 12,
-    "frames_with_window": 0,
-    "visible": false,
-    "animating": false,
-    "png": null
+    "frames_with_window": 9,
+    "visible": true,
+    "animating": true,
+    "png": "console-x64-d3d11_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "76cd6466"
+    }
   },
   "x86-d3d11_probe": {
-    "frames": 12,
-    "frames_with_window": 0,
-    "visible": false,
-    "animating": false,
-    "png": null
+    "frames": 13,
+    "frames_with_window": 9,
+    "visible": true,
+    "animating": true,
+    "png": "console-x86-d3d11_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "a0feabb3"
+    }
   },
   "x64-d3d12_probe": {
-    "frames": 12,
-    "frames_with_window": 0,
-    "visible": false,
-    "animating": false,
-    "png": null
+    "frames": 13,
+    "frames_with_window": 8,
+    "visible": true,
+    "animating": true,
+    "png": "console-x64-d3d12_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "4b781e7e"
+    }
   },
   "x86-d3d12_probe": {
-    "frames": 12,
-    "frames_with_window": 0,
-    "visible": false,
-    "animating": false,
-    "png": null
+    "frames": 13,
+    "frames_with_window": 8,
+    "visible": true,
+    "animating": true,
+    "png": "console-x86-d3d12_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "63587ea5"
+    }
   },
   "x64-opengl_probe": {
     "frames": 12,
-    "frames_with_window": 0,
-    "visible": false,
-    "animating": false,
-    "png": null
+    "frames_with_window": 9,
+    "visible": true,
+    "animating": true,
+    "png": "console-x64-opengl_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "eec40c30"
+    }
   },
   "x86-opengl_probe": {
     "frames": 12,
-    "frames_with_window": 0,
-    "visible": false,
-    "animating": false,
-    "png": null
+    "frames_with_window": 9,
+    "visible": true,
+    "animating": true,
+    "png": "console-x86-opengl_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "8fcc3259"
+    }
   },
   "x64-vulkan_probe": {
     "frames": 12,
-    "frames_with_window": 0,
-    "visible": false,
-    "animating": false,
-    "png": null
+    "frames_with_window": 9,
+    "visible": true,
+    "animating": true,
+    "png": "console-x64-vulkan_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "dc7132b7"
+    }
   },
   "x86-vulkan_probe": {
-    "frames": 12,
-    "frames_with_window": 0,
-    "visible": false,
-    "animating": false,
-    "png": null
+    "frames": 13,
+    "frames_with_window": 9,
+    "visible": true,
+    "animating": true,
+    "png": "console-x86-vulkan_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "e1e5f6f1"
+    }
   }
 }
