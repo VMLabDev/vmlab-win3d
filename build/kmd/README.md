@@ -4,7 +4,7 @@ Builds the Yttrium viogpu3d kernel-mode display driver (KMD), its two
 user-mode helpers, and the INF files, for x64 Windows 10 and 11. The source is
 `arehnman/yttrium-virtio-gpu` at tag `yttrium-experimental-2026-09-27`
 (`b99d951a1c97f6fb3a1adbc08a4d2ab9ce9f5a15`), a fork of virtio-win's
-kvm-guest-drivers-windows, plus the patch in `patches/kmd/`.
+kvm-guest-drivers-windows, plus the patches in `patches/kmd/`.
 
 Upstream builds with Visual Studio and the WDK on Windows. This build runs on
 Linux: clang-cl and lld-link from llvm-mingw compile and link against the
@@ -145,8 +145,10 @@ Debian packages are pinned by version in `Dockerfile`: `python3`, `xz-utils`,
 | Patch | What it does |
 | --- | --- |
 | `0001-kmd-r10-copy.patch` | Converts R10G10B10A2 sources to 8-bit RGBA or BGRA in the KMD's CPU present blit, so 10-bit back buffers present correctly. It is a byte-identical copy of the prior art's `R/kmd-r10-copy.patch` on the same base (prior-art §2.2, `NW` F93). |
+| `0002-kmd-cache-gdi-shadow-and-staging-surfaces.patch` | Sets `Flags.Cached` on the GDI shadow and staging surfaces, the destination of every Blt present, so the KMD's CPU present copy does not write uncached memory. It took D3D9 windowed presents from 25–31 fps to the refresh rate on AMD hosts ([`docs/present.md`](../../docs/present.md)). |
 
-The patch has no mail header. `PINS` records its sha256 and origin.
+0001 has no mail header; 0002 has a short one, which `patch` skips. `PINS`
+records each patch's sha256 and origin.
 
 ## Reproducibility
 

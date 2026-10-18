@@ -1,0 +1,44 @@
+Subject: [PATCH] d3d9: put DirectDraw present sources in host-cached memory
+
+A DirectDraw Blt to the primary reaches the KMD as a Blt present whose
+source is the application's off-screen plain surface (patch 0014). On
+Venus the KMD carries that out as a CPU copy out of the source's blob
+mapping. The KMD maps a blob with the cache type the host reports for it,
+and virglrenderer reports device-local, host-visible memory as
+write-combined, so the copy read the source uncached. On hosts with an AMD
+CPU, whose KVM keeps the guest's memory type, a 1280x720 Blt took 38 ms
+even with the destination fixed (KMD patch 0002).
+
+DirectDraw present sources now ask for host-cached memory
+(YTTRIUM_GDI_RESOURCE_FLAG_CPU_READBACK), as DiscardRenderTarget resources
+and the D3D10/11 path's non-shared BIND_PRESENT resources already do.
+D3D9 swapchain back buffers do not need it: with KMD 0002 alone they
+present at the refresh rate up to 1280x720.
+
+Evidence: docs/present.md, docs/evidence/present/.
+Origin: vmlab-win3d present worker.
+---
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Resource.cpp b/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
+index ae9ab75..b221c1c 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
+@@ -2769,11 +2769,17 @@ D3D9CreateResource(HANDLE hDevice, D3DDDIARG_CREATERESOURCE *data)
+             templ.nr_samples = 1;
+          templ.nr_storage_samples = templ.nr_samples;
+          templ.bind = D3D9PipeBind(data);
+-         if (D3D9ResourceIsDDrawPresentSource(device, data))
++         const bool ddraw_present_source =
++            D3D9ResourceIsDDrawPresentSource(device, data);
++         if (ddraw_present_source)
+             templ.bind |= PIPE_BIND_RENDER_TARGET | PIPE_BIND_DISPLAY_TARGET |
+                           PIPE_BIND_SHARED;
+          templ.usage = D3D9PipeUsage(data->Pool);
+-         if (yttrium && data->Flags.DiscardRenderTarget)
++         /* A DirectDraw Blt to the primary reaches the KMD as a Blt present,
++          * which the KMD carries out on Venus as a CPU copy out of the
++          * source's blob mapping. Device-local memory is mapped
++          * write-combined, so that copy read the source uncached. */
++         if (yttrium && (data->Flags.DiscardRenderTarget || ddraw_present_source))
+             templ.flags |= YTTRIUM_GDI_RESOURCE_FLAG_CPU_READBACK;
+          if (msaa_primary)
+             templ.bind &= ~PIPE_BIND_DISPLAY_TARGET;

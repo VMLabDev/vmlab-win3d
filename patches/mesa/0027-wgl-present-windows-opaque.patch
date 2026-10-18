@@ -1,0 +1,35 @@
+Subject: [PATCH] wgl: present windows opaque through kopper
+
+stw_st_fill_private_loader_data() set has_alpha for every window, so Zink's
+Win32 swapchain asked for VK_COMPOSITE_ALPHA_PRE_MULTIPLIED, and the Win32
+WSI created its DXGI composition swapchain with
+DXGI_ALPHA_MODE_PREMULTIPLIED. DWM then blended whatever alpha an
+application left in its back buffer with the desktop behind the window.
+Blender 4.2 leaves alpha below one in much of its UI, and its window was
+translucent on Windows 10. The OpenGL probe writes alpha one and was opaque.
+
+A WGL window is opaque on Windows: GDI and DWM's redirection surfaces
+ignore the framebuffer's alpha. The swapchain now asks for
+VK_COMPOSITE_ALPHA_OPAQUE, which the WSI maps to DXGI_ALPHA_MODE_IGNORE.
+
+Evidence: docs/present.md, docs/evidence/present/ (src/gl_alpha.c).
+Origin: vmlab-win3d present worker.
+---
+diff --git a/src/gallium/frontends/wgl/stw_st.c b/src/gallium/frontends/wgl/stw_st.c
+index 06506ef..0506be5 100644
+--- a/src/gallium/frontends/wgl/stw_st.c
++++ b/src/gallium/frontends/wgl/stw_st.c
+@@ -141,7 +141,12 @@ stw_st_fill_private_loader_data(struct stw_st_framebuffer *stwfb, struct kopper_
+    win32->flags = 0;
+    win32->hinstance = GetModuleHandle(NULL);
+    win32->hwnd = stwfb->fb->hWnd;
+-   out->has_alpha = true;
++   /* A WGL window is opaque on Windows: GDI and DWM's redirection surfaces
++    * ignore the framebuffer's alpha. Kopper's Win32 swapchain is a DXGI
++    * composition swapchain whose alpha mode follows this flag, so with
++    * alpha the compositor would blend whatever alpha the application left
++    * in its back buffer with the desktop behind the window. */
++   out->has_alpha = false;
+ }
+ #endif
+ /**
