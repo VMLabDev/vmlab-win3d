@@ -5,7 +5,7 @@ fixes it. It also records how the failure was reproduced, what was tried, and
 who owns each fix. The diagnosis cites files under `docs/evidence/nvidia/`;
 the acceptance runs are under `docs/evidence/acceptance/windows-11-nvidia1/`
 and `windows-11-nvidia2/`. Diagnosis: 2026-10-17. Acceptance on vmlab
-0.27.0-alpha: 2026-10-18.
+0.27.0-alpha (`Nvidia2`: 0.28.0-alpha): 2026-10-18.
 
 ## Result
 
@@ -33,19 +33,16 @@ The DirectX SDK's D3D9 `BasicHLSL` sample, a stretch application, hangs the
 guest on NVIDIA with a host Xid 69 ([known limits](known-limits.md#host-gpu-support)).
 
 The same run on the second RTX 5090, `--host-gpu Nvidia2`
-(`0000:05:00.0`), shows that the PCI filter puts the guest on that card:
-one Venus device, every render server on `0000:05:00.0`, and the filter
-line `kept NVIDIA GeForce RTX 5090, hid 1`. Its console is black, though,
-because helios's host config gives `Nvidia2` no `qemu_binary`, so vmlab ran
-the stock `qemu-system-x86_64` from `PATH` (fault 2 below). The fix is one
-line in `~/.config/vmlab/config.wcl`:
-
-```wcl
-gpu "Nvidia2" {
-  address     = "0000:05:00.0"
-  qemu_binary = "/home/wil/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64"
-}
-```
+(`0000:05:00.0`, `renderD130`), also passes 12 of 12 on vmlab 0.28.0-alpha
+now that helios's host config names the same patched QEMU as `Nvidia2`'s
+`qemu_binary` (`docs/evidence/acceptance/windows-11-nvidia2/`, 2026-10-18,
+commit `99ad0c1`): one Venus device, every probe on the console,
+`vmlab: argv:` starting with the `qemu_binary`, `VMLAB_VK_PCI_ADDRESS=0000:05:00.0`,
+the filter line `vmlab-pci-filter: 0000:05:00.0: kept NVIDIA GeForce RTX 5090, hid 1`,
+and `status -v`: `host_gpu=Nvidia2 qemu=<path>`. This run has no
+`nvidia-smi` capture; the earlier stock-QEMU run on `Nvidia2` (black
+console, 4 of 12; git history at `a58acd3`) had every render server on
+`0000:05:00.0`.
 
 Two separate faults stopped it. Neither is a bug in the NVIDIA driver.
 
@@ -299,8 +296,8 @@ vmlab 0.26.0-alpha added two optional attributes to a host GPU block in
   joined by `:`, not `=`: `qemu_env = { VKR_DEBUG: "validate" }`.
 
 Give every NVIDIA GPU that a Venus lab may use a `qemu_binary`. For
-helios that is the following; as of 2026-10-18 the real config gives only
-`Nvidia1` one:
+helios that is the following, and since 2026-10-18 the real config gives
+both `Nvidia1` and `Nvidia2` one:
 
 ```wcl
 import <vmlab-host.wcl>
