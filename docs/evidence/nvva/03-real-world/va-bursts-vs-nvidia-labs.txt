@@ -1,0 +1,28 @@
+01:50 Xid05 1 win3d-compat-nvidia2 win3d-d3d12app-nv1 win3d-e2e-windows-11-nvidia2 win3d-ffp2-nv2 win3d-ffp2-w10-nv2 win3d-n5-w11-nv1 win3d-wu-nvidia1
+02:02 VA 11 win3d-d3d12app-nv1 win3d-e2e-windows-11-nvidia2 win3d-ffp2-nv2 win3d-ffp2-w10-nv2 win3d-n5-w11-nv1 win3d-wu-nvidia1
+02:03 VA 5 win3d-d3d12app-nv1 win3d-e2e-windows-11-nvidia2 win3d-ffp2-nv2 win3d-ffp2-w10-nv2 win3d-n5-w11-nv1 win3d-wu-nvidia1
+02:04 VA 3 win3d-d3d12app-nv1 win3d-e2e-windows-11-nvidia2 win3d-ffp2-nv2 win3d-ffp2-w10-nv2 win3d-n5-w11-nv1 win3d-wu-nvidia1
+02:06 VA 25 win3d-d3d12app-nv1 win3d-e2e-windows-11-nvidia2 win3d-ffp2-nv2 win3d-ffp2-w10-nv2 win3d-n5-w11-nv1 win3d-wu-nvidia1
+02:10 VA 4 win3d-d3d12app-nv1 win3d-e2e-windows-11-nvidia2 win3d-ffp2-nv2 win3d-ffp2-w10-nv2 win3d-n5-w11-nv1 win3d-wu-nvidia1
+02:11 VA 7 win3d-d3d12app-nv1 win3d-e2e-windows-11-nvidia2 win3d-ffp2-nv2 win3d-ffp2-w10-nv2 win3d-n5-w11-nv1 win3d-wu-nvidia1
+02:12 VA 6 win3d-d3d12app-nv1 win3d-e2e-windows-11-nvidia2 win3d-ffp2-nv2 win3d-ffp2-w10-nv2 win3d-n5-w11-nv1 win3d-wu-nvidia1
+02:13 VA 2 win3d-d3d12app-nv1 win3d-e2e-windows-11-nvidia2 win3d-ffp2-nv2 win3d-ffp2-w10-nv2 win3d-n5-w11-nv1 win3d-wu-nvidia1
+02:14 VA 2 win3d-d3d12app-nv1 win3d-e2e-windows-11-nvidia2 win3d-ffp2-nv2 win3d-ffp2-w10-nv2 win3d-n5-w11-nv1 win3d-wu-nvidia1
+02:15 VA 2 win3d-d3d12app-nv1 win3d-e2e-windows-11-nvidia2 win3d-ffp2-nv2 win3d-ffp2-w10-nv2 win3d-n5-w11-nv1 win3d-wu-nvidia1
+02:16 VA 18 win3d-d3d12app-nv1 win3d-e2e-windows-11-nvidia2 win3d-ffp2-nv2 win3d-ffp2-w10-nv2 win3d-n5-w11-nv1 win3d-wu-nvidia1
+02:18 VA 13 win3d-d3d12app-nv1 win3d-e2e-windows-11-nvidia2 win3d-ffp2-nv2 win3d-ffp2-w10-nv2 win3d-n5-w11-nv1 win3d-wu-nvidia1
+02:19 VA 6 win3d-d3d12app-nv1 win3d-e2e-windows-11-nvidia2 win3d-ffp2-nv2 win3d-ffp2-w10-nv2 win3d-n5-w11-nv1 win3d-wu-nvidia1
+02:22 VA 2 win3d-d3d12app-nv1 win3d-e2e-windows-11-nvidia2 win3d-ffp2-nv2 win3d-ffp2-w10-nv2 win3d-n5-w11-nv1 win3d-wu-nvidia1
+02:23 VA 2 win3d-compat-nvidia2 win3d-d3d12app-nv1 win3d-ffp2-nv2 win3d-ffp2-w10-nv2 win3d-n5-w11-nv1 win3d-wu-nvidia1
+02:57 VA 2 win3d-compat-nvidia2 win3d-d3d12app-nv1 win3d-ffp2-e2e-w10-nvidia2 win3d-ffp2-e2e-w11-nvidia2 win3d-shaders2-e2e-nv1 win3d-wu-nvidia1
+03:04 Xid05 1 win3d-compat-nvidia2 win3d-d3d12app-nv1 win3d-ffp2-e2e-w10-nvidia2 win3d-ffp2-e2e-w11-nvidia2 win3d-shaders2-e2e-nv1
+03:05 VA 3 win3d-compat-nvidia2 win3d-d3d12app-nv1 win3d-ffp2-e2e-w10-nvidia2 win3d-ffp2-e2e-w11-nvidia2 win3d-shaders2-e2e-nv1
+04:09 VA 15 win3d-dwmheap-nv1a win3d-dwmheap-nv1b
+04:11 VA 15 win3d-dwmheap-nv1a win3d-dwmheap-nv1b
+04:34 VA 12 win3d-dwmheap-nv1a win3d-dwmheap-nv1b win3d-ei-nv2 win3d-gzdoom-nvidia2
+04:41 VA 2 win3d-dwmheap-nv1a win3d-dwmheap-nv1b win3d-ei-nv2 win3d-gzdoom-nvidia2
+04:44 VA 4 win3d-dwmheap-nv1a win3d-dwmheap-nv1b win3d-ei-nv2 win3d-gzdoom-nvidia2
+05:02 VA 4 win3d-dwmheap-nv1a win3d-ei-nv2 win3d-gzdoom-nvidia2 win3d-unid3d-nvidia2 win3d-unigl-f4-nvidia1
+05:03 VA 3 win3d-dwmheap-nv1a win3d-ei-nv2 win3d-gzdoom-nvidia2 win3d-unid3d-nvidia2 win3d-unigl-f4-nvidia1
+05:04 VA 7 win3d-dwmheap-nv1a win3d-ei-nv2 win3d-gzdoom-nvidia2 win3d-unid3d-nvidia2 win3d-unigl-f4-nvidia1
+05:05 VA 5 win3d-dwmheap-nv1a win3d-ei-nv2 win3d-gzdoom-nvidia2 win3d-unid3d-nvidia2 win3d-unigl-f4-nvidia1

@@ -1,0 +1,7 @@
+stage: s4-three-vms-plus-hog  labs: a b c  minutes: 6  host hog: 82 MiB (dma-buf mapped, so about twice that in BAR1)
+from 2026-10-19T06:25:57+10:00 to 2026-10-19T06:32:18+10:00
+a: runs 14, pass 14, not pass 0
+b: runs 14, pass 14, not pass 0
+c: runs 13, pass 13, not pass 0
+new 'can't alloc VA space' kernel lines: 4
+highest BAR1 used: 243 MiB of 256

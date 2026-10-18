@@ -86,6 +86,23 @@ NVIDIA failure (`vkGetImageMemoryRequirements resulted in CS error` and a
 black console; `docs/evidence/host/good-none/`, `min-none/`). It is
 historical: `docs/nvidia.md` names the cause.
 
+### Two Windows VMs per RTX 5090 without resizable BAR
+
+Helios's RTX 5090s run with resizable BAR off, so each card has a 256 MiB
+BAR1 aperture that every process and VM on the card shares. Venus guests
+fill it. Each Windows VM takes about 40 MiB at an idle desktop and 60 MiB
+while it renders, mostly for the Yttrium UMD's shared images. With three VMs
+on a card, BAR1 runs out: the host kernel logs `NVRM: dmaAllocMapping_GM107:
+can't alloc VA space for mapping`, and guest Venus contexts die (dwm or
+applications report ring timeouts, often in `vkGetImageSubresourceLayout`).
+`patches/mesa/0070` (with `0086`) keeps Vulkan, DXVK, vkd3d-proton and Zink
+memory out of BAR1, but not the UMD's images.
+
+Run at most two Windows VMs per RTX 5090, counting the host desktop on
+`Nvidia1` as part of the load, or turn on resizable BAR in the host's
+firmware. Integrated GPUs and resizable-BAR hosts are not affected. Cause,
+numbers and the dropped UMD change: [nvva.md](nvva.md).
+
 ### Requires vmlab 0.27.0-alpha or later
 
 vmlab 0.23 did not give a working Venus guest from `gpu { mode = "vulkan" }`.
