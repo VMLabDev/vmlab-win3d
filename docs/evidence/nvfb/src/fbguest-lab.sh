@@ -9,7 +9,8 @@
 #
 # The lab is win3d-nvfb-<host_gpu, lower case>, in .scratch/fbguest-<gpu>/;
 # it is destroyed at the end unless --keep (then FBGUEST_REUSE=1 runs the
-# tests again in it without a new install).
+# tests again in it without a new install; FBGUEST_LABDIR names another
+# lab directory, such as one tests/e2e/run.sh --keep left).
 set -uo pipefail
 REPO=$(cd "$(dirname "$0")/../../../.." && pwd)
 export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
@@ -17,7 +18,7 @@ export PATH=$HOME/.local/bin:$PATH
 GPU=$1 BUNDLE=$(cd "$2" && pwd) KEEP=${4:-}
 mkdir -p "$3"; OUT=$(cd "$3" && pwd)
 LAB=win3d-nvfb-${GPU,,}
-LABDIR=$REPO/.scratch/fbguest-${GPU,,}
+LABDIR=${FBGUEST_LABDIR:-$REPO/.scratch/fbguest-${GPU,,}}
 VM=win
 mkdir -p "$LABDIR"
 cd "$LABDIR"

@@ -118,10 +118,26 @@ main(int argc, char **argv)
       .queueCreateInfoCount = 1,
       .pQueueCreateInfos = &qci,
    };
+   /* Device creation time, for the cost of Venus's feedback self-test
+    * (patches/mesa/0066): the median of 11 create/destroy pairs. */
    VkDevice dev;
-   double t0 = now_us();
-   CHECK(vkCreateDevice(pd, &dci, NULL, &dev));
-   printf("vkCreateDevice %.0f us\n", now_us() - t0);
+   double times[11];
+   for (int i = 0; i < 11; i++) {
+      double t0 = now_us();
+      CHECK(vkCreateDevice(pd, &dci, NULL, &dev));
+      times[i] = now_us() - t0;
+      if (i < 10)
+         vkDestroyDevice(dev, NULL);
+   }
+   for (int i = 0; i < 11; i++)
+      for (int j = i + 1; j < 11; j++)
+         if (times[j] < times[i]) {
+            double t = times[i];
+            times[i] = times[j];
+            times[j] = t;
+         }
+   printf("vkCreateDevice median %.0f us (min %.0f, max %.0f, 11 runs)\n",
+          times[5], times[0], times[10]);
    VkQueue queue;
    vkGetDeviceQueue(dev, 0, 0, &queue);
    VkCommandPoolCreateInfo pci = {

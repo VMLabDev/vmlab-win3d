@@ -64,6 +64,7 @@ or Intel GPU as declared in the host config, `~/.config/vmlab/config.wcl`
 | [d3d12app.md](d3d12app.md) | See how Microsoft's D3D12 samples are built unmodified with clang-cl and xwin, how they ran on AMD1 and Nvidia1, and why ExecuteIndirect draws nothing |
 | [nvidia.md](nvidia.md) | See why Venus failed on the RTX 5090 and what fixes it: `patches/mesa/0020` and a patched QEMU |
 | [zeus.md](zeus.md) | See the package on an Intel Iris Xe (passes with `patches/mesa/0021`) and a laptop RTX 4060 (Venus feedback writes invisible to the guest) |
+| [nvfb.md](nvfb.md) | See why Venus fences hung on the RTX 4060 Laptop (GPU writes to uncached memory invisible to the guest) and the fixes `patches/mesa/0065` and `0066` |
 | [xid69.md](xid69.md) | See why D3D9 depth draws into the back buffer hung the RTX 5090 (Xid 69) and how `patches/mesa/0022` fixed it |
 | [nvtex.md](nvtex.md) | See why mipmapped textures were black on NVIDIA, and the fixed-function and 16-bit format fixes `patches/mesa/0023` to `0025` |
 | [ds.md](ds.md) | See why D3D11 domain shaders that index patch constants removed the device, and the fix `patches/mesa/0030` |

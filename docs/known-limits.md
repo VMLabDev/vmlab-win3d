@@ -17,7 +17,7 @@ result depends on the host GPU. Four were tried:
 | AMD Radeon iGPU (Granite Ridge), RADV, Mesa 26.2.2 | helios | **Full pass**: every Done check in `docs/brief.md` item 2, on `windows-11` and `windows-10` | A plain vmlab lab that names the AMD GPU (`host_gpu = "AMD1"`; the final runs used vmlab 0.25.0-alpha at commit `6105889`) | [`acceptance.md`](acceptance.md) |
 | NVIDIA RTX 5090, 610.57.04 | helios | **Full pass**, 12 of 12 Done checks, through `tests/e2e/run.sh`: `windows-11` and `windows-10` on `Nvidia1` (vmlab 0.27.0-alpha) and `windows-11` on `Nvidia2` (vmlab 0.28.0-alpha); the guest lists exactly one Venus device. Depth draws into the back buffer need `patches/mesa/0022`, and mipmapped D3D9 textures need `0023` (below) | `patches/mesa/0020`, `0022` and `0023` (in the package) **and** the patched QEMU (the VMLabDev/qemu commit in `patches/host/PINS`) as the GPU's `qemu_binary` in the host config. Helios's host config gives both `Nvidia1` and `Nvidia2` one; without it the probes render but the console is black | [`acceptance.md`](acceptance.md#nvidia-rtx-5090), [`nvidia.md`](nvidia.md) |
 | Intel Iris Xe (Raptor Lake-P), ANV, Mesa 26.2.2 | Zeus | **Full pass** on `windows-11`, 12 of 12 Done checks. Without `patches/mesa/0021`, dwm crash-loops and the console is black | `patches/mesa/0021` (in the package) | [`zeus.md`](zeus.md) |
-| NVIDIA RTX 4060 Max-Q (laptop), 615.71.09 | Zeus | **Fails, 7 of 12** (2026-10-19, `main`, the patched QEMU, vmlab 0.28): install, vulkaninfo, D3D9 and D3D11 pass, but every Vulkan-API client (Vulkan, D3D12 through vkd3d-proton, OpenGL through Zink) hangs on its first fence, because the guest never sees the host's writes to Venus's fence and semaphore feedback memory. With that feedback off in the guest (`VN_PERF=no_fence_feedback,no_semaphore_feedback,no_event_feedback,no_query_feedback`, a diagnostic setting the package does not make) it passes 11 of 12 twice; one OpenGL readback per run stays black. No Xid in 52 runtime-D3 resumes; the 2026-10-17 GPU loss (Xid 79) did not recur | The patched QEMU as `qemu_binary`; a fix for the feedback fault, not yet known | [`zeus.md`](zeus.md#nvidia-rtx-4060) |
+| NVIDIA RTX 4060 Max-Q (laptop), 615.71.09 | Zeus | **Passes 12 of 12 in one run, 11 of 12 in the other** (2026-10-19, `6dabb22` of branch `work/nvfb`, package defaults, the patched QEMU, vmlab 0.28). Without `patches/mesa/0065` every Vulkan-API client (Vulkan, D3D12 through vkd3d-proton, OpenGL through Zink) hung on its first fence: on this host the guest never sees the GPU's writes to uncached host-visible memory (type 2), where Venus kept its fence and semaphore feedback. The failing check is an OpenGL readback that comes back black in about one run in three; that fault is older than the fix and is not solved. Guest reads of GPU-written type-2 memory stay stale on this host; nothing in the package does them | `patches/mesa/0065` and `0066` (in the package) and the patched QEMU as `qemu_binary` | [`nvfb.md`](nvfb.md), [`zeus.md`](zeus.md#nvidia-rtx-4060) |
 
 All four hosts ran QEMU 11.1.1 (on NVIDIA, the vmlab QEMU built on it) and
 virglrenderer 1.3.0. No other GPU or driver version was tried. On
@@ -70,9 +70,10 @@ the application results.
 > fallen off the bus"), and only a reboot recovered it
 > (`docs/evidence/zeus/nvidia/kernel-nvrm.txt`). It did not recur on
 > 2026-10-19 across 52 runtime-power resumes under Venus, with or without a
-> keep-awake helper. The 4060's remaining failure is a different one: Venus
-> feedback writes from the host GPU never reach the guest, so Vulkan, D3D12
-> and OpenGL clients hang ([zeus.md](zeus.md)).
+> keep-awake helper. The 4060's other failure was a different one: Venus
+> feedback writes from the host GPU never reached the guest, so Vulkan, D3D12
+> and OpenGL clients hung. `patches/mesa/0065` and `0066` fix it
+> ([nvfb.md](nvfb.md)).
 
 On a host with an AMD or Intel GPU and an NVIDIA GPU, declare both in the host
 config and name the AMD or Intel GPU in the lab with `host_gpu`. vmlab then
