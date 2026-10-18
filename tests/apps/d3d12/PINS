@@ -1,0 +1,8 @@
+# Third-party binaries tests/apps/d3d12/run.sh downloads and installs in the
+# guest. Not committed; fetched into .scratch/apps-d3d12/cache/ and checked here.
+# name  sha256  url
+# Visual C++ 2015-2022 x64 runtime 14.44.35211, the redistributable of the CRT
+# the samples are built against (build/d3d12-samples/PINS crt-version
+# 14.44.17.14). The URL and hash are the Microsoft.VisualCpp.Redist.14
+# payload in the pinned Visual Studio manifest.
+vcredist-x64  cc0ff0eb1dc3f5188ae6300faef32bf5beeba4bdd6e8e445a9184072096b713b  https://download.visualstudio.microsoft.com/download/pr/990c720a-46ce-4dc7-87b9-c2eb615d34b9/CC0FF0EB1DC3F5188AE6300FAEF32BF5BEEBA4BDD6E8E445A9184072096B713B/VC_redist.x64.exe
