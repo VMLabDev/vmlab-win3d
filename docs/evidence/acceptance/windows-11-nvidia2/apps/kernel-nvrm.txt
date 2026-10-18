@@ -1,3 +1,0 @@
-Oct 18 11:37:01 helios kernel: NVRM: GPU at PCI:0000:05:00: GPU-1b303823-5ac9-74a6-1072-3c4e16f729a4
-Oct 18 11:37:01 helios kernel: NVRM: GPU Board Serial Number: 0
-Oct 18 11:37:01 helios kernel: NVRM: Xid (PCI:0000:05:00): 69, pid=3123958, name=vkr-ring-115, Class Error: channel 0x00000032, Class 0000ce97, Offset 0000026c, Data 000000a8, ErrorCode 0000009c

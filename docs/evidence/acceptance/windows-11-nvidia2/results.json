@@ -1,6 +1,6 @@
 {
-  "evidence_dir": "/home/wil/dev/vmlab-win3d-wt/nvidia-e2e/docs/evidence/acceptance/windows-11-nvidia2",
-  "passed": false,
+  "evidence_dir": "/home/wil/dev/vmlab-win3d-wt/nv2/docs/evidence/acceptance/windows-11-nvidia2",
+  "passed": true,
   "rows": [
     {
       "item": "1",
@@ -69,81 +69,81 @@
     {
       "item": "2",
       "check": "Direct3D 9 (x64) renders on the GPU and shows on the console",
-      "result": "FAIL",
-      "evidence": "probes/x64-d3d9_probe.run.json, probes/x64-d3d9_probe.modules.txt, (no png)",
-      "note": "probe window not found in any console capture",
+      "result": "pass",
+      "evidence": "probes/x64-d3d9_probe.run.json, probes/x64-d3d9_probe.modules.txt, console-x64-d3d9_probe.png",
+      "note": "Hardsoft VirtIO GPU 3D controller, 21.0 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating",
       "counts": true
     },
     {
       "item": "2",
       "check": "Direct3D 9 (x86) renders on the GPU and shows on the console",
-      "result": "FAIL",
-      "evidence": "probes/x86-d3d9_probe.run.json, probes/x86-d3d9_probe.modules.txt, (no png)",
-      "note": "probe window not found in any console capture",
+      "result": "pass",
+      "evidence": "probes/x86-d3d9_probe.run.json, probes/x86-d3d9_probe.modules.txt, console-x86-d3d9_probe.png",
+      "note": "Hardsoft VirtIO GPU 3D controller, 19.94 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating",
       "counts": true
     },
     {
       "item": "2",
       "check": "Direct3D 11 (x64) renders on the GPU and shows on the console",
-      "result": "FAIL",
-      "evidence": "probes/x64-d3d11_probe.run.json, probes/x64-d3d11_probe.modules.txt, (no png)",
-      "note": "probe window not found in any console capture",
+      "result": "pass",
+      "evidence": "probes/x64-d3d11_probe.run.json, probes/x64-d3d11_probe.modules.txt, console-x64-d3d11_probe.png",
+      "note": "Hardsoft VirtIO GPU 3D controller, 58.12 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating",
       "counts": true
     },
     {
       "item": "2",
       "check": "Direct3D 11 (x86) renders on the GPU and shows on the console",
-      "result": "FAIL",
-      "evidence": "probes/x86-d3d11_probe.run.json, probes/x86-d3d11_probe.modules.txt, (no png)",
-      "note": "probe window not found in any console capture",
+      "result": "pass",
+      "evidence": "probes/x86-d3d11_probe.run.json, probes/x86-d3d11_probe.modules.txt, console-x86-d3d11_probe.png",
+      "note": "Hardsoft VirtIO GPU 3D controller, 58.03 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating",
       "counts": true
     },
     {
       "item": "2",
       "check": "Direct3D 12 (x64) renders on the GPU and shows on the console",
-      "result": "FAIL",
-      "evidence": "probes/x64-d3d12_probe.run.json, probes/x64-d3d12_probe.modules.txt, (no png)",
-      "note": "probe window not found in any console capture",
+      "result": "pass",
+      "evidence": "probes/x64-d3d12_probe.run.json, probes/x64-d3d12_probe.modules.txt, console-x64-d3d12_probe.png",
+      "note": "Hardsoft VirtIO GPU 3D controller, 51.39 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating",
       "counts": true
     },
     {
       "item": "2",
       "check": "Direct3D 12 (x86) renders on the GPU and shows on the console",
-      "result": "FAIL",
-      "evidence": "probes/x86-d3d12_probe.run.json, probes/x86-d3d12_probe.modules.txt, (no png)",
-      "note": "probe window not found in any console capture",
+      "result": "pass",
+      "evidence": "probes/x86-d3d12_probe.run.json, probes/x86-d3d12_probe.modules.txt, console-x86-d3d12_probe.png",
+      "note": "Hardsoft VirtIO GPU 3D controller, 53.24 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating",
       "counts": true
     },
     {
       "item": "2",
       "check": "OpenGL (x64) renders on the GPU and shows on the console",
-      "result": "FAIL",
-      "evidence": "probes/x64-opengl_probe.run.json, probes/x64-opengl_probe.modules.txt, (no png)",
-      "note": "probe window not found in any console capture",
+      "result": "pass",
+      "evidence": "probes/x64-opengl_probe.run.json, probes/x64-opengl_probe.modules.txt, console-x64-opengl_probe.png",
+      "note": "zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY)), 60.63 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating",
       "counts": true
     },
     {
       "item": "2",
       "check": "OpenGL (x86) renders on the GPU and shows on the console",
-      "result": "FAIL",
-      "evidence": "probes/x86-opengl_probe.run.json, probes/x86-opengl_probe.modules.txt, (no png)",
-      "note": "probe window not found in any console capture",
+      "result": "pass",
+      "evidence": "probes/x86-opengl_probe.run.json, probes/x86-opengl_probe.modules.txt, console-x86-opengl_probe.png",
+      "note": "zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY)), 59.88 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating",
       "counts": true
     },
     {
       "item": "2",
       "check": "Vulkan (x64) renders on the GPU and shows on the console",
-      "result": "FAIL",
-      "evidence": "probes/x64-vulkan_probe.run.json, probes/x64-vulkan_probe.modules.txt, (no png)",
-      "note": "probe window not found in any console capture",
+      "result": "pass",
+      "evidence": "probes/x64-vulkan_probe.run.json, probes/x64-vulkan_probe.modules.txt, console-x64-vulkan_probe.png",
+      "note": "Virtio-GPU Venus (NVIDIA GeForce RTX 5090), 57.72 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating",
       "counts": false
     },
     {
       "item": "2",
       "check": "Vulkan (x86) renders on the GPU and shows on the console",
-      "result": "FAIL",
-      "evidence": "probes/x86-vulkan_probe.run.json, probes/x86-vulkan_probe.modules.txt, (no png)",
-      "note": "probe window not found in any console capture",
+      "result": "pass",
+      "evidence": "probes/x86-vulkan_probe.run.json, probes/x86-vulkan_probe.modules.txt, console-x86-vulkan_probe.png",
+      "note": "Virtio-GPU Venus (NVIDIA GeForce RTX 5090), 57.76 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating",
       "counts": false
     },
     {
