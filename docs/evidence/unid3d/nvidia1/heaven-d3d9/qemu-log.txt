@@ -1,0 +1,2 @@
+virgl_render_server[1497107]: vkr: vkCmdPipelineBarrier resulted in CS error
+virgl_render_server[1497107]: vkr: ring_submit_cmd: vn_dispatch_command failed

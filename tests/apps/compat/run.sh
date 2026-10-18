@@ -60,12 +60,15 @@ GPU=${HOST_GPU,,}
 # address (0000:05:00.0 -> "PCI:0000:05:00"); amdgpu lines name the driver.
 GPU_ADDR=$(awk -v g="gpu \"$HOST_GPU\"" 'index($0, g) { inb = 1 } inb && match($0, /address *= *"[^"]*"/) { v = substr($0, RSTART, RLENGTH); sub(/^[^"]*"/, "", v); sub(/"$/, "", v); print v; exit }' "${XDG_CONFIG_HOME:-$HOME/.config}/vmlab/config.wcl")
 case $HOST_GPU in Nvidia*) KPAT="Xid \(PCI:${GPU_ADDR%.*}\)" ;; *) KPAT='amdgpu' ;; esac
-LAB=win3d-compat-$GPU
+# COMPAT_LAB and COMPAT_EV let a worker run the sweep in its own lab and
+# write the evidence elsewhere (defaults: win3d-compat-<gpu>,
+# docs/evidence/compat/<gpu>).
+LAB=${COMPAT_LAB:-win3d-compat-$GPU}
 VM=win
-WORK=$REPO/.scratch/compat/$GPU
+WORK=$REPO/.scratch/compat/${COMPAT_LAB:-$GPU}
 LABDIR=$WORK/lab
 CACHE=$REPO/.scratch/compat/cache
-EV=$REPO/docs/evidence/compat/$GPU
+EV=${COMPAT_EV:-$REPO/docs/evidence/compat/$GPU}
 QLOG=${XDG_STATE_HOME:-$HOME/.local/state}/vmlab/labs/$LAB/vms/$VM/qemu.log
 mkdir -p "$WORK/shots" "$EV" "$CACHE"
 exec > >(tee -a "$WORK/run.log") 2>&1

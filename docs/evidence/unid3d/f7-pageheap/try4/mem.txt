@@ -1,0 +1,2 @@
+t=13 guest_pm=200 guest_ws=246 guest_handles=255 guest_va=781 qemu_rss=8073 rs_rss=394 rs_maps=4065 rs_dmabuf=80
+t=25 exited
