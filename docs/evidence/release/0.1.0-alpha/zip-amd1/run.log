@@ -1,0 +1,80 @@
+[15:58:28] lab up
+ok: lab "win3d-release-zip" — 1 vm(s), 0 container(s), 0 segment(s)
+first-boot: provisioning win11...
+first-boot: specialize complete; clearing marker
+first-boot: settling staged AppX (LKG) before first logon
+first-boot: appx settle skipped (exec `powershell.exe -NoProfile -NonInteractive -Command $prov = (Get-AppxProvisionedPackage -Online).DisplayName; Get-AppxPackage -AllUsers | Where-Object { -not $_.IsFramework -and -not $_.IsResourcePackage -and $prov -notcontains $_.Name -and -not ($_.PackageUserInformation | Where-Object InstallState -eq 'Installed') } | ForEach-Object { $r = 'removed'; try { Remove-AppxPackage -Package $_.PackageFullName -AllUsers -ErrorAction Stop } catch { $r = 'settled' }; Write-Output ($r + ' ' + $_.PackageFullName) }` timed out after 120s)
+first-boot: installing first-logon XAML registration hook (sysprep-as-SYSTEM workaround)
+first-boot: xaml: hook installed for: MicrosoftWindows.Client.CBS_cw5n1h2txyewy, Microsoft.UI.Xaml.CBS_8wekyb3d8bbwe, MicrosoftWindows.Client.Core_cw5n1h2txyewy
+first-boot: rebooting once to settle shell reconciliation
+first-boot: holding ready until the guest settles (early first logons break the 24H2 shell)
+first-boot: guest settled (uptime 303s)
+warning: agent: could not update "win11" (agent=f1e4515 → agent=817cfd4): "win11": the pushed agent is installed at C:\ProgramData\vmlab\vmlab-agent.exe but the agent answering is still agent=f1e4515 — the service did not restart onto it; `vmlab vm restart win11` loads it; set agent_update = false on the vm to stop trying
+first-boot: win11 ready
+lab "win3d-release-zip" is up
+[16:09:01] test desktop (autologon user, for the probes)
+pushed 7 file(s), 42217 bytes to win11:C:/win3d/guest
+[16:10:04] copy the zip and extract it (README step 1)
+pushed 25491725 bytes to win11:C:/Users/Public/Downloads/vmlab-win3d-0.1.0-alpha-windows-x64.zip
+C:\vmlab-win3d-0.1.0-alpha\vmlab-win3d-0.1.0
+C:\vmlab-win3d-0.1.0-alpha\README.txt
+C:\vmlab-win3d-0.1.0-alpha\vmlab-win3d-0.1.0\driver
+C:\vmlab-win3d-0.1.0-alpha\vmlab-win3d-0.1.0\runtime
+C:\vmlab-win3d-0.1.0-alpha\vmlab-win3d-0.1.0\Install.cmd
+C:\vmlab-win3d-0.1.0-alpha\vmlab-win3d-0.1.0\manifest.json
+C:\vmlab-win3d-0.1.0-alpha\vmlab-win3d-0.1.0\README.txt
+C:\vmlab-win3d-0.1.0-alpha\vmlab-win3d-0.1.0\Uninstall.cmd
+C:\vmlab-win3d-0.1.0-alpha\vmlab-win3d-0.1.0\vmlab-win3d-test.cer
+C:\vmlab-win3d-0.1.0-alpha\vmlab-win3d-0.1.0\vmlab-win3d.ps1
+[16:10:09] run Install.cmd elevated (README step 2)
+2026-10-18T06:10:08.338-07:00 [Install] Install from C:\vmlab-win3d-0.1.0-alpha\vmlab-win3d-0.1.0 (state: NotInstalled)
+2026-10-18T06:10:11.633-07:00 [Install] staged bundle C:\vmlab-win3d-0.1.0-alpha\vmlab-win3d-0.1.0 -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T06:10:14.571-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
+2026-10-18T06:10:14.877-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T06:10:14.891-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-18T06:10:14.895-07:00 [Install]   Signature matches Public Key
+2026-10-18T06:10:14.898-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T06:10:14.902-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T06:10:14.956-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T06:10:14.958-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-18T06:10:14.963-07:00 [Install]   Signature matches Public Key
+2026-10-18T06:10:14.967-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T06:10:14.969-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T06:10:15.056-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-18T06:10:15.061-07:00 [Install]   The operation completed successfully.
+2026-10-18T06:10:15.478-07:00 [Install] test signing is set but not active in this boot
+2026-10-18T06:10:16.057-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T06:10:16.120-07:00 [Install] rebooting; step Driver resumes after the restart
+[16:10:18] Install.cmd exit 0
+[16:10:18] wait for Status = Installed (README steps 3 and 4)
+[16:10:21] status: {     "version":  "0.1.0",     "step":  "Driver",     "last_error":  null,     "operation":  "Install",     "status":  "RebootPending",     "bundle_sha256":  "C0C3A96CB9E4100A1670AC3899C2E0632F354A088
+[16:10:38] status: {     "version":  "0.1.0",     "step":  "Driver",     "last_error":  null,     "operation":  "Install",     "status":  "RebootPending",     "bundle_sha256":  "C0C3A96CB9E4100A1670AC3899C2E0632F354A088
+[16:10:59] status: {     "version":  "0.1.0",     "step":  "Driver",     "last_error":  null,     "operation":  "Install",     "status":  "RebootPending",     "bundle_sha256":  "C0C3A96CB9E4100A1670AC3899C2E0632F354A088
+[16:11:16] status: {     "version":  "0.1.0",     "step":  "Driver",     "last_error":  null,     "operation":  "Install",     "status":  "RebootPending",     "bundle_sha256":  "C0C3A96CB9E4100A1670AC3899C2E0632F354A088
+[16:11:34] status: {     "version":  "0.1.0",     "step":  "Runtime",     "last_error":  null,     "operation":  "Install",     "status":  "Installing",     "bundle_sha256":  "C0C3A96CB9E4100A1670AC3899C2E0632F354A088C5
+[16:11:52] status: {     "version":  "0.1.0",     "step":  "Verify",     "last_error":  null,     "operation":  "Install",     "status":  "RebootPending",     "bundle_sha256":  "C0C3A96CB9E4100A1670AC3899C2E0632F354A088
+[16:12:18] status: {     "version":  "0.1.0",     "step":  "Verify",     "last_error":  null,     "operation":  "Install",     "status":  "RebootPending",     "bundle_sha256":  "C0C3A96CB9E4100A1670AC3899C2E0632F354A088
+[16:12:35] status: {     "version":  "0.1.0",     "step":  "Verify",     "last_error":  null,     "operation":  "Install",     "status":  "RebootPending",     "bundle_sha256":  "C0C3A96CB9E4100A1670AC3899C2E0632F354A088
+[16:12:53] status: {     "version":  "0.1.0",     "step":  null,     "last_error":  null,     "operation":  "Install",     "status":  "Installed",     "bundle_sha256":  "C0C3A96CB9E4100A1670AC3899C2E0632F354A088C5CA0608
+[16:12:54] vulkaninfo --summary (README check)
+[16:12:55] Run-AllProbes.ps1
+pushed 5 file(s), 174592 bytes to win11:C:/win3d/probes/x64
+pushed 5 file(s), 153088 bytes to win11:C:/win3d/probes/x86
+
+name             exit_code result adapter                                                                                                      software readback_ok avg_fps first_error
+----             --------- ------ -------                                                                                                      -------- ----------- ------- -----------
+x64-d3d11_probe          0 pass   Hardsoft VirtIO GPU 3D controller                                                                               False        True   59.75            
+x64-d3d12_probe          0 pass   Hardsoft VirtIO GPU 3D controller                                                                               False        True   53.60            
+x64-d3d9_probe           0 pass   Hardsoft VirtIO GPU 3D controller                                                                               False        True   31.62            
+x64-opengl_probe         0 pass   zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV))    False        True   63.82            
+x64-vulkan_probe         0 pass   Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))                                 False        True   59.65            
+x86-d3d11_probe          0 pass   Hardsoft VirtIO GPU 3D controller                                                                               False        True   57.51            
+x86-d3d12_probe          0 pass   Hardsoft VirtIO GPU 3D controller                                                                               False        True   52.13            
+x86-d3d9_probe           0 pass   Hardsoft VirtIO GPU 3D controller                                                                               False        True   29.87            
+x86-opengl_probe         0 pass   zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV))    False        True   64.49            
+x86-vulkan_probe         0 pass   Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))                                 False        True   59.25            
+
+
+
+/home/wil/dev/vmlab-win3d-wt/release/.scratch/ev-zip/console-after-probes.png
+[16:17:00] done

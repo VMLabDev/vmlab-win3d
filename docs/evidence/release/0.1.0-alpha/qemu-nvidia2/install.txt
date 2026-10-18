@@ -1,0 +1,18 @@
+ldd: every shared library the binary needs is present and new enough
+ldd: every shared library the binary needs is present and new enough
+installed: /home/wil/dev/vmlab-win3d-wt/release/.scratch/qemu-test/prefix/bin/qemu-system-x86_64
+QEMU emulator version 11.1.1
+
+Add this line to each NVIDIA GPU block in the vmlab host config,
+~/.config/vmlab/config.wcl (vmlab 0.26.0-alpha or later):
+
+  qemu_binary = "/home/wil/dev/vmlab-win3d-wt/release/.scratch/qemu-test/prefix/bin/qemu-system-x86_64"
+
+For example:
+
+  gpu "Nvidia1" {
+    address     = "0000:01:00.0"
+    qemu_binary = "/home/wil/dev/vmlab-win3d-wt/release/.scratch/qemu-test/prefix/bin/qemu-system-x86_64"
+  }
+
+Then check it with: vmlab validate

@@ -1,0 +1,1 @@
+ldd: every shared library the binary needs is present and new enough

@@ -1,0 +1,14 @@
+import <vmlab-host.wcl>
+
+// Isolated host config for the release worker's NVIDIA check: both RTX 5090s
+// run the release tarball's QEMU, installed into a temporary prefix.
+gpu "AMD1"    { address = "0000:72:00.0" }
+gpu "Nvidia1" {
+  address     = "0000:01:00.0"
+  default     = true
+  qemu_binary = "/home/wil/dev/vmlab-win3d-wt/release/.scratch/qemu-test/prefix/bin/qemu-system-x86_64"
+}
+gpu "Nvidia2" {
+  address     = "0000:05:00.0"
+  qemu_binary = "/home/wil/dev/vmlab-win3d-wt/release/.scratch/qemu-test/prefix/bin/qemu-system-x86_64"
+}
