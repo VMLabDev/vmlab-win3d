@@ -1,0 +1,5 @@
+stage: s1-one-vm  labs: a  minutes: 5  host hog: 0 MiB (dma-buf mapped, so about twice that in BAR1)
+from 2026-10-19T07:07:26+10:00 to 2026-10-19T07:12:31+10:00
+a: runs 13, pass 13, not pass 0
+new 'can't alloc VA space' kernel lines: 0
+highest BAR1 used: 195 MiB of 256

@@ -1,0 +1,10 @@
+$ BAR1PROBE_TYPE=1 BAR1PROBE_IMPORT_TYPE=- bar1probe 05 16 32 import 4
+BAR1 before: 69 MiB
+device NVIDIA GeForce RTX 5090 bus 05
+type 1 heap 0 size 32607 MiB
+  fd memoryTypeBits 0x3 (vk 0), importing as type 1
+chunk 0 total 16 MiB: ok (vk 0); heap usage 16 MiB budget 31089 MiB
+  fd memoryTypeBits 0x3 (vk 0), importing as type 1
+chunk 1 total 32 MiB: ok (vk 0); heap usage 32 MiB budget 31089 MiB
+holding 4 s
+BAR1 held: 70 MiB

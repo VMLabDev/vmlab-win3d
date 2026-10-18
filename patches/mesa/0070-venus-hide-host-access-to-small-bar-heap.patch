@@ -1,0 +1,75 @@
+Subject: [PATCH] venus: hide host access to a small BAR heap
+
+Without resizable BAR, the host's NVIDIA driver offers host-visible VRAM
+as a heap of its own, 246 MiB on an RTX 5090. On the host that heap is
+the card's BAR1 aperture (256 MiB), which the host desktop, every other
+process and every VM on the card share. A Venus guest's host-visible blob
+costs twice its size there: vkAllocateMemory in the render server maps it
+into BAR1, and the dma-buf mmap that virglrenderer makes in QEMU for the
+guest's blob mapping maps it again. The driver admits an allocation while
+the heap has room for one copy, so with a few VMs on a card the second
+mapping fails: mmap gets ENOMEM and the host kernel logs
+"NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping".
+
+Memory types that are device-local and host-visible on a heap less than
+half the size of the largest device-local heap now report as
+device-local only, so applications, DXVK, vkd3d-proton and Zink put
+host-visible allocations in system memory. Resizable-BAR heaps and
+integrated GPUs keep their host-visible VRAM type.
+
+Evidence: docs/nvva.md, docs/evidence/nvva/.
+Origin: vmlab-win3d nvva worker.
+---
+--- a/src/virtio/vulkan/vn_physical_device.c	2026-10-19 04:24:49.764066631 +1000
++++ b/src/virtio/vulkan/vn_physical_device.c	2026-10-19 04:25:44.490924877 +1000
+@@ -974,6 +974,40 @@
+    return VK_SUCCESS;
+ }
+ 
++/* Without resizable BAR, a discrete GPU exposes host-visible VRAM through a
++ * small separate heap (246 MiB on an RTX 5090). On the host that window is
++ * the card's BAR1, which every process and every VM on the card shares, and
++ * a guest blob of it costs twice its size there: the allocation and the
++ * dma-buf mapping that QEMU makes of it. When BAR1 runs out, the host driver
++ * still admits the allocation but the mapping fails ("can't alloc VA space
++ * for mapping" in the host kernel log) and the guest's ring stalls. Report
++ * such types as device-local only, so host-visible allocations land in
++ * system memory. A BAR heap at least half the size of the largest
++ * device-local heap (resizable BAR, or an integrated GPU) is left alone.
++ */
++static void
++vn_physical_device_hide_small_bar_memory(
++   VkPhysicalDeviceMemoryProperties *props)
++{
++   VkDeviceSize vram = 0;
++   for (uint32_t i = 0; i < props->memoryHeapCount; i++) {
++      if (props->memoryHeaps[i].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT)
++         vram = MAX2(vram, props->memoryHeaps[i].size);
++   }
++
++   const VkMemoryPropertyFlags bar = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT |
++                                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
++   for (uint32_t i = 0; i < props->memoryTypeCount; i++) {
++      VkMemoryType *type = &props->memoryTypes[i];
++      if ((type->propertyFlags & bar) != bar ||
++          props->memoryHeaps[type->heapIndex].size * 2 > vram)
++         continue;
++      type->propertyFlags &= ~(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
++                               VK_MEMORY_PROPERTY_HOST_COHERENT_BIT |
++                               VK_MEMORY_PROPERTY_HOST_CACHED_BIT);
++   }
++}
++
+ static void
+ vn_physical_device_init_memory_properties(
+    struct vn_physical_device *physical_dev)
+@@ -988,6 +1022,9 @@
+ 
+    physical_dev->memory_properties = props2.memoryProperties;
+ 
++   vn_physical_device_hide_small_bar_memory(
++      &physical_dev->memory_properties);
++
+    /* Kernel makes every mapping coherent. If a memory type is truly
+     * incoherent, it's better to remove the host-visible flag than silently
+     * making it coherent. However, for app compatibility purpose, when

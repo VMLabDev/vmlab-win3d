@@ -1,0 +1,4 @@
+$ BAR1PROBE_TYPE=2 BAR1PROBE_IMPORT_TYPE=- bar1probe 05 16 32 import 4
+BAR1 before: 69 MiB
+/bin/bash: line 34: 774542 Segmentation fault         (core dumped) BAR1PROBE_TYPE=$1 VK_LOADER_DRIVERS_SELECT='*nvidia*' $S/bar1probe 05 16 32 import 4
+BAR1 held: 69 MiB

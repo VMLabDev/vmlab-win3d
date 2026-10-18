@@ -1,0 +1,512 @@
+From 53177c0b60067618ed45ebbb76e2a1d5617030db Mon Sep 17 00:00:00 2001
+From: Wil Taylor <ai@wiltaylor.dev>
+Date: Mon, 19 Oct 2026 03:48:40 +1000
+Subject: [PATCH] vkd3d: Emulate state-changing ExecuteIndirect without
+ EXT_dgc.
+
+Venus does not forward VK_EXT_device_generated_commands, so command
+signatures that set root constants or root descriptors dropped the state
+argument and drew with unbound root parameters.
+
+Without DGC, put root parameters in the push UBO block and root CBVs in
+raw VAs for every root signature. ExecuteIndirect then gives each
+sequence a slot in upload memory holding the bound root parameters and
+the action's arguments. The existing patch shader copies the argument
+buffer into the slots, honouring the count buffer, and the command list
+issues one push-descriptor update and one indirect draw, draw indexed,
+mesh draw or dispatch per sequence. Incrementing constants are written
+by the CPU. Vertex and index buffer view arguments are still dropped.
+
+vmlab-win3d: docs/ei.md.
+---
+ libs/vkd3d/command.c       | 387 +++++++++++++++++++++++++++++++++++++
+ libs/vkd3d/state.c         |   7 +-
+ libs/vkd3d/vkd3d_private.h |  21 ++
+ 3 files changed, 413 insertions(+), 2 deletions(-)
+
+diff --git a/libs/vkd3d/command.c b/libs/vkd3d/command.c
+index 84976e6a..af86b008 100644
+--- a/libs/vkd3d/command.c
++++ b/libs/vkd3d/command.c
+@@ -17099,6 +17099,217 @@ void d3d12_command_list_flush_dgc_batch(struct d3d12_command_list *list)
+             state ? &state->ID3D12PipelineState_iface : NULL);
+ }
+ 
++static void d3d12_command_list_execute_indirect_state_template_emulated(
++        struct d3d12_command_list *list, struct d3d12_command_signature *signature,
++        uint32_t max_command_count,
++        struct d3d12_resource *arg_buffer, UINT64 arg_buffer_offset,
++        struct d3d12_resource *count_buffer, UINT64 count_buffer_offset)
++{
++    const struct vkd3d_vk_device_procs *vk_procs = &list->device->vk_procs;
++    const struct d3d12_bind_point_layout *bind_point_layout;
++    struct vkd3d_scratch_allocation predication_allocation;
++    const struct d3d12_root_signature *root_signature;
++    struct vkd3d_scratch_allocation count_allocation;
++    struct vkd3d_scratch_allocation slot_allocation;
++    struct vkd3d_execute_indirect_args patch_args;
++    union vkd3d_root_parameter_data root_data;
++    D3D12_INDIRECT_ARGUMENT_TYPE action_type;
++    struct vkd3d_scratch_allocation slot;
++    struct vkd3d_pipeline_bindings *bindings;
++    VkWriteDescriptorSet descriptor_write;
++    VkDescriptorBufferInfo buffer_info;
++    VkPipelineBindPoint vk_bind_point;
++    VkDeviceAddress indirect_count_va;
++    VkCommandBuffer vk_cmd_buffer;
++    VkMemoryBarrier2 barrier;
++    VkDependencyInfo dep_info;
++    uint32_t stride, i;
++    uint8_t *slot_ptr;
++
++    action_type = signature->desc.pArgumentDescs[signature->desc.NumArgumentDescs - 1].Type;
++    bindings = d3d12_command_list_get_bindings(list, signature->pipeline_type);
++    if (!(root_signature = bindings->root_signature))
++    {
++        WARN("No root signature bound, ignoring ExecuteIndirect.\n");
++        return;
++    }
++
++    bind_point_layout = d3d12_root_signature_get_layout(root_signature, signature->pipeline_type);
++    if (!(bind_point_layout->flags & VKD3D_ROOT_SIGNATURE_USE_PUSH_CONSTANT_UNIFORM_BLOCK))
++    {
++        FIXME("Bound root signature does not use a push UBO, ignoring ExecuteIndirect.\n");
++        return;
++    }
++
++    stride = signature->emulation.slot_stride;
++    if (!d3d12_command_allocator_allocate_scratch_memory(list->allocator,
++            VKD3D_SCRATCH_POOL_KIND_UNIFORM_UPLOAD, (VkDeviceSize)stride * max_command_count,
++            D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT, ~0u, &slot_allocation) || !slot_allocation.host_ptr)
++    {
++        ERR("Failed to allocate ExecuteIndirect emulation slots.\n");
++        return;
++    }
++
++    indirect_count_va = count_buffer ? count_buffer->res.va + count_buffer_offset : 0;
++
++    if (list->predication.fallback_enabled)
++    {
++        union vkd3d_predicate_command_direct_args args;
++
++        /* Fold the predicate into the sequence count. */
++        args.draw_count = max_command_count;
++        if (!d3d12_command_list_emit_predicated_command(list,
++                count_buffer ? VKD3D_PREDICATE_COMMAND_DRAW_INDIRECT_COUNT : VKD3D_PREDICATE_COMMAND_DRAW_INDIRECT,
++                indirect_count_va, &args, &predication_allocation))
++            return;
++        indirect_count_va = predication_allocation.va;
++        /* The patch shader reads the count in a compute shader, not as an indirect argument. */
++        list->cmd.indirect_meta->need_compute_to_cbv_barrier = true;
++    }
++
++    if (indirect_count_va && !d3d12_command_allocator_allocate_scratch_memory(list->allocator,
++            VKD3D_SCRATCH_POOL_KIND_DEVICE_STORAGE, sizeof(uint32_t), sizeof(uint32_t), ~0u, &count_allocation))
++    {
++        ERR("Failed to allocate count memory.\n");
++        return;
++    }
++
++    /* Patch the slots on the GPU, in order with the rest of the command list. Sequences past
++     * the count keep their zeroed action arguments and draw or dispatch nothing. */
++    d3d12_command_list_end_current_render_pass(list, false);
++    d3d12_command_list_end_transfer_batch(list);
++    d3d12_command_list_invalidate_current_pipeline(list, true);
++    d3d12_command_list_invalidate_root_parameters(list, &list->compute_bindings, true, &list->graphics_bindings);
++
++    vk_cmd_buffer = list->cmd.vk_command_buffer;
++
++    memset(&patch_args, 0, sizeof(patch_args));
++    patch_args.template_va = signature->state_template.dgc.buffer_va;
++    patch_args.api_buffer_va = arg_buffer->res.va + arg_buffer_offset;
++    patch_args.device_generated_commands_va = slot_allocation.va;
++    patch_args.indirect_count_va = indirect_count_va;
++    patch_args.dst_indirect_count_va = indirect_count_va ? count_allocation.va : 0;
++    patch_args.api_buffer_word_stride = signature->desc.ByteStride / sizeof(uint32_t);
++    patch_args.device_generated_commands_word_stride = stride / sizeof(uint32_t);
++
++    if (list->predication.fallback_enabled)
++    {
++        memset(&barrier, 0, sizeof(barrier));
++        barrier.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER_2;
++        barrier.srcStageMask = VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT;
++        barrier.srcAccessMask = VK_ACCESS_2_SHADER_WRITE_BIT;
++        barrier.dstStageMask = VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT;
++        barrier.dstAccessMask = VK_ACCESS_2_SHADER_READ_BIT;
++
++        memset(&dep_info, 0, sizeof(dep_info));
++        dep_info.sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO;
++        dep_info.memoryBarrierCount = 1;
++        dep_info.pMemoryBarriers = &barrier;
++        VK_CALL(vkCmdPipelineBarrier2(vk_cmd_buffer, &dep_info));
++    }
++
++    if (signature->state_template.dgc.pipeline.vk_pipeline)
++    {
++        VK_CALL(vkCmdPushConstants(vk_cmd_buffer, signature->state_template.dgc.pipeline.vk_pipeline_layout,
++                VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(patch_args), &patch_args));
++        VK_CALL(vkCmdBindPipeline(vk_cmd_buffer, VK_PIPELINE_BIND_POINT_COMPUTE,
++                signature->state_template.dgc.pipeline.vk_pipeline));
++        VK_CALL(vkCmdDispatch(vk_cmd_buffer, max_command_count, 1, 1));
++
++        memset(&barrier, 0, sizeof(barrier));
++        barrier.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER_2;
++        barrier.srcStageMask = VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT;
++        barrier.srcAccessMask = VK_ACCESS_2_SHADER_WRITE_BIT;
++        barrier.dstStageMask = VK_PIPELINE_STAGE_2_ALL_COMMANDS_BIT;
++        barrier.dstAccessMask = VK_ACCESS_2_INDIRECT_COMMAND_READ_BIT | VK_ACCESS_2_UNIFORM_READ_BIT;
++
++        memset(&dep_info, 0, sizeof(dep_info));
++        dep_info.sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO;
++        dep_info.memoryBarrierCount = 1;
++        dep_info.pMemoryBarriers = &barrier;
++        VK_CALL(vkCmdPipelineBarrier2(vk_cmd_buffer, &dep_info));
++    }
++
++    /* Flush the application's state as for a normal draw or dispatch. */
++    if (signature->pipeline_type == VKD3D_PIPELINE_TYPE_COMPUTE)
++    {
++        if (!d3d12_command_list_update_compute_state(list))
++            return;
++    }
++    else
++    {
++        if (action_type == D3D12_INDIRECT_ARGUMENT_TYPE_DRAW_INDEXED &&
++                !d3d12_command_list_update_index_buffer(list))
++            return;
++
++        if (!d3d12_command_list_begin_render_pass(list, signature->pipeline_type))
++        {
++            WARN("Failed to begin render pass, ignoring ExecuteIndirect.\n");
++            return;
++        }
++
++        if (action_type == D3D12_INDIRECT_ARGUMENT_TYPE_DRAW_INDEXED)
++            d3d12_command_list_check_index_buffer_strip_cut_value(list);
++    }
++
++    /* Every slot starts as the currently bound root parameters. The GPU patch
++     * overwrites the arguments the signature changes; host writes made while
++     * recording are visible to it at submission. */
++    memset(&root_data, 0, sizeof(root_data));
++    d3d12_command_list_fetch_root_parameter_data(list, bindings, &root_data);
++
++    for (i = 0; i < max_command_count; i++)
++    {
++        slot_ptr = (uint8_t *)slot_allocation.host_ptr + (size_t)i * stride;
++        memcpy(slot_ptr, &root_data, signature->emulation.action_offset);
++        memset(slot_ptr + signature->emulation.action_offset, 0, stride - signature->emulation.action_offset);
++        if (signature->emulation.incrementing_constant_word != UINT32_MAX)
++            memcpy(slot_ptr + signature->emulation.incrementing_constant_word * sizeof(uint32_t), &i, sizeof(i));
++    }
++
++    vk_bind_point = vk_bind_point_from_pipeline_type(signature->pipeline_type);
++    vk_cmd_buffer = list->cmd.vk_command_buffer;
++    d3d12_command_list_debug_mark_begin_region(list, "EI (emulated)");
++
++    for (i = 0; i < max_command_count; i++)
++    {
++        slot = slot_allocation;
++        slot.offset += (VkDeviceSize)i * stride;
++
++        vk_write_descriptor_set_from_scratch_push_ubo(&descriptor_write, &buffer_info, &slot,
++                D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT, root_signature->push_constant_ubo_binding.binding);
++        VK_CALL(vkCmdPushDescriptorSetKHR(vk_cmd_buffer, vk_bind_point,
++                bind_point_layout->vk_pipeline_layout, root_signature->root_descriptor_set, 1, &descriptor_write));
++
++        slot.offset += signature->emulation.action_offset;
++
++        switch (action_type)
++        {
++            case D3D12_INDIRECT_ARGUMENT_TYPE_DRAW:
++                VK_CALL(vkCmdDrawIndirect(vk_cmd_buffer, slot.buffer, slot.offset, 1, 0));
++                break;
++            case D3D12_INDIRECT_ARGUMENT_TYPE_DRAW_INDEXED:
++                VK_CALL(vkCmdDrawIndexedIndirect(vk_cmd_buffer, slot.buffer, slot.offset, 1, 0));
++                break;
++            case D3D12_INDIRECT_ARGUMENT_TYPE_DISPATCH_MESH:
++                VK_CALL(vkCmdDrawMeshTasksIndirectEXT(vk_cmd_buffer, slot.buffer, slot.offset, 1, 0));
++                break;
++            case D3D12_INDIRECT_ARGUMENT_TYPE_DISPATCH:
++                VK_CALL(vkCmdDispatchIndirect(vk_cmd_buffer, slot.buffer, slot.offset));
++                break;
++            default:
++                break;
++        }
++    }
++
++    d3d12_command_list_debug_mark_end_region(list);
++
++    /* State set by the signature is undefined afterwards, and the push UBO now points at the
++     * last slot, so re-emit everything for the next command. */
++    d3d12_command_list_clear_signature_state(list, signature);
++    d3d12_command_list_invalidate_all_state(list);
++}
++
+ static void STDMETHODCALLTYPE d3d12_command_list_ExecuteIndirect(d3d12_command_list_iface *iface,
+         ID3D12CommandSignature *command_signature, UINT max_command_count, ID3D12Resource *arg_buffer,
+         UINT64 arg_buffer_offset, ID3D12Resource *count_buffer, UINT64 count_buffer_offset)
+@@ -17141,6 +17352,15 @@ static void STDMETHODCALLTYPE d3d12_command_list_ExecuteIndirect(d3d12_command_l
+     VKD3D_BREADCRUMB_COOKIE(count_impl ? count_impl->res.cookie.index : 0);
+     VKD3D_BREADCRUMB_AUX64(count_buffer_offset);
+ 
++    if (sig_impl->emulation.enabled)
++    {
++        d3d12_command_list_flush_dgc_batch(list);
++        d3d12_command_list_execute_indirect_state_template_emulated(list, sig_impl,
++                max_command_count, arg_impl, arg_buffer_offset, count_impl, count_buffer_offset);
++        VKD3D_BREADCRUMB_COMMAND(EXECUTE_INDIRECT_TEMPLATE);
++        return;
++    }
++
+     if (sig_impl->requires_state_template)
+     {
+         d3d12_command_list_execute_indirect_state_template_dgc(list, sig_impl,
+@@ -25399,6 +25619,162 @@ end:
+     return hr;
+ }
+ 
++static HRESULT d3d12_command_signature_init_state_template_emulated(struct d3d12_command_signature *signature,
++        const D3D12_COMMAND_SIGNATURE_DESC *desc,
++        struct d3d12_root_signature *root_signature,
++        struct d3d12_device *device)
++{
++    const struct vkd3d_shader_root_parameter *root_parameter;
++    const struct d3d12_bind_point_layout *bind_point_layout;
++    const struct vkd3d_shader_root_constant *root_constant;
++    struct vkd3d_patch_command *patch_commands = NULL;
++    uint32_t incrementing_constant_word = UINT32_MAX;
++    uint32_t root_parameter_index, root_data_words;
++    size_t patch_commands_count = 0;
++    size_t patch_commands_size = 0;
++    uint32_t src_word_offset = 0;
++    uint32_t action_words = 0;
++    uint32_t copy_count;
++    uint32_t dst_word;
++    HRESULT hr = S_OK;
++    uint32_t i, j;
++
++    /* Words of the root parameter block in use: raw VAs, then root constants,
++     * then descriptor table offsets (d3d12_root_signature_init_push_constants). */
++    root_data_words = 0;
++    if (root_signature)
++    {
++        bind_point_layout = d3d12_root_signature_get_layout(root_signature, signature->pipeline_type);
++        if (!(bind_point_layout->flags & VKD3D_ROOT_SIGNATURE_USE_PUSH_CONSTANT_UNIFORM_BLOCK))
++        {
++            FIXME("Root signature does not use a push UBO, cannot emulate ExecuteIndirect state.\n");
++            return E_NOTIMPL;
++        }
++
++        root_data_words = root_signature->descriptor_table_offset / sizeof(uint32_t) +
++                root_signature->descriptor_table_count;
++        for (i = 0; i < root_signature->parameter_count; i++)
++        {
++            root_parameter = root_signature_get_parameter(root_signature, i);
++            if (root_parameter->parameter_type == D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS)
++                root_data_words = max(root_data_words,
++                        root_parameter->constant.constant_index + root_parameter->constant.constant_count);
++            else if (root_signature->root_descriptor_raw_va_mask & (1ull << i))
++                root_data_words = max(root_data_words,
++                        2 * (root_parameter->descriptor.raw_va_root_descriptor_index + 1));
++        }
++    }
++
++    for (i = 0; i < desc->NumArgumentDescs; i++)
++    {
++        const D3D12_INDIRECT_ARGUMENT_DESC *argument_desc = &desc->pArgumentDescs[i];
++        copy_count = 0;
++        dst_word = 0;
++
++        switch (argument_desc->Type)
++        {
++            case D3D12_INDIRECT_ARGUMENT_TYPE_CONSTANT:
++                root_constant = root_signature_get_32bit_constants(root_signature,
++                        argument_desc->Constant.RootParameterIndex);
++                dst_word = root_constant->constant_index + argument_desc->Constant.DestOffsetIn32BitValues;
++                copy_count = argument_desc->Constant.Num32BitValuesToSet;
++                break;
++
++            case D3D12_INDIRECT_ARGUMENT_TYPE_INCREMENTING_CONSTANT:
++                /* No payload. The CPU writes the sequence index into each slot. */
++                root_constant = root_signature_get_32bit_constants(root_signature,
++                        argument_desc->IncrementingConstant.RootParameterIndex);
++                incrementing_constant_word = root_constant->constant_index +
++                        argument_desc->IncrementingConstant.DestOffsetIn32BitValues;
++                break;
++
++            case D3D12_INDIRECT_ARGUMENT_TYPE_UNORDERED_ACCESS_VIEW:
++            case D3D12_INDIRECT_ARGUMENT_TYPE_SHADER_RESOURCE_VIEW:
++            case D3D12_INDIRECT_ARGUMENT_TYPE_CONSTANT_BUFFER_VIEW:
++                root_parameter_index = argument_desc->ShaderResourceView.RootParameterIndex;
++                root_parameter = root_signature_get_parameter(root_signature, root_parameter_index);
++                if (!(root_signature->root_descriptor_raw_va_mask & (1ull << root_parameter_index)))
++                {
++                    FIXME("Root parameter %u is not a raw VA, cannot emulate ExecuteIndirect state.\n",
++                            root_parameter_index);
++                    hr = E_NOTIMPL;
++                    goto end;
++                }
++                dst_word = 2 * root_parameter->descriptor.raw_va_root_descriptor_index;
++                copy_count = sizeof(VkDeviceAddress) / sizeof(uint32_t);
++                break;
++
++            case D3D12_INDIRECT_ARGUMENT_TYPE_DRAW:
++                action_words = sizeof(VkDrawIndirectCommand) / sizeof(uint32_t);
++                copy_count = action_words;
++                break;
++
++            case D3D12_INDIRECT_ARGUMENT_TYPE_DRAW_INDEXED:
++                action_words = sizeof(VkDrawIndexedIndirectCommand) / sizeof(uint32_t);
++                copy_count = action_words;
++                break;
++
++            case D3D12_INDIRECT_ARGUMENT_TYPE_DISPATCH:
++                action_words = sizeof(VkDispatchIndirectCommand) / sizeof(uint32_t);
++                copy_count = action_words;
++                break;
++
++            case D3D12_INDIRECT_ARGUMENT_TYPE_DISPATCH_MESH:
++                action_words = sizeof(VkDrawMeshTasksIndirectCommandEXT) / sizeof(uint32_t);
++                copy_count = action_words;
++                break;
++
++            default:
++                /* Vertex and index buffer views are bound on the CPU and cannot come from the GPU. */
++                FIXME("Cannot emulate indirect argument type %u without EXT_dgc.\n", argument_desc->Type);
++                hr = E_NOTIMPL;
++                goto end;
++        }
++
++        if (action_words)
++        {
++            /* The action is always last. Its words follow the root parameter block. */
++            dst_word = align(root_data_words, 4);
++        }
++
++        if (copy_count)
++        {
++            vkd3d_array_reserve((void **)&patch_commands, &patch_commands_size,
++                    patch_commands_count + copy_count, sizeof(*patch_commands));
++
++            for (j = 0; j < copy_count; j++, patch_commands_count++)
++            {
++                patch_commands[patch_commands_count].token = VKD3D_PATCH_COMMAND_TOKEN_COPY_CONST_U32;
++                patch_commands[patch_commands_count].src_offset = src_word_offset++;
++                patch_commands[patch_commands_count].dst_offset = dst_word + j;
++            }
++        }
++    }
++
++    signature->emulation.action_offset = align(root_data_words, 4) * sizeof(uint32_t);
++    /* Slots are bound as UBOs of D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT bytes,
++     * which also keeps every slot offset aligned. */
++    signature->emulation.slot_stride = align(signature->emulation.action_offset + action_words * sizeof(uint32_t),
++            D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
++    signature->emulation.incrementing_constant_word = incrementing_constant_word;
++
++    if (FAILED(hr = d3d12_command_signature_init_patch_commands_buffer(signature, device,
++            patch_commands, patch_commands_count)))
++        goto end;
++
++    if (FAILED(hr = vkd3d_meta_get_execute_indirect_pipeline(&device->meta_ops, patch_commands_count,
++            &signature->state_template.dgc.pipeline)))
++        goto end;
++
++    signature->emulation.enabled = true;
++    INFO("Emulating ExecuteIndirect state (%zu patch words, slot stride %u) without EXT_dgc.\n",
++            patch_commands_count, signature->emulation.slot_stride);
++
++end:
++    vkd3d_free(patch_commands);
++    return hr;
++}
++
+ HRESULT d3d12_command_signature_create(struct d3d12_device *device, struct d3d12_root_signature *root_signature,
+         const D3D12_COMMAND_SIGNATURE_DESC *desc,
+         struct d3d12_command_signature **signature)
+@@ -25561,6 +25937,17 @@ HRESULT d3d12_command_signature_create(struct d3d12_device *device, struct d3d12
+     {
+         if (!device->device_info.device_generated_commands_features.deviceGeneratedCommands)
+         {
++            if (pipeline_type == VKD3D_PIPELINE_TYPE_GRAPHICS ||
++                    pipeline_type == VKD3D_PIPELINE_TYPE_MESH_GRAPHICS ||
++                    pipeline_type == VKD3D_PIPELINE_TYPE_COMPUTE)
++            {
++                if (SUCCEEDED(hr = d3d12_command_signature_init_state_template_emulated(object, desc,
++                        root_signature, device)))
++                    goto out;
++                if (hr != E_NOTIMPL)
++                    goto err;
++            }
++
+             FIXME("Device generated commands is not supported by implementation.\n");
+             object->requires_state_template = false;
+             goto out;
+diff --git a/libs/vkd3d/state.c b/libs/vkd3d/state.c
+index e667d49f..a25885c2 100644
+--- a/libs/vkd3d/state.c
++++ b/libs/vkd3d/state.c
+@@ -1484,8 +1484,10 @@ static HRESULT d3d12_root_signature_init_global(struct d3d12_root_signature *roo
+             &push_constant_range)))
+         return hr;
+ 
+-    /* If we cannot contain the push constants, fall back to push UBO everywhere. */
+-    if (push_constant_range.size > vk_device_properties->limits.maxPushConstantsSize)
++    /* If we cannot contain the push constants, fall back to push UBO everywhere.
++     * ExecuteIndirect emulation also needs root parameters in memory. */
++    if (push_constant_range.size > vk_device_properties->limits.maxPushConstantsSize ||
++            (push_constant_range.size && d3d12_device_emulates_execute_indirect_state(device)))
+         d3d12_root_signature_add_common_flags(root_signature, VKD3D_ROOT_SIGNATURE_USE_PUSH_CONSTANT_UNIFORM_BLOCK);
+ 
+     d3d12_root_signature_init_extra_bindings(root_signature, &info);
+@@ -7419,6 +7421,7 @@ static uint32_t vkd3d_bindless_state_get_bindless_flags(struct d3d12_device *dev
+      * On ACO, BDA with NonWritable can be promoted directly to scalar loads,
+      * which is great. */
+     if ((vkd3d_config_flags & VKD3D_CONFIG_FLAG_FORCE_RAW_VA_CBV) ||
++            d3d12_device_emulates_execute_indirect_state(device) ||
+             (device_info->properties2.properties.vendorID != VKD3D_VENDOR_ID_NVIDIA &&
+ 	     device_info->properties2.properties.vendorID != VKD3D_VENDOR_ID_QUALCOMM))
+         flags |= VKD3D_RAW_VA_ROOT_DESCRIPTOR_CBV;
+diff --git a/libs/vkd3d/vkd3d_private.h b/libs/vkd3d/vkd3d_private.h
+index 63154f9d..fbddda34 100644
+--- a/libs/vkd3d/vkd3d_private.h
++++ b/libs/vkd3d/vkd3d_private.h
+@@ -3809,6 +3809,19 @@ struct d3d12_command_signature
+         } compute;
+     } state_template;
+     bool requires_state_template;
++
++    /* Without DGC, a state-changing signature runs as one indirect command per
++     * sequence. Each sequence gets a slot of slot_stride bytes in upload memory:
++     * the root parameter block, bound as the push UBO, then the action's
++     * arguments at action_offset. The patch shader (state_template.dgc.buffer
++     * and .pipeline) copies the argument buffer into the slots. */
++    struct
++    {
++        bool enabled;
++        uint32_t slot_stride;
++        uint32_t action_offset;
++        uint32_t incrementing_constant_word;
++    } emulation;
+     enum vkd3d_pipeline_type pipeline_type;
+ 
+     struct d3d12_device *device;
+@@ -5682,6 +5695,14 @@ static inline bool d3d12_device_uses_descriptor_buffers(const struct d3d12_devic
+     return device->global_descriptor_buffer.resource.va != 0;
+ }
+ 
++/* Without EXT_dgc (Venus does not forward it), ExecuteIndirect with state-changing
++ * command signatures is emulated. That needs root parameters in a push UBO and root CBVs
++ * as raw VAs, so the GPU can write them per sequence. */
++static inline bool d3d12_device_emulates_execute_indirect_state(const struct d3d12_device *device)
++{
++    return !device->device_info.device_generated_commands_features.deviceGeneratedCommands;
++}
++
+ static inline bool is_cpu_accessible_heap(const D3D12_HEAP_PROPERTIES *properties)
+ {
+     if (properties->Type == D3D12_HEAP_TYPE_DEFAULT)
+-- 
+2.55.0
+

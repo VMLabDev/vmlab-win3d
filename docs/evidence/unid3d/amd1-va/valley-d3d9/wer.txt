@@ -1,0 +1,19 @@
+-- AppCrash_Valley.exe_282651f4b084869d7099c8e3d96b90266cdc7d0_a432d84d_c9e6f5ef-4501-4e41-82ce-813155f59145 2026-10-18T14:23:34.1486915-07:00
+EventType=APPCRASH
+Sig[0].Name=Application Name
+Sig[0].Value=Valley.exe
+Sig[1].Name=Application Version
+Sig[1].Value=1.0.0.0
+Sig[2].Name=Application Timestamp
+Sig[2].Value=511cbdf2
+Sig[3].Name=Fault Module Name
+Sig[3].Value=Unigine_x86.dll
+Sig[4].Name=Fault Module Version
+Sig[4].Value=0.0.0.0
+Sig[5].Name=Fault Module Timestamp
+Sig[5].Value=511cbdf2
+Sig[6].Name=Exception Code
+Sig[6].Value=c0000005
+Sig[7].Name=Exception Offset
+Sig[7].Value=003cc176
+AppPath=C:\apps\valley\bin\Valley.exe

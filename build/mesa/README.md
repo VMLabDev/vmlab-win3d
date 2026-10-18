@@ -74,17 +74,17 @@ The series has two parts, and the patches apply in name order:
   mixed-case header symlinks that `prepare-build.py` creates, so they are
   build output, not source. The diff was then split by topic. Each patch has
   a header that says what it fixes and which prior-art finding it comes from.
-- **0012 to 0017, 0020 to 0027, 0030 to 0032, 0035, 0040 to 0044 and 0075** are this repository's own fixes, found by
+- **0012 to 0017, 0020 to 0027, 0030 to 0032, 0035, 0040 to 0044, 0070, 0075, 0086 and 0090** are this repository's own fixes, found by
   the acceptance and host runs. Each header names the document with the
-  evidence. The series skips 0018, 0019, 0028, 0029, 0033, 0034, 0036 to 0039 and 0045 to 0074.
+  evidence. The series skips 0018, 0019, 0028, 0029, 0033, 0034, 0036 to 0039, 0045 to 0069, 0071 to 0074 and 0076 to 0089.
 
 0005 to 0010, every patch from 0012 to 0026 and 0030 to 0032 change
 `viogpu_d3d10.dll`, the D3D9/D3D10/D3D11 UMD (the `d3d10umd` frontend and the
 Yttrium winsys). 0032 also changes Gallium's `tgsi_to_nir`, in a branch that
 only a TGSI tessellation control shader reaches, which only the UMD makes.
 0001 to 0003 are build and utility fixes that every DLL shares, 0004 and 0027
-are in WGL, and 0011 is in the Venus ICD. 0075 is in Mesa's Win32 WSI, which
-the Venus ICD `libvulkan_virtio.dll` links.
+are in WGL, 0011 and 0070 are in the Venus ICD, and 0086 is in Zink (WGL).
+0075 is in Mesa's Win32 WSI, which the Venus ICD `libvulkan_virtio.dll` links.
 
 ### From the prior art
 
@@ -129,7 +129,10 @@ the Venus ICD `libvulkan_virtio.dll` links.
 | 0042 d3d9-fixed-function-points | Points wider than one pixel keep their colours and texture coordinates, get sprite coordinates only with `POINTSPRITEENABLE`, keep their size under perspective, and honour `PSIZE` in `XYZRHW` vertices | [`docs/ffp.md`](../../docs/ffp.md) |
 | 0043 d3d9-bump-luminance-formats | `L6V5U5` and `X8L8V8U8` bump maps exist (stored as `R8G8B8A8_SNORM`, converted on upload), so `BUMPENVMAPLUMINANCE` works; `CreateTexture` failed with `D3DERR_NOTAVAILABLE` | [`docs/ffp2.md`](../../docs/ffp2.md) |
 | 0044 d3d9-indexed-vertex-blend-palette | `MaxVertexBlendMatrixIndex` is 8, the runtime's matrix palette for indexed vertex blending with hardware vertex processing, instead of 0 | [`docs/ffp2.md`](../../docs/ffp2.md) |
+| 0070 venus-hide-host-access-to-small-bar-heap | The Venus ICD reports a device-local, host-visible type on a heap less than half the largest device-local heap as device-local only, so Vulkan, DXVK, vkd3d-proton and Zink keep host-visible memory out of the host card's BAR1 (246 MiB without resizable BAR, shared by every VM on the card; "can't alloc VA space for mapping") | [`docs/nvva.md`](../../docs/nvva.md) |
 | 0075 wsi-win32-blit-shared-swapchain-when-linear-cannot-render | Vulkan swapchains render into an OPTIMAL image that the present copies into the LINEAR shared image, when the device's `linearTilingFeatures` lack what the swapchain usage needs (NVIDIA has no linear colour attachment; Godot's first frame raised Xid 69, ErrorCode 0x13d) | [`docs/godot.md`](../../docs/godot.md) |
+| 0086 zink-keep-buffers-mappable-without-visible-vram | Zink keeps directly mapped buffers in host-visible memory when the device has no device-local, host-visible type (needed with 0070; Unigine Heaven and Valley crashed). Written by the unigl worker; carried unchanged | [`docs/nvva.md`](../../docs/nvva.md) |
+| 0090 yttrium-d3d9-depth-bias-without-float-representation | D3D9 depth bias works on devices without `VK_EXT_depth_bias_control`'s float representation (NVIDIA): it is converted to integer units for the depth format and requested exact. Before, every pipeline with a D3D9 depth bias failed and its draws were skipped | [`docs/unid3d.md`](../../docs/unid3d.md) |
 
 0021 has no mail header. `scripts/pins-table.py` carries its one-line
 description.
@@ -163,6 +166,7 @@ Which patches have run in a guest, and where:
 | nvtex proof, Windows 11, `Nvidia1` and `AMD1` (e2e, probes, SDK samples) | 0001 to 0017, 0020 to 0025 | `docs/nvtex.md` |
 | ffp proof, Windows 11, `Nvidia2` and `AMD1` (e2e, probes, `d3d9_ffp`, `Text3D`) | 0001 to 0017, 0020 to 0025, 0030, 0040 to 0042 | `docs/ffp.md` |
 | ffp2 proof, Windows 11 on `Nvidia2` and `AMD1`, Windows 10 on `Nvidia2` (e2e, `d3d9_ffp2`, `d3d9_ffp`) | 0001 to 0017, 0020 to 0027, 0030, 0035, 0040 to 0044 | `docs/ffp2.md` |
+| unid3d proof, Windows 11 on `AMD1`, `Nvidia1` and `Nvidia2` (e2e, `d3d9_depthbias`, Unigine D3D9 and D3D11) | 0001 to 0017, 0020 to 0027, 0030 to 0032, 0035, 0040 to 0044, 0090 | `docs/unid3d.md` |
 
 The nvtex proof run (2026-10-18) has the full series, 0001 to 0025, built by
 `scripts/build.sh` at commit `e428846`. Before it, no recorded run had 0015

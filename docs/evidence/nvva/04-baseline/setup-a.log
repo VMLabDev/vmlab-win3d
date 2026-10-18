@@ -1,0 +1,47 @@
+first-boot: provisioning win...
+first-boot: specialize complete; clearing marker
+first-boot: settling staged AppX (LKG) before first logon
+first-boot: rebooting once to settle shell reconciliation
+first-boot: win ready
+lab "win3d-nvva-a" is up
+pushed 7 file(s), 42217 bytes to win:C:/win3d/guest
+pushed 5 file(s), 174592 bytes to win:C:/win3d/probes/x64
+pushed 5 file(s), 153088 bytes to win:C:/win3d/probes/x86
+oobe: done after -24941 s
+created user win3d
+autologon set for VMLABVM-223TD55\win3d
+rebooting in 5 s
+[05:50:23] waiting for the guest agent
+[05:50:39] copying bundle-baseline to C:\vmlab-win3d
+pushed 29 file(s), 102413421 bytes to win:C:/vmlab-win3d
+[05:50:44] running C:\vmlab-win3d\Install.cmd
+2026-10-18T12:50:47.248-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
+2026-10-18T12:50:53.583-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T12:50:59.978-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
+2026-10-18T12:51:01.104-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T12:51:01.131-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-18T12:51:01.135-07:00 [Install]   Signature matches Public Key
+2026-10-18T12:51:01.143-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T12:51:01.147-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T12:51:01.215-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T12:51:01.217-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-18T12:51:01.223-07:00 [Install]   Signature matches Public Key
+2026-10-18T12:51:01.230-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T12:51:01.236-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T12:51:01.348-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-18T12:51:01.355-07:00 [Install]   The operation completed successfully.
+2026-10-18T12:51:01.877-07:00 [Install] test signing is set but not active in this boot
+2026-10-18T12:51:02.662-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T12:51:02.755-07:00 [Install] rebooting; step Driver resumes after the restart
+[05:51:04] Install.cmd exited 0
+[05:51:06] state: RebootPending|Driver|
+[05:52:15] state: Installing|Driver|
+[05:52:52] state: RebootPending|Verify|
+[05:54:37] state: Installed||
+[05:54:37] done: Installed
+[05:54:39] desktop: True 56
+[05:54:56] desktop: True 74
+[05:55:13] desktop: True 91
+[05:55:30] desktop: True 108
+[05:55:46] desktop: True 124
+[05:55:46] setup a done

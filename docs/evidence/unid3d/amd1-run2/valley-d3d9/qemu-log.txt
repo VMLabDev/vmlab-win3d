@@ -1,0 +1,2 @@
+virgl_render_server[841539]: vkr: vkCmdBeginRenderPass resulted in CS error
+virgl_render_server[841539]: vkr: ring_submit_cmd: vn_dispatch_command failed
