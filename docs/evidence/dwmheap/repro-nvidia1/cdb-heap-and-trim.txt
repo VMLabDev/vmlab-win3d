@@ -1,0 +1,175 @@
+0:003> cdb: Reading initial command '!heap -s; ~2k; ~15k; ~18k; uf d3d11!NDXGI::CDevice::TrimNotificationCallback; q'
+                                      Process    Total      Total 
+                              Global     Heap Reserved  Committed 
+    Heap Address  Signature    Flags     List    Bytes      Bytes 
+                                        Index      (K)        (K) 
+     1c532000000   ddeeddee        0        0    74752      46044 
+     1c532400000   ddeeddee        0        0     3072        232 
+     1c532600000   ddeeddee        0        0     2048         16 
+     1c532800000   ddeeddee        0        0     2048         28 
+***********************************************************************************************************************
+*
+                                              NT HEAP STATS BELOW
+***********************************************************************************************************************
+*
+**************************************************************
+*                                                            *
+*                  HEAP ERROR DETECTED                       *
+*                                                            *
+**************************************************************
+Details:
+Heap address:  000001c532000140
+Error address: 000001c53d55e180
+Error type:    HEAP_FAILURE_SEGMENT_LFH_DOUBLE_FREE
+Details:       The heap detected that the current free operation
+               is attempting to free a block which is already free.
+Follow-up:     Enable pageheap.
+Stack trace:
+Stack trace at 0x00007ffb1f9ad138
+    00007ffb1f809643: ntdll!RtlpHpFreeHeap+0x2b3
+    00007ffb1f7fce11: ntdll!RtlFreeHeap+0x231
+    00007ffb1cab2d7b: ucrtbase!free_base+0x1b
+*** WARNING: Unable to verify timestamp for viogpu_d3d10.dll
+    00007ffb15a52c83: viogpu_d3d10!D3DKMTConfigureSharedResource+0x1c743
+    00007ffb15a45f56: viogpu_d3d10!D3DKMTConfigureSharedResource+0xfa16
+    00007ffb15a48e4a: viogpu_d3d10!D3DKMTConfigureSharedResource+0x1290a
+    00007ffb15a042f5: viogpu_d3d10!OpenAdapter+0x32a55
+    00007ffb18513b92: d3d11!NDXGI::CDevice::TrimNotificationCallback+0x82
+    00007ffb19dd75cd: DXCore!DxTrimWnfCallback+0xdd
+    00007ffb1f8633d4: ntdll!RtlpWnfWalkUserSubscriptionList+0x3c4
+    00007ffb1f862dae: ntdll!RtlpWnfProcessCurrentDescriptor+0x11e
+    00007ffb1f861b57: ntdll!RtlpWnfNotificationThread+0x87
+    00007ffb1f861420: ntdll!TppExecuteWaitCallback+0x1d0
+    00007ffb1f7fa879: ntdll!TppWorkerThread+0x599
+    00007ffb1e4bcd87: kernel32!BaseThreadInitThunk+0x17
+    00007ffb1f88caec: ntdll!RtlUserThreadStart+0x2c
+LFH Key                   : 0x871c27c3a7e3f469
+Termination on corruption : ENABLED
+          Heap     Flags   Reserv  Commit  Virt   Free  List   UCR  Virt  Lock  Fast 
+                            (k)     (k)    (k)     (k) length      blocks cont. heap 
+-------------------------------------------------------------------------------------
+000001c531a90000 00000002     168     40     64      9     2     1    0      0   LFH
+000001c531ba0000 00008000      64      4     64      2     1     1    0      0      
+000001c53c5b0000 00000001      16     16     16     11     1     1    0    N/A   
+-------------------------------------------------------------------------------------
+Child-SP          RetAddr               Call Site
+00000001`0047f768 00007ffb`1f7eff6d     ntdll!NtWaitForAlertByThreadId+0x14
+00000001`0047f770 00007ffb`1f7f166f     ntdll!RtlpWaitOnCriticalSection+0x5ad
+00000001`0047f870 00007ffb`1f7f28e2     ntdll!RtlpEnterCriticalSectionContended+0x1ef
+00000001`0047f8f0 00007ffb`184d7a7f     ntdll!RtlEnterCriticalSection+0xf2
+00000001`0047f930 00007ffb`184d7a2d     d3d11!ATL::CComCritSecLock<ATL::CComCriticalSection>::Lock+0x13
+00000001`0047f960 00007ffb`184d6303     
+d3d11!ATL::CComCritSecLock<ATL::CComCriticalSection>::CComCritSecLock<ATL::CComCriticalSection>+0x15
+00000001`0047f9b0 00007ffb`18526329     d3d11!NDXGI::CDevice::LLOBeginLayerDestruction+0x37
+00000001`0047f9f0 00007ffb`185262cf     d3d11!NOutermost::CDevice::LLOBeginLayerDestruction+0x19
+00000001`0047fa20 00007ffb`18526284     d3d11!TComObject<NOutermost::CDevice>::~TComObject<NOutermost::CDevice>+0x1f
+00000001`0047fa50 00007ffb`184d7e08     d3d11!TComObject<NOutermost::CDevice>::`vector deleting destructor'+0x14
+00000001`0047fa80 00007ffb`184c0336     d3d11!TComObject<NOutermost::CDevice>::Release+0x38
+00000001`0047fab0 00007ffb`18505264     d3d11!CUseCountedObject<NOutermost::CDeviceChild>::Release+0x196
+00000001`0047fae0 00007ffb`19262bd0     d3d11!CLayeredObject<CClassLinkage>::CContainedObject::Release+0x14
+00000001`0047fb10 00007ffb`1925d9a4     dwmcore!CD3DResourceLeakChecker::~CD3DResourceLeakChecker+0x18
+00000001`0047fb40 00007ffb`1910abb1     dwmcore!CD3DDevice::`vector deleting destructor'+0x14
+00000001`0047fb70 00007ffb`19283d0a     dwmcore!CD3DDevice::Release+0x111
+00000001`0047fba0 00007ffb`19079470     dwmcore!ReleaseInterface<CD3DDevice>+0x16
+00000001`0047fbd0 00007ffb`19079329     dwmcore!CDeviceManager::DeleteUnusedDevices+0xd0
+00000001`0047fc00 00007ffb`19077da4     dwmcore!CDeviceManager::ProcessDeviceLost+0x89
+00000001`0047fc60 00007ffb`190b8163     dwmcore!CComposition::PostRender+0x138
+00000001`0047fd10 00007ffb`190734b6     dwmcore!CComposition::ProcessComposition+0x4c3
+00000001`0047fe00 00007ffb`192990e6     dwmcore!CConnection::MainCompositionThreadLoop+0x4a
+00000001`0047fe30 00007ffb`1e4bcd87     dwmcore!CConnection::RunCompositionThread+0x142
+00000001`0047fe70 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+00000001`0047fea0 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+Child-SP          RetAddr               Call Site
+00000001`00c9e758 00007ffb`1f7eff6d     ntdll!NtWaitForAlertByThreadId+0x14
+00000001`00c9e760 00007ffb`1f7f166f     ntdll!RtlpWaitOnCriticalSection+0x5ad
+00000001`00c9e860 00007ffb`1f7f28e2     ntdll!RtlpEnterCriticalSectionContended+0x1ef
+00000001`00c9e8e0 00007ffb`19dd6fe3     ntdll!RtlEnterCriticalSection+0xf2
+00000001`00c9e920 00007ffb`184d5b0d     DXCore!D3DKMTRegisterTrimNotification+0x73
+00000001`00c9e970 00007ffb`184d8ef4     d3d11!NDXGI::CDevice::LLOCompleteLayerConstruction+0x3e1
+00000001`00c9ec40 00007ffb`184d538a     d3d11!NOutermost::CDevice::LLOCompleteLayerConstruction+0x14
+00000001`00c9ec70 00007ffb`184d5641     d3d11!TComObject<NOutermost::CDevice>::TComObject<NOutermost::CDevice>+0xf6
+00000001`00c9ece0 00007ffb`184d799b     d3d11!D3D11CreateLayeredDevice+0x231
+00000001`00c9ede0 00007ffb`184d8397     d3d11!D3D11CoreCreateLayeredDevice+0x11b
+00000001`00c9eeb0 00007ffb`184d6b9f     d3d11!D3D11RegisterLayersAndCreateDevice+0x57f
+00000001`00c9f010 00007ffb`184d93c3     d3d11!D3D11CoreCreateDevice+0x40f
+00000001`00c9f330 00007ffb`1852252e     d3d11!D3D11CreateDeviceAndSwapChainImpl+0x2a3
+00000001`00c9f5a0 00007ffb`1852247c     d3d11!D3D11CreateDeviceAndSwapChain+0x9e
+00000001`00c9f620 00007ffb`18523e06     d3d11!D3D11CreateDeviceImpl+0x5c
+00000001`00c9f690 00007ffb`195a41b2     d3d11!D3D11CreateDevice+0x86
+00000001`00c9f700 00007ffb`1956cd0b     uDWM!CGraphicsDeviceManager::InitializeGraphicsDeviceType+0x62
+00000001`00c9f7b0 00007ffb`1953357b     uDWM!CGraphicsDeviceManager::InitializeGraphicsDevice+0x43
+00000001`00c9f7e0 00007ffb`19578742     uDWM!CGraphicsDeviceManager::EnsureGraphicsDeviceCreated+0x1b
+00000001`00c9f810 00007ffb`1955bea3     uDWM!CGraphicsDeviceManager::HandleGraphicsDeviceLost+0x16
+00000001`00c9f840 00007ffb`1955ba42     uDWM!CGraphicsDeviceManager::CheckDXGIAdapter+0x3e7
+00000001`00c9fba0 00007ffb`1956bebf     uDWM!CGraphicsDeviceManager::ValidateDXGIAdapterAndDevice+0x12
+00000001`00c9fbd0 00007ffb`1e4bcd87     uDWM!CDesktopManager::DwmEventThreadProc+0x44f
+00000001`00c9fd60 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+00000001`00c9fd90 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+Child-SP          RetAddr               Call Site
+00000001`00e9f8f8 00007ffb`1f7f137b     ntdll!NtWaitForAlertByThreadId+0x14
+00000001`00e9f900 00007ffb`1cf93ac8     ntdll!RtlSleepConditionVariableCS+0x14b
+00000001`00e9f970 00007ffb`15ac39c0     KERNELBASE!SleepConditionVariableCS+0x38
+00000001`00e9f9a0 00007ffb`15afc30c     viogpu_d3d10!D3DKMTConfigureSharedResource+0x8d480
+00000001`00e9f9d0 00007ffb`1caccd30     viogpu_d3d10!D3DKMTConfigureSharedResource+0xc5dcc
+00000001`00e9fae0 00007ffb`1e4bcd87     ucrtbase!thread_start<unsigned int (__cdecl*)(void *),1>+0x30
+00000001`00e9fb10 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+00000001`00e9fb40 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+d3d11!NDXGI::CDevice::TrimNotificationCallback:
+00007ffb`18513b10 48895c2410      mov     qword ptr [rsp+10h],rbx
+00007ffb`18513b15 57              push    rdi
+00007ffb`18513b16 4883ec50        sub     rsp,50h
+00007ffb`18513b1a 488b05dfc41b00  mov     rax,qword ptr [d3d11!_security_cookie (00007ffb`186d0000)]
+00007ffb`18513b21 4833c4          xor     rax,rsp
+00007ffb`18513b24 4889442440      mov     qword ptr [rsp+40h],rax
+00007ffb`18513b29 488b39          mov     rdi,qword ptr [rcx]
+00007ffb`18513b2c 33d2            xor     edx,edx
+00007ffb`18513b2e 89542434        mov     dword ptr [rsp+34h],edx
+00007ffb`18513b32 488b8778020000  mov     rax,qword ptr [rdi+278h]
+00007ffb`18513b39 4889442428      mov     qword ptr [rsp+28h],rax
+00007ffb`18513b3e 8b4108          mov     eax,dword ptr [rcx+8]
+00007ffb`18513b41 89442430        mov     dword ptr [rsp+30h],eax
+00007ffb`18513b45 488b4110        mov     rax,qword ptr [rcx+10h]
+00007ffb`18513b49 4889442438      mov     qword ptr [rsp+38h],rax
+00007ffb`18513b4e 488b5f48        mov     rbx,qword ptr [rdi+48h]
+00007ffb`18513b52 4885db          test    rbx,rbx
+00007ffb`18513b55 746c            je      d3d11!NDXGI::CDevice::TrimNotificationCallback+0xb3 (00007ffb`18513bc3)
+d3d11!NDXGI::CDevice::TrimNotificationCallback+0x47:
+00007ffb`18513b57 389318050000    cmp     byte ptr [rbx+518h],dl
+00007ffb`18513b5d 7457            je      d3d11!NDXGI::CDevice::TrimNotificationCallback+0xa6 (00007ffb`18513bb6)
+d3d11!NDXGI::CDevice::TrimNotificationCallback+0x4f:
+00007ffb`18513b5f 48895c2420      mov     qword ptr [rsp+20h],rbx
+00007ffb`18513b64 488bcb          mov     rcx,rbx
+d3d11!NDXGI::CDevice::TrimNotificationCallback+0x57:
+00007ffb`18513b67 4885c9          test    rcx,rcx
+00007ffb`18513b6a 7415            je      d3d11!NDXGI::CDevice::TrimNotificationCallback+0x71 (00007ffb`18513b81)
+d3d11!NDXGI::CDevice::TrimNotificationCallback+0x5c:
+00007ffb`18513b6c 4881c1c8000000  add     rcx,0C8h
+00007ffb`18513b73 e8c8affaff      call    d3d11!CLayeredObjectRoot<ID3D11LayeredDevice>::Lock (00007ffb`184beb40)
+00007ffb`18513b78 488bcb          mov     rcx,rbx
+00007ffb`18513b7b e858b1faff      call    d3d11!CDDISync::CFreeThreadedLock::Enter (00007ffb`184becd8)
+00007ffb`18513b80 90              nop
+d3d11!NDXGI::CDevice::TrimNotificationCallback+0x71:
+00007ffb`18513b81 488d4c2428      lea     rcx,[rsp+28h]
+00007ffb`18513b86 488b8710030000  mov     rax,qword ptr [rdi+310h]
+00007ffb`18513b8d e87ed41500      call    d3d11!guard_dispatch_icall$thunk$10345483385596137414 (00007ffb`18671010)
+00007ffb`18513b92 90              nop
+00007ffb`18513b93 488d4c2420      lea     rcx,[rsp+20h]
+00007ffb`18513b98 e863c2faff      call    d3d11!CDDISync::CFreeThreadedLock::~CFreeThreadedLock (00007ffb`184bfe00)
+00007ffb`18513b9d 488b4c2440      mov     rcx,qword ptr [rsp+40h]
+00007ffb`18513ba2 4833cc          xor     rcx,rsp
+00007ffb`18513ba5 e836440300      call    d3d11!_security_check_cookie (00007ffb`18547fe0)
+00007ffb`18513baa 488b5c2468      mov     rbx,qword ptr [rsp+68h]
+00007ffb`18513baf 4883c450        add     rsp,50h
+00007ffb`18513bb3 5f              pop     rdi
+00007ffb`18513bb4 c3              ret
+d3d11!NDXGI::CDevice::TrimNotificationCallback+0xa6:
+00007ffb`18513bb6 488bda          mov     rbx,rdx
+00007ffb`18513bb9 4889542420      mov     qword ptr [rsp+20h],rdx
+00007ffb`18513bbe 488bca          mov     rcx,rdx
+00007ffb`18513bc1 eba4            jmp     d3d11!NDXGI::CDevice::TrimNotificationCallback+0x57 (00007ffb`18513b67)
+d3d11!NDXGI::CDevice::TrimNotificationCallback+0xb3:
+00007ffb`18513bc3 4889542420      mov     qword ptr [rsp+20h],rdx
+00007ffb`18513bc8 ebb7            jmp     d3d11!NDXGI::CDevice::TrimNotificationCallback+0x71 (00007ffb`18513b81)
+quit:
+
+

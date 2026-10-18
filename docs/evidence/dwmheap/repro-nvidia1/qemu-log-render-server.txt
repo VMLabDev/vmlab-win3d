@@ -1,0 +1,104 @@
+vmlab: argv: ~/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64 -name vmlab:win3d-dwmheap-nv1a/win11 -L /usr/share/qemu -machine q35 -accel kvm -cpu host,vmx=off,svm=off -smp 4 -m 8192M -display none -vnc unix:/run/user/1000/vmlab/labs/win3d-dwmheap-nv1a/vms/win11/vnc.sock,share=ignore -qmp unix:/run/user/1000/vmlab/labs/win3d-dwmheap-nv1a/vms/win11/qmp.sock,server=on,wait=off -monitor none -serial file:~/.local/state/vmlab/labs/win3d-dwmheap-nv1a/vms/win11/serial.log -drive if=pflash,format=raw,readonly=on,file=~/.local/share/vmlab/guest/firmware/x86_64/OVMF_CODE_4M.fd -drive if=pflash,format=raw,file=~/dev/vmlab-win3d-wt/dwmheap/.scratch/labs/nv1a/.vmlab/vms/win11/OVMF_VARS.fd -chardev socket,id=vagent0,path=/run/user/1000/vmlab/labs/win3d-dwmheap-nv1a/vms/win11/agent.sock,server=on,wait=off -device virtio-serial-pci -device virtserialport,chardev=vagent0,name=vmlab.agent.0 -blockdev driver=qcow2,node-name=disk0,file.driver=file,file.filename=~/dev/vmlab-win3d-wt/dwmheap/.scratch/labs/nv1a/.vmlab/vms/win11/disk0.qcow2 -device virtio-blk-pci,drive=disk0 -netdev tap,id=net0,fd=10 -device virtio-net-pci,netdev=net0,mac=52:54:00:94:08:a7,host_mtu=9000 -chardev socket,id=chrtpm,path=/run/user/1000/vmlab/labs/win3d-dwmheap-nv1a/vms/win11/tpm.sock -tpmdev emulator,id=tpm0,chardev=chrtpm -device tpm-tis,tpmdev=tpm0 -device virtio-vga-gl,venus=true,blob=true,hostmem=4G -display egl-headless,rendernode=/dev/dri/renderD128 -usb -device usb-tablet -S
+virtio_gpu_virgl_process_cmd: ctrl 0x102, error 0x1203
+vmlab: argv: ~/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64 -name vmlab:win3d-dwmheap-nv1a/win11 -L /usr/share/qemu -machine q35 -accel kvm -cpu host,vmx=off,svm=off -smp 4 -m 8192M -display none -vnc unix:/run/user/1000/vmlab/labs/win3d-dwmheap-nv1a/vms/win11/vnc.sock,share=ignore -qmp unix:/run/user/1000/vmlab/labs/win3d-dwmheap-nv1a/vms/win11/qmp.sock,server=on,wait=off -monitor none -serial file:~/.local/state/vmlab/labs/win3d-dwmheap-nv1a/vms/win11/serial.log -drive if=pflash,format=raw,readonly=on,file=~/.local/share/vmlab/guest/firmware/x86_64/OVMF_CODE_4M.fd -drive if=pflash,format=raw,file=~/dev/vmlab-win3d-wt/dwmheap/.scratch/labs/nv1a/.vmlab/vms/win11/OVMF_VARS.fd -chardev socket,id=vagent0,path=/run/user/1000/vmlab/labs/win3d-dwmheap-nv1a/vms/win11/agent.sock,server=on,wait=off -device virtio-serial-pci -device virtserialport,chardev=vagent0,name=vmlab.agent.0 -blockdev driver=qcow2,node-name=disk0,file.driver=file,file.filename=~/dev/vmlab-win3d-wt/dwmheap/.scratch/labs/nv1a/.vmlab/vms/win11/disk0.qcow2 -device virtio-blk-pci,drive=disk0 -netdev tap,id=net0,fd=10 -device virtio-net-pci,netdev=net0,mac=52:54:00:94:08:a7,host_mtu=9000 -chardev socket,id=chrtpm,path=/run/user/1000/vmlab/labs/win3d-dwmheap-nv1a/vms/win11/tpm.sock -tpmdev emulator,id=tpm0,chardev=chrtpm -device tpm-tis,tpmdev=tpm0 -device virtio-vga-gl,venus=true,blob=true,hostmem=4G -display egl-headless,rendernode=/dev/dri/renderD128 -usb -device usb-tablet -S
+virtio_gpu_virgl_process_cmd: ctrl 0x102, error 0x1203
+virgl_render_server[3604944]: vkr: destroying context 24 (yttrium) with a valid instance
+virgl_render_server[3604944]: vkr: destroying device with valid objects
+virgl_render_server[3599402]: vkr: destroying context 16 (yttrium) with a valid instance
+virgl_render_server[3606158]: vkr: destroying context 26 (yttrium) with a valid instance
+virgl_render_server[3606158]: vkr: destroying device with valid objects
+virgl_render_server[3599402]: vkr: destroying device with valid objects
+virgl_render_server[3643779]: vkr: failed to look up object 10 of type 8
+virgl_render_server[3643779]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3643779]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3623906]: vkr: failed to look up object 335 of type 8
+virgl_render_server[3623906]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3623906]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3646130]: vkr: failed to look up object 10 of type 8
+virgl_render_server[3646130]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3646130]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3646630]: vkr: failed to look up object 10 of type 8
+virgl_render_server[3646630]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3646630]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3647009]: vkr: failed to look up object 10 of type 8
+virgl_render_server[3647009]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3647009]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3649171]: vkr: failed to look up object 26 of type 8
+virgl_render_server[3649171]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3649171]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3650521]: vkr: failed to look up object 26 of type 8
+virgl_render_server[3650521]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3650521]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3651762]: vkr: failed to look up object 26 of type 8
+virgl_render_server[3651762]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3651762]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3652508]: vkr: failed to look up object 26 of type 8
+virgl_render_server[3652508]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3652508]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3653531]: vkr: failed to look up object 26 of type 8
+virgl_render_server[3653531]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3653531]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3655672]: vkr: failed to look up object 26 of type 8
+virgl_render_server[3655672]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3655672]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3656181]: vkr: failed to look up object 26 of type 8
+virgl_render_server[3656181]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3656181]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3657113]: vkr: failed to look up object 26 of type 8
+virgl_render_server[3657113]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3657113]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3658325]: vkr: failed to look up object 26 of type 8
+virgl_render_server[3658325]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3658325]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3659374]: vkr: failed to look up object 26 of type 8
+virgl_render_server[3659374]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3659374]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3660426]: vkr: failed to look up object 26 of type 8
+virgl_render_server[3660426]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3660426]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3661849]: vkr: failed to look up object 107 of type 8
+virgl_render_server[3661849]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3661849]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3662606]: vkr: failed to look up object 37 of type 8
+virgl_render_server[3662606]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3662606]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3663392]: vkr: failed to look up object 33 of type 8
+virgl_render_server[3663392]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3663392]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3664194]: vkr: failed to look up object 33 of type 8
+virgl_render_server[3664194]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3664194]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3665869]: vkr: failed to look up object 33 of type 8
+virgl_render_server[3665869]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3665869]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3667183]: vkr: failed to look up object 31 of type 8
+virgl_render_server[3667183]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3667183]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3667906]: vkr: failed to look up object 31 of type 8
+virgl_render_server[3667906]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3667906]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3684486]: vkr: failed to look up object 105 of type 8
+virgl_render_server[3684486]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3684486]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3695217]: vkr: failed to look up object 31 of type 8
+virgl_render_server[3695217]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3695217]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3696524]: vkr: failed to look up object 33 of type 8
+virgl_render_server[3696524]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3696524]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3697957]: vkr: failed to look up object 31 of type 8
+virgl_render_server[3697957]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3697957]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3699179]: vkr: failed to look up object 31 of type 8
+virgl_render_server[3699179]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3699179]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3700208]: vkr: failed to look up object 31 of type 8
+virgl_render_server[3700208]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3700208]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3701178]: vkr: failed to look up object 33 of type 8
+virgl_render_server[3701178]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3701178]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3703335]: vkr: failed to look up object 105 of type 8
+virgl_render_server[3703335]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[3703335]: vkr: ring_submit_cmd: vn_dispatch_command failed
+vmlab: argv: ~/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64 -name vmlab:win3d-dwmheap-nv1a/win11 -L /usr/share/qemu -machine q35 -accel kvm -cpu host,vmx=off,svm=off -smp 4 -m 8192M -display none -vnc unix:/run/user/1000/vmlab/labs/win3d-dwmheap-nv1a/vms/win11/vnc.sock,share=ignore -qmp unix:/run/user/1000/vmlab/labs/win3d-dwmheap-nv1a/vms/win11/qmp.sock,server=on,wait=off -monitor none -serial file:~/.local/state/vmlab/labs/win3d-dwmheap-nv1a/vms/win11/serial.log -drive if=pflash,format=raw,readonly=on,file=~/.local/share/vmlab/guest/firmware/x86_64/OVMF_CODE_4M.fd -drive if=pflash,format=raw,file=~/dev/vmlab-win3d-wt/dwmheap/.scratch/labs/nv1a/.vmlab/vms/win11/OVMF_VARS.fd -chardev socket,id=vagent0,path=/run/user/1000/vmlab/labs/win3d-dwmheap-nv1a/vms/win11/agent.sock,server=on,wait=off -device virtio-serial-pci -device virtserialport,chardev=vagent0,name=vmlab.agent.0 -blockdev driver=qcow2,node-name=disk0,file.driver=file,file.filename=~/dev/vmlab-win3d-wt/dwmheap/.scratch/labs/nv1a/.vmlab/vms/win11/disk0.qcow2 -device virtio-blk-pci,drive=disk0 -netdev tap,id=net0,fd=10 -device virtio-net-pci,netdev=net0,mac=52:54:00:94:08:a7,host_mtu=9000 -chardev socket,id=chrtpm,path=/run/user/1000/vmlab/labs/win3d-dwmheap-nv1a/vms/win11/tpm.sock -tpmdev emulator,id=tpm0,chardev=chrtpm -device tpm-tis,tpmdev=tpm0 -device virtio-vga-gl,venus=true,blob=true,hostmem=4G -display egl-headless,rendernode=/dev/dri/renderD128 -usb -device usb-tablet -S
