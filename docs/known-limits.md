@@ -399,16 +399,29 @@ written by hand or by another compiler would hit it. Vertex shader input
 ranges and domain shader ranges over tessellation factors were not tested
 ([`ds.md`](ds.md#what-remains)).
 
-### No D3D12 application besides the probe
+### D3D12: ExecuteIndirect that changes state draws wrongly, and an NVIDIA first-boot dwm crash
 
-The planned D3D12 application, Microsoft's DirectX-Graphics-Samples
-`D3D12HelloTriangle`, does not build unmodified with the project toolchain,
-llvm-mingw. It uses the MSVC return-value form of
-`GetCPUDescriptorHandleForHeapStart()`, WRL's `FileHandle` and `_uuidof`,
-which DirectX-Headers and mingw do not provide for that compiler. Building it
-needs MSVC or clang-cl with the Windows SDK, so it was skipped
-(`docs/acceptance.md`, "Stretch"). D3D12 has run only as the probe here; the
-prior art's D3D12 application results are listed above.
+Five unmodified Microsoft DirectX-Graphics-Samples D3D12 samples now build
+with clang-cl and the MSVC CRT (`build/d3d12-samples/`) and run through the
+installed package with no app-local DLLs (`docs/d3d12app.md`).
+`D3D12HelloTriangle`, `D3D12HelloTexture`, `D3D12Bundles` and
+`D3D12nBodyGravity` render and exit 0 on AMD1 and Nvidia1. Two failures
+remain:
+
+- **`ExecuteIndirect` with a command signature that changes state** draws
+  wrongly, with no error. Such a signature changes root constants, root
+  descriptors, or vertex or index buffers. vkd3d-proton implements it with
+  `VK_EXT_device_generated_commands`. RADV and the NVIDIA driver on the host
+  have that extension, but Venus (guest Mesa 26.1.0 and virglrenderer 1.3.0)
+  does not pass it through. vkd3d-proton then drops the state arguments and
+  issues only the draws. `D3D12ExecuteIndirect` shows the clear colour and
+  none of its triangles. Plain indirect draws and dispatches are not
+  affected.
+- **On NVIDIA, dwm.exe can crash in the first boot after the install.** The
+  crash is heap corruption, `0xc0000374`, with `viogpu_d3d10.dll` loaded,
+  during the first D3D12 sample. D3D12 programs then fail until the next
+  reboot. It happened in two fresh Nvidia1 labs and in neither AMD1 lab. One
+  more reboot clears it. The cause is open.
 
 ### DirectDraw: 16 bpp only for 32-bit programs, and flips below the refresh rate on NVIDIA
 

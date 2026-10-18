@@ -1,0 +1,11 @@
+== D3D12HelloTriangle
+case shim: D3Dcompiler.h -> /out/.work/winsysroot/Windows Kits/10/Include/10.0.26100/um/d3dcompiler.h
+== D3D12HelloTexture
+case shim: D3Dcompiler.h -> /out/.work/winsysroot/Windows Kits/10/Include/10.0.26100/um/d3dcompiler.h
+== D3D12Bundles
+case shim: D3Dcompiler.h -> /out/.work/winsysroot/Windows Kits/10/Include/10.0.26100/um/d3dcompiler.h
+== D3D12nBodyGravity
+case shim: D3Dcompiler.h -> /out/.work/winsysroot/Windows Kits/10/Include/10.0.26100/um/d3dcompiler.h
+== D3D12ExecuteIndirect
+case shim: D3Dcompiler.h -> /out/.work/winsysroot/Windows Kits/10/Include/10.0.26100/um/d3dcompiler.h
+== done: /out/x64

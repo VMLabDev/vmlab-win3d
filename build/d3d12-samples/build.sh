@@ -8,9 +8,8 @@
 #
 # Every input is pinned in PINS; the in-container steps are in
 # container-build.sh and build-samples.py. The MSVC CRT and Windows SDK are
-# fetched by xwin, which needs the Microsoft licence accepted
-# (XWIN_ACCEPT_LICENSE); the result stays in out/d3d12-samples/.work and is
-# never committed or packaged.
+# fetched by xwin, which runs with --accept-license (Microsoft's terms); the
+# result stays in out/d3d12-samples/.work and is never committed or packaged.
 set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$here/../.." && pwd)"
