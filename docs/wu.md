@@ -127,7 +127,15 @@ same offer.
 The full acceptance run, `tests/e2e/run.sh --template windows-11`, with
 the NIC and the activation step, passes 12 of 12 on Nvidia2
 (`docs/evidence/wu/e2e/windows-11-nvidia2/`, bundle 0.1.0 at `54355df`)
-and AMD1-E2E. Each run's `activation.txt` shows `License Status: Licensed`.
+and on AMD1 (`docs/evidence/wu/e2e/windows-11-amd1/`, bundle 0.1.1 built
+at `1c73461`). Each run's `activation.txt` shows `License Status: Licensed`.
+The first AMD1 run passed 11 of 12
+(`docs/evidence/wu/e2e/windows-11-amd1-run1/`). Its x86 D3D12 probe passed
+its own readback but presented one frame in 40 seconds, so its window never
+reached a console capture. The x64 D3D12 probe in the same run ran at 49
+fps, the host's load average was about 28, and worker `dd16` saw the same
+11 of 12 on AMD1 without this change. The rerun presented 569 frames at 28
+fps.
 
 ## What remains
 
@@ -144,3 +152,6 @@ and AMD1-E2E. Each run's `activation.txt` shows `License Status: Licensed`.
   activation, and the rearm count is 1.
 - The NIC gives the guest internet egress, and lets guests in one lab
   reach each other.
+- On AMD1 the x86 D3D12 probe once stalled for 40 seconds after its first
+  present (above). The cause was not investigated here; it is not related
+  to the lab network.
