@@ -74,9 +74,9 @@ The series has two parts, and the patches apply in name order:
   mixed-case header symlinks that `prepare-build.py` creates, so they are
   build output, not source. The diff was then split by topic. Each patch has
   a header that says what it fixes and which prior-art finding it comes from.
-- **0012 to 0017, 0020 to 0027, 0030 and 0035** are this repository's own fixes, found by
+- **0012 to 0017, 0020 to 0027, 0030, 0035 and 0040 to 0042** are this repository's own fixes, found by
   the acceptance and host runs. Each header names the document with the
-  evidence. The series skips 0018 and 0019.
+  evidence. The series skips 0018, 0019, 0026 to 0029 and 0031 to 0039.
 
 0005 to 0010 and every patch from 0012 to 0026 change `viogpu_d3d10.dll`, the
 D3D9/D3D10/D3D11 UMD (the `d3d10umd` frontend and the Yttrium winsys). 0001
@@ -119,6 +119,9 @@ and 0011 is in the Venus ICD.
 | 0027 wgl-present-windows-opaque | WGL windows present opaque: Kopper's swapchain no longer asks for premultiplied alpha, so the compositor ignores the alpha an application leaves in its back buffer (Blender's window was translucent on Windows 10) | [`docs/present.md`](../../docs/present.md) |
 | 0030 d3d10umd-domain-shader-indexed-patch-constants | Domain shaders read patch constants with a register index (`dcl_indexrange vpc`; the device was removed at the first draw) | [`docs/ds.md`](../../docs/ds.md) |
 | 0035 d3d9-hardware-colour-key-and-mirror-blits | DirectDraw source colour-key and mirror blits are drawn on the GPU, matching the emulation layer pixel for pixel, and the HAL reports `DDCKEYCAPS_SRCBLT` and the mirror FX caps (DirectDraw emulated them on the CPU through Lock) | [`docs/ddraw.md`](../../docs/ddraw.md) |
+| 0040 d3d9-swvp-processed-vertices-keep-declaration-vs | Fixed-function draws with software vertex processing keep their colours and texture coordinates (every one rendered black) | [`docs/ffp.md`](../../docs/ffp.md) |
+| 0041 d3d9-fixed-function-fog | Table fog under a perspective projection uses W (from `UpdateWInfo`), vertex fog is clamped per pixel, and pre-transformed vertices get their fog factor from FOG or the specular alpha | [`docs/ffp.md`](../../docs/ffp.md) |
+| 0042 d3d9-fixed-function-points | Points wider than one pixel keep their colours and texture coordinates, get sprite coordinates only with `POINTSPRITEENABLE`, keep their size under perspective, and honour `PSIZE` in `XYZRHW` vertices | [`docs/ffp.md`](../../docs/ffp.md) |
 
 0021 has no mail header. `scripts/pins-table.py` carries its one-line
 description.
@@ -150,6 +153,7 @@ Which patches have run in a guest, and where:
 | D3D11 samples, Windows 11, AMD | 0001 to 0017, 0020 | `docs/d3d11-apps.md` |
 | Zeus Intel and the helios AMD regression, Windows 11 | 0001 to 0014, 0020, 0021 | `docs/zeus.md` |
 | nvtex proof, Windows 11, `Nvidia1` and `AMD1` (e2e, probes, SDK samples) | 0001 to 0017, 0020 to 0025 | `docs/nvtex.md` |
+| ffp proof, Windows 11, `Nvidia2` and `AMD1` (e2e, probes, `d3d9_ffp`, `Text3D`) | 0001 to 0017, 0020 to 0025, 0030, 0040 to 0042 | `docs/ffp.md` |
 
 The nvtex proof run (2026-10-18) has the full series, 0001 to 0025, built by
 `scripts/build.sh` at commit `e428846`. Before it, no recorded run had 0015

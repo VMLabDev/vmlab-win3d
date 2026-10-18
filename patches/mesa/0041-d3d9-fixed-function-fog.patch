@@ -1,0 +1,131 @@
+Subject: [PATCH] d3d9: fixed-function fog for perspective table fog, vertex fog clamping and pre-transformed vertices
+
+Three faults in D3D9 fog after a ps_1_x/ps_2_0 shader, the path every
+fixed-function draw takes:
+
+- Table fog uses eye depth (W fog) under a perspective projection. The UMD
+  chose by the projection matrix it got from SetTransform, but when the
+  runtime emulates fixed-function vertex processing with shaders it never
+  calls SetTransform, so table fog always used screen z and a perspective
+  scene showed almost no fog. The runtime does report the projection's W
+  range through UpdateWInfo, with WNear == WFar for a projection that is not
+  perspective; that now selects W fog.
+- Vertex fog was clamped to [0, 1] in the vertex shader and then
+  interpolated. D3D9 interpolates the factor and clamps it per pixel, so a
+  fog range that starts or ends inside a primitive was smeared over it. The
+  clamp moved to the pixel shader's fog stage.
+- Pre-transformed vertices (XYZRHW, and the runtime's software-processed
+  vertices) had no fog factor in the generated POSITIONT vertex shader, so
+  vertex fog made them fully fogged. It now comes from the FOG element when
+  the declaration has one (software vertex processing), else from the alpha
+  of the specular colour, else 0.
+
+Evidence: docs/ffp.md, docs/evidence/ffp/ (src/d3d9_ffp.cpp, fv_*, ft_*,
+fog_rhw_*).
+Origin: vmlab-win3d ffp worker.
+---
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Draw.cpp b/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
+index 7d4272e..fc66a89 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
+@@ -67,11 +67,21 @@ struct D3D9AutoUploadResources
+    }
+ };
+ 
++/*
++ * Table fog uses eye-space depth (w) when the projection is perspective and
++ * screen z otherwise.  When the runtime emulates fixed-function vertex
++ * processing with shaders it never calls SetTransform, so the projection
++ * the UMD holds stays the identity.  The runtime still reports the w range
++ * of the projection through UpdateWInfo, and sends WNear == WFar (1.0) for a
++ * projection that is not perspective.
++ */
+ static bool
+ D3D9ProjectionUsesZFog(const D3D9Device *device)
+ {
+    const D3DMATRIX &projection = device->transforms[D3DTS_PROJECTION];
+ 
++   if (device->winfo.WNear != device->winfo.WFar)
++      return false;
+    return projection._34 == 0.0f && projection._44 == 1.0f;
+ }
+ 
+@@ -925,7 +935,8 @@ D3D9InitPositionTRuntimePsFixedFunctionVsInfo(
+           element->Type == D3DDECLTYPE_FLOAT4)
+          position_t = true;
+       else if ((base == NINE_DECLUSAGE_COLOR ||
+-                base == NINE_DECLUSAGE_TEXCOORD) &&
++                base == NINE_DECLUSAGE_TEXCOORD ||
++                usage == NINE_DECLUSAGE_FOG) &&
+                !D3D9AppendUniqueVsInput(vs_shader, usage))
+          return false;
+    }
+@@ -1171,6 +1182,27 @@ D3D9CreatePositionTPsInputFixedFunctionVs(D3D9Device *device,
+          ureg_MOV(ureg, output, inputs[input]);
+    }
+ 
++   /* Vertex fog for pre-transformed vertices.  Vertices the runtime
++    * processed in software carry the fog factor in a FOG element, which the
++    * loop above passed through as GENERIC 16.  Application XYZRHW vertices
++    * carry it in the alpha of the specular colour, and a vertex without one
++    * gets 0 (full fog).  The pixel shader's fog stage reads GENERIC 16 when
++    * no table fog mode is set (shader_add_ps_fog_stage). */
++   bool has_fog_input = false;
++   for (UINT input = 1; input < shader->translated_vs_num_inputs; ++input) {
++      if (shader->translated_vs_input_map[input] == NINE_DECLUSAGE_FOG)
++         has_fog_input = true;
++   }
++   if (device->render_states[D3DRS_FOGENABLE] && !has_fog_input) {
++      struct ureg_dst fog = ureg_DECL_output(ureg, TGSI_SEMANTIC_GENERIC, 16);
++      struct ureg_src fog_src = ureg_imm1f(ureg, 0.0f);
++      for (UINT input = 1; input < shader->translated_vs_num_inputs; ++input) {
++         if (shader->translated_vs_input_map[input] == NINE_DECLUSAGE_i(COLOR, 1))
++            fog_src = ureg_scalar(inputs[input], TGSI_SWIZZLE_W);
++      }
++      ureg_MOV(ureg, ureg_writemask(fog, TGSI_WRITEMASK_X), fog_src);
++   }
++
+    ureg_release_temporary(ureg, tmp);
+    ureg_END(ureg);
+ 
+@@ -1340,6 +1372,12 @@ D3D9CreatePositionTDiffuseFixedFunctionVs(D3D9Device *device)
+             ureg_scalar(ureg_src(tmp), TGSI_SWIZZLE_W));
+    ureg_MOV(ureg, out_pos, ureg_src(tmp));
+    ureg_MOV(ureg, out_color, color);
++   /* No specular colour, so the vertex fog factor is 0 (full fog), as in
++    * D3D9CreatePositionTPsInputFixedFunctionVs. */
++   if (device->render_states[D3DRS_FOGENABLE]) {
++      struct ureg_dst fog = ureg_DECL_output(ureg, TGSI_SEMANTIC_GENERIC, 16);
++      ureg_MOV(ureg, ureg_writemask(fog, TGSI_WRITEMASK_X), ureg_imm1f(ureg, 0.0f));
++   }
+    ureg_release_temporary(ureg, tmp);
+    ureg_END(ureg);
+ 
+diff --git a/src/gallium/frontends/d3d10umd/D3D9NineShader.c b/src/gallium/frontends/d3d10umd/D3D9NineShader.c
+index 0aaa047..70c77a4 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9NineShader.c
++++ b/src/gallium/frontends/d3d10umd/D3D9NineShader.c
+@@ -1412,9 +1412,13 @@ _tx_dst_param(struct shader_translator *tx, const struct sm1_dst_param *param)
+             dst = tx->regs.oPos;
+             break;
+         case 1:
++            /* Not clamped here: D3D9 clamps the fog factor after
++             * interpolation (shader_add_ps_fog_stage), so a factor outside
++             * [0, 1] at a vertex still moves the fog edge inside the
++             * primitive. */
+             if (ureg_dst_is_undef(tx->regs.oFog))
+                 tx->regs.oFog =
+-                    ureg_saturate(ureg_DECL_output(tx->ureg, TGSI_SEMANTIC_GENERIC, 16));
++                    ureg_DECL_output(tx->ureg, TGSI_SEMANTIC_GENERIC, 16);
+             dst = tx->regs.oFog;
+             break;
+         case 2:
+@@ -4007,7 +4011,7 @@ shader_add_ps_fog_stage(struct shader_translator *tx, struct ureg_dst dst_col, s
+         fog_vs = ureg_scalar(ureg_DECL_fs_input(ureg, TGSI_SEMANTIC_GENERIC, 16,
+                                             TGSI_INTERPOLATE_PERSPECTIVE),
+                                             TGSI_SWIZZLE_X);
+-        ureg_MOV(ureg, fog_factor, fog_vs);
++        ureg_MOV(ureg, ureg_saturate(fog_factor), fog_vs);
+     }
+ 
+     ureg_LRP(ureg, ureg_writemask(dst_col, TGSI_WRITEMASK_XYZ),
