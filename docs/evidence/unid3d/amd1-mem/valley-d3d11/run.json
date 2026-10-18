@@ -1,0 +1,37 @@
+﻿{
+    "name":  "valley-d3d11",
+    "exe":  "C:\\apps\\valley\\bin\\Valley.exe",
+    "arguments":  "-project_name Valley -data_path ../ -engine_config ../data/valley_1.0.cfg -system_script valley/unigine.cpp -video_app direct3d11 -video_multisample 0 -video_fullscreen 0 -video_mode 3 -extern_define ,RELEASE,LANGUAGE_EN,QUALITY_MEDIUM,TESSELLATION_NORMAL -extern_plugin ,GPUMonitor",
+    "user":  "VMLABVM-KFPN1D3\\win3d",
+    "session_id":  1,
+    "pid":  6384,
+    "wow64":  true,
+    "started":  "2026-10-18T14:15:51.9257586-07:00",
+    "ended":  "2026-10-18T14:19:04.2028921-07:00",
+    "duration_s":  192.3,
+    "timed_out":  false,
+    "exit_code":  0,
+    "exit_code_hex":  "0x00000000",
+    "task_result":  0,
+    "probe_json":  null,
+    "probe_result":  null,
+    "adapter":  null,
+    "software":  null,
+    "readback_ok":  null,
+    "module_count":  69,
+    "graphics_modules":  [
+                             "C:\\WINDOWS\\SysWOW64\\dxgi.dll [syswow64] 10.0.26100.9444 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\d3d11.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\apps\\valley\\bin\\d3dcompiler_42.dll [app_local] 9.27.952.3022",
+                             "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll [syswow64] ",
+                             "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)"
+                         ],
+    "app_local_modules":  [
+                              "C:\\apps\\valley\\bin\\MSVCR100.dll",
+                              "C:\\apps\\valley\\bin\\Unigine_x86.dll",
+                              "C:\\apps\\valley\\bin\\GPUMonitor_x86.dll",
+                              "C:\\apps\\valley\\bin\\d3dcompiler_42.dll",
+                              "C:\\apps\\valley\\bin\\openal32.dll"
+                          ]
+}

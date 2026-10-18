@@ -1,0 +1,38 @@
+ADAPTER Hardsoft VirtIO GPU 3D controller type=ref
+CASE fmt=D16 dz=+0.004 bias=-0.008 expect=green got=ff00ff00 hr=0x00000000 ok
+CASE fmt=D16 dz=+0.004 bias=-0.002 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D16 dz=+0.004 bias=+0.000 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D16 dz=-0.004 bias=+0.008 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D16 dz=-0.004 bias=+0.002 expect=green got=ff00ff00 hr=0x00000000 ok
+SCALE fmt=D16 threshold=0.003985 scale=1.004
+CASE fmt=D24X8 dz=+0.004 bias=-0.008 expect=green got=ff00ff00 hr=0x00000000 ok
+CASE fmt=D24X8 dz=+0.004 bias=-0.002 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D24X8 dz=+0.004 bias=+0.000 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D24X8 dz=-0.004 bias=+0.008 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D24X8 dz=-0.004 bias=+0.002 expect=green got=ff00ff00 hr=0x00000000 ok
+SCALE fmt=D24X8 threshold=0.004000 scale=1.000
+CASE fmt=D24S8 dz=+0.004 bias=-0.008 expect=green got=ff00ff00 hr=0x00000000 ok
+CASE fmt=D24S8 dz=+0.004 bias=-0.002 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D24S8 dz=+0.004 bias=+0.000 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D24S8 dz=-0.004 bias=+0.008 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D24S8 dz=-0.004 bias=+0.002 expect=green got=ff00ff00 hr=0x00000000 ok
+SCALE fmt=D24S8 threshold=0.004000 scale=1.000
+CASE fmt=D32 dz=+0.004 bias=-0.008 expect=green got=ff00ff00 hr=0x00000000 ok
+CASE fmt=D32 dz=+0.004 bias=-0.002 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D32 dz=+0.004 bias=+0.000 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D32 dz=-0.004 bias=+0.008 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D32 dz=-0.004 bias=+0.002 expect=green got=ff00ff00 hr=0x00000000 ok
+SCALE fmt=D32 threshold=0.004000 scale=1.000
+CASE fmt=D32F_LOCKABLE dz=+0.004 bias=-0.008 expect=green got=ff00ff00 hr=0x00000000 ok
+CASE fmt=D32F_LOCKABLE dz=+0.004 bias=-0.002 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D32F_LOCKABLE dz=+0.004 bias=+0.000 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D32F_LOCKABLE dz=-0.004 bias=+0.008 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D32F_LOCKABLE dz=-0.004 bias=+0.002 expect=green got=ff00ff00 hr=0x00000000 ok
+SCALE fmt=D32F_LOCKABLE threshold=0.004000 scale=1.000
+CASE fmt=D24FS8 dz=+0.004 bias=-0.008 expect=green got=ff00ff00 hr=0x00000000 ok
+CASE fmt=D24FS8 dz=+0.004 bias=-0.002 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D24FS8 dz=+0.004 bias=+0.000 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D24FS8 dz=-0.004 bias=+0.008 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D24FS8 dz=-0.004 bias=+0.002 expect=green got=ff00ff00 hr=0x00000000 ok
+SCALE fmt=D24FS8 threshold=0.004000 scale=1.000
+RESULT ran=30 failed=0

@@ -1,0 +1,101 @@
+unigine-heaven-4.0 setup exit 0
+C:\apps\heaven\bin
+C:\apps\heaven\data
+C:\apps\heaven\documentation
+C:\apps\heaven\heaven.bat
+C:\apps\heaven\heaven.ico
+C:\apps\heaven\unigine.url
+C:\apps\heaven\unins000.dat
+C:\apps\heaven\unins000.exe
+C:\apps\heaven\bin\App3DSurround_x86.dll
+C:\apps\heaven\bin\App3DVision_x86.dll
+C:\apps\heaven\bin\AppStereo_x86.dll
+C:\apps\heaven\bin\AppSurround_x86.dll
+C:\apps\heaven\bin\AppWall_x86.dll
+C:\apps\heaven\bin\browser_x86.exe
+C:\apps\heaven\bin\d3dcompiler_42.dll
+C:\apps\heaven\bin\d3dx11_42.dll
+C:\apps\heaven\bin\d3dx9_42.dll
+C:\apps\heaven\bin\GPUMonitor_x86.dll
+C:\apps\heaven\bin\Heaven.exe
+C:\apps\heaven\bin\msvcp100.dll
+C:\apps\heaven\bin\msvcr100.dll
+C:\apps\heaven\bin\openal32.dll
+C:\apps\heaven\bin\QtCoreUnigine_x864.dll
+C:\apps\heaven\bin\QtGuiUnigine_x864.dll
+C:\apps\heaven\bin\QtNetworkUnigine_x864.dll
+C:\apps\heaven\bin\QtWebKitUnigine_x864.dll
+C:\apps\heaven\bin\QtXmlUnigine_x864.dll
+C:\apps\heaven\bin\Unigine_x86.dll
+C:\apps\heaven\bin\X3DAudio1_7.dll
+C:\apps\heaven\bin\XAudio2_7.dll
+C:\apps\heaven\data\launcher
+C:\apps\heaven\data\core.ung
+C:\apps\heaven\data\heaven-version
+C:\apps\heaven\data\heaven.ung
+C:\apps\heaven\data\heaven_4.0.cfg
+C:\apps\heaven\documentation\User_Manual.pdf
+unigine-valley-1.0 setup exit 0
+C:\apps\valley\bin
+C:\apps\valley\data
+C:\apps\valley\documentation
+C:\apps\valley\icon.ico
+C:\apps\valley\unins000.dat
+C:\apps\valley\unins000.exe
+C:\apps\valley\unins000.msg
+C:\apps\valley\valley.bat
+C:\apps\valley\bin\App3DSurround_x86.dll
+C:\apps\valley\bin\App3DVision_x86.dll
+C:\apps\valley\bin\AppStereo_x86.dll
+C:\apps\valley\bin\AppSurround_x86.dll
+C:\apps\valley\bin\AppWall_x86.dll
+C:\apps\valley\bin\browser_x86.exe
+C:\apps\valley\bin\d3dcompiler_42.dll
+C:\apps\valley\bin\d3dx11_42.dll
+C:\apps\valley\bin\d3dx9_42.dll
+C:\apps\valley\bin\GPUMonitor_x86.dll
+C:\apps\valley\bin\msvcp100.dll
+C:\apps\valley\bin\msvcr100.dll
+C:\apps\valley\bin\openal32.dll
+C:\apps\valley\bin\QtCoreUnigine_x864.dll
+C:\apps\valley\bin\QtGuiUnigine_x864.dll
+C:\apps\valley\bin\QtNetworkUnigine_x864.dll
+C:\apps\valley\bin\QtWebKitUnigine_x864.dll
+C:\apps\valley\bin\QtXmlUnigine_x864.dll
+C:\apps\valley\bin\Unigine_x86.dll
+C:\apps\valley\bin\Valley.exe
+C:\apps\valley\bin\X3DAudio1_7.dll
+C:\apps\valley\bin\XAudio2_7.dll
+C:\apps\valley\data\launcher
+C:\apps\valley\data\valley
+C:\apps\valley\data\core.ung
+C:\apps\valley\data\valley-version
+C:\apps\valley\data\valley.ung
+C:\apps\valley\data\valley_1.0.cfg
+C:\apps\valley\documentation\License.pdf
+C:\apps\valley\documentation\User_Manual.pdf
+unpacked gzdoom-4.14.2
+unpacked crispy-doom-7.2.0
+unpacked freedoom-0.13.0
+unpacked godot-4.7.2
+unpacked godot-demo-particles
+ERROR: Condition "res != ((HRESULT)0x00000000)" is true. Returning: String()
+   at: get_system_dir (platform/windows/os_windows.cpp:2502)
+ERROR: Condition "res != ((HRESULT)0x00000000)" is true. Returning: String()
+   at: get_system_dir (platform/windows/os_windows.cpp:2502)
+ERROR: Condition "res != ((HRESULT)0x00000000)" is true. Returning: String()
+   at: get_system_dir (platform/windows/os_windows.cpp:2502)
+ERROR: Condition "res != ((HRESULT)0x00000000)" is true. Returning: String()
+   at: get_system_dir (platform/windows/os_windows.cpp:2502)
+godot --import exit 0
+[   0% ] [90m[1mloading_editor_layout[22m | Started Loading editor (5 steps)[39m[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Loading editor layout...[39m[0m
+[  16% ] [90m[1mloading_editor_layout[22m | Loading docks...[39m[0m
+[92m[ DONE ][39m [1mloading_editor_layout[22m
+[0m
+crispy
+freedoom
+godot
+gzdoom
+heaven
+valley

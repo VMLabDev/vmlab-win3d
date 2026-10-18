@@ -1,0 +1,18 @@
+t=29 guest_pm=1120 guest_ws=1177 guest_handles=284 guest_va=1856 qemu_rss=7836 rs_rss=409 rs_maps=5317 rs_dmabuf=467
+t=42 guest_pm=1447 guest_ws=1514 guest_handles=284 guest_va=2468 qemu_rss=7836 rs_rss=414 rs_maps=5391 rs_dmabuf=1076
+t=55 guest_pm=1849 guest_ws=1859 guest_handles=270 guest_va=3269 qemu_rss=7837 rs_rss=423 rs_maps=5908 rs_dmabuf=1615
+t=68 guest_pm=1962 guest_ws=1920 guest_handles=270 guest_va=3963 qemu_rss=7837 rs_rss=423 rs_maps=5902 rs_dmabuf=1908
+t=82 guest_pm=1959 guest_ws=1883 guest_handles=268 guest_va=3834 qemu_rss=7837 rs_rss=423 rs_maps=5903 rs_dmabuf=1886
+t=95 guest_pm=1883 guest_ws=1816 guest_handles=266 guest_va=3786 qemu_rss=7887 rs_rss=423 rs_maps=6159 rs_dmabuf=1860
+t=107 guest_pm=1898 guest_ws=1837 guest_handles=268 guest_va=3799 qemu_rss=7935 rs_rss=423 rs_maps=6397 rs_dmabuf=1697
+t=119 guest_pm=1883 guest_ws=1808 guest_handles=268 guest_va=3795 qemu_rss=7935 rs_rss=423 rs_maps=6397 rs_dmabuf=1697
+t=131 guest_pm=1883 guest_ws=1808 guest_handles=268 guest_va=3795 qemu_rss=7935 rs_rss=423 rs_maps=6397 rs_dmabuf=1697
+t=143 guest_pm=1883 guest_ws=1784 guest_handles=266 guest_va=3794 qemu_rss=7936 rs_rss=423 rs_maps=6397 rs_dmabuf=1697
+t=155 guest_pm=1883 guest_ws=1779 guest_handles=262 guest_va=3790 qemu_rss=7936 rs_rss=423 rs_maps=6397 rs_dmabuf=1697
+t=168 guest_pm=1883 guest_ws=1749 guest_handles=262 guest_va=3790 qemu_rss=7936 rs_rss=423 rs_maps=6397 rs_dmabuf=1697
+t=180 guest_pm=1883 guest_ws=1732 guest_handles=262 guest_va=3790 qemu_rss=7936 rs_rss=423 rs_maps=6401 rs_dmabuf=1697
+t=192 guest_pm=1883 guest_ws=1725 guest_handles=262 guest_va=3790 qemu_rss=7936 rs_rss=423 rs_maps=6401 rs_dmabuf=1697
+t=205 guest_pm=1883 guest_ws=1700 guest_handles=262 guest_va=3790 qemu_rss=7937 rs_rss=425 rs_maps=6446 rs_dmabuf=1697
+t=225 guest_pm=1883 guest_ws=1649 guest_handles=262 guest_va=3790 qemu_rss=7937 rs_rss=425 rs_maps=6446 rs_dmabuf=1697
+t=237 guest_pm=1883 guest_ws=1635 guest_handles=262 guest_va=3790 qemu_rss=7936 rs_rss=426 rs_maps=6450 rs_dmabuf=1697
+t=255 exited

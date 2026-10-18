@@ -279,6 +279,10 @@ skipped. The AMD1 runs log none of these lines.
 The fix belongs in the UMD: a fallback that scales the bias when the float
 representation is missing.
 
+**Status:** fixed by `patches/mesa/0090` ([unid3d.md](unid3d.md#f5-d3d9-depth-bias-on-nvidia)).
+Heaven D3D9 now renders correctly on NVIDIA. Valley D3D9 and Heaven's exit
+still fail there, from F6's cause.
+
 ### F6: Valley D3D9 on AMD1 hangs
 
 - **What happens:** the frame freezes partway through the run. The middle
@@ -287,6 +291,11 @@ representation is missing.
 - **On close:** after WM_CLOSE, the program does not exit within 60 s, and
   `Run-Probe` kills it.
 - **UMD log:** no lines for the process.
+
+**Status:** cause found, not fixed ([unid3d.md](unid3d.md#f6-valley-d3d9-on-amd1)).
+Valley, a 32-bit process, runs out of address space through the UMD's
+ordered-context-worker upload path. `ORDERED_CONTEXT_WORKER=0` in
+`C:\ProgramData\Yttrium\yttrium.ini` works around it.
 
 ### F7: Heaven D3D11 on AMD1 crashed once
 
@@ -298,6 +307,9 @@ representation is missing.
 
 The crash is intermittent. A heap check (Application Verifier or page heap)
 on `Heaven.exe` is the next step.
+
+**Status:** reproduced under PageHeap in 2 of 5 runs, as a use-after-free in
+the UMD's threaded context. Not fixed ([unid3d.md](unid3d.md#f7-heaven-d3d11-on-amd1)).
 
 ## Notes that are not failures
 
@@ -351,8 +363,8 @@ is still loading. The later frames render, so this is start-up, not a fault.
 - F1 (Xid 69, ErrorCode `0x13d`), F2 and F4 on NVIDIA: render-server CS
   errors from native Vulkan and from Zink.
 - F3: GZDoom's OpenGL context: fixed by `patches/mesa/0080` ([gzdoom.md](gzdoom.md)).
-- F5: the D3D9 depth-bias fallback for NVIDIA.
-- F6: the Valley D3D9 device loss on AMD.
-- F7: the intermittent Heaven D3D11 heap corruption.
+- F5: fixed (`patches/mesa/0090`).
+- F6: Valley D3D9 runs out of 32-bit address space ([unid3d.md](unid3d.md)).
+- F7: the threaded-context use-after-free behind Heaven D3D11's heap corruption ([unid3d.md](unid3d.md)).
 - Not run: Windows 10, Nvidia1, x86 builds other than Unigine (which is
   32-bit only), and longer runs.

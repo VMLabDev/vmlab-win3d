@@ -1,0 +1,19 @@
+-- AppCrash_Heaven.exe_6aab9f3916936b9f6dd55a8f277744b73672e2d4_eb1cd854_90d21774-6ef1-47bb-8ce0-64092043b962 2026-10-18T15:00:23.4977929-07:00
+EventType=APPCRASH
+Sig[0].Name=Application Name
+Sig[0].Value=Heaven.exe
+Sig[1].Name=Application Version
+Sig[1].Value=1.0.0.0
+Sig[2].Name=Application Timestamp
+Sig[2].Value=511b9e02
+Sig[3].Name=Fault Module Name
+Sig[3].Value=textinputframework.dll
+Sig[4].Name=Fault Module Version
+Sig[4].Value=10.0.26100.9278
+Sig[5].Name=Fault Module Timestamp
+Sig[5].Value=ac364c18
+Sig[6].Name=Exception Code
+Sig[6].Value=00000675
+Sig[7].Name=Exception Offset
+Sig[7].Value=0006e3d1
+AppPath=C:\apps\heaven\bin\Heaven.exe
