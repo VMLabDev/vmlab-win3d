@@ -20,7 +20,7 @@ egl-headless patch, and virglrenderer 1.3.0. The evidence is in
 | Fullscreen exclusive, 32 bpp (640×480, 800×600, 1024×768), x64 and x86 | Works: the mode set, the flip chain, `Flip`, pixel checks on the front buffer, and restoring the desktop mode | The same |
 | Fullscreen exclusive, 16 bpp (640×480×16, 800×600×16), **32-bit (x86) program** | Works. Windows' 32-bit `ddraw.dll` offers 8 and 16 bpp modes and emulates them | The same: 300 flips per mode, every pixel check matching |
 | Fullscreen exclusive, 16 bpp, **64-bit (x64) program** | `SetDisplayMode` fails with `DDERR_UNSUPPORTED`: no 16-bit mode is listed | Unchanged ([16 bpp modes](#16-bpp-modes)) |
-| Fullscreen frame rate | 2 to 8 flips per second on Nvidia1 | The same. The Blt-model present limits it, and that present is shared with D3D9 ([Frame rate](#frame-rate)) |
+| Fullscreen frame rate | 2 to 8 flips per second on Nvidia1 | The same; 9 to 29 on AMD1. The Blt-model present limits it, and that present is shared with D3D9 ([Frame rate](#frame-rate)) |
 
 ## The repros
 
@@ -159,6 +159,7 @@ before and after 0035:
 | Before, front buffer checked every 30 frames | 3.6 | 4.4 | 2.2 |
 | After, the same | 4.8 | 3.2 | 2.1 |
 | After, front buffer checked once | 7.5 | 3.6 | — |
+| AMD1 after, front buffer checked every 30 frames | 29.2 | 19.8 | 12.4 |
 
 The rate varies from run to run. In the trace, almost all of each frame is
 spent in `pfnPresent`. A Blt-model present takes 65 to 265 ms here
@@ -202,12 +203,29 @@ DirectDraw program sees depends on its bitness:
   and no package (`basic/ddfull-x64.json`). That lab flips 800×600×32 at 40
   frames per second.
 
-Games that ask for 16 bpp are 32-bit programs, so they get their mode. No
-KMD change was made. Offering R5G6B5 source modes in the KMD would also add
-16-bit modes to the desktop's mode list. It would also need a 16-to-32-bit
-conversion on every present or flip, because virtio-gpu has no 16-bit
-scanout format (`VioGpuVirglFormatToScanout`). It would help only 64-bit
-DirectDraw programs that insist on 16 bpp.
+Games that ask for 16 bpp are 32-bit programs, so they get their mode. On
+AMD1, x86 `ddfull` ran 640×480×16 at 19.1 flips per second and 800×600×16
+at 13.5, with every pixel check matching
+(`after/amd1/ddfull-x86-16bpp.json`).
+
+**The KMD cannot add 16-bit modes for 64-bit programs.** An experiment
+showed this:
+`kmd-16bpp-experiment/0003-kmd-16bpp-source-modes.patch` adds
+`D3DDDIFMT_R5G6B5` to every source mode the VidPN offers, accepts it in the
+source-mode check, and maps R5G6B5 standard allocations to
+`VIRGL_FORMAT_B5G6R5_UNORM`. With that KMD installed on Nvidia1
+(`installed-kmd.txt`), `tests/e2e/run.sh` still passed 12 of 12. A 64-bit
+process still saw no 16-bit mode, and `SetDisplayMode(640, 480, 16)` still
+failed with `DDERR_UNSUPPORTED` (`kmd-16bpp-experiment/ddfull-x64.json`).
+A 32-bit process still got its emulated 16-bit modes
+(`kmd-16bpp-experiment/ddfull-x86.json`).
+
+Windows does not pass sub-32-bit source modes from this driver on to
+programs. Low colour depths reach programs only through the 32-bit
+DirectDraw emulation. The patch therefore stays out of `patches/kmd`. The
+desktop keeps 32-bit modes only, as before. A 64-bit DirectDraw program
+that insists on 16 bpp has no path on this stack, and we know of no such
+program.
 
 ## Proof
 
@@ -219,11 +237,11 @@ The package was built at `cbbc481` with `patches/mesa` 0001 to 0025 and
 
 | Check | Nvidia1 (RTX 5090) | AMD1 (RADV) |
 | --- | --- | --- |
-| `tests/e2e/run.sh --template windows-11` | 12 of 12 | AMD1_E2E |
-| `ddblit`, x64 and x86 | Pass: 13 cases × 3 formats match the HEL exactly. 50 colour-key blits take 2.0 to 10.4 ms, against 438 to 464 ms before 0035 | AMD1_DDBLIT |
-| `ddcaps`, x64 and x86 | Pass. Colour key and mirror are HAL steps; 87 and 89 windowed blits in 10 s | AMD1_DDCAPS |
-| `ddfull` x64, 800×600×32, 300 frames, every frame checked | Pass, 1,200 of 1,200 pixel checks, 2.3 flips per second; 640×480×16 `DDERR_UNSUPPORTED` | AMD1_DDFULL64 |
-| `ddfull` x86, 800×600×32 and 640×480×16, then 640×480×16 and 800×600×16, 300 frames each | Pass, every pixel check, desktop mode restored | AMD1_DDFULL86 |
+| `tests/e2e/run.sh --template windows-11` | 12 of 12 | 12 of 12 |
+| `ddblit`, x64 and x86 | Pass: 13 cases × 3 formats match the HEL exactly. 50 colour-key blits take 2.0 to 10.4 ms, against 438 to 464 ms before 0035 | Pass, the same. 50 colour-key blits take 1.4 to 3.2 ms |
+| `ddcaps`, x64 and x86 | Pass. Colour key and mirror are HAL steps; 87 and 89 windowed blits in 10 s | Pass. 147 and 143 windowed blits in 10 s |
+| `ddfull` x64, 800×600×32, 300 frames, every frame checked | Pass, 1,200 of 1,200 pixel checks, 2.3 flips per second; 640×480×16 `DDERR_UNSUPPORTED` | Pass, 1,200 of 1,200, 9.4 flips per second; 640×480×16 `DDERR_UNSUPPORTED` |
+| `ddfull` x86, 800×600×32 and 640×480×16, then 640×480×16 and 800×600×16, 300 frames each | Pass, every pixel check, desktop mode restored | Pass, every pixel check: 800×600×32 at 9.3 flips per second; 640×480×16 at 17.8 and 19.1; 800×600×16 at 13.5 |
 | Host Xid during the runs | none | not applicable |
 
 ## Upstream
@@ -246,5 +264,8 @@ mirror flags, which only DirectDraw sends, and `GetCaps(DDRAW)`.
 | `basic/ddfull-x64.json`, `basic/video-controller.txt` | Red Hat's display-only `viogpudo` (no package, no GPU): the same 32-bit-only mode list and the same 16-bit failure |
 | `after/<gpu>/ddblit-{x64,x86}.json` | 0035: every case matches the HEL exactly, with the timing |
 | `after/<gpu>/ddcaps-{x64,x86}.json` | 0012 to 0014 still pass; colour key and mirror are HAL steps |
-| `after/<gpu>/ddfull-{x64,x86}.json`, `console-ddfull-*.png` | Fullscreen 800×600×32 and 640×480×16, 300 frames, every frame checked; screenshots during the flip loop |
-| `after/<gpu>/e2e-results.txt`, `e2e-build.txt` | `tests/e2e/run.sh` on the package with 0035 |
+| `after/<gpu>/ddfull-x64.json`, `console-ddfull-x64-800x600x32.png` | x64 fullscreen 800×600×32, 300 frames, every frame checked; 640×480×16 refused |
+| `after/<gpu>/ddfull-x86-16bpp.json`, `ddfull-x86-32and16.json`, `console-ddfull-x86-*x16.png` | x86 640×480×16 and 800×600×16, 300 frames each, all checks matching; screenshots during the 16 bpp flip loop |
+| `after/<gpu>/ddfull-x64-rate.json`, `after/nvidia1/ddfull-x64-nocheck.json` | Flip rates at 640×480, 800×600 and 1024×768 |
+| `after/<gpu>/e2e-results.txt`, `e2e-build.txt`, `e2e-host.txt`, `qemu-argv-env.txt` | `tests/e2e/run.sh` on the package with 0035: 12 of 12 |
+| `kmd-16bpp-experiment/` | The R5G6B5 source-mode KMD patch (not applied), its installed hash, its e2e result (12 of 12), and `ddfull` x64 and x86 with it: no change |

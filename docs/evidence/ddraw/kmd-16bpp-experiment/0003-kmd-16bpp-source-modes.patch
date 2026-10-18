@@ -1,6 +1,16 @@
-Subject: [PATCH] viogpu3d: offer R5G6B5 source modes for 16 bpp fullscreen programs (WIP)
+Subject: [PATCH] viogpu3d: offer R5G6B5 source modes (experiment, not applied)
 
-Origin: vmlab-win3d ddraw worker.
+An experiment, kept as evidence and not in patches/kmd. It adds
+D3DDDIFMT_R5G6B5 to every source mode the VidPN offers, accepts it in the
+source-mode check, and maps R5G6B5 standard allocations to
+VIRGL_FORMAT_B5G6R5_UNORM. Installed on Nvidia1 (signed driver hash in
+installed-kmd.txt), it changed nothing that a program sees: a 64-bit
+process still listed no 16-bit mode in EnumDisplayModes or
+EnumDisplaySettings, and SetDisplayMode(640, 480, 16) still failed with
+DDERR_UNSUPPORTED. Windows does not pass sub-32-bit source modes from this
+driver to programs; 32-bit programs get 8 and 16 bpp from the WOW64
+DirectDraw emulation either way. See docs/ddraw.md, "16 bpp modes".
+Applies after patches/kmd/0001.
 ---
 diff --git a/viogpu/common/virgl_hw.h b/viogpu/common/virgl_hw.h
 index d4607de..3a1c90b 100644
