@@ -193,7 +193,9 @@ are older than the template's `viogpudo` (`docs/wu.md`). `UsoClient` on build
 `0x80070057`, as a made-up verb does, so the COM API does the install.
 
 Results: `docs/evidence/wu/windows-11-nvidia1/checks.txt` and
-`docs/evidence/wu/windows-11-amd1/checks.txt`, 16 of 16 checks each.
+`docs/evidence/wu/windows-11-amd1/checks.txt`: 16 of 16 on Nvidia1, and
+15 of 16 on AMD1, where the first search did not finish within an hour on a
+degraded internet link (`docs/wu.md`).
 
 ## What remains
 

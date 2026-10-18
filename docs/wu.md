@@ -104,19 +104,25 @@ The steps (`repro.sh`):
 
 | Step | Nvidia1 (`windows-11-nvidia1/`) | AMD1 (`windows-11-amd1/`) |
 | --- | --- | --- |
-| 1 Activation | Notification, then `Licensed`, ends 1/16/2027 | AMD1-1 |
-| 2 Baseline | `oem7.inf` `viogpudo` 2025-07-09, rank `00F90000` | AMD1-2 |
-| 4 Search, template driver | 4 updates, no driver; 953 s | AMD1-4 |
-| 5 Search, no driver | `display.inf`, rank `00FB2006`; 4 updates, no driver; 13 s | AMD1-5 |
-| 6 Install the bundle (0.1.1) | `viogpu3d` 2026-09-27, rank `00E00000`, pinned | AMD1-6 |
-| 7 Search, download, install drivers | 4 updates, 0 drivers, nothing to install; `viogpu3d`, pinned | AMD1-7 |
-| 8 UsoClient | `StartScan`, `StartInteractiveScan` exit 0; `StartDownload`, `StartInstall` and the made-up verb `0x80070057`; Windows Update logged "found 2 updates"; `viogpu3d`, pinned | AMD1-8 |
-| 9 Reboot | `viogpu3d`, pinned; still `Licensed` | AMD1-9 |
-| Checks | 16 of 16 | AMD1-CHECKS |
+| 1 Activation | Notification, then `Licensed`, ends 1/16/2027 | Same, ends 1/16/2027 |
+| 2 Baseline | `oem7.inf` `viogpudo` 2025-07-09, rank `00F90000` | Same |
+| 4 Search, template driver | 4 updates, no driver; 953 s | **No result**: the search was still syncing when `vmlab exec` hit its 3600 s limit. The guest's log has transient `0x8024401C` timeouts against `fe2cr.update.microsoft.com` throughout; an earlier attempt ended `0x80240438` (endpoint unreachable) |
+| 5 Search, no driver | `display.inf`, rank `00FB2006`; 4 updates, no driver; 13 s | Same; the search picked up the interrupted sync: 4 updates, no driver, 423 s |
+| 6 Install the bundle (0.1.1) | `viogpu3d` 2026-09-27, rank `00E00000`, pinned | Same |
+| 7 Search, download, install drivers | 4 updates, 0 drivers, nothing to install; `viogpu3d`, pinned | Same |
+| 8 UsoClient | `StartScan`, `StartInteractiveScan` exit 0; `StartDownload`, `StartInstall` and the made-up verb `0x80070057`; Windows Update logged "found 2 updates"; `viogpu3d`, pinned | Same; "found 2 updates" twice |
+| 9 Reboot | `viogpu3d`, pinned; still `Licensed` | Same |
+| Checks | 16 of 16 | 15 of 16: step 4, for the network reason above |
 
 An earlier Nvidia1 run, before step 5 existed and while the UsoClient check
 still expected the download and install verbs to work, had the same driver
-results with bundle 0.1.0 (git history of `windows-11-nvidia1/`).
+results with bundle 0.1.0 (git history of `windows-11-nvidia1/`). The
+first AMD1 run was stopped after the same network failure at step 4; the
+search then had no retry. `repro.sh` now allows each first search two hours,
+and `Test-WindowsUpdate.ps1` retries a search that ends in a transport error.
+The AMD1 step 4 was not run again: the step does not depend on the GPU, it
+passed on Nvidia1, and the step-5 search in the same AMD1 guest returned the
+same offer.
 
 The full acceptance run, `tests/e2e/run.sh --template windows-11`, with
 the NIC and the activation step, passes 12 of 12 on Nvidia2
@@ -129,7 +135,8 @@ and AMD1-E2E. Each run's `activation.txt` shows `License Status: Licensed`.
   no driver for the device in any state, so the installer's guards were
   not exercised by a real offer, only by the `pnputil` repro in
   `docs/installer.md`.
-- Each Windows Update search took 15 to 48 minutes on helios's degraded
+- **AMD1's search on the template's driver has no result** (above). Each
+  first Windows Update search took 15 to 60 minutes or more on helios's degraded
   internet link on 2026-10-19. The first search in a clone syncs the whole
   catalogue at background priority.
 - Activation needs `slmgr /ato` once per clone. Labs brought up by hand

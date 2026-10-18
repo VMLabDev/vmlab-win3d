@@ -108,7 +108,7 @@ report baseline
 say "3 Windows Update on"
 next enable; wu 300 -Action Enable -Label enable >"$F.json"
 say "4 search on the template's driver"
-next search-template; wu 3600 -Action Search -Label search-template >"$F.json"; bound "$F.json"
+next search-template; wu 7200 -Action Search -Label search-template >"$F.json"; bound "$F.json"
 say "4b the same search with no driver on the device"
 # Take the template's viogpudo off the device and out of the store, so the
 # device falls back to Microsoft Basic Display: any driver Windows Update
@@ -117,7 +117,7 @@ INF=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="u
 next remove-viogpudo; in_lab vmlab exec --timeout 300 "$VM" -- pnputil.exe /delete-driver "$INF" /uninstall /force 2>&1 | tr -d '\r' >"$F.txt"
 echo "  pnputil /delete-driver $INF /uninstall /force: $(grep -iE 'deleted|failed' "$F.txt" | head -1)"
 report basic-display
-next search-basic-display; wu 3600 -Action Search -Label search-basic-display >"$F.json"; bound "$F.json"
+next search-basic-display; wu 7200 -Action Search -Label search-basic-display >"$F.json"; bound "$F.json"
 say "5 install the bundle"
 next install; "$REPO/scripts/install-into-vm.sh" "$WORK/lab" "$VM" >"$F.log" 2>&1; echo "  install-into-vm.sh -> $?"
 report installed
