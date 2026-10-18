@@ -1,0 +1,4 @@
+virgl_render_server[2930225]: vkr: failed to look up object 17379 of type 8
+virtio_gpu_virgl_process_cmd: ctrl 0x10c, error 0x1200
+virgl_render_server[2930225]: vkr: vkBindBufferMemory2 resulted in CS error
+virgl_render_server[2930225]: vkr: ring_submit_cmd: vn_dispatch_command failed

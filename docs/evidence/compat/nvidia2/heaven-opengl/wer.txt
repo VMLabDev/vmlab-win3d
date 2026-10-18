@@ -1,0 +1,19 @@
+-- AppCrash_Heaven.exe_2effbdc2fce925d3dc1d94864efb510777c3a7_eb1cd854_a85662d3-e589-40b6-8290-d258f6f24146 2026-10-18T09:52:19.5825073-07:00
+EventType=APPCRASH
+Sig[0].Name=Application Name
+Sig[0].Value=Heaven.exe
+Sig[1].Name=Application Version
+Sig[1].Value=1.0.0.0
+Sig[2].Name=Application Timestamp
+Sig[2].Value=511b9e02
+Sig[3].Name=Fault Module Name
+Sig[3].Value=viogpu_wgl.dll
+Sig[4].Name=Fault Module Version
+Sig[4].Value=0.0.0.0
+Sig[5].Name=Fault Module Timestamp
+Sig[5].Value=00000000
+Sig[6].Name=Exception Code
+Sig[6].Value=c0000005
+Sig[7].Name=Exception Offset
+Sig[7].Value=002699c8
+AppPath=C:\apps\heaven\bin\Heaven.exe

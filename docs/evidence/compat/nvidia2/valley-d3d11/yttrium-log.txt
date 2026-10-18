@@ -1,0 +1,1 @@
+      1 [warning pid=7660 process=Valley.exe] yttrium: Venus renderer refuses feedback-loop usage for format=37 tiling=1 flags=Nx8 usage=0x80017; creating the image without it

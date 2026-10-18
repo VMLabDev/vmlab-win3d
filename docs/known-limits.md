@@ -342,6 +342,16 @@ OpenGL and Vulkan, x64 and x86), two diagnostic probes (`probes/dxut-enum`,
   (D3D11) render after `patches/mesa/0015` to `0017`, with the window
   caveat below;
 - Blender 4.2.3 (OpenGL 4.3) renders its UI and viewport.
+- The compatibility sweep ([compat.md](compat.md)) runs Unigine Heaven and
+  Valley (D3D11, D3D9, OpenGL), Godot 4.7.2 (D3D12, Vulkan, OpenGL), GZDoom
+  (Vulkan, OpenGL) and Crispy Doom (D3D9), each for about 3 minutes on AMD1
+  and Nvidia2:
+  - AMD1: 10 of 12 runs pass. Valley D3D9 hangs, and GZDoom cannot create
+    an OpenGL context. Heaven D3D11 crashed once with heap corruption.
+  - Nvidia2: 5 of 12 runs pass. Godot's Vulkan renderer causes a host Xid 69
+    (ErrorCode `0x13d`). GZDoom Vulkan and both Unigine OpenGL runs crash.
+    Unigine D3D9 skips its draws that use depth bias, because the device
+    lacks the float depth-bias representation.
 
 D3D9 fixed function goes through the shaders that the Windows runtime
 generates; its coverage and what it still lacks are in the next section.

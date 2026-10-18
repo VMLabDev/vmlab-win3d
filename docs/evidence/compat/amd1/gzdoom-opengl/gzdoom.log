@@ -1,0 +1,18 @@
+Log started: 2026-10-18 09:58:34
+GZDoom version g4.14.2
+W_Init: Init WADfiles.
+adding C:/apps/gzdoom/gzdoom.pk3, 692 lumps
+adding C:/apps/gzdoom/game_support.pk3, 3308 lumps
+adding C:/apps/freedoom/freedoom-0.13.0/freedoom2.wad, 3610 lumps
+adding C:/apps/gzdoom/game_widescreen_gfx.pk3, 214 lumps
+S_Init: Setting up sound.
+I_InitInput
+I_StartupMouse
+I_StartupKeyboard
+I_StartupXInput
+I_StartupRawPS2
+I_StartupDirectInputJoystick
+
+**** DIED WITH FATAL ERROR:
+R_OPENGL: Unable to create an OpenGL render context. Insufficient driver support for context creation
+
