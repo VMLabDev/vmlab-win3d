@@ -45,6 +45,7 @@ EXTERNAL_COMMITS = {
     "2645da6": "vmlab 0.23.0-alpha as probed (host.md)",
     "f1e4515": "vmlab: the template agent's version (host.md)",
     "fb0c538": "vmlab-templates: firstboot.ws waits for user OOBE, handoff 20261018-092229 (known-limits.md)",
+    "f5832b34dd09a1be669af55e0c4c81b4a8d52a5f": "VMLabDev/qemu: the single-patch egl-headless fix, before the branch was rewritten (nvidia.md)",
     "8dae2d85": "dxil-spirv's dxbc-spirv gitlink at the pinned commit (build/d3d12/README.md)",
     "be71ee8c": "dxil-spirv's SPIRV-Cross gitlink (build/d3d12/README.md)",
     "199cb207": "dxil-spirv's SPIRV-Tools gitlink (build/d3d12/README.md)",
@@ -55,6 +56,7 @@ EXTERNAL_COMMITS = {
 HISTORICAL_PATHS = {
     "labs/probe/vmlab-amd.sh": "the vmlab 0.23 supervisor workaround, removed in badd5c2 (host.md)",
     "labs/nvidia/vmlab-nv.sh": "the isolated-supervisor NVIDIA wrapper, removed in 08ff884 when vmlab 0.26 added qemu_binary (host.md, nvidia.md)",
+    "patches/host/qemu/0001": "the single QEMU patch, replaced by the VMLabDev/qemu branch pin in patches/host/PINS (nvidia.md, zeus.md, acceptance.md)",
 }
 
 BACKTICK = re.compile(r"`([^`\n]+)`")
@@ -104,7 +106,7 @@ def path_exists(span):
         if any((REPO / "docs" / "evidence").glob("**/" + pattern)):
             return True
         if candidate in HISTORICAL_PATHS:
-            return subprocess.run(["git", "-C", str(REPO), "log", "--all", "-1", "--format=%h", "--", candidate],
+            return subprocess.run(["git", "-C", str(REPO), "log", "--all", "-1", "--format=%h", "--", f":(glob){candidate}*"],
                                   capture_output=True, text=True).stdout.strip() != ""
     return False
 

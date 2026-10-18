@@ -1,0 +1,148 @@
+
+[16:12:35] == vmlab-win3d e2e: windows-11, commit 9569489
+date: 2026-10-18T16:12:35+10:00
+commit: 9569489418823e7a18ce412f30906605c122b391
+worktree changes: 0
+template: x86_64/windows-11@26100.1742.5
+kernel: 7.2.3-1-cachyos
+qemu (PATH): QEMU emulator version 11.1.1
+qemu (Nvidia2 qemu_binary): /home/wil/dev/vmlab-win3d-wt/release/.scratch/qemu-test/prefix/bin/qemu-system-x86_64, QEMU emulator version 11.1.1
+packages: qemu-full 11.1.1-1 virglrenderer 1.3.0-2.1 mesa 3:26.2.2-2 vulkan-radeon 3:26.2.2-2 nvidia-utils 610.57.04-1 
+vmlab: vmlab 0.28.0-alpha
+venus gpu: host_gpu Nvidia2, /dev/dri/renderD130 0000:05:00.0 VGA compatible controller: NVIDIA Corporation GB202 [GeForce RTX 5090] (rev a1)
+
+[16:12:35] == 1 build
+[16:12:35] reused (out/package built at 9569489418823e7a18ce412f30906605c122b391; no change to build installer probes patches scripts/build.sh since)
+
+[16:12:35] == 2 fresh lab win3d-release-nv2 from x86_64/windows-11@26100.1742.5
+ok: lab "win3d-release-nv2" — 1 vm(s), 0 container(s), 0 segment(s)
+first-boot: provisioning win...
+first-boot: specialize complete; clearing marker
+first-boot: settling staged AppX (LKG) before first logon
+first-boot: appx: removed MicrosoftWindows.Client.AIX_1000.26100.29.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.AccountsService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.IrisService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.Search_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed NcsiUwpApp_1000.25128.1000.0_neutral_neutral_8wekyb3d8bbwe
+removed MdOdrMcpFilterPackage_1.0.0.0_neutral__cw5n1h2txyewy
+first-boot: installing first-logon XAML registration hook (sysprep-as-SYSTEM workaround)
+first-boot: xaml: hook installed for: MicrosoftWindows.Client.CBS_cw5n1h2txyewy, Microsoft.UI.Xaml.CBS_8wekyb3d8bbwe, MicrosoftWindows.Client.Core_cw5n1h2txyewy
+first-boot: rebooting once to settle shell reconciliation
+first-boot: holding ready until the guest settles (early first logons break the 24H2 shell)
+first-boot: guest settled (uptime 310s)
+first-boot: win ready
+lab "win3d-release-nv2" is up
+
+[16:22:07] == 3 guest scripts, probes and the baseline
+pushed 7 file(s), 42217 bytes to win:C:/win3d/guest
+pushed 1 file(s), 2321 bytes to win:C:/win3d/e2e
+pushed 5 file(s), 174592 bytes to win:C:/win3d/probes/x64
+pushed 5 file(s), 153088 bytes to win:C:/win3d/probes/x86
+pushed 2800056 bytes to win:C:/win3d/lunarg/x64/vulkaninfo.exe
+pushed 2403256 bytes to win:C:/win3d/lunarg/x86/vulkaninfo.exe
+[16:22:41] baseline: Red Hat VirtIO GPU DOD controller (problem 0)
+
+[16:22:41] == 3b test desktop (autologon user win3d)
+[16:22:43] oobe: done after 0 s
+[16:23:45] autologon before-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-IDCDV55 AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-IDCDV55\win3d 
+
+[16:23:45] == 4 install: scripts/install-into-vm.sh /home/wil/dev/vmlab-win3d-wt/release/.scratch/clone/.scratch/e2e/windows-11-nvidia2/lab win
+[16:23:45] waiting for the guest agent
+[16:23:46] copying vmlab-win3d-0.1.0 to C:\vmlab-win3d
+pushed 29 file(s), 102346103 bytes to win:C:/vmlab-win3d
+[16:23:50] running C:\vmlab-win3d\Install.cmd
+2026-10-18T06:23:50.019-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
+2026-10-18T06:23:53.515-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T06:23:56.409-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
+2026-10-18T06:23:56.732-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T06:23:56.743-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-18T06:23:56.752-07:00 [Install]   Signature matches Public Key
+2026-10-18T06:23:56.754-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T06:23:56.758-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T06:23:56.816-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T06:23:56.818-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-18T06:23:56.822-07:00 [Install]   Signature matches Public Key
+2026-10-18T06:23:56.827-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T06:23:56.829-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T06:23:56.906-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-18T06:23:56.910-07:00 [Install]   The operation completed successfully.
+2026-10-18T06:23:57.367-07:00 [Install] test signing is set but not active in this boot
+2026-10-18T06:23:58.129-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T06:23:58.213-07:00 [Install] rebooting; step Driver resumes after the restart
+[16:24:00] Install.cmd exited 0
+[16:24:02] state: RebootPending|Driver|
+[16:25:13] state: Installing|Driver|
+[16:25:31] state: RebootPending|Verify|
+[16:26:43] state: Installed||
+[16:26:43] done: Installed
+[16:26:53] autologon after-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-IDCDV55 AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-IDCDV55\win3d 
+
+[16:26:53] == 5 interactive-session tests
+[16:26:55] desktop: True 75
+[16:27:12] desktop: True 92
+[16:27:29] desktop: True 109
+[16:27:45] desktop: True 125
+
+[16:27:48] == 5a vulkaninfo --summary
+    "exit_code":  0,
+    "exit_code_hex":  "0x00000000",
+	deviceType         = PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
+	deviceName         = Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+	driverName         = venus
+exit 0 
+	deviceType         = PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
+	deviceName         = Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+	driverName         = venus
+exit 0 
+	deviceType         = PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
+	deviceName         = Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+	driverName         = venus
+	deviceType         = PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
+	deviceName         = Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+	driverName         = venus
+
+[16:27:59] == 5b probes
+[16:27:59] probe x64-d3d9_probe
+[16:28:26]   Run-Probe exit 0
+  console: 10/13 frames show the probe window; animating=True
+[16:28:26] probe x86-d3d9_probe
+[16:28:54]   Run-Probe exit 0
+  console: 9/13 frames show the probe window; animating=True
+[16:28:54] probe x64-d3d11_probe
+[16:29:19]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+[16:29:19] probe x86-d3d11_probe
+[16:29:44]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+[16:29:44] probe x64-d3d12_probe
+[16:30:10]   Run-Probe exit 0
+  console: 8/12 frames show the probe window; animating=True
+[16:30:10] probe x86-d3d12_probe
+[16:30:37]   Run-Probe exit 0
+  console: 8/13 frames show the probe window; animating=True
+[16:30:37] probe x64-opengl_probe
+[16:31:05]   Run-Probe exit 0
+  console: 9/13 frames show the probe window; animating=True
+[16:31:05] probe x86-opengl_probe
+[16:31:32]   Run-Probe exit 0
+  console: 9/13 frames show the probe window; animating=True
+[16:31:32] probe x64-vulkan_probe
+[16:32:00]   Run-Probe exit 0
+  console: 9/13 frames show the probe window; animating=True
+[16:32:00] probe x86-vulkan_probe
+[16:32:25]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+
+[16:32:25] == 5c dxdiag
+                        "D3D Status":  "Enabled",
+                        "AGP Status":  "Enabled"
+                    }
+                ]
+}
+
+[16:32:58] == 6 collect evidence
+pulled 52161 bytes to /home/wil/dev/vmlab-win3d-wt/release/.scratch/clone/.scratch/e2e/windows-11-nvidia2/results.zip
+
+[16:33:02] == 7 teardown
+lab "win3d-release-nv2" destroyed
+

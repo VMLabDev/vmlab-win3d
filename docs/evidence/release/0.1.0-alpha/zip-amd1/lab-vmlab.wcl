@@ -1,0 +1,24 @@
+import <vmlab.wcl>
+
+// Minimal lab that gives a Windows 11 guest a working Venus device on this
+// host. Needs vmlab >= 0.25.0-alpha, which emits
+// virtio-vga-gl,venus=true,blob=true,hostmem=4G, takes the host GPU named by
+// gpu.host_gpu from the host config ~/.config/vmlab/config.wcl (render node
+// for egl-headless and the Vulkan ICD filter in QEMU's own environment) and
+// screenshots GL displays over VNC.
+// See docs/host.md and vmlab handoffs 20261017-142905 and 20261017-210821.
+lab "win3d-release-zip" {
+  vm "win11" {
+    template = "x86_64/windows-11@26100.1742.5"
+    // The template's windows-11 profile turns Secure Boot on; the test-signed
+    // driver package needs it off (docs/decisions/0001-signing.md).
+    secure_boot = false
+    // AMD1 is helios's AMD iGPU (0000:72:00.0, RADV, renderD129). Name it:
+    // helios's default host GPU is an RTX 5090 (Nvidia1), where Venus does not
+    // work with the stock QEMU (docs/known-limits.md).
+    gpu {
+      mode     = "vulkan"
+      host_gpu = "AMD1"
+    }
+  }
+}

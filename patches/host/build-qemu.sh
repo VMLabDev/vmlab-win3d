@@ -1,43 +1,54 @@
 #!/usr/bin/env bash
-# Build a patched QEMU 11.1.1 (x86_64 system emulator only) for the host, for
-# lab use only.
+# Build the vmlab QEMU (x86_64 system emulator only) for the host, for lab
+# use only.
 #
 #   patches/host/build-qemu.sh
 #
-# Applies patches/host/qemu/*.patch in order to the 11.1.1 release (the host's
-# package version, decision D3) and writes out/host/qemu/bin/qemu-system-x86_64.
+# Builds the commit that patches/host/PINS pins ("qemu" line) on the
+# VMLabDev/qemu fork's branch vmlab/egl-headless-external-dmabuf: QEMU 11.1.1
+# (the host's package version, decision D3) plus the egl-headless fix for
+# NVIDIA's external-only dma-bufs (docs/nvidia.md). It fetches exactly that
+# commit, never the branch tip; patches/host/bump-qemu.sh moves the pin.
+# Writes out/host/qemu/bin/qemu-system-x86_64.
 #
 # This build runs natively, not in Docker: QEMU links glib, pixman, epoxy,
 # gbm and virglrenderer, and a current Arch container is already newer than
 # the frozen host (glib 2.90 against the host's 2.88), so its binary would not
 # load here. The build uses the host's compiler and libraries read-only, uses
 # QEMU's vendored Meson, writes only under .scratch/ and out/, and installs
-# nothing. It needs gcc, make, ninja, pkg-config and the headers of the libraries
-# above, all of which the host's packages already ship.
+# nothing. It needs git, gcc, make, ninja, pkg-config and the headers of the
+# libraries above, all of which the host's packages already ship. configure
+# downloads the Meson subprojects (keycodemapdb, berkeley-softfloat-3, ...)
+# at the revisions the commit's subprojects/*.wrap files pin.
 #
 # The binary is configured with --prefix=/usr, so it uses the host's
 # /usr/share/qemu ROMs (through the out/host/qemu/share/qemu symlink). A lab
 # uses this build when the host config names it as its GPU's qemu_binary
-# (vmlab >= 0.26; docs/nvidia.md, "Host setup"). Pins are in patches/host/PINS.
+# (vmlab >= 0.26; docs/nvidia.md, "Host setup").
+#
+# For packaging (scripts/release.sh) it also writes out/host/qemu/BUILDINFO,
+# the source commit, the build host and the versions of the host libraries
+# the binary was built against, and copies QEMU's licence files to
+# out/host/qemu/licenses/.
 set -euo pipefail
 HERE=$(cd "$(dirname "$0")" && pwd)
 REPO=$(cd "$HERE/../.." && pwd)
 OUT=$REPO/out/host/qemu
-DL=$REPO/.scratch/downloads
 WORK=$REPO/.scratch/build-qemu
-URL=https://download.qemu.org/qemu-11.1.1.tar.xz
-SHA=079ffbff8a7111bbc89022107cbabf3bbfd614d5fc9d7cc675991196aca12482
-
-mkdir -p "$DL" "$OUT/bin"
-tarball=$DL/qemu-11.1.1.tar.xz
-[ -f "$tarball" ] || curl -fsSL -o "$tarball" "$URL"
-echo "$SHA  $tarball" | sha256sum -c -
+read -r URL BRANCH COMMIT < <(awk '$1 == "qemu" && $3 == "branch" && $5 == "commit" { print $2, $4, $6 }' "$HERE/PINS")
+[[ ${COMMIT:-} =~ ^[0-9a-f]{40}$ ]] || { echo "no qemu branch/commit pin in $HERE/PINS" >&2; exit 1; }
 
 [ ! -e "$WORK" ] || find "$WORK" -delete
-mkdir -p "$WORK"
-tar -C "$WORK" -xf "$tarball"
-cd "$WORK/qemu-11.1.1"
-for p in "$HERE"/qemu/*.patch; do echo "applying $(basename "$p")"; patch -p1 <"$p"; done
+[ ! -e "$OUT" ] || find "$OUT" -delete
+mkdir -p "$WORK/qemu" "$OUT/bin"
+cd "$WORK/qemu"
+echo "fetching $URL $COMMIT (branch $BRANCH)"
+git init -q
+git fetch -q --depth 1 "$URL" "$COMMIT"
+git -c advice.detachedHead=false checkout -q FETCH_HEAD
+[ "$(git rev-parse HEAD)" = "$COMMIT" ] || { echo "fetched $(git rev-parse HEAD), wanted $COMMIT" >&2; exit 1; }
+# History back to the release tag, for the series list in BUILDINFO.
+git fetch -q --shallow-exclude="v$(cat VERSION)" "$URL" "$COMMIT" || echo "warning: no history to v$(cat VERSION); BUILDINFO lists no series" >&2
 ./configure --prefix=/usr --target-list=x86_64-softmmu --enable-kvm \
     --enable-opengl --enable-virglrenderer --enable-vnc --enable-tpm \
     --enable-slirp --disable-docs --disable-gtk --disable-sdl --disable-spice \
@@ -48,3 +59,21 @@ cp build/qemu-system-x86_64 "$OUT/bin/"
 # QEMU looks for its ROMs in ../share/qemu next to the binary: use the host's.
 mkdir -p "$OUT/share"; ln -sfn /usr/share/qemu "$OUT/share/qemu"
 "$OUT/bin/qemu-system-x86_64" --version | head -1
+
+mkdir -p "$OUT/licenses"; cp COPYING COPYING.LIB LICENSE "$OUT/licenses/"
+(
+    . /etc/os-release
+    echo "qemu:           $("$OUT/bin/qemu-system-x86_64" --version | head -1)"
+    echo "source:         $URL branch $BRANCH"
+    echo "commit:         $COMMIT"
+    git log --format='series:         %h %s' HEAD
+    echo "build host:     ${PRETTY_NAME:-unknown}, $(uname -m), built $(date -u +%Y-%m-%d)"
+    echo "compiler:       $(cc --version | head -1)"
+    echo "glibc:          $(ldd --version | head -1 | awk '{print $NF}')"
+    echo "needs GLIBC:    $(objdump -T "$OUT/bin/qemu-system-x86_64" | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -1)"
+    for m in glib-2.0 pixman-1 epoxy gbm virglrenderer libdrm slirp zlib libzstd libpng libjpeg gnutls libudev; do
+        v=$(pkg-config --modversion "$m" 2>/dev/null) && printf 'lib %-11s %s\n' "$m:" "$v"
+    done
+    echo "NEEDED:         $(objdump -p "$OUT/bin/qemu-system-x86_64" | awk '$1 == "NEEDED" { print $2 }' | tr '\n' ' ')"
+) >"$OUT/BUILDINFO"
+cat "$OUT/BUILDINFO"

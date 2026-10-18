@@ -1,0 +1,1 @@
+{'version': '0.1.0', 'status': 'Installed', 'operation': 'Install', 'bundle_sha256': 'C0C3A96CB9E4100A1670AC3899C2E0632F354A088C5CA0608EF6FE52AA622968', 'last_error': None}

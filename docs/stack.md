@@ -229,7 +229,7 @@ labs that select them explicitly. Nothing is installed on the host
 
 | Path | What it is for |
 | --- | --- |
-| `patches/host/qemu/0001` and `patches/host/build-qemu.sh` | A QEMU 11.1.1 whose egl-headless display shows LINEAR scanout dma-bufs that the host's EGL imports as external only. NVIDIA needs it for a visible console; AMD and Intel do not. The build is native against the host's libraries, not in Docker. On vmlab 0.26 or later the host config names it as the NVIDIA GPU's `qemu_binary` ([`nvidia.md`](nvidia.md)); the Zeus runs, on 0.24, used an isolated supervisor (`labs/zeus/vmlab-iso.sh`) |
+| `patches/host/build-qemu.sh`, `patches/host/bump-qemu.sh` and the `qemu` pin in `patches/host/PINS` | The vmlab QEMU: QEMU 11.1.1 plus the series on the [VMLabDev/qemu](https://github.com/VMLabDev/qemu/tree/vmlab/egl-headless-external-dmabuf) branch `vmlab/egl-headless-external-dmabuf`, at the pinned commit. Its egl-headless display shows LINEAR scanout dma-bufs that the host's EGL imports as external only. NVIDIA needs it for a visible console; AMD and Intel do not. The build is native against the host's libraries, not in Docker. On vmlab 0.26 or later the host config names it as the NVIDIA GPU's `qemu_binary` ([`nvidia.md`](nvidia.md)); the Zeus runs, on 0.24, used an isolated supervisor (`labs/zeus/vmlab-iso.sh`) |
 | `patches/host/virglrenderer/0001` and `patches/host/build-virglrenderer.sh` | A diagnostic render server: stock virglrenderer 1.3.0 that also logs failed image creation with its create-info. It is selected with `RENDER_SERVER_EXEC_PATH` and used only to investigate a failure ([`nvidia.md`](nvidia.md), [`zeus.md`](zeus.md)) |
 | `patches/host/virglrenderer/workaround/0002` | The host-side workaround for the NVIDIA feedback-loop fault, kept as documentation. `patches/mesa/0020` replaced it; `build-virglrenderer.sh` applies it only with `WITH_WORKAROUND=1` |
 
@@ -289,7 +289,7 @@ Dockerfiles pin their Debian packages by version.
 | [`vulkan-sdk`](../build/vulkan-sdk/PINS) | Vulkan-Tools | `vulkan-sdk-1.4.363.0` | `6fe2055cf2fa921d52a4c6a31528cfc279a6977f` | `6cbeb83294434e636a0c78760f1a6dfe3e50c1bab0cffa154603ce73e70508f1` | https://github.com/KhronosGroup/Vulkan-Tools/archive/refs/tags/vulkan-sdk-1.4.363.0.tar.gz |
 | [`host`](../patches/host/PINS) | virglrenderer | `1.3.0` | — | `065bc56e89e6f631f96101cd62eba0748e48eb888b434edc86e89d05395e76f3` | https://gitlab.freedesktop.org/virgl/virglrenderer/-/archive/1.3.0/virglrenderer-1.3.0.tar.gz |
 | [`host`](../patches/host/PINS) | build-image | — | `sha256:3c64b538588416593f69a1aebd2f2ec0f2541b29159f32556fa7def2167147a0` | — | docker.io/library/archlinux |
-| [`host`](../patches/host/PINS) | qemu | `11.1.1` | — | `079ffbff8a7111bbc89022107cbabf3bbfd614d5fc9d7cc675991196aca12482` | https://download.qemu.org/qemu-11.1.1.tar.xz |
+| [`host`](../patches/host/PINS) | qemu | `branch vmlab/egl-headless-external-dmabuf` | `78bc99a513c04b8c51bc6c211f5da4eaa21e2592` | — | https://github.com/VMLabDev/qemu |
 <!-- END generated pins table -->
 
 ## Patches
@@ -308,7 +308,6 @@ committed.
 | --- | --- | --- | --- | --- |
 | dxil-spirv | 0 | — | None; see [`patches/dxil-spirv/`](../patches/dxil-spirv/) | — |
 | dxvk | 1 | [`0001`](../patches/dxvk/0001-dxgi-Keep-the-swap-chain-description-when-a-resize-fails.patch) | dxgi: Keep the swap-chain description when a resize fails. | [`build/d3d12/README.md`](../build/d3d12/README.md) |
-| host/qemu | 1 | [`0001`](../patches/host/qemu/0001-ui-egl-headless-external-only-dmabuf-scanouts.patch) | ui/egl-headless: show LINEAR scanout dma-bufs that the host EGL imports as external only (NVIDIA) | [`docs/nvidia.md`](nvidia.md) |
 | host/virglrenderer | 1 | [`0001`](../patches/host/virglrenderer/0001-vkr-log-image-creation.patch) | vkr: log failed image creation and memory allocation, with the create-info (diagnostic render server) | [`docs/nvidia.md`](nvidia.md) |
 | host/virglrenderer/workaround | 1 | [`0002`](../patches/host/virglrenderer/workaround/0002-vkr-drop-unsupported-feedback-loop-usage.patch) | vkr: retry vkCreateImage and the image-format queries without feedback-loop usage (superseded by mesa/0020; built only with WITH_WORKAROUND=1) | [`docs/nvidia.md`](nvidia.md) |
 | kmd | 1 | [`0001`](../patches/kmd/0001-kmd-r10-copy.patch) | Convert R10G10B10A2 sources to 8-bit RGBA or BGRA in the KMD's CPU present blit (the prior art's r10 KMD) | [`build/kmd/README.md`](../build/kmd/README.md) |

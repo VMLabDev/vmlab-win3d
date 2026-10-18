@@ -6,7 +6,7 @@ device and a visible console. Every claim cites a file under
 `docs/evidence/host/`. Probe date: 2026-10-17.
 
 The NVIDIA failures this probe recorded have since been explained and fixed
-in `docs/nvidia.md` (`patches/mesa/0020` and `patches/host/qemu/0001`). Read
+in `docs/nvidia.md` (`patches/mesa/0020` and the patched QEMU). Read
 the NVIDIA results below as the state before those fixes.
 
 ## Update: vmlab 0.26 and 0.27 (2026-10-18)
