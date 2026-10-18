@@ -1,7 +1,7 @@
 {
-    "computer":  "VMLABVM-241P7ES",
+    "computer":  "VMLABVM-AIUBH5O",
     "os":  "Microsoft Windows 10 Enterprise Evaluation 10.0.19045",
-    "collected":  "2026-10-17T12:05:13.7120694-07:00",
+    "collected":  "2026-10-18T15:34:40.5708328-07:00",
     "display_devices":  [
                             {
                                 "name":  "Hardsoft VirtIO GPU 3D controller",
@@ -31,7 +31,7 @@
                                                  "DriverVersion":  "100.6.101.58100",
                                                  "InfPath":  "oem15.inf",
                                                  "InfSection":  "VioGpu3D_Inst",
-                                                 "FeatureScore":  249,
+                                                 "FeatureScore":  224,
                                                  "UserModeDriverName":  [
                                                                             "C:\\Windows\\system32\\viogpu_d3d10.dll",
                                                                             "C:\\Windows\\system32\\viogpu_d3d10.dll",
