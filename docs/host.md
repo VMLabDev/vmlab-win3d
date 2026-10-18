@@ -20,13 +20,16 @@ Two more host-config features remove the last NVIDIA workarounds
 | Debug variables and `RENDER_SERVER_EXEC_PATH` set in that supervisor's environment | 0.26: `qemu_env = { NAME: "value" }` on the host GPU block |
 | Both RTX 5090s visible to the guest, since `*nvidia*` matches both | 0.27: the implicit layer `VK_LAYER_VMLAB_pci_filter` keeps only the host GPU's device; no setting (vmlab handoff `20261018-092228`) |
 
-Helios's host config now gives `Nvidia1` a `qemu_binary`:
+Helios's host config gives `Nvidia1` a `qemu_binary`. The path below is the
+current one: since 2026-10-18 it is the version-free
+`~/.local/opt/qemu-vmlab-egl`, built from QEMU master plus our series
+(`patches/host/PINS`); before that it was `~/.local/opt/qemu-11.1.1-vmlab-egl`.
 
 ```wcl
 gpu "Nvidia1" {
   address     = "0000:01:00.0"
   default     = true
-  qemu_binary = "/home/wil/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64"
+  qemu_binary = "/home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64"
 }
 ```
 

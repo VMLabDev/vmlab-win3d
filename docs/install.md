@@ -37,11 +37,11 @@ On the host:
   gpu "Nvidia1" {                                             // RTX 5090
     address     = "0000:01:00.0"
     default     = true
-    qemu_binary = "/home/wil/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64"
+    qemu_binary = "/home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64"
   }
   gpu "Nvidia2" {                                             // RTX 5090
     address     = "0000:05:00.0"
-    qemu_binary = "/home/wil/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64"
+    qemu_binary = "/home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64"
   }
   ```
 
