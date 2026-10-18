@@ -1,0 +1,3 @@
+gpu: client (8, 72, 1278, 750), triangle coverage 0.202, bands 0.00 0.00 0.22 0.26 0.27 0.25 0.01 0.00
+warp: client (8, 58, 1278, 750), triangle coverage 0.178, bands 0.00 0.00 0.21 0.24 0.23 0.31 0.01 0.00
+PASS: coverage ratio gpu/warp 1.13, largest band difference 0.06

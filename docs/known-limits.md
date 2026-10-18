@@ -480,7 +480,7 @@ in [`shaders2.md`](shaders2.md#what-remains): a range over a geometry
 shader's packed scalar system values is still rejected, and indexed reads of
 ordinary patch constants in a join phase were not run.
 
-### D3D12: ExecuteIndirect that changes state draws wrongly, and an NVIDIA first-boot dwm crash
+### D3D12: ExecuteIndirect with vertex or index buffer arguments, and an NVIDIA first-boot dwm crash
 
 Five unmodified Microsoft DirectX-Graphics-Samples D3D12 samples now build
 with clang-cl and the MSVC CRT (`build/d3d12-samples/`) and run through the
@@ -489,15 +489,17 @@ installed package with no app-local DLLs (`docs/d3d12app.md`).
 `D3D12nBodyGravity` render and exit 0 on AMD1 and Nvidia1. Two failures
 remain:
 
-- **`ExecuteIndirect` with a command signature that changes state** draws
-  wrongly, with no error. Such a signature changes root constants, root
-  descriptors, or vertex or index buffers. vkd3d-proton implements it with
-  `VK_EXT_device_generated_commands`. RADV and the NVIDIA driver on the host
-  have that extension, but Venus (guest Mesa 26.1.0 and virglrenderer 1.3.0)
-  does not pass it through. vkd3d-proton then drops the state arguments and
-  issues only the draws. `D3D12ExecuteIndirect` shows the clear colour and
-  none of its triangles. Plain indirect draws and dispatches are not
-  affected.
+- **`ExecuteIndirect` with a command signature that sets vertex or index
+  buffer views** draws wrongly, with no error. Venus (guest Mesa 26.1.0 and
+  virglrenderer 1.3.0) does not forward `VK_EXT_device_generated_commands`,
+  which vkd3d-proton uses for state-changing signatures.
+  `patches/vkd3d-proton/0006` emulates signatures that set root constants
+  or root CBV, SRV or UAV addresses: one GPU-patched indirect draw or
+  dispatch per sequence. With it, `D3D12ExecuteIndirect` renders as on WARP
+  on AMD1 and Nvidia1 ([ei.md](ei.md)). Vertex and index buffer view
+  arguments are still dropped. The emulation also moves every root
+  signature's root parameters into a push UBO and root CBVs to raw VAs,
+  with unmeasured cost per draw.
 - **On NVIDIA, dwm.exe can crash in the first boot after the install.** The
   crash is heap corruption, `0xc0000374`, with `viogpu_d3d10.dll` loaded,
   during the first D3D12 sample. D3D12 programs then fail until the next

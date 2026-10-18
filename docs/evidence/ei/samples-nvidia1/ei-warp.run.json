@@ -1,0 +1,34 @@
+﻿{
+    "name":  "ei-warp",
+    "exe":  "C:\\apps\\ei-warp\\D3D12ExecuteIndirect.exe",
+    "arguments":  "-warp",
+    "user":  "VMLABVM-RURG5A4\\win3d",
+    "session_id":  1,
+    "pid":  508,
+    "wow64":  false,
+    "started":  "2026-10-18T20:30:10.6975557-07:00",
+    "ended":  "2026-10-18T20:31:43.3646884-07:00",
+    "duration_s":  92.7,
+    "timed_out":  true,
+    "exit_code":  null,
+    "exit_code_hex":  null,
+    "task_result":  4294967295,
+    "probe_json":  null,
+    "probe_result":  null,
+    "adapter":  null,
+    "software":  null,
+    "readback_ok":  null,
+    "module_count":  43,
+    "graphics_modules":  [
+                             "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\apps\\ei-warp\\d3d12.dll [app_local] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\apps\\ei-warp\\D3D12\\D3D12Core.dll [other] 1.618.3.0.20251110.1",
+                             "C:\\WINDOWS\\SYSTEM32\\d3d10warp.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\D3DSCache.dll [system32] 10.0.26100.8117 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)"
+                         ],
+    "app_local_modules":  [
+                              "C:\\apps\\ei-warp\\d3d12.dll"
+                          ]
+}
