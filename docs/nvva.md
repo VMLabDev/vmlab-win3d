@@ -95,7 +95,8 @@ column, and `06-unpatched/` is the real baseline.
 
 With 0070 alone (the shipped fix, `07-0070/`), two VMs at the desktop and a
 third booting put `Nvidia2` at 120 MiB, much as unpatched. Yttrium's share
-dominates an idle desktop.
+dominates an idle desktop. Neither lab's dwm failed an import or lost its ring after
+the reboot onto that package (`07-0070/yttrium-errors-*.txt`).
 
 ## Why 0071 was dropped
 
@@ -134,8 +135,21 @@ images.
 
 `tests/e2e/run.sh --template windows-11 --host-gpu Nvidia2 --lab win3d-nvva-e2e`
 with the 0070 and 0086 package, while labs `a` and `b` (same package) ran
-the probe loops (`07-0070/load-during-e2e/`). The result is in
-`docs/evidence/acceptance/windows-11-nvidia2/` and below.
+the probe loops (`07-0070/load-during-e2e/`), 2026-10-19, package built at
+`a9579f1`:
+
+- **12 of 12 Done checks pass**
+  (`docs/evidence/acceptance/windows-11-nvidia2/results.txt`): the install,
+  `vulkaninfo`, dxdiag, and all ten probes on the console. OpenGL runs
+  through Zink at 57 fps, so 0086 works without a host-visible VRAM type.
+- The two loaded labs ran 68 probe runs and all 68 passed.
+- During the run, `Nvidia2` peaked at 205 MiB of BAR1 with three VMs on it,
+  and the kernel logged no new `can't alloc VA space` lines
+  (`04-baseline/monitor.txt` from 07:47).
+
+Three VMs passed here, but the unpatched three-VM stage reached 213 MiB and
+failed. So the margin is small, and the recommendation stays at two VMs
+per card.
 
 ## Evidence
 
