@@ -11,15 +11,20 @@ virtio-gpu Venus, with no per-application files or settings.
 On the host:
 
 - Docker, usable without sudo, and network access for the pinned downloads.
-- vmlab 0.25.0-alpha or later, and the local `windows-11` (or `windows-10`)
+- vmlab 0.27.0-alpha or later, and the local `windows-11` (or `windows-10`)
   template. vmlab before 0.24 does not give the guest a working Venus
-  device (`docs/host.md` records why), and 0.24 lab files name the GPU by
-  PCI address, which 0.25 rejects.
+  device (`docs/host.md` records why), 0.24 lab files name the GPU by PCI
+  address, which 0.25 rejects, 0.26 added the host GPU's `qemu_binary` that
+  NVIDIA needs, and 0.27 hides the host's other GPUs from the guest.
 - A host GPU whose Vulkan driver Venus works on: AMD with RADV (the
   reference; on helios the iGPU at PCI address `0000:72:00.0`,
-  `/dev/dri/renderD129`) or Intel with ANV. NVIDIA needs a patched QEMU and
-  is only partly working, and a laptop RTX 4060 failed outright
+  `/dev/dri/renderD129`), Intel with ANV, or an NVIDIA RTX 5090. A laptop
+  RTX 4060 failed outright
   ([known limits](known-limits.md#host-gpu-support)).
+- **For an NVIDIA GPU, a patched QEMU named as `qemu_binary` on that GPU's
+  host config block.** Stock QEMU 11.1.1 shows a black console for a Venus
+  guest on NVIDIA. `docs/nvidia.md`, "Host setup", says how to build it
+  (`patches/host/build-qemu.sh`) and where to point.
 - That GPU declared by name in the host config,
   `~/.config/vmlab/config.wcl`. Find its address with
   `lspci -D | grep -Ei 'vga|3d|display'`, or from
@@ -29,20 +34,28 @@ On the host:
   import <vmlab-host.wcl>
 
   gpu "AMD1"    { address = "0000:72:00.0" }                  // AMD iGPU (RADV, renderD129)
-  gpu "Nvidia1" { address = "0000:01:00.0"  default = true }  // RTX 5090
-  gpu "Nvidia2" { address = "0000:05:00.0" }                  // RTX 5090
+  gpu "Nvidia1" {                                             // RTX 5090
+    address     = "0000:01:00.0"
+    default     = true
+    qemu_binary = "/home/wil/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64"
+  }
+  gpu "Nvidia2" {                                             // RTX 5090
+    address     = "0000:05:00.0"
+    qemu_binary = "/home/wil/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64"
+  }
   ```
 
   One GPU is the default: a lone declared GPU, or the one with
   `default = true`. A lab that does not name a GPU gets the default. On
-  helios that is an RTX 5090, so the labs here name `AMD1`.
+  helios that is `Nvidia1`, an RTX 5090; the labs here name their GPU
+  explicitly.
 
 The VM needs two settings, as in `labs/probe/vmlab.wcl`:
 
 | Setting | Why |
 | --- | --- |
 | `secure_boot = false` | The package is test-signed (decision 0001). Windows ignores `testsigning` while Secure Boot is on, so `Install.cmd` refuses to run. This cannot be changed from inside the guest. |
-| `gpu { mode = "vulkan" host_gpu = "AMD1" }` | vmlab's Venus mode. vmlab emits one `virtio-vga-gl,venus=true,blob=true,hostmem=4G` adapter. `host_gpu` names a host GPU from the host config: vmlab puts egl-headless on its render node and sets `VK_LOADER_DRIVERS_SELECT` in QEMU's environment from its kernel driver, so virglrenderer uses RADV. The KMD needs the device's `VIRTIO_GPU_F_VIRGL` feature; the INF matches its hardware ID, `PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01`. |
+| `gpu { mode = "vulkan" host_gpu = "AMD1" }` | vmlab's Venus mode. vmlab emits one `virtio-vga-gl,venus=true,blob=true,hostmem=4G` adapter. `host_gpu` names a host GPU from the host config: vmlab puts egl-headless on its render node and sets `VK_LOADER_DRIVERS_SELECT` in QEMU's environment from its kernel driver, so virglrenderer uses that GPU's driver (RADV for `AMD1`). vmlab 0.27 also loads a Vulkan layer that hides every other host GPU, so the guest sees one Venus device. The KMD needs the device's `VIRTIO_GPU_F_VIRGL` feature; the INF matches its hardware ID, `PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01`. |
 
 `vulkan_icd = "<path to ICD JSON>"` on the host config's `gpu "<name>" {}`
 block overrides the ICD choice when the driver name is not enough. A
@@ -68,8 +81,11 @@ lab "win3d-package" {
 
 Bring it up with plain `vmlab up`. QEMU's log, `qemu.log` in the VM's state
 directory, starts with `vmlab: argv:` and `vmlab: env:` lines, so you can
-check the device line and the ICD filter there. `vmlab status -v` shows
-`host_gpu=<name>`.
+check the device line, the ICD filter and, for a GPU with `qemu_binary`,
+the QEMU binary there. On vmlab 0.27 a later
+`vmlab-pci-filter: <address>: kept <device>, hid <n>` line names the one
+host device the guest sees. `vmlab status -v` shows `host_gpu=<name>`, and
+`qemu=<path>` when the GPU has a `qemu_binary`.
 
 The evidence in `docs/evidence/package/` predates vmlab 0.24 and 0.25. It used vmlab
 0.23 with `qemu_args` and an isolated supervisor that had

@@ -1,11 +1,10 @@
 import <vmlab.wcl>
 
 // Windows 11 with Venus on the first RTX 5090 (host GPU Nvidia1, renderD128).
-// Needs vmlab >= 0.25.0-alpha and a host config (~/.config/vmlab/config.wcl)
-// declaring gpu "Nvidia1" { address = "0000:01:00.0" }: gpu.host_gpu picks
-// the render node for egl-headless and sets VK_LOADER_DRIVERS_SELECT=*nvidia*
-// in QEMU's environment. See docs/nvidia.md. Bring it up through ./vmlab-nv.sh when a
-// patched render server is wanted (its path has to be in QEMU's environment).
+// Needs vmlab >= 0.27.0-alpha and a host config (~/.config/vmlab/config.wcl)
+// whose gpu "Nvidia1" names the RTX 5090's address and, as qemu_binary, a
+// QEMU with the egl-headless fix (patches/host/qemu/0001); stock QEMU shows a
+// black console on NVIDIA. See docs/nvidia.md.
 lab "win3d-nvidia-a" {
   vm "win11" {
     template = "x86_64/windows-11@26100.1742.5"

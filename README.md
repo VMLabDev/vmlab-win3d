@@ -32,9 +32,12 @@ off.
   ([acceptance](docs/acceptance.md)).
 - **Also verified on Intel.** The same checks pass on an Intel Iris Xe host
   (ANV) with `patches/mesa/0021` ([zeus](docs/zeus.md)).
-- **NVIDIA partial.** On an RTX 5090 the probes pass, but only with a patched
-  QEMU that vmlab cannot run yet ([nvidia](docs/nvidia.md)). On a laptop RTX
-  4060 the GPU fell off the bus during a run ([zeus](docs/zeus.md)).
+- **Also verified on NVIDIA.** On an RTX 5090 the same checks pass on
+  `windows-11` and `windows-10` with vmlab 0.27, when the host config names a patched QEMU
+  as the GPU's `qemu_binary` ([nvidia](docs/nvidia.md),
+  [acceptance](docs/acceptance.md#nvidia-rtx-5090)). One DirectX SDK D3D9
+  sample hangs the guest there. On a laptop RTX 4060 the GPU fell off the
+  bus during a run ([zeus](docs/zeus.md)).
 - Uninstall returns the guest to its state before the install
   ([evidence](docs/evidence/package/README.md)).
 
@@ -43,8 +46,10 @@ including the full host GPU matrix.
 
 ## Quick start
 
-You need Docker without sudo, vmlab 0.25.0-alpha or later, the local
-`windows-11` template, and an AMD or Intel GPU on the host.
+You need Docker without sudo, vmlab 0.27.0-alpha or later, the local
+`windows-11` template, and an AMD, Intel or NVIDIA RTX 5090 GPU on the
+host. NVIDIA also needs a patched QEMU as `qemu_binary` on its host config
+block ([docs/nvidia.md](docs/nvidia.md)).
 
 ```sh
 scripts/build.sh                               # writes out/package/
@@ -53,8 +58,8 @@ scripts/install-into-vm.sh <lab-dir> <vm>      # install, with the reboots
 ```
 
 The lab needs `secure_boot = false` and
-`gpu { mode = "vulkan" host_gpu = "<name>" }`, where `<name>` is the AMD
-or Intel GPU as declared in the host config, `~/.config/vmlab/config.wcl`
+`gpu { mode = "vulkan" host_gpu = "<name>" }`, where `<name>` is the
+GPU as declared in the host config, `~/.config/vmlab/config.wcl`
 (for example `gpu "AMD1" { address = "0000:72:00.0" }`), as in
 `labs/probe/vmlab.wcl`. Without `host_gpu` the lab gets the host's default
 GPU. [docs/install.md](docs/install.md) has the full

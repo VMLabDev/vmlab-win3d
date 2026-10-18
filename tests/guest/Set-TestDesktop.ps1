@@ -11,6 +11,13 @@ This script prepares that session: it creates the user (a standard user unless
 blanking, and optionally reboots so the logon happens. Run it as SYSTEM or an
 administrator. It is idempotent.
 
+Before it writes the Winlogon values it waits, up to -OobeTimeoutSeconds, for
+Windows' user OOBE to finish. On a fresh clone of a sysprep-generalized
+template, user OOBE can still be running when vmlab reports the VM ready, and
+when it exits it deletes AutoAdminLogon and DefaultUserName whoever wrote them
+(vmlab handoff 20261018-092229). The check is the one vmlab gives there. It
+prints one "oobe:" line saying how long it waited.
+
 .EXAMPLE
 powershell -NoProfile -ExecutionPolicy Bypass -File Set-TestDesktop.ps1 -Reboot
 #>
@@ -19,9 +26,28 @@ param(
     [string]$UserName = 'win3d',
     [string]$Password = 'Win3d-probe-1!',
     [switch]$Administrator,
-    [switch]$Reboot
+    [switch]$Reboot,
+    [int]$OobeTimeoutSeconds = 900
 )
 $ErrorActionPreference = 'Stop'
+
+function Test-OobeDone {
+    $s = Get-ItemProperty HKLM:\SYSTEM\Setup
+    $w = Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
+    $l = Select-String C:\Windows\Panther\UnattendGC\setupact.log `
+        -Pattern 'fEnableAutologon = 1|Clearing Auto-logon values' -ErrorAction SilentlyContinue |
+        Select-Object -Last 1
+    -not ($s.SystemSetupInProgress -ne 0 -or $s.OOBEInProgress -ne 0 -or $w.SystemAutoLogon -or
+        ($l -and $l.Line -notmatch 'Clearing'))
+}
+$oobeStart = Get-Date
+while (-not (Test-OobeDone)) {
+    if (((Get-Date) - $oobeStart).TotalSeconds -ge $OobeTimeoutSeconds) { break }
+    Start-Sleep -Seconds 5
+}
+$waited = [int]((Get-Date) - $oobeStart).TotalSeconds
+if (Test-OobeDone) { Write-Output "oobe: done after $waited s" }
+else { Write-Output "oobe: still in progress after $waited s; setting autologon anyway" }
 
 $secure = ConvertTo-SecureString $Password -AsPlainText -Force
 $user = Get-LocalUser -Name $UserName -ErrorAction SilentlyContinue

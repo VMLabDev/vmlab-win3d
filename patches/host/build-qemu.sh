@@ -16,9 +16,9 @@
 # above, all of which the host's packages already ship.
 #
 # The binary is configured with --prefix=/usr, so it uses the host's
-# /usr/share/qemu ROMs (through the out/host/qemu/share/qemu symlink). vmlab finds QEMU on PATH, so a lab uses this build by
-# putting out/host/qemu/bin first on the vmlab supervisor's PATH
-# (labs/nvidia/vmlab-nv.sh: WIN3D_QEMU_DIR). Pins are in patches/host/PINS.
+# /usr/share/qemu ROMs (through the out/host/qemu/share/qemu symlink). A lab
+# uses this build when the host config names it as its GPU's qemu_binary
+# (vmlab >= 0.26; docs/nvidia.md, "Host setup"). Pins are in patches/host/PINS.
 set -euo pipefail
 HERE=$(cd "$(dirname "$0")" && pwd)
 REPO=$(cd "$HERE/../.." && pwd)

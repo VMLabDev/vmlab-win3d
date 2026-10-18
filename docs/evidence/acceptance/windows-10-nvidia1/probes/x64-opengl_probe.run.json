@@ -1,0 +1,37 @@
+﻿{
+    "name":  "x64-opengl_probe",
+    "exe":  "C:\\win3d\\probes\\x64\\opengl_probe.exe",
+    "arguments":  "--seconds 20 --out C:\\win3d\\results\\probes\\x64-opengl_probe.json",
+    "user":  "VMLABVM-7U5IQU5\\win3d",
+    "session_id":  1,
+    "pid":  6764,
+    "wow64":  false,
+    "started":  "2026-10-18T02:00:39.3228056-07:00",
+    "ended":  "2026-10-18T02:01:00.3141641-07:00",
+    "duration_s":  21,
+    "timed_out":  false,
+    "exit_code":  0,
+    "exit_code_hex":  "0x00000000",
+    "task_result":  0,
+    "probe_json":  "C:\\win3d\\results\\probes\\x64-opengl_probe.json",
+    "probe_result":  "pass",
+    "adapter":  "zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY))",
+    "software":  false,
+    "readback_ok":  true,
+    "module_count":  45,
+    "graphics_modules":  [
+                             "C:\\Windows\\SYSTEM32\\OPENGL32.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
+                             "C:\\Windows\\SYSTEM32\\GLU32.dll [system32] 10.0.19041.1 (WinBuild.160101.0800)",
+                             "C:\\Windows\\system32\\viogpu_wgl.dll [system32] ",
+                             "C:\\Windows\\SYSTEM32\\vulkan-1.dll [system32] 1.4.363.0",
+                             "C:\\Windows\\system32\\dxgi.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
+                             "C:\\Windows\\system32\\libvulkan_virtio.dll [system32] ",
+                             "C:\\Windows\\system32\\d3d11.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
+                             "C:\\Windows\\system32\\viogpu_d3d10.dll [system32] ",
+                             "C:\\Windows\\SYSTEM32\\dxcore.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
+                             "C:\\Windows\\SYSTEM32\\dwmapi.dll [system32] 10.0.19041.1 (WinBuild.160101.0800)"
+                         ],
+    "app_local_modules":  [
+
+                          ]
+}

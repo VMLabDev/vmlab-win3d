@@ -4,9 +4,10 @@
     tests/e2e/report.py
 
 Replaces the text between the `<!-- e2e:results -->` and
-`<!-- /e2e:results -->` markers with one table per template that has
-docs/evidence/acceptance/<template>/results.json, plus the host stack and
-commit that run recorded in host.txt.
+`<!-- /e2e:results -->` markers with one table per evidence directory that
+has a results.json: docs/evidence/acceptance/<template>/ (AMD1), then
+<template>-<gpu>/ (run.sh --host-gpu), plus the host GPU, QEMU and commit
+that run recorded in host.txt.
 """
 import json, os, re, sys
 
@@ -20,7 +21,9 @@ def cell(s):
 
 
 out = []
-for t in ('windows-11', 'windows-10'):
+dirs = ['windows-11', 'windows-10']
+dirs += sorted(d for d in os.listdir(EVROOT) if d not in dirs and re.match(r'windows-1[01]-', d))
+for t in dirs:
     ev = os.path.join(EVROOT, t)
     try:
         res = json.load(open(os.path.join(ev, 'results.json')))
@@ -38,6 +41,11 @@ for t in ('windows-11', 'windows-10'):
     counted = [r for r in rows if r['counts']]
     passed = sum(1 for r in counted if r['result'] == 'pass')
     out.append(f'### {t}\n')
+    gpu = host.get('venus gpu', '')
+    if gpu.startswith('host_gpu '):
+        qemu = next((f'{v} (the {k[6:-1]})' for k, v in host.items() if k.startswith('qemu (') and 'qemu_binary' in k), None)
+        out.append(f"Host GPU: {gpu.removeprefix('host_gpu ')}. QEMU: "
+                   f"{qemu or host.get('qemu (PATH)', '?') + ' (from PATH)'}.\n")
     out.append(f"Run {host.get('date', '?')} at commit `{host.get('commit', '?')[:12]}`, template "
                f"`{host.get('template', '?')}`. **{'PASS' if res['passed'] else 'FAIL'}: {passed} of "
                f"{len(counted)} Done checks pass** (run stage: {stage or '?'}). Evidence: "

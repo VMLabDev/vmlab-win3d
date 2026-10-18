@@ -82,6 +82,14 @@ for arch in ('x64', 'x86'):
     row('2', f'vulkaninfo --summary ({arch}) lists the Venus device', ok, f'vulkaninfo/vulkaninfo-{arch}.txt',
         venus[0] if venus else ('no Venus device: ' + (names[0].strip() if names else 'no device')), extra=(arch != 'x64'))
 
+# The host GPU's Venus device alone: vmlab >= 0.27's PCI-filter layer hides the
+# host's other GPUs (two RTX 5090s on helios both match *nvidia*).
+v = read('vulkaninfo', 'vulkaninfo-x64.txt')
+if v is not None:
+    venus = [n.strip() for n in re.findall(r'deviceName\s*=\s*(.+)', v) if 'Venus' in n]
+    row('2', 'vulkaninfo --summary (x64) lists exactly one Venus device', len(venus) == 1,
+        'vulkaninfo/vulkaninfo-x64.txt', f"{len(venus)} Venus: {', '.join(venus) or 'none'}", extra=True)
+
 # Cross-check: LunarG's vulkaninfo (tests/e2e/PINS) through the installed loader and ICD.
 for arch in ('x64', 'x86'):
     v = read('vulkaninfo', f'lunarg-vulkaninfo-{arch}.txt')

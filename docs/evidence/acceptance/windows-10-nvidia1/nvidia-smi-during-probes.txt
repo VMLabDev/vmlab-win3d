@@ -1,0 +1,13 @@
+# nvidia-smi --query-compute-apps during the probes, 2026-10-18T12:01:55+10:00
+pid, process_name, gpu_bus_id, used_gpu_memory [MiB]
+3151450, /usr/lib/virgl_render_server, 00000000:01:00.0, 140 MiB
+3151615, /usr/lib/virgl_render_server, 00000000:01:00.0, 17 MiB
+3151647, /usr/lib/virgl_render_server, 00000000:01:00.0, 20 MiB
+3151661, /usr/lib/virgl_render_server, 00000000:01:00.0, 17 MiB
+3151760, /usr/lib/virgl_render_server, 00000000:01:00.0, 20 MiB
+3151791, /usr/lib/virgl_render_server, 00000000:01:00.0, 20 MiB
+3151824, /usr/lib/virgl_render_server, 00000000:01:00.0, 17 MiB
+3151884, /usr/lib/virgl_render_server, 00000000:01:00.0, 17 MiB
+3152369, /usr/lib/virgl_render_server, 00000000:01:00.0, 17 MiB
+3153079, /usr/lib/virgl_render_server, 00000000:01:00.0, 17 MiB
+3153557, /usr/lib/virgl_render_server, 00000000:01:00.0, 17 MiB

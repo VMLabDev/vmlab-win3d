@@ -44,6 +44,7 @@ EXTERNAL_COMMITS = {
     "cdf4ff9": "vmlab: the 0.24 changes from handoff 20261017-142905 (host.md)",
     "2645da6": "vmlab 0.23.0-alpha as probed (host.md)",
     "f1e4515": "vmlab: the template agent's version (host.md)",
+    "fb0c538": "vmlab-templates: firstboot.ws waits for user OOBE, handoff 20261018-092229 (known-limits.md)",
     "8dae2d85": "dxil-spirv's dxbc-spirv gitlink at the pinned commit (build/d3d12/README.md)",
     "be71ee8c": "dxil-spirv's SPIRV-Cross gitlink (build/d3d12/README.md)",
     "199cb207": "dxil-spirv's SPIRV-Tools gitlink (build/d3d12/README.md)",
@@ -53,6 +54,7 @@ EXTERNAL_COMMITS = {
 # Paths that documents describe as removed; they must exist in git history.
 HISTORICAL_PATHS = {
     "labs/probe/vmlab-amd.sh": "the vmlab 0.23 supervisor workaround, removed in badd5c2 (host.md)",
+    "labs/nvidia/vmlab-nv.sh": "the isolated-supervisor NVIDIA wrapper, removed in 08ff884 when vmlab 0.26 added qemu_binary (host.md, nvidia.md)",
 }
 
 BACKTICK = re.compile(r"`([^`\n]+)`")

@@ -74,7 +74,7 @@ Everything else stays under `~/win3d-zeus/` on Zeus ([Cleanup](#cleanup)).
 | `amd/vmlab.wcl` | `win3d-zeus-amd`: `labs/probe/vmlab.wcl` with its own lab name (`host_gpu = "AMD1"`), for the regression run on helios |
 | `stage.sh` | Copies what a run needs from helios to `~/win3d-zeus/repo` on Zeus: `out/package`, `out/probes`, `tests/guest`, `tests/e2e` from `main`, `scripts/install-into-vm.sh`, `labs/zeus`, `patches/host`, and the uavtest build |
 | `run.sh` | `tests/e2e/run.sh` adapted for Zeus. It brings up a fresh lab, installs with `scripts/install-into-vm.sh` (the documented command), then runs vulkaninfo, the 10 probes with `vmlab vm screenshot` captures, dxdiag and uavtest. `tests/e2e/check.py` judges the result. It does not build: the package comes from helios |
-| `vmlab-iso.sh` | Runs vmlab against an isolated supervisor under `~/win3d-zeus/`, whose `PATH` and environment give QEMU a patched QEMU (`patches/host/qemu/0001`, built on Zeus) or the diagnostic render server. `labs/nvidia/vmlab-nv.sh` does the same on helios |
+| `vmlab-iso.sh` | Runs vmlab against an isolated supervisor under `~/win3d-zeus/`, whose `PATH` and environment give QEMU a patched QEMU (`patches/host/qemu/0001`, built on Zeus) or the diagnostic render server. helios used `labs/nvidia/vmlab-nv.sh` the same way until vmlab 0.26's `qemu_binary` replaced it ([`nvidia.md`](nvidia.md)) |
 | `uavtest/` | A D3D11 FL11_0 compute test for typed UAV loads: it prints the caps and checks R32_FLOAT and R32_UINT read-modify-write. `uavtest/build.sh` builds it in the toolchain image |
 
 ## Commands
