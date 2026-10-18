@@ -360,7 +360,8 @@ earlier acceptance runs (`b3e1798`, `cb4d53c`) recorded both as failures.
 DXUT loads `D3D11Ref.dll` only while it enumerates devices. It is not in
 either sample's module list, and both overlays name the HARDWARE device.
 
-**Not attempted: D3D12.** The candidate was Microsoft's
+**Not attempted here: D3D12.** (Done later, with clang-cl and the MSVC headers:
+[d3d12app.md](d3d12app.md).) The candidate was Microsoft's
 DirectX-Graphics-Samples `D3D12HelloTriangle` (MIT), built from source with
 the project toolchain, llvm-mingw. It does not compile unmodified with that
 toolchain:

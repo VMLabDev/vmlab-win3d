@@ -346,8 +346,8 @@ OpenGL and Vulkan, x64 and x86), two diagnostic probes (`probes/dxut-enum`,
 D3D9 fixed function goes through the shaders that the Windows runtime
 generates; its coverage and what it still lacks are in the next section.
 
-D3D10 has no probe here, and no D3D12 application other than the probe has
-run (see below). The prior art ran real applications on its own builds of the
+D3D10 has no probe here. Five unmodified Microsoft D3D12 samples have run
+([d3d12app.md](d3d12app.md); four render, `D3D12ExecuteIndirect` does not, see below). The prior art ran real applications on its own builds of the
 same components:
 
 - GravityMark (D3D11, D3D12, OpenGL), Unigine Heaven (D3D9, D3D11, OpenGL),
