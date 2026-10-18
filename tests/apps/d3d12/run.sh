@@ -31,7 +31,7 @@ SAMPLES=("$@")
 [ ${#SAMPLES[@]} -gt 0 ] || SAMPLES=(D3D12HelloTriangle D3D12HelloTexture D3D12Bundles D3D12nBodyGravity D3D12ExecuteIndirect)
 BIN=$REPO/out/d3d12-samples/x64
 CACHE=$REPO/.scratch/apps-d3d12/cache
-STAGE=$REPO/.scratch/apps-d3d12/stage
+STAGE=$REPO/.scratch/apps-d3d12/stage/$(basename "$EV")
 mkdir -p "$CACHE" "$STAGE/shots"
 [ -d "$BIN" ] || { echo "no $BIN; run build/d3d12-samples/build.sh" >&2; exit 2; }
 
@@ -104,6 +104,8 @@ sample() { # sample NAME
     fi
     in_lab vmlab cp "$VM:C:/win3d/results/d3d12-samples/$name.run.json" "$EV/$name.run.json" >/dev/null 2>&1
     in_lab vmlab cp "$VM:C:/win3d/results/d3d12-samples/$name.modules.json" "$STAGE/$name.modules.json" >/dev/null 2>&1
+    # DXVK's DXGI writes <exe>_dxgi.log to the working directory.
+    in_lab vmlab cp "$VM:C:/win3d/results/d3d12-samples/${name}_dxgi.log" "$EV/${name}_dxgi.log" >/dev/null 2>&1
     [ -f "$STAGE/$name.modules.json" ] && python3 - "$STAGE/$name.modules.json" "$EV/$name.modules.txt" <<'EOF'
 import json, sys
 mods = json.load(open(sys.argv[1], encoding='utf-8-sig'))
@@ -116,7 +118,13 @@ EOF
 }
 
 stage || { note "staging failed"; exit 1; }
+since=$(gps '(Get-Date).ToString("o")' 60 | tail -1)
 for s in "${SAMPLES[@]}"; do sample "$s"; done
+# Application crashes during the runs (the samples, and dwm.exe).
+gps '$e = Get-WinEvent -FilterHashtable @{ LogName = "Application"; ProviderName = "Application Error", "Windows Error Reporting"; StartTime = [datetime]"'"$since"'" } -ErrorAction SilentlyContinue
+     if (-not $e) { "no Application Error events" }
+     $e | Sort-Object TimeCreated | ForEach-Object { "{0:o} {1} {2}" -f $_.TimeCreated, $_.ProviderName, (($_.Message -split "`r?`n" | Where-Object { $_ })[0..4] -join " | ") }' 120 \
+    >"$EV/app-errors.txt"
 
 python3 - "$EV" "${SAMPLES[@]}" <<'EOF'
 import json, os, sys
