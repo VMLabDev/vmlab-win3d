@@ -13,7 +13,7 @@
         "blue",
         "green"
       ],
-      "crc": "f5591694"
+      "crc": "c5617009"
     }
   },
   "x86-d3d9_probe": {
@@ -30,12 +30,12 @@
         "blue",
         "green"
       ],
-      "crc": "054a9bd5"
+      "crc": "32c40ec1"
     }
   },
   "x64-d3d11_probe": {
     "frames": 12,
-    "frames_with_window": 9,
+    "frames_with_window": 10,
     "visible": true,
     "animating": true,
     "png": "console-x64-d3d11_probe.png",
@@ -47,12 +47,12 @@
         "blue",
         "green"
       ],
-      "crc": "3cd6733b"
+      "crc": "227d86b9"
     }
   },
   "x86-d3d11_probe": {
     "frames": 12,
-    "frames_with_window": 9,
+    "frames_with_window": 10,
     "visible": true,
     "animating": true,
     "png": "console-x86-d3d11_probe.png",
@@ -64,7 +64,7 @@
         "blue",
         "green"
       ],
-      "crc": "bb71cf81"
+      "crc": "db94abb0"
     }
   },
   "x64-d3d12_probe": {
@@ -81,7 +81,7 @@
         "blue",
         "green"
       ],
-      "crc": "a3c1a2a8"
+      "crc": "1cdbd461"
     }
   },
   "x86-d3d12_probe": {
@@ -98,7 +98,7 @@
         "blue",
         "green"
       ],
-      "crc": "a2804027"
+      "crc": "33264622"
     }
   },
   "x64-opengl_probe": {
@@ -115,7 +115,7 @@
         "blue",
         "green"
       ],
-      "crc": "5365514c"
+      "crc": "a857b423"
     }
   },
   "x86-opengl_probe": {
@@ -132,7 +132,7 @@
         "blue",
         "green"
       ],
-      "crc": "b3838b60"
+      "crc": "b5367b8f"
     }
   },
   "x64-vulkan_probe": {
@@ -149,7 +149,7 @@
         "blue",
         "green"
       ],
-      "crc": "704b5b88"
+      "crc": "863bd5ad"
     }
   },
   "x86-vulkan_probe": {
@@ -166,7 +166,7 @@
         "blue",
         "green"
       ],
-      "crc": "48eb2054"
+      "crc": "a67511f5"
     }
   }
 }

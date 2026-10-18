@@ -1,0 +1,32 @@
+﻿{
+    "name":  "d3d9-x64-BasicHLSL",
+    "exe":  "C:\\apps\\DXSDK\\Samples\\C++\\Direct3D\\Bin\\x64\\BasicHLSL.exe",
+    "arguments":  "-windowed",
+    "user":  "VMLABVM-JBO5SQV\\win3d",
+    "session_id":  1,
+    "pid":  4812,
+    "wow64":  false,
+    "started":  "2026-10-18T15:32:20.6415931-07:00",
+    "ended":  "2026-10-18T15:32:52.0641340-07:00",
+    "duration_s":  31.4,
+    "timed_out":  true,
+    "exit_code":  null,
+    "exit_code_hex":  null,
+    "task_result":  4294967295,
+    "probe_json":  null,
+    "probe_result":  null,
+    "adapter":  null,
+    "software":  null,
+    "readback_ok":  null,
+    "module_count":  50,
+    "graphics_modules":  [
+                             "C:\\Windows\\SYSTEM32\\d3dx9_43.dll [system32] 9.29.952.3111",
+                             "C:\\Windows\\SYSTEM32\\d3dx10_43.dll [system32] 9.29.952.3111",
+                             "C:\\Windows\\SYSTEM32\\d3d9.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
+                             "C:\\Windows\\SYSTEM32\\dwmapi.dll [system32] 10.0.19041.1 (WinBuild.160101.0800)",
+                             "C:\\Windows\\system32\\viogpu_d3d10.dll [system32] "
+                         ],
+    "app_local_modules":  [
+
+                          ]
+}

@@ -1,0 +1,7 @@
+KMD built from patches/kmd 0001, 0002 and docs/evidence/ddraw/kmd-16bpp-experiment/0003-kmd-16bpp-source-modes.patch
+(applied as patches/kmd/0003 for this run only; not committed there)
+patch 0003 sha256 6164c8d6934bc0a1717b03fa7cf332f988a98c64ed28e8d4b2fddd91b5d8f1bc
+out/kmd/x64/viogpu3d.sys (unsigned) 9c0d239b6f4fd502f14b68a17048e82c495003010d74d21ce869fb08adb62f9d
+package driver/viogpu3d.sys (signed) d5f925bbc03c8698487cf402a4fa44144a634d6e4c89748d5d4778384875406d
+installed DriverStore copy (viogpu3d.inf_amd64_e24a94dfea8f0416\viogpu3d.sys)  D5F925BBC03C8698487CF402A4FA44144A634D6E4C89748D5D4778384875406D
+installed with scripts/install-into-vm.sh over the baseline package in lab win3d-dd16-amd1 (AMD1), 2026-10-19; Win32_VideoController: Hardsoft VirtIO GPU 3D controller 100.6.101.58100, 32 bpp, status OK

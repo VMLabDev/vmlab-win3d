@@ -1,5 +1,5 @@
-lab "win3d-nv2-w11"
+lab "win3d-rc-w11-nv2"
 
   NAME KIND      STATUS  IP TEMPLATE/IMAGE
   win  vm        running -  x86_64/windows-11@26100.1742.5
-      state=running ready=yes cached=yes arch=x86_64 cpus=4 memory=8GiB agent=f1e4515 host_gpu=Nvidia2 qemu=/home/wil/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64
+      state=running ready=yes cached=yes arch=x86_64 cpus=4 memory=8GiB agent=f1e4515 host_gpu=Nvidia2 qemu=/home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64
