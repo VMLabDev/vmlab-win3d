@@ -13,12 +13,12 @@
         "blue",
         "green"
       ],
-      "crc": "fb3ee5eb"
+      "crc": "54d1cb4c"
     }
   },
   "x86-d3d9_probe": {
     "frames": 12,
-    "frames_with_window": 9,
+    "frames_with_window": 10,
     "visible": true,
     "animating": true,
     "png": "console-x86-d3d9_probe.png",
@@ -30,12 +30,12 @@
         "blue",
         "green"
       ],
-      "crc": "8d1913ca"
+      "crc": "ca50fcf3"
     }
   },
   "x64-d3d11_probe": {
     "frames": 12,
-    "frames_with_window": 10,
+    "frames_with_window": 9,
     "visible": true,
     "animating": true,
     "png": "console-x64-d3d11_probe.png",
@@ -47,7 +47,7 @@
         "blue",
         "green"
       ],
-      "crc": "c648d5a1"
+      "crc": "ee077f67"
     }
   },
   "x86-d3d11_probe": {
@@ -64,12 +64,12 @@
         "blue",
         "green"
       ],
-      "crc": "c4e9c884"
+      "crc": "711edf1a"
     }
   },
   "x64-d3d12_probe": {
     "frames": 12,
-    "frames_with_window": 9,
+    "frames_with_window": 8,
     "visible": true,
     "animating": true,
     "png": "console-x64-d3d12_probe.png",
@@ -81,11 +81,11 @@
         "blue",
         "green"
       ],
-      "crc": "a79729b7"
+      "crc": "87149dfc"
     }
   },
   "x86-d3d12_probe": {
-    "frames": 12,
+    "frames": 13,
     "frames_with_window": 9,
     "visible": true,
     "animating": true,
@@ -98,7 +98,7 @@
         "blue",
         "green"
       ],
-      "crc": "6bea816c"
+      "crc": "c11007cb"
     }
   },
   "x64-opengl_probe": {
@@ -115,7 +115,7 @@
         "blue",
         "green"
       ],
-      "crc": "056816c3"
+      "crc": "d06aa387"
     }
   },
   "x86-opengl_probe": {
@@ -132,12 +132,12 @@
         "blue",
         "green"
       ],
-      "crc": "479dea66"
+      "crc": "e96a5c16"
     }
   },
   "x64-vulkan_probe": {
     "frames": 12,
-    "frames_with_window": 9,
+    "frames_with_window": 10,
     "visible": true,
     "animating": true,
     "png": "console-x64-vulkan_probe.png",
@@ -149,7 +149,7 @@
         "blue",
         "green"
       ],
-      "crc": "5ad1cd87"
+      "crc": "cf5d0f67"
     }
   },
   "x86-vulkan_probe": {
@@ -166,7 +166,7 @@
         "blue",
         "green"
       ],
-      "crc": "85139604"
+      "crc": "796906a7"
     }
   }
 }

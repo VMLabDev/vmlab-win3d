@@ -1,1 +1,118 @@
-{}
+{
+  "d3d11-x64-BasicHLSL11": {
+    "exe": "C:\\apps\\DXSDK\\Samples\\C++\\Direct3D11\\Bin\\x64\\BasicHLSL11.exe",
+    "session_id": 1,
+    "exit_code": null,
+    "timed_out": true,
+    "app_local_modules": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SYSTEM32\\d3dx9_43.dll [system32] 9.29.952.3111",
+      "C:\\WINDOWS\\SYSTEM32\\D3DCOMPILER_43.dll [system32] 9.29.952.3111",
+      "C:\\WINDOWS\\SYSTEM32\\d3dx11_43.dll [system32] 9.29.952.3111",
+      "C:\\WINDOWS\\SYSTEM32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\d3d9.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\D3D10Warp.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] "
+    ],
+    "console_png": "console-d3d11-x64-BasicHLSL11.png"
+  },
+  "d3d11-x64-SubD11": {
+    "exe": "C:\\apps\\DXSDK\\Samples\\C++\\Direct3D11\\Bin\\x64\\SubD11.exe",
+    "session_id": 1,
+    "exit_code": null,
+    "timed_out": true,
+    "app_local_modules": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SYSTEM32\\d3dx9_43.dll [system32] 9.29.952.3111",
+      "C:\\WINDOWS\\SYSTEM32\\d3dx11_43.dll [system32] 9.29.952.3111",
+      "C:\\WINDOWS\\SYSTEM32\\D3DCOMPILER_43.dll [system32] 9.29.952.3111",
+      "C:\\WINDOWS\\SYSTEM32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\d3d9.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\D3D10Warp.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] "
+    ],
+    "console_png": "console-d3d11-x64-SubD11.png"
+  },
+  "d3d9-x64-BasicHLSL": {
+    "exe": "C:\\apps\\DXSDK\\Samples\\C++\\Direct3D\\Bin\\x64\\BasicHLSL.exe",
+    "session_id": 1,
+    "exit_code": null,
+    "timed_out": true,
+    "app_local_modules": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SYSTEM32\\d3dx9_43.dll [system32] 9.29.952.3111",
+      "C:\\WINDOWS\\SYSTEM32\\d3dx10_43.dll [system32] 9.29.952.3111",
+      "C:\\WINDOWS\\SYSTEM32\\d3d9.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\D3DREF9.DLL [system32] 6.0.5300.0 (vbl_wcp_gfx_dev_sdk.060125-2214)"
+    ],
+    "console_png": "console-d3d9-x64-BasicHLSL.png"
+  },
+  "d3d9-x64-ParallaxOcclusionMapping": {
+    "exe": "C:\\apps\\DXSDK\\Samples\\C++\\Direct3D\\Bin\\x64\\ParallaxOcclusionMapping.exe",
+    "session_id": 1,
+    "exit_code": null,
+    "timed_out": true,
+    "app_local_modules": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SYSTEM32\\d3dx9_43.dll [system32] 9.29.952.3111",
+      "C:\\WINDOWS\\SYSTEM32\\d3dx10_43.dll [system32] 9.29.952.3111",
+      "C:\\WINDOWS\\SYSTEM32\\d3d9.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\D3DREF9.DLL [system32] 6.0.5300.0 (vbl_wcp_gfx_dev_sdk.060125-2214)"
+    ],
+    "console_png": "console-d3d9-x64-ParallaxOcclusionMapping.png"
+  },
+  "d3d9-x86-BasicHLSL": {
+    "exe": "C:\\apps\\DXSDK\\Samples\\C++\\Direct3D\\Bin\\x86\\BasicHLSL.exe",
+    "session_id": 1,
+    "exit_code": null,
+    "timed_out": true,
+    "app_local_modules": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SysWOW64\\d3dx9_43.dll [syswow64] 9.29.952.3111",
+      "C:\\WINDOWS\\SysWOW64\\d3dx10_43.dll [syswow64] 9.29.952.3111",
+      "C:\\WINDOWS\\SysWOW64\\d3d9.dll [syswow64] 10.0.26100.8972 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll [syswow64] ",
+      "C:\\WINDOWS\\SysWOW64\\D3DREF9.DLL [syswow64] 6.0.5300.0 (vbl_wcp_gfx_dev_sdk.060125-2109)"
+    ],
+    "console_png": "console-d3d9-x86-BasicHLSL.png"
+  },
+  "opengl-x64-Blender": {
+    "exe": "C:\\apps\\blender-4.2.3-windows-x64\\blender.exe",
+    "session_id": 1,
+    "exit_code": null,
+    "timed_out": true,
+    "app_local_modules": [
+      "C:\\apps\\blender-4.2.3-windows-x64\\blender_cpu_check.dll",
+      "C:\\apps\\blender-4.2.3-windows-x64\\cycles_kernel_oneapi_aot.dll",
+      "C:\\apps\\blender-4.2.3-windows-x64\\python311.dll",
+      "C:\\apps\\blender-4.2.3-windows-x64\\python3.DLL"
+    ],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\OPENGL32.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\GLU32.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_wgl.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\vulkan-1.dll [system32] 1.4.363.0",
+      "C:\\WINDOWS\\system32\\libvulkan_virtio.dll [system32] ",
+      "C:\\WINDOWS\\system32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] "
+    ],
+    "console_png": "console-opengl-x64-Blender.png"
+  }
+}

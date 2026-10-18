@@ -22,7 +22,7 @@ LABDIR=$(cd "$1" && pwd)
 VM=$2
 EV=$3/apps
 CACHE=$REPO/.scratch/e2e/cache
-STAGE=$REPO/.scratch/e2e/apps
+STAGE=$REPO/.scratch/e2e/apps/$(basename "$3")   # per evidence dir, so parallel runs do not share shots
 mkdir -p "$EV" "$STAGE/shots"
 find "$EV" -mindepth 1 -delete
 
@@ -34,7 +34,7 @@ fetch_pin() {
     read -r _ sha url < <(grep "^$name " "$HERE/PINS") || return 1
     f=$CACHE/$(basename "$url")
     mkdir -p "$CACHE"
-    if [ ! -f "$f" ]; then curl -sSfLo "$f.part" "$url" && mv "$f.part" "$f" || return 1; fi
+    if [ ! -f "$f" ]; then curl -sSfLo "$f.part.$$" "$url" && mv "$f.part.$$" "$f" || return 1; fi
     echo "$sha  $f" | sha256sum -c --quiet - >&2 || { note "sha256 mismatch for $name"; return 1; }
     echo "$f"
 }
