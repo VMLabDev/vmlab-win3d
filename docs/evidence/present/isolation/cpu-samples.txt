@@ -1,0 +1,14 @@
+CPU time over 10 s while pace.exe d3d9-imm ran, from Get-Process in the guest
+(CPU and PrivilegedProcessorTime deltas). Copied from the session transcript.
+
+AMD1, Windows 11, mesa 0026 (first draft) and 0027, no KMD 0002, 1280x720
+(38.35 ms per Present, 25.7 presents/s):
+  dwm  cpu_s_in_10s=0.89 priv_s=0.17
+  pace cpu_s_in_10s=9.06 priv_s=8.95
+  -> the presenting thread is busy in kernel mode for the whole Present.
+
+Nvidia1, Windows 11, package 12be6fd plus 0026 with back buffers cached
+(nvidia1-backbuffers-cached/), 640x480 (16.2 ms per Present, 55 presents/s):
+  dwm  cpu_s_in_10s=0.56 priv_s=0.39
+  pace cpu_s_in_10s=0.88 priv_s=0.64
+  -> the presenting thread waits; it is not copying.

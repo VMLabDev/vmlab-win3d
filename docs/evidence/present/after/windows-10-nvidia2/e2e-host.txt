@@ -1,0 +1,10 @@
+date: 2026-10-18T21:26:40+10:00
+commit: 12be6fd7969a64a93a0ce60207edd9522a6a3049
+worktree changes: 1
+template: x86_64/windows-10@19045.2006.8
+kernel: 7.2.3-1-cachyos
+qemu (PATH): QEMU emulator version 11.1.1
+qemu (Nvidia2 qemu_binary): /home/wil/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64, QEMU emulator version 11.1.1
+packages: qemu-full 11.1.1-1 virglrenderer 1.3.0-2.1 mesa 3:26.2.2-2 vulkan-radeon 3:26.2.2-2 nvidia-utils 610.57.04-1 
+vmlab: vmlab 0.28.0-alpha
+venus gpu: host_gpu Nvidia2, /dev/dri/renderD130 0000:05:00.0 VGA compatible controller: NVIDIA Corporation GB202 [GeForce RTX 5090] (rev a1)

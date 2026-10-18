@@ -1,0 +1,8 @@
+mode: ddraw
+seconds: 15.09
+calls: 513
+rate_per_s: 34.0
+call_ms: n=513 mean=29.24 p50=28.69 p95=34.45 max=49.56
+frame_ms: n=512 mean=29.27 p50=28.72 p95=34.02 max=49.60
+vblank_ms: n=904 mean=16.70 p50=16.80 p95=22.01 max=40.63
+result: FAIL

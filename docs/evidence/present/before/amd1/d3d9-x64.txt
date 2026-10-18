@@ -1,0 +1,8 @@
+mode: d3d9
+seconds: 15.14
+calls: 689
+rate_per_s: 45.5
+call_ms: n=689 mean=21.10 p50=18.02 p95=33.77 max=128.10
+frame_ms: n=688 mean=21.72 p50=18.72 p95=34.24 max=129.06
+vblank_ms: n=907 mean=16.69 p50=16.75 p95=19.32 max=36.09
+result: FAIL

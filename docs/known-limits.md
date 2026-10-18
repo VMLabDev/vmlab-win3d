@@ -227,7 +227,7 @@ installed. Evidence: decision 0001, "Fast Startup and hibernation hazard";
 `docs/evidence/package/00-baseline-installer-state.txt` (the template already
 had hibernation off).
 
-### Presentation pacing is unmeasured, and D3D9 runs at about 30 fps
+### Presentation pacing is unmeasured; D3D9 is below the refresh rate on NVIDIA
 
 Nobody has measured frame pacing or console latency for this package. The
 prior art measured its own builds of the same components (prior-art §3,
@@ -238,19 +238,22 @@ prior art measured its own builds of the same components (prior-art §3,
 - D3D12 dropped about 40 % of its presents (667 of 1628 windowed), with
   about 105 ms display latency.
 
-The probes here report frame rates, which are not a pacing measurement. On
-the AMD host, the D3D9 probe reached about 30 fps in every acceptance run
-(29.4 to 34.4 fps), against about 60 for D3D11, D3D12 and Vulkan and about 66
-for OpenGL (`docs/evidence/acceptance/*/results.txt`). On Zeus's Intel GPU the
-same D3D9 probe reached 59.3 and 58.0 fps (`docs/zeus.md`), so the halving is
-not inherent to D3D9 on this stack. Its cause was not investigated. The
-earlier package run on vmlab 0.23 measured 19.6 fps for D3D9 x64
-(`docs/evidence/package/README.md`). Presentation only has to make a game
-watchable on the console (`docs/brief.md`); deeper frame-pacing work is out
-of scope.
+The probes here report frame rates, which are not a pacing measurement.
 
-DirectDraw presents are slow too: windowed blits to the primary reached 13 to
-17 per second in `ddcaps` (`docs/dxdiag.md`, "Not covered").
+D3D9 ran at about 30 fps on the AMD host and about 20 fps on its RTX 5090,
+and DirectDraw windowed blits to the primary reached 13 to 34 per second.
+On hosts with an AMD CPU, the KMD's CPU copy for a Blt present wrote an
+uncached destination and read an uncached source. `patches/kmd/0002` and
+`patches/mesa/0026` fix both ends ([`present.md`](present.md)). On
+`AMD1` the D3D9 probe now runs at 59.4 and 58.2 fps (x64, x86), and
+DirectDraw at several hundred Blts per second.
+
+On `Nvidia1` the D3D9 probe rose from about 22 to 39 fps, still below the
+refresh rate. There each windowed D3D9 Present waits about 16 to 20 ms,
+whatever the window size, with the CPU idle. The cause is not known; it is
+not the copy ([`present.md`](present.md#what-remains)). Presentation only has
+to make a game watchable on the console (`docs/brief.md`); deeper
+frame-pacing work is out of scope.
 
 ### Kernel driver diagnostics
 
@@ -276,11 +279,11 @@ Windows 11 run: commit `6105889`, with every Mesa patch including 0015 to
 0017 and 0021 (`docs/acceptance.md`; `docs/evidence/acceptance/windows-10/`).
 The DirectX SDK D3D9 and D3D11 samples and Blender also rendered there.
 
-Blender's window is translucent on Windows 10: the wallpaper shows through
+Blender's window was translucent on Windows 10: the wallpaper showed through
 its viewport and panels (`docs/evidence/acceptance/windows-10/apps/console-opengl-x64-Blender.png`).
-The same build is opaque on Windows 11, and the OpenGL probe is opaque on
-both. The cause is not confirmed. A likely one is that Windows 10's
-compositor honours the alpha Blender leaves in its framebuffer.
+Mesa's WGL asked for a premultiplied-alpha swapchain for every window, so
+the compositor blended the alpha Blender leaves in its framebuffer.
+`patches/mesa/0027` presents WGL windows opaque ([`present.md`](present.md)).
 
 What was not run on Windows 10:
 

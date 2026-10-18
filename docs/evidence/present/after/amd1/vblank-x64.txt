@@ -1,0 +1,9 @@
+mode: vblank
+size: 640x480
+seconds: 15.00
+calls: 0
+rate_per_s: 0.0
+call_ms: n=0
+frame_ms: n=0
+vblank_ms: n=900 mean=16.66 p50=16.90 p95=17.77 max=24.69
+result: PASS

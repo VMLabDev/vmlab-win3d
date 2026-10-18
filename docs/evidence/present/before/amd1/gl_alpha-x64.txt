@@ -1,0 +1,10 @@
+renderer: zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV))
+pixel_format: 39 color=32 alpha=8
+clear: 204 51 51 alpha=0.00
+sample 1: 204 51 51 opaque
+sample 2: 204 51 51 opaque
+sample 3: 204 51 51 opaque
+frames: 1008
+samples: 29
+bad_samples: 0
+result: PASS
