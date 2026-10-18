@@ -72,14 +72,17 @@ the last `vmlab: env:` line is the run's own. NVIDIA runs had
 | `windows-11-nvidia1-run1/` (03:56) | patched | 10 of 12 | D3D12 x64 and x86: 1 frame in 29 s; NVRM BAR1 errors at 04:11:31, the second the D3D12 probe ran |
 | `windows-11-nvidia2-run2/` (04:59) | patched | 10 of 12 | D3D12 x64 and x86, the same way (4 VMs on `Nvidia2`, 365 NVRM BAR1 errors after 05:00) |
 | `windows-11-nvidia1-run3/` (06:20) | patched | 4 of 12 | no probe window on the console; the server logged `vkAllocateMemory failed: ret -2` (out of device memory) for memory type 4, `DEVICE_LOCAL`, `HOST_VISIBLE`, `HOST_COHERENT` (the 256 MiB BAR1 heap), then `failed to look up object` CS errors (`render-server-errors.txt`, from patch 0001's logging); NVRM BAR1 errors 06:25 to 06:35; the card had 3 VMs |
+| `windows-11-nvidia2-run3-b74ea3c/` (09:16) | patched; package from `main` `b74ea3c` (mesa 0070 and 0086) | 10 of 12 | D3D11 x86 (`CreateSwapChain` 0x887a0005) and D3D12 x64 (fence timeout); the server logged `vkAllocateMemory failed: ret -2` on memory type 4 with dma-buf export (0x200), 2621440 bytes, a 1024×640 swapchain image; NVRM BAR1 errors 09:29:35 to 09:30:35 |
 
 No NVIDIA run reached 12 of 12. Every NVIDIA failure coincided with BAR1
-exhaustion, the failure the orchestrator's 06:00 rule attributes to the
-small-BAR heap (worker nvva, mesa 0070 and 0071), and the stock server
-failed the same probes the same way in `nvidia1-ab/2-stock`. In the A/B lab
-the D3D12, D3D9 and OpenGL probes passed with the patched server once the
-card had room. A 12-of-12 NVIDIA run with the render server still needs a
-quiet card or nvva's fix; `Nvidia2` is reserved for nvva.
+exhaustion on the RTX 5090s' 256 MiB BAR1, which worker nvva diagnosed,
+and the stock server failed the same probes the same way in
+`nvidia1-ab/2-stock`. The fence patch changes no memory allocation. With
+nvva's mesa 0070 and 0086 (`run3-b74ea3c`), exportable swapchain images
+still came from the BAR1 heap and ran out. In the A/B lab the D3D12, D3D9
+and OpenGL probes passed with the patched server whenever the card had
+room. A 12-of-12 NVIDIA run with the render server needs a card with no
+other VM on it, or a fix that keeps the shared images out of BAR1.
 
 Earlier runs that did not get as far as the probes are not kept: the
 first `AMD1` and `Nvidia2` attempts at 04:05 stopped in Windows OOBE ("Why
