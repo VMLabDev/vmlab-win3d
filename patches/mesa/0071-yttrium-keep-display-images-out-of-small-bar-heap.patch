@@ -1,0 +1,67 @@
+Subject: [PATCH] yttrium: keep display images out of a small BAR heap
+
+The venus2 winsys prefers device-local, host-visible memory for display
+images (every shared colour surface, including dwm's redirection
+surfaces) and offers it to its draw arenas on request. Without resizable
+BAR that is the host card's BAR1 aperture, 256 MiB shared by every
+process and VM on the card, and a guest blob of it costs twice its size
+there (patch 0070 has the measurements). With several Windows VMs on one
+RTX 5090 the host's dma-buf mappings failed ("can't alloc VA space for
+mapping") and the guests' Venus rings timed out.
+
+The winsys now applies the same rule as the Venus ICD (0070) to the
+memory properties it queries for itself: a device-local, host-visible
+type on a heap less than half the size of the largest device-local heap
+is treated as device-local only, so those resources use system memory.
+
+Evidence: docs/nvva.md, docs/evidence/nvva/.
+Origin: vmlab-win3d nvva worker.
+---
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c	2026-10-19 04:24:49.777689649 +1000
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c	2026-10-19 04:27:09.860374565 +1000
+@@ -760,6 +760,37 @@
+    return true;
+ }
+ 
++/*
++ * Without resizable BAR, host-visible VRAM is a small heap of its own (246 MiB
++ * on an RTX 5090). On the host it is the card's BAR1, shared by every process
++ * and VM on the card, and each guest blob of it costs twice its size there
++ * (the allocation and QEMU's dma-buf mapping of it). Once BAR1 is full the
++ * host admits allocations whose mapping then fails. Treat such types as
++ * device-local only, so display images and other host-visible resources use
++ * system memory. Large BAR heaps (resizable BAR, integrated GPUs) stay.
++ */
++static void
++yttrium_venus_hide_small_bar_memory(VkPhysicalDeviceMemoryProperties *props)
++{
++   VkDeviceSize vram = 0;
++   for (uint32_t i = 0; i < props->memoryHeapCount; i++) {
++      if (props->memoryHeaps[i].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT)
++         vram = MAX2(vram, props->memoryHeaps[i].size);
++   }
++
++   const VkMemoryPropertyFlags bar = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT |
++                                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
++   for (uint32_t i = 0; i < props->memoryTypeCount; i++) {
++      VkMemoryType *type = &props->memoryTypes[i];
++      if ((type->propertyFlags & bar) != bar ||
++          props->memoryHeaps[type->heapIndex].size * 2 > vram)
++         continue;
++      type->propertyFlags &= ~(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
++                               VK_MEMORY_PROPERTY_HOST_COHERENT_BIT |
++                               VK_MEMORY_PROPERTY_HOST_CACHED_BIT);
++   }
++}
++
+ static bool
+ yttrium_venus_create_device_objects(struct yttrium_venus *venus)
+ {
+@@ -773,6 +804,7 @@
+    vn_call_vkGetPhysicalDeviceMemoryProperties(&venus->vn_ring,
+                                                venus->physical_device,
+                                                &venus->memory_props);
++   yttrium_venus_hide_small_bar_memory(&venus->memory_props);
+ 
+    bool have_depth_bias_control_ext = false;
+    bool have_transform_feedback_ext = false;
