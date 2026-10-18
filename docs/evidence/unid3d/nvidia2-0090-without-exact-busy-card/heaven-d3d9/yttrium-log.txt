@@ -1,0 +1,40 @@
+  13438 [warning pid=2524 process=Heaven.exe] yttrium: shader_draw_probe try_draw skipped ubo missing stage=vs raw=0 binding=0 elem=0 size=0x0 data=00000000
+  10043 [warning pid=2524 process=Heaven.exe] d3d9ddi: draw failed owner=d3d9umd reason=backend_native_draw_failed action=return_E_FAIL
+   9899 [warning pid=2524 process=Heaven.exe] yttrium: ordered worker direct upload backing create failed owner=yttrium_resource reason=venus_uniform_buffer_create_failed resource=63d3d630 size=0x40000
+   9711 [warning pid=2524 process=Heaven.exe] yttrium: ordered worker direct upload backing create failed owner=yttrium_resource reason=venus_uniform_buffer_create_failed resource=63d3fa50 size=0x40000
+   8032 [warning pid=2524 process=Heaven.exe] yttrium: shader_draw_probe try_draw skipped ubo upload collect vs_ubo=0x1 tcs_ubo=0x0 tes_ubo=0x0 gs_ubo=0x0 fs_ubo=0x0
+   5406 [warning pid=2524 process=Heaven.exe] yttrium: shader_draw_probe try_draw skipped ubo upload collect vs_ubo=0x1 tcs_ubo=0x0 tes_ubo=0x0 gs_ubo=0x0 fs_ubo=0x1
+   3640 [warning pid=2524 process=Heaven.exe] yttrium: ordered worker direct upload backing create failed owner=yttrium_resource reason=venus_uniform_buffer_create_failed resource=63d3df38 size=0x40000
+   1113 [warning pid=2524 process=Heaven.exe] yttrium: Venus flush failed
+   1113 [warning pid=2524 process=Heaven.exe] yttrium: KMD present skipped, missing Venus render context hAllocation=0x40000840 res_id=N primary=0
+   1098 [warning pid=2524 process=Heaven.exe] yttrium: display clear skipped without native Venus clear hAllocation=0x40000840 res_id=N classic=0 display=1 level=0 layers=0+1 box=0,0 1280x720
+   1097 [warning pid=2524 process=Heaven.exe] yttrium: Venus vkCreateShaderModule fs rejected before Venus init code_size=784
+    306 [warning pid=2524 process=Heaven.exe] yttrium: ordered worker direct upload backing create failed owner=yttrium_resource reason=venus_uniform_buffer_create_failed resource=63d3fa50 size=0x100000
+    297 [warning pid=2524 process=Heaven.exe] yttrium: ordered worker direct upload backing create failed owner=yttrium_resource reason=venus_uniform_buffer_create_failed resource=63d3d630 size=0x100000
+    121 [warning pid=2524 process=Heaven.exe] yttrium: ordered worker direct upload backing create failed owner=yttrium_resource reason=venus_uniform_buffer_create_failed resource=63d3df38 size=0x100000
+     78 [warning pid=2524 process=Heaven.exe] yttrium: ordered worker direct upload backing create failed owner=yttrium_resource reason=venus_uniform_buffer_create_failed resource=63d40358 size=0x40000
+     65 [warning pid=2524 process=Heaven.exe] yttrium: ERROR: Venus2 batch wait rejected owner=venus2 reason=unsubmitted_batch label=batch queue destroy
+     50 [warning pid=2524 process=Heaven.exe] yttrium: ordered worker direct upload backing create failed owner=yttrium_resource reason=venus_uniform_buffer_create_failed resource=63d2ac28 size=0x100000
+     46 [warning pid=2524 process=Heaven.exe] yttrium: ordered worker direct upload backing create failed owner=yttrium_resource reason=venus_uniform_buffer_create_failed resource=63d224b0 size=0x100000
+     18 [warning pid=2524 process=Heaven.exe] yttrium: ordered worker direct upload backing create failed owner=yttrium_resource reason=venus_uniform_buffer_create_failed resource=63d40c60 size=0x40000
+     15 [warning pid=2524 process=Heaven.exe] yttrium: shader_draw_probe try_draw skipped ubo upload collect vs_ubo=0x0 tcs_ubo=0x0 tes_ubo=0x0 gs_ubo=0x0 fs_ubo=0x1
+     15 [warning pid=2524 process=Heaven.exe] yttrium: shader_draw_probe try_draw skipped ubo missing stage=fs raw=0 binding=32 elem=0 size=0x0 data=00000000
+     14 [warning pid=2524 process=Heaven.exe] yttrium: clear_depth_stencil Venus clear failed resource=2e822738 image_id=1709 flags=Nx1 depth=1.000000 stencil=0
+     14 [warning pid=2524 process=Heaven.exe] yttrium: clear_depth_stencil Venus clear failed resource=2e81b1d0 image_id=958 flags=Nx1 depth=1.000000 stencil=0
+     11 [warning pid=2524 process=Heaven.exe] yttrium: ordered worker direct upload backing create failed owner=yttrium_resource reason=venus_uniform_buffer_create_failed resource=63d21ba8 size=0x100000
+      9 [warning pid=2524 process=Heaven.exe] yttrium: ordered worker direct upload backing create failed owner=yttrium_resource reason=venus_uniform_buffer_create_failed resource=63d31888 size=0x100000
+      2 [warning pid=2524 process=Heaven.exe] yttrium: ordered worker direct upload backing create failed owner=yttrium_resource reason=venus_uniform_buffer_create_failed resource=63d3e840 size=0x100000
+      1 [warning pid=2524 process=Heaven.exe] yttrium: Venus ring submit failed reason=wait-seqno status=7 cmd_size=32 reply_size=32 seqno=3741607664 valid=0 cur=3741607664 head=3741592532 tail=3741607664 ring_status=0x0 failed=1 reply_map=19e91000 reply_size_bo=1048576 reply_res_id=N cmd0=0x0000001e cmd1=0x00000001 cmd2=0x00000004 cmd3=0x00000000
+      1 [warning pid=2524 process=Heaven.exe] yttrium: Venus ring submit failed reason=reply-request-with-invalid-seqno status=8 cmd_size=32 reply_size=32 seqno=3741607664 valid=0 cur=3741607664 head=3741592532 tail=3741607664 ring_status=0x0 failed=1 reply_map=19e91000 reply_size_bo=1048576 reply_res_id=N cmd0=0x0000001e cmd1=0x00000001 cmd2=0x00000004 cmd3=0x00000000
+      1 [warning pid=2524 process=Heaven.exe] yttrium: Venus resource-backed destroy could not drain batches owner=venus2 hAllocation=0x80009180 hResource=53db13d8
+      1 [warning pid=2524 process=Heaven.exe] yttrium: Venus resource-backed destroy could not drain batches owner=venus2 hAllocation=0x80009100 hResource=53db1928
+      1 [warning pid=2524 process=Heaven.exe] yttrium: Venus resource-backed destroy could not drain batches owner=venus2 hAllocation=0x80006800 hResource=53daf040
+      1 [warning pid=2524 process=Heaven.exe] yttrium: Venus resource-backed destroy could not drain batches owner=venus2 hAllocation=0x800040c0 hResource=53dafa58
+      1 [warning pid=2524 process=Heaven.exe] yttrium: Venus resource-backed destroy could not drain batches owner=venus2 hAllocation=0x80000340 hResource=1caf3f48
+      1 [warning pid=2524 process=Heaven.exe] yttrium: Venus resource-backed destroy could not drain batches owner=venus2 hAllocation=0x800002c0 hResource=1caf5b70
+      1 [warning pid=2524 process=Heaven.exe] yttrium: Venus resource-backed destroy could not drain batches owner=venus2 hAllocation=0x80000240 hResource=1caf1150
+      1 [warning pid=2524 process=Heaven.exe] yttrium: Venus resource-backed destroy could not drain batches owner=venus2 hAllocation=0x40008d40 hResource=53db0ad0
+      1 [warning pid=2524 process=Heaven.exe] yttrium: Venus resource-backed destroy could not drain batches owner=venus2 hAllocation=0x40008cc0 hResource=53daf480
+      1 [warning pid=2524 process=Heaven.exe] yttrium: Venus resource-backed destroy could not drain batches owner=venus2 hAllocation=0x40008c40 hResource=53db0360
+      1 [warning pid=2524 process=Heaven.exe] yttrium: Venus resource-backed destroy could not drain batches owner=venus2 hAllocation=0x40008bc0 hResource=53db0e88
+      1 [warning pid=2524 process=Heaven.exe] yttrium: Venus resource-backed destroy could not drain batches owner=venus2 hAllocation=0x40008b40 hResource=53db0d78

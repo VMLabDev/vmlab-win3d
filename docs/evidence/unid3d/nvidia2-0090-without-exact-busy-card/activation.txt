@@ -1,0 +1,6 @@
+Activating Windows(R), EnterpriseEval edition (3f4c0546-36c6-46a8-a37f-be13cdd0cf25) ...
+Product activated successfully.
+
+Windows(R), EnterpriseEval edition:
+    Timebased activation will expire 1/16/2027 12:03:41 PM
+
