@@ -1,0 +1,13 @@
+step 1: dummy window, legacy context, extension entry points
+dummy window 000000000004038E
+modules at start: opengl32.dll 0000000000000000, viogpu_wgl.dll 0000000000000000
+pixel formats on the dummy DC: 792
+ChoosePixelFormat -> 51 (error 0)
+modules after ChoosePixelFormat: opengl32.dll 0000000000000000, viogpu_wgl.dll 00007FFEE7690000
+dummy chosen: pf 51 flags 0x00008225 DOUBLEBUFFER colour 32 (r8 g8 b8 a8) depth 16 stencil 0 accum 0
+SetPixelFormat -> 1 (error 0)
+modules after SetPixelFormat: opengl32.dll 0000000000000000, viogpu_wgl.dll 00007FFEE7690000
+wglCreateContext -> 0000000000000000 (error 2000)
+wglMakeCurrent -> 0 (error 2000)
+wglGetProcAddress: wglChoosePixelFormatARB 0000000000000000, wglCreateContextAttribsARB 0000000000000000, wglGetExtensionsStringARB 0000000000000000
+FAIL step 1: GZDoom would stop here with "Insufficient driver support for context creation"
