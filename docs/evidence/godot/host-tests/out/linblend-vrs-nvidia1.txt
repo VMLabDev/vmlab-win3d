@@ -1,0 +1,69 @@
+### linear none 1 0 vram full none
+mem vram, cover full, vrs none
+device 0 NVIDIA GeForce RTX 5090 (pci 0000:01:00) driver 0x988e4100; colour linear, blend none, vkCmdDrawIndexed 6
+B8G8R8A8_UNORM linearTilingFeatures 0x1dd03 (COLOR_ATTACHMENT no)
+colour image format properties: 0 (maxExtent 32768x32768)
+vkWaitForFences: 0
+OK
+### linear none 1 0 vram full 1x1
+mem vram, cover full, vrs 1x1
+device 0 NVIDIA GeForce RTX 5090 (pci 0000:01:00) driver 0x988e4100; colour linear, blend none, vkCmdDrawIndexed 6
+B8G8R8A8_UNORM linearTilingFeatures 0x1dd03 (COLOR_ATTACHMENT no)
+colour image format properties: 0 (maxExtent 32768x32768)
+fragment shading rate: pipeline 1 primitive 1 attachment 1
+vkWaitForFences: -4 (DEVICE_LOST)
+FAILED
+Oct 19 05:49:54 helios kernel: NVRM: Xid (PCI:0000:01:00): 69, pid=150881, name=linblend, Class Error: channel 0x0000009f, Class 0000ce97, Offset 0000026c, Data 00000006, ErrorCode 0000013d
+### linear none 1 0 vram full 2x2
+mem vram, cover full, vrs 2x2
+device 0 NVIDIA GeForce RTX 5090 (pci 0000:01:00) driver 0x988e4100; colour linear, blend none, vkCmdDrawIndexed 6
+B8G8R8A8_UNORM linearTilingFeatures 0x1dd03 (COLOR_ATTACHMENT no)
+colour image format properties: 0 (maxExtent 32768x32768)
+fragment shading rate: pipeline 1 primitive 1 attachment 1
+vkWaitForFences: -4 (DEVICE_LOST)
+FAILED
+Oct 19 05:49:58 helios kernel: NVRM: Xid (PCI:0000:01:00): 69, pid=151349, name=linblend, Class Error: channel 0x0000009f, Class 0000ce97, Offset 0000026c, Data 00000006, ErrorCode 0000013d
+### linear none 1 0 sysmem small 4x4
+mem sysmem, cover small, vrs 4x4
+device 0 NVIDIA GeForce RTX 5090 (pci 0000:01:00) driver 0x988e4100; colour linear, blend none, vkCmdDrawIndexed 6
+B8G8R8A8_UNORM linearTilingFeatures 0x1dd03 (COLOR_ATTACHMENT no)
+colour image format properties: 0 (maxExtent 32768x32768)
+fragment shading rate: pipeline 1 primitive 1 attachment 1
+vkWaitForFences: -4 (DEVICE_LOST)
+FAILED
+Oct 19 05:50:01 helios kernel: NVRM: Xid (PCI:0000:01:00): 69, pid=151515, name=linblend, Class Error: channel 0x0000009f, Class 0000ce97, Offset 0000026c, Data 00000006, ErrorCode 0000013d
+### linear alpha 1 0 import full 4x4
+mem import, cover full, vrs 4x4
+device 0 NVIDIA GeForce RTX 5090 (pci 0000:01:00) driver 0x988e4100; colour linear, blend alpha, vkCmdDrawIndexed 6
+B8G8R8A8_UNORM linearTilingFeatures 0x1dd03 (COLOR_ATTACHMENT no)
+colour image format properties: 0 (maxExtent 32768x32768)
+fragment shading rate: pipeline 1 primitive 1 attachment 1
+exported 3686400 bytes as dma-buf fd 48 (memory type 1)
+import: image needs 3686400 bytes, bits 0x1f; importing into type 1
+vkWaitForFences: -4 (DEVICE_LOST)
+FAILED
+Oct 19 05:50:04 helios kernel: NVRM: Xid (PCI:0000:01:00): 69, pid=151957, name=linblend, Class Error: channel 0x000000a1, Class 0000ce97, Offset 0000026c, Data 00000006, ErrorCode 0000013d
+### optimal alpha 1 0 vram full 4x4
+mem vram, cover full, vrs 4x4
+device 0 NVIDIA GeForce RTX 5090 (pci 0000:01:00) driver 0x988e4100; colour optimal, blend alpha, vkCmdDrawIndexed 6
+B8G8R8A8_UNORM linearTilingFeatures 0x1dd03 (COLOR_ATTACHMENT no)
+colour image format properties: 0 (maxExtent 32768x32768)
+fragment shading rate: pipeline 1 primitive 1 attachment 1
+vkWaitForFences: 0
+OK
+### optimal none 1 0 vram full 1x1
+mem vram, cover full, vrs 1x1
+device 0 NVIDIA GeForce RTX 5090 (pci 0000:01:00) driver 0x988e4100; colour optimal, blend none, vkCmdDrawIndexed 6
+B8G8R8A8_UNORM linearTilingFeatures 0x1dd03 (COLOR_ATTACHMENT no)
+colour image format properties: 0 (maxExtent 32768x32768)
+fragment shading rate: pipeline 1 primitive 1 attachment 1
+vkWaitForFences: 0
+OK
+### linear none 1 0 vram full feature
+mem vram, cover full, vrs feature
+device 0 NVIDIA GeForce RTX 5090 (pci 0000:01:00) driver 0x988e4100; colour linear, blend none, vkCmdDrawIndexed 6
+B8G8R8A8_UNORM linearTilingFeatures 0x1dd03 (COLOR_ATTACHMENT no)
+colour image format properties: 0 (maxExtent 32768x32768)
+fragment shading rate: pipeline 1 primitive 1 attachment 1
+vkWaitForFences: 0
+OK

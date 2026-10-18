@@ -1,0 +1,20 @@
+### optimal alpha
+device 0 NVIDIA GeForce RTX 5090 (pci 0000:01:00) driver 0x988e4100; colour optimal, blend alpha, vkCmdDrawIndexed 6
+B8G8R8A8_UNORM linearTilingFeatures 0x1dd03 (COLOR_ATTACHMENT no)
+colour image format properties: 0 (maxExtent 32768x32768)
+vkWaitForFences: 0
+OK
+### linear none
+device 0 NVIDIA GeForce RTX 5090 (pci 0000:01:00) driver 0x988e4100; colour linear, blend none, vkCmdDrawIndexed 6
+B8G8R8A8_UNORM linearTilingFeatures 0x1dd03 (COLOR_ATTACHMENT no)
+colour image format properties: 0 (maxExtent 32768x32768)
+vkWaitForFences: 0
+pixel in quad 0: 0x7fff7f00, background: 0xff191933
+OK
+### linear alpha
+device 0 NVIDIA GeForce RTX 5090 (pci 0000:01:00) driver 0x988e4100; colour linear, blend alpha, vkCmdDrawIndexed 6
+B8G8R8A8_UNORM linearTilingFeatures 0x1dd03 (COLOR_ATTACHMENT no)
+colour image format properties: 0 (maxExtent 32768x32768)
+vkWaitForFences: 0
+pixel in quad 0: 0xbf8c4c1a, background: 0xff191933
+OK
