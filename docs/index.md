@@ -66,6 +66,7 @@ or Intel GPU as declared in the host config, `~/.config/vmlab/config.wcl`
 | [xid69.md](xid69.md) | See why D3D9 depth draws into the back buffer hung the RTX 5090 (Xid 69) and how `patches/mesa/0022` fixed it |
 | [nvtex.md](nvtex.md) | See why mipmapped textures were black on NVIDIA, and the fixed-function and 16-bit format fixes `patches/mesa/0023` to `0025` |
 | [ds.md](ds.md) | See why D3D11 domain shaders that index patch constants removed the device, and the fix `patches/mesa/0030` |
+| [shaders2.md](shaders2.md) | See which indexed shader inputs and outputs work, how the repro assembles bytecode d3dcompiler_47 refuses, and the output-range and hull shader join-phase fixes `patches/mesa/0031` and `0032` |
 | [installer.md](installer.md) | See how the package keeps its driver bound when Windows Update offers a newer Red Hat `viogpudo` (FeatureScore, forced install, device pin) |
 | [ddraw.md](ddraw.md) | See DirectDraw fullscreen exclusive mode, 16 bpp modes, and the hardware colour-key and mirror blits of `patches/mesa/0035` |
 | [present.md](present.md) | See why presents were slow (CPU reads of write-combined memory) and why Blender was translucent on Windows 10, and the fixes `patches/kmd/0002` and `patches/mesa/0026`, `0027` |
