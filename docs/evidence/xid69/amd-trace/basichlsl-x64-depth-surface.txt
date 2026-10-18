@@ -1,0 +1,2 @@
+CreateResource hDevice=000000000585adc0 data=00000000006de660 resource=0000000002e45cd0 format=77 pool=2 surfaces=1 levels=0 flags=0x00001082 rt=0 primary=0 discard_rt=1 texture=0 vb=0 ib=0 z=1 vidpn=0 multisample=0
+CreateResource default depth resource=0000000002e45d90

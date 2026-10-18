@@ -1,0 +1,1 @@
+Oct 18 16:40:06 helios kernel: NVRM: Xid (PCI:0000:01:00): 69, pid=1200538, name=vkr-ring-42, Class Error: channel 0x00000051, Class 0000ce97, Offset 0000026c, Data 000000a8, ErrorCode 0000009c

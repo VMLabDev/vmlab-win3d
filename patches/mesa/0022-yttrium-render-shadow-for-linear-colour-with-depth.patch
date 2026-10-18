@@ -1,0 +1,540 @@
+Subject: [PATCH] yttrium: render LINEAR colour targets next to depth through an OPTIMAL shadow
+
+Shared colour images, among them every D3D9 and DXGI back buffer, are
+LINEAR, and the venus2 draw path binds them directly as colour attachments.
+NVIDIA's driver (610.57.04, RTX 5090) sets no
+VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT in linearTilingFeatures for any
+format, although vkGetPhysicalDeviceImageFormatProperties accepts the usage.
+Rendering into such an image alone happens to work, which is why dwm and the
+probes run. A render pass that also has a depth attachment does not: the
+first draw makes the GPU reject the method (host Xid 69, class 0xce97,
+DRAW_INDEX_BUFFER_BEGIN_END_B or DRAW_VERTEX_ARRAY_BEGIN_END_B, ErrorCode
+0x9c), the channel is torn down and the guest application hangs. The DirectX
+SDK's BasicHLSL hits it on its first draw, and so does any application that
+draws with a depth buffer into its back buffer. RADV and ANV advertise linear
+colour attachments and are unaffected.
+
+When the renderer lacks linear COLOR_ATTACHMENT support for the format and
+the render pass has a depth attachment, the pipeline's colour view now names
+an OPTIMAL "render shadow" image of the same format, extent, levels and
+layers, created once per resource and retired with it. The draw copies the
+target level from the LINEAR image into the shadow before vkCmdBeginRenderPass
+and back after vkCmdEndRenderPass, so the LINEAR image stays the copy that
+presentation, sharing and readback see. Such draws are not deferred into
+the render-pass batch, whose replay has no place for the copies. Draws without
+depth, feedback-loop attachments and renderers with linear colour attachment
+support are unchanged.
+
+Evidence: docs/xid69.md, docs/evidence/xid69/ (host-tests/lindepth.c and
+its output reproduce the Xid with no VM).
+Origin: vmlab-win3d xid69 worker.
+---
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus.h b/src/gallium/winsys/yttrium/gdi/yttrium_venus.h
+index 97c5c4d..99bcf6b 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus.h
+@@ -296,6 +296,8 @@ struct yttrium_venus_resource {
+    struct yttrium_venus_object draw_index_memory_obj;
+    struct yttrium_venus_object device_local_draw_buffer_obj;
+    struct yttrium_venus_object device_local_draw_memory_obj;
++   struct yttrium_venus_object render_shadow_image_obj;
++   struct yttrium_venus_object render_shadow_memory_obj;
+    VkImage image;
+    VkBuffer buffer;
+    VkDeviceMemory memory;
+@@ -318,10 +320,19 @@ struct yttrium_venus_resource {
+    VkDeviceMemory draw_index_memory;
+    VkBuffer device_local_draw_buffer;
+    VkDeviceMemory device_local_draw_memory;
++   /*
++    * An OPTIMAL colour image that stands in for a LINEAR one as a render
++    * pass attachment next to a depth attachment, on a renderer without
++    * linear COLOR_ATTACHMENT support (yttrium_venus_color_render_shadow).
++    */
++   VkImage render_shadow_image;
++   VkDeviceMemory render_shadow_memory;
++   VkImageLayout render_shadow_layout;
+    struct yttrium_venus_memory_mapping draw_vertex_mapping;
+    struct yttrium_venus_memory_mapping draw_index_mapping;
+    VkImageLayout layout;
+    VkImageUsageFlags image_usage;
++   VkImageTiling tiling;
+    VkImageAspectFlags initialized_aspects;
+    VkBufferUsageFlags buffer_usage;
+    VkFormat vk_format;
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_batch.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_batch.c
+index b5c55a4..104c1e8 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_batch.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_batch.c
+@@ -274,6 +274,13 @@ yttrium_venus_retired_resource_rebuild_handles(
+       retired->device_local_draw_memory =
+          YTTRIUM_VENUS_HANDLE(
+             VkDeviceMemory, &retired->device_local_draw_memory_obj);
++   if (retired->render_shadow_image)
++      retired->render_shadow_image =
++         YTTRIUM_VENUS_HANDLE(VkImage, &retired->render_shadow_image_obj);
++   if (retired->render_shadow_memory)
++      retired->render_shadow_memory =
++         YTTRIUM_VENUS_HANDLE(VkDeviceMemory,
++                              &retired->render_shadow_memory_obj);
+ }
+ 
+ struct yttrium_venus_retired_resource *
+@@ -306,6 +313,8 @@ yttrium_venus_retired_resource_create(
+       resource->device_local_draw_buffer_obj;
+    retired->device_local_draw_memory_obj =
+       resource->device_local_draw_memory_obj;
++   retired->render_shadow_image_obj = resource->render_shadow_image_obj;
++   retired->render_shadow_memory_obj = resource->render_shadow_memory_obj;
+    retired->image = resource->image;
+    retired->buffer = resource->buffer;
+    retired->memory = resource->memory;
+@@ -331,6 +340,8 @@ yttrium_venus_retired_resource_create(
+       resource->device_local_draw_buffer;
+    retired->device_local_draw_memory =
+       resource->device_local_draw_memory;
++   retired->render_shadow_image = resource->render_shadow_image;
++   retired->render_shadow_memory = resource->render_shadow_memory;
+    retired->draw_vertex_mapping = resource->draw_vertex_mapping;
+    retired->draw_index_mapping = resource->draw_index_mapping;
+ 
+@@ -757,6 +768,12 @@ yttrium_venus_destroy_retired_resource(
+    if (retired->device_local_draw_memory)
+       vn_async_vkFreeMemory(&venus->vn_ring, venus->device_handle,
+                             retired->device_local_draw_memory, NULL);
++   if (retired->render_shadow_image)
++      vn_async_vkDestroyImage(&venus->vn_ring, venus->device_handle,
++                              retired->render_shadow_image, NULL);
++   if (retired->render_shadow_memory)
++      vn_async_vkFreeMemory(&venus->vn_ring, venus->device_handle,
++                            retired->render_shadow_memory, NULL);
+    if (retired->buffer)
+       vn_async_vkDestroyBuffer(&venus->vn_ring, venus->device_handle,
+                                retired->buffer, NULL);
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c
+index 97692f9..b2bf7a0 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c
+@@ -1773,6 +1773,317 @@ yttrium_venus_cmd_transition_image(struct yttrium_venus *venus,
+    resource->layout = new_layout;
+ }
+ 
++/*
++ * Shared colour images are LINEAR (yttrium_venus2_resource.c), and the
++ * draw path binds them as colour attachments.  A renderer need not support
++ * that: NVIDIA 610.57.04 reports no VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT
++ * in linearTilingFeatures for any format, yet still accepts the image.
++ * Rendering into it alone works there, but a render pass that also has a
++ * depth attachment makes the GPU reject the draw (Xid 69, class error on
++ * the Blackwell 3D class) and the context is lost.  Any D3D9/D3D10/D3D11
++ * application drawing with a depth buffer into its back buffer hits this.
++ *
++ * For that case the attachment is an OPTIMAL "render shadow" of the LINEAR
++ * image instead: the draw copies the LINEAR level into the shadow before
++ * the render pass and back after it, so the LINEAR image stays the only
++ * copy anything else reads.  Draws without depth, and renderers that do
++ * support linear colour attachments, are unchanged.
++ */
++static bool
++yttrium_venus_linear_color_attachment_supported(struct yttrium_venus *venus,
++                                                VkFormat format)
++{
++   uint8_t *cached = (uint32_t)format <
++         ARRAY_SIZE(venus->linear_color_attachment_formats) ?
++      &venus->linear_color_attachment_formats[format] : NULL;
++   if (cached && *cached)
++      return *cached == 2;
++
++   VkFormatProperties2 properties = {
++      .sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2,
++   };
++   vn_call_vkGetPhysicalDeviceFormatProperties2(
++      &venus->vn_ring, venus->physical_device, format, &properties);
++   const bool supported =
++      (properties.formatProperties.linearTilingFeatures &
++       VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT) != 0;
++   if (cached)
++      *cached = supported ? 2 : 1;
++   if (!supported)
++      YTTRIUM_LOG("yttrium: Venus renderer has no linear colour attachment "
++                  "support for vk_format=%u; depth draws into linear "
++                  "targets use a render shadow\n", format);
++   return supported;
++}
++
++static bool
++yttrium_venus_color_render_shadow(struct yttrium_venus *venus,
++                                  const struct yttrium_venus_resource *color,
++                                  VkFormat attachment_format,
++                                  bool has_depth,
++                                  bool feedback_loop)
++{
++   if (!venus || !color || !has_depth || feedback_loop ||
++       color->buffer_backed || color->tiling != VK_IMAGE_TILING_LINEAR ||
++       (color->samples && color->samples != VK_SAMPLE_COUNT_1_BIT) ||
++       color->depth > 1)
++      return false;
++   return !yttrium_venus_linear_color_attachment_supported(
++             venus, color->vk_format) ||
++          (attachment_format != color->vk_format &&
++           !yttrium_venus_linear_color_attachment_supported(
++              venus, attachment_format));
++}
++
++static bool
++yttrium_venus_ensure_render_shadow(struct yttrium_venus *venus,
++                                   struct yttrium_venus_resource *color)
++{
++   if (color->render_shadow_image)
++      return true;
++
++   const VkImageCreateInfo image_info = {
++      .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
++      .flags = VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT,
++      .imageType = VK_IMAGE_TYPE_2D,
++      .format = color->vk_format,
++      .extent = { color->width, color->height, 1 },
++      .mipLevels = MAX2(color->levels, 1),
++      .arrayLayers = MAX2(color->layers, 1),
++      .samples = VK_SAMPLE_COUNT_1_BIT,
++      .tiling = VK_IMAGE_TILING_OPTIMAL,
++      .usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
++               VK_IMAGE_USAGE_TRANSFER_SRC_BIT |
++               VK_IMAGE_USAGE_TRANSFER_DST_BIT,
++      .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
++      .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
++   };
++   yttrium_venus_init_object(venus, &color->render_shadow_image_obj);
++   VkImage image =
++      YTTRIUM_VENUS_HANDLE(VkImage, &color->render_shadow_image_obj);
++   VkResult result = vn_call_vkCreateImage(&venus->vn_ring,
++                                           venus->device_handle,
++                                           &image_info, NULL, &image);
++   if (result != VK_SUCCESS) {
++      YTTRIUM_WARN("yttrium: Venus render shadow vkCreateImage failed "
++                   "result=%d %ux%u levels=%u layers=%u vk_format=%u\n",
++                   result, color->width, color->height, color->levels,
++                   color->layers, color->vk_format);
++      memset(&color->render_shadow_image_obj, 0,
++             sizeof(color->render_shadow_image_obj));
++      return false;
++   }
++
++   VkMemoryRequirements reqs;
++   memset(&reqs, 0, sizeof(reqs));
++   vn_call_vkGetImageMemoryRequirements(&venus->vn_ring,
++                                        venus->device_handle, image, &reqs);
++   const uint32_t memory_type_index =
++      yttrium_venus_choose_memory_type(venus, reqs.memoryTypeBits, 0,
++                                       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
++   yttrium_venus_init_object(venus, &color->render_shadow_memory_obj);
++   VkDeviceMemory memory =
++      YTTRIUM_VENUS_HANDLE(VkDeviceMemory, &color->render_shadow_memory_obj);
++   result = VK_ERROR_OUT_OF_DEVICE_MEMORY;
++   if (reqs.size && memory_type_index != UINT32_MAX) {
++      const VkMemoryAllocateInfo memory_info = {
++         .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
++         .allocationSize = reqs.size,
++         .memoryTypeIndex = memory_type_index,
++      };
++      result = vn_call_vkAllocateMemory(&venus->vn_ring,
++                                        venus->device_handle,
++                                        &memory_info, NULL, &memory);
++      if (result == VK_SUCCESS) {
++         result = vn_call_vkBindImageMemory(&venus->vn_ring,
++                                            venus->device_handle,
++                                            image, memory, 0);
++         if (result != VK_SUCCESS)
++            vn_async_vkFreeMemory(&venus->vn_ring, venus->device_handle,
++                                  memory, NULL);
++      }
++   }
++   if (result != VK_SUCCESS) {
++      YTTRIUM_WARN("yttrium: Venus render shadow memory failed result=%d "
++                   "size=0x%llx bits=0x%x\n", result,
++                   (unsigned long long)reqs.size, reqs.memoryTypeBits);
++      vn_async_vkDestroyImage(&venus->vn_ring, venus->device_handle,
++                              image, NULL);
++      memset(&color->render_shadow_image_obj, 0,
++             sizeof(color->render_shadow_image_obj));
++      memset(&color->render_shadow_memory_obj, 0,
++             sizeof(color->render_shadow_memory_obj));
++      return false;
++   }
++
++   color->render_shadow_image = image;
++   color->render_shadow_memory = memory;
++   color->render_shadow_layout = VK_IMAGE_LAYOUT_UNDEFINED;
++   YTTRIUM_LOG("yttrium: Venus render shadow created image_id=%llu for "
++               "linear image_id=%llu %ux%u vk_format=%u\n",
++               (unsigned long long)color->render_shadow_image_obj.id,
++               (unsigned long long)color->image_obj.id,
++               color->width, color->height, color->vk_format);
++   return true;
++}
++
++/*
++ * Copy one level and layer range between a LINEAR colour image and its
++ * render shadow, outside a render pass.  Both images are in
++ * COLOR_ATTACHMENT_OPTIMAL before and after, as the draw path expects.
++ */
++static void
++yttrium_venus_cmd_render_shadow_copy(struct yttrium_venus *venus,
++                                     struct yttrium_venus_resource *color,
++                                     uint32_t level, uint32_t layer,
++                                     uint32_t layers, bool to_shadow)
++{
++   const VkImageSubresourceRange range = {
++      .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
++      .baseMipLevel = level,
++      .levelCount = 1,
++      .baseArrayLayer = layer,
++      .layerCount = layers,
++   };
++   const VkImage src = to_shadow ? color->image : color->render_shadow_image;
++   const VkImage dst = to_shadow ? color->render_shadow_image : color->image;
++   const VkImageLayout shadow_layout =
++      color->render_shadow_layout == VK_IMAGE_LAYOUT_UNDEFINED ?
++         VK_IMAGE_LAYOUT_UNDEFINED : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
++   const VkAccessFlags attachment_access =
++      VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
++      VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
++   const VkPipelineStageFlags stages =
++      VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
++   VkImageMemoryBarrier barriers[2] = {
++      {
++         .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
++         .srcAccessMask = attachment_access | VK_ACCESS_TRANSFER_WRITE_BIT,
++         .dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT,
++         .oldLayout = to_shadow ? VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL :
++                                  shadow_layout,
++         .newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
++         .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
++         .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
++         .image = src,
++         .subresourceRange = range,
++      },
++      {
++         .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
++         .srcAccessMask = attachment_access | VK_ACCESS_TRANSFER_READ_BIT |
++                          VK_ACCESS_TRANSFER_WRITE_BIT,
++         .dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT,
++         .oldLayout = to_shadow ? shadow_layout :
++                                  VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
++         .newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
++         .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
++         .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
++         .image = dst,
++         .subresourceRange = range,
++      },
++   };
++   vn_async_vkCmdPipelineBarrier(&venus->vn_ring, venus->command_buffer,
++                                 stages, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
++                                 0, NULL, 0, NULL, 2, barriers);
++
++   const VkImageCopy region = {
++      .srcSubresource = {
++         .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
++         .mipLevel = level,
++         .baseArrayLayer = layer,
++         .layerCount = layers,
++      },
++      .dstSubresource = {
++         .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
++         .mipLevel = level,
++         .baseArrayLayer = layer,
++         .layerCount = layers,
++      },
++      .extent = {
++         yttrium_venus_subresource_width(color, level),
++         yttrium_venus_subresource_height(color, level),
++         1,
++      },
++   };
++   vn_async_vkCmdCopyImage(&venus->vn_ring, venus->command_buffer,
++                           src, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
++                           dst, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
++                           1, &region);
++
++   for (uint32_t i = 0; i < 2; i++) {
++      barriers[i].srcAccessMask = i ? VK_ACCESS_TRANSFER_WRITE_BIT :
++                                      VK_ACCESS_TRANSFER_READ_BIT;
++      barriers[i].dstAccessMask = attachment_access |
++         VK_ACCESS_TRANSFER_READ_BIT | VK_ACCESS_TRANSFER_WRITE_BIT |
++         VK_ACCESS_SHADER_READ_BIT;
++      barriers[i].oldLayout = barriers[i].newLayout;
++      barriers[i].newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
++   }
++   vn_async_vkCmdPipelineBarrier(&venus->vn_ring, venus->command_buffer,
++                                 VK_PIPELINE_STAGE_TRANSFER_BIT, stages, 0,
++                                 0, NULL, 0, NULL, 2, barriers);
++   color->render_shadow_layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
++}
++
++/* Whether a draw with this pipeline renders through any render shadow. */
++static bool
++yttrium_venus_draw_uses_render_shadow(
++   struct yttrium_venus *venus,
++   const struct yttrium_pipeline *pipeline,
++   struct yttrium_venus_resource *const *color_resources,
++   uint32_t color_resource_count,
++   bool has_depth)
++{
++   for (uint32_t i = 0; i < color_resource_count; i++) {
++      const struct yttrium_venus_resource *color = color_resources[i];
++      if (!color || !color->render_shadow_image)
++         continue;
++      const VkFormat attachment_format =
++         pipeline->key.rt_format[i] != VK_FORMAT_UNDEFINED ?
++         pipeline->key.rt_format[i] : color->vk_format;
++      if (yttrium_venus_color_render_shadow(
++             venus, color, attachment_format, has_depth,
++             (pipeline->key.color_feedback_loop_mask & (1u << i)) != 0))
++         return true;
++   }
++   return false;
++}
++
++static void
++yttrium_venus_cmd_render_shadow_copies(
++   struct yttrium_venus *venus,
++   const struct yttrium_pipeline *pipeline,
++   const struct yttrium_venus_draw_state *draw_state,
++   struct yttrium_venus_resource *const *color_resources,
++   uint32_t color_resource_count,
++   bool has_depth,
++   uint32_t render_level,
++   uint32_t render_layer,
++   uint32_t render_layers,
++   bool to_shadow)
++{
++   for (uint32_t i = 0; i < color_resource_count; i++) {
++      struct yttrium_venus_resource *color = color_resources[i];
++      if (!color || !color->render_shadow_image)
++         continue;
++      const VkFormat attachment_format =
++         pipeline->key.rt_format[i] != VK_FORMAT_UNDEFINED ?
++         pipeline->key.rt_format[i] : color->vk_format;
++      if (!yttrium_venus_color_render_shadow(
++             venus, color, attachment_format, has_depth,
++             (pipeline->key.color_feedback_loop_mask & (1u << i)) != 0))
++         continue;
++      const uint32_t level =
++         draw_state && i < ARRAY_SIZE(draw_state->rt_level) ?
++            draw_state->rt_level[i] : render_level;
++      const uint32_t layer =
++         draw_state && i < ARRAY_SIZE(draw_state->rt_layer) ?
++            draw_state->rt_layer[i] : render_layer;
++      yttrium_venus_cmd_render_shadow_copy(venus, color, level, layer,
++                                           render_layers, to_shadow);
++   }
++}
++
+ static bool
+ yttrium_venus_cmd_batch_transition_image(struct yttrium_venus *venus,
+                                          struct yttrium_venus_resource *resource,
+@@ -3352,9 +3663,15 @@ yttrium_venus2_pipeline_init(struct yttrium_venus *venus,
+       const uint32_t color_layer =
+          draw_state && i < ARRAY_SIZE(draw_state->rt_layer) ?
+             draw_state->rt_layer[i] : render_layer;
++      /* A LINEAR target next to depth renders through its OPTIMAL shadow. */
++      const bool render_shadow = yttrium_venus_color_render_shadow(
++         venus, color, attachment_format, has_depth,
++         (color_feedback_loop_mask & (1u << i)) != 0);
++      if (render_shadow && !yttrium_venus_ensure_render_shadow(venus, color))
++         goto pipeline_submit_failed;
+       const VkImageViewCreateInfo view_info = {
+          .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+-         .image = color->image,
++         .image = render_shadow ? color->render_shadow_image : color->image,
+          .viewType = yttrium_venus_render_view_type(color, render_layers),
+          .format = attachment_format,
+          .subresourceRange = {
+@@ -9669,6 +9986,9 @@ retry_batch_layout:
+    struct yttrium_venus_render_pass_group_key render_pass_key;
+    bool render_pass_key_valid = false;
+    memset(&render_pass_key, 0, sizeof(render_pass_key));
++   const bool draw_uses_render_shadow =
++      yttrium_venus_draw_uses_render_shadow(venus, pipeline, color_resources,
++                                            color_resource_count, has_depth);
+    const bool render_pass_batch_allowed =
+       native_draw_batch_candidate && !draw_indirect &&
+       (!has_cpu_vertex_upload || !has_sampled_descriptor ||
+@@ -9676,7 +9996,9 @@ retry_batch_layout:
+       yttrium_venus_deferred_draw_allowed(
+          pipeline, sampled_images, sampled_image_count, color_resources,
+          color_resource_count, depth_resource, storage_image_count,
+-         so_target_count, draw_auto);
++         so_target_count, draw_auto) &&
++      /* The render shadow copies wrap one render pass; draw it directly. */
++      !draw_uses_render_shadow;
+    if (render_pass_batch_allowed) {
+       render_pass_key_valid =
+          yttrium_venus_deferred_draw_make_render_key(
+@@ -11128,6 +11450,11 @@ retry_batch_layout:
+              instance_count, vertex_offset))
+          goto fail_restore_command_buffer;
+    } else {
++      if (draw_uses_render_shadow)
++         yttrium_venus_cmd_render_shadow_copies(
++            venus, pipeline, draw_state, color_resources,
++            color_resource_count, has_depth, render_level, render_layer,
++            render_layers, true);
+       const VkRenderPassBeginInfo render_pass_begin = {
+          .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+          .renderPass = pipeline->render_pass,
+@@ -11259,6 +11586,11 @@ retry_batch_layout:
+             so_counter_buffers, so_counter_offsets);
+       }
+       vn_async_vkCmdEndRenderPass(&venus->vn_ring, venus->command_buffer);
++      if (draw_uses_render_shadow)
++         yttrium_venus_cmd_render_shadow_copies(
++            venus, pipeline, draw_state, color_resources,
++            color_resource_count, has_depth, render_level, render_layer,
++            render_layers, false);
+    }
+ 
+    yttrium_venus_trace_timing(
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h
+index d1759b6..2992225 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h
+@@ -374,6 +374,8 @@ struct yttrium_venus_retired_resource {
+    struct yttrium_venus_object draw_index_memory_obj;
+    struct yttrium_venus_object device_local_draw_buffer_obj;
+    struct yttrium_venus_object device_local_draw_memory_obj;
++   struct yttrium_venus_object render_shadow_image_obj;
++   struct yttrium_venus_object render_shadow_memory_obj;
+    VkImage image;
+    VkBuffer buffer;
+    VkDeviceMemory memory;
+@@ -404,6 +406,8 @@ struct yttrium_venus_retired_resource {
+    VkDeviceMemory draw_index_memory;
+    VkBuffer device_local_draw_buffer;
+    VkDeviceMemory device_local_draw_memory;
++   VkImage render_shadow_image;
++   VkDeviceMemory render_shadow_memory;
+    struct yttrium_venus_memory_mapping draw_vertex_mapping;
+    struct yttrium_venus_memory_mapping draw_index_mapping;
+    struct yttrium_venus_render_target *render_target_cache_entry;
+@@ -733,6 +737,8 @@ struct yttrium_venus {
+    bool storage_image_write_without_format;
+    /* Immutable per-device format support: 0 unknown, 1 unsupported, 2 supported. */
+    uint8_t storage_image_formatless_formats[PIPE_FORMAT_COUNT];
++   /* 0 unknown, 1 no, 2 yes: linearTilingFeatures has COLOR_ATTACHMENT. */
++   uint8_t linear_color_attachment_formats[256];
+    bool multisampled_render_to_single_sampled;
+    bool transform_feedback;
+    bool vertex_attribute_instance_rate_divisor;
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_resource.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_resource.c
+index 119f7f7..ec3f868 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_resource.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_resource.c
+@@ -273,6 +273,7 @@ yttrium_venus_create_image_tiled(struct yttrium_venus *venus,
+    }
+ 
+    resource->image_usage = usage;
++   resource->tiling = tiling;
+    resource->vk_format = vk_format;
+    resource->width = width;
+    resource->height = height;

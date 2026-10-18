@@ -74,7 +74,7 @@ The series has two parts, and the patches apply in name order:
   mixed-case header symlinks that `prepare-build.py` creates, so they are
   build output, not source. The diff was then split by topic. Each patch has
   a header that says what it fixes and which prior-art finding it comes from.
-- **0012 to 0017, 0020 and 0021** are this repository's own fixes, found by
+- **0012 to 0017 and 0020 to 0022** are this repository's own fixes, found by
   the acceptance and host runs. Each header names the document with the
   evidence. The series skips 0018 and 0019.
 
@@ -111,6 +111,7 @@ and 0011 is in the Venus ICD.
 | 0017 yttrium-honour-wireframe-fill-mode | `D3D11_FILL_WIREFRAME` draws wireframe when the host has `fillModeNonSolid` | [`docs/d3d11-apps.md`](../../docs/d3d11-apps.md) |
 | 0020 yttrium-gate-feedback-loop-usage-on-format-support | Drops `ATTACHMENT_FEEDBACK_LOOP` usage when the host driver refuses it for the image (NVIDIA rejects it on LINEAR images; dwm crashed before logon) | [`docs/nvidia.md`](../../docs/nvidia.md) |
 | 0021 yttrium-d3d11-typed-uav-loads-without-formatless-read | WDDM 2.0 D3D11 devices are created without `shaderStorageImageReadWithoutFormat`, with R32 typed UAV loads only, and GetCaps reports `TypedUAVLoadAdditionalFormats` from the host (Intel ANV; dwm crash-looped) | [`docs/zeus.md`](../../docs/zeus.md) |
+| 0022 yttrium-render-shadow-for-linear-colour-with-depth | Depth draws into LINEAR shared back buffers go through an OPTIMAL shadow image and copies, only when the renderer lacks linear colour-attachment support (NVIDIA 610.57.04 raised Xid 69 and hung the guest) | [`docs/xid69.md`](../../docs/xid69.md) |
 
 0021 has no mail header. `scripts/pins-table.py` carries its one-line
 description.
