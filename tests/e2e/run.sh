@@ -1,49 +1,70 @@
 #!/usr/bin/env bash
 # End-to-end acceptance run for the Done items in docs/brief.md.
 #
-#   tests/e2e/run.sh [--template windows-11|windows-10] [--keep] [--apps]
+#   tests/e2e/run.sh [--template windows-11|windows-10] [--host-gpu NAME]
+#                    [--lab NAME] [--keep] [--apps]
 #
 # From nothing: builds the package (or reuses out/package/ when it was built
 # from a tree identical to HEAD), brings up a fresh lab from
-# labs/acceptance/vmlab.wcl (vmlab >= 0.25: gpu { mode = "vulkan" host_gpu
-# = "AMD1" }, the host config's AMD iGPU; docs/host.md), records the guest
+# labs/acceptance/vmlab.wcl (vmlab >= 0.27: gpu { mode = "vulkan" host_gpu
+# = NAME }, a GPU declared in the host config ~/.config/vmlab/config.wcl;
+# default AMD1, the AMD iGPU; docs/host.md, docs/nvidia.md), records the guest
 # baseline, installs with the documented command (scripts/install-into-vm.sh,
 # docs/install.md), then in the autologon user's desktop session runs
 # vulkaninfo, the D3D9, D3D11, D3D12, OpenGL and Vulkan probes (x64 and
 # x86) with `vmlab vm screenshot` console captures of each, and dxdiag. The
-# evidence goes to docs/evidence/acceptance/<template>/; tests/e2e/check.py
-# judges it.
+# evidence goes to docs/evidence/acceptance/<template>/ (AMD1) or
+# <template>-<gpu, lower case>/; tests/e2e/check.py judges it. The lab is
+# win3d-e2e-<template>[-<gpu>] unless --lab names it.
 # The lab is destroyed unless --keep. --apps also runs the stretch
 # applications (tests/e2e/apps.sh) into <evidence>/apps/; they do not
 # count towards the exit status.
 #
 # Exit status: 0 when every Done check passes, 1 otherwise, 2 on usage.
-# Lab state lives in .scratch/e2e/<template>/lab/.vmlab/.
+# Lab state lives in .scratch/e2e/<template>[-<gpu>]/lab/.vmlab/.
 set -uo pipefail
 REPO=$(cd "$(dirname "$0")/../.." && pwd)
 HERE=$REPO/tests/e2e
 TEMPLATE=windows-11
+HOST_GPU=AMD1
+LAB=
 KEEP=0
 APPS=0
 while [ $# -gt 0 ]; do
     case $1 in
         --template) TEMPLATE=${2:-}; shift 2 ;;
+        --host-gpu) HOST_GPU=${2:-}; shift 2 ;;
+        --lab) LAB=${2:-}; shift 2 ;;
         --keep) KEEP=1; shift ;;
         --apps) APPS=1; shift ;;
-        -h|--help) sed -n '2,21p' "$0"; exit 0 ;;
-        *) sed -n '2,21p' "$0" >&2; exit 2 ;;
+        -h|--help) sed -n '2,26p' "$0"; exit 0 ;;
+        *) sed -n '2,26p' "$0" >&2; exit 2 ;;
     esac
 done
 case $TEMPLATE in windows-11|windows-10) ;; *) echo "unknown template $TEMPLATE" >&2; exit 2 ;; esac
+[[ $HOST_GPU =~ ^[A-Za-z0-9_-]+$ ]] || { echo "bad --host-gpu '$HOST_GPU'" >&2; exit 2; }
+HOSTCFG=${XDG_CONFIG_HOME:-$HOME/.config}/vmlab/config.wcl
+gpu_attr() { # gpu_attr ATTR: a string attribute of the host config's gpu "$HOST_GPU" block
+    awk -v g="gpu \"$HOST_GPU\"" -v a="$1" '
+        index($0, g) { inb = 1 }
+        inb && match($0, "(^|[{ ])" a "[[:space:]]*=[[:space:]]*\"[^\"]*\"") {
+            v = substr($0, RSTART, RLENGTH); sub(/^[^"]*"/, "", v); sub(/"$/, "", v); print v; exit }
+        inb && /}/ { exit }' "$HOSTCFG"
+}
+GPU_ADDR=$(gpu_attr address)
+[ -n "$GPU_ADDR" ] || { echo "no gpu \"$HOST_GPU\" with an address in $HOSTCFG" >&2; exit 2; }
+GPU_QEMU=$(gpu_attr qemu_binary)
 
 TDIR=$HOME/.local/share/vmlab/templates/x86_64/$TEMPLATE
 VER=$(ls "$TDIR" 2>/dev/null | sort -V | tail -1)
 [ -n "$VER" ] || { echo "no local template $TEMPLATE in $TDIR" >&2; exit 2; }
-LAB=win3d-e2e-$TEMPLATE
+SUFFIX=; [ "$HOST_GPU" = AMD1 ] || SUFFIX=-${HOST_GPU,,}
+LAB=${LAB:-win3d-e2e-$TEMPLATE$SUFFIX}
 VM=win
-WORK=$REPO/.scratch/e2e/$TEMPLATE
+WORK=$REPO/.scratch/e2e/$TEMPLATE$SUFFIX
 LABDIR=$WORK/lab
-EV=$REPO/docs/evidence/acceptance/$TEMPLATE
+EV=$REPO/docs/evidence/acceptance/$TEMPLATE$SUFFIX
+QLOG=${XDG_STATE_HOME:-$HOME/.local/state}/vmlab/labs/$LAB/vms/$VM/qemu.log
 SECONDS_PER_PROBE=20
 
 mkdir -p "$WORK" "$EV"
@@ -77,11 +98,15 @@ host_stack() {
         echo "worktree changes: $(git -C "$REPO" status --porcelain | grep -v ' docs/evidence/acceptance/' | wc -l)"
         echo "template: x86_64/$TEMPLATE@$VER"
         echo "kernel: $(uname -r)"
-        echo "qemu: $(qemu-system-x86_64 --version | head -1)"
-        echo "packages: $(pacman -Q qemu-full virglrenderer mesa vulkan-radeon 2>/dev/null | tr '\n' ' ')"
+        echo "qemu (PATH): $(qemu-system-x86_64 --version | head -1)"
+        [ -z "$GPU_QEMU" ] || echo "qemu ($HOST_GPU qemu_binary): $GPU_QEMU, $("$GPU_QEMU" --version | head -1)"
+        echo "packages: $(pacman -Q qemu-full virglrenderer mesa vulkan-radeon nvidia-utils 2>/dev/null | tr '\n' ' ')"
         echo "vmlab: $(vmlab --version)"
-        local pci; pci=$(basename "$(readlink -f /sys/class/drm/renderD129/device)")
-        echo "venus gpu: /dev/dri/renderD129 $pci $(lspci -s "$pci" 2>/dev/null | cut -d' ' -f2-)"
+        local n node=
+        for n in /sys/class/drm/renderD*; do
+            [ "$(basename "$(readlink -f "$n/device")")" = "$GPU_ADDR" ] && node=/dev/dri/$(basename "$n")
+        done
+        echo "venus gpu: host_gpu $HOST_GPU, ${node:-no render node} $GPU_ADDR $(lspci -s "$GPU_ADDR" 2>/dev/null | cut -d' ' -f2-)"
     } | tee "$EV/host.txt"
 }
 
@@ -130,17 +155,24 @@ lab_up() {
     mkdir -p "$LABDIR"
     sed -e "s/\"win3d-e2e-windows-11\"/\"$LAB\"/" \
         -e "s#\"x86_64/windows-11@[^\"]*\"#\"x86_64/$TEMPLATE@$VER\"#" \
+        -e "s/host_gpu = \"AMD1\"/host_gpu = \"$HOST_GPU\"/" \
         "$REPO/labs/acceptance/vmlab.wcl" >"$LABDIR/vmlab.wcl"
     cp "$LABDIR/vmlab.wcl" "$EV/lab-vmlab.wcl"
     in_lab vmlab validate || return 1
     in_lab vmlab up || return 1
-    # The host GPU the lab daemon picked (host_gpu=...).
+    grep -q "host_gpu = \"$HOST_GPU\"" "$LABDIR/vmlab.wcl" || { note "lab file does not name host_gpu $HOST_GPU"; return 1; }
+    # The host GPU the lab daemon picked (host_gpu=...) and, for a GPU with
+    # qemu_binary (vmlab >= 0.26), qemu=<path>.
     in_lab vmlab status -v >"$EV/status-v.txt" 2>&1 || true
-    # vmlab (>= 0.24) starts qemu.log with the argv and environment it gave QEMU.
-    local qlog=${XDG_STATE_HOME:-$HOME/.local/state}/vmlab/labs/$LAB/vms/$VM/qemu.log
-    [ -f "$qlog" ] && grep -E '^vmlab: (argv|env):' "$qlog" >"$EV/qemu-argv-env.txt"
+    qemu_log_lines
     wait_agent || return 1
     in_lab vmlab osinfo "$VM" >"$EV/osinfo.json" 2>&1 || true
+}
+
+qemu_log_lines() {
+    # vmlab (>= 0.24) starts qemu.log with the argv and environment it gave
+    # QEMU; its PCI-filter layer (>= 0.27) logs the device it kept.
+    [ -f "$QLOG" ] && grep -aE '^vmlab: (argv|env):|vmlab-pci-filter:' "$QLOG" >"$EV/qemu-argv-env.txt"
 }
 
 prepare_guest() {
@@ -167,7 +199,10 @@ prepare_guest() {
     note "baseline: $(python3 -c 'import json,sys; d=json.load(open(sys.argv[1],encoding="utf-8-sig")); print(", ".join("%s (problem %s)" % (x["name"], x["problem_code"]) for x in d["display_devices"]))' "$EV/baseline-gpu-state.json" 2>&1)"
 
     say "3b test desktop (autologon user win3d)"
-    gfile 300 'C:\win3d\guest\Set-TestDesktop.ps1' -Reboot >"$EV/test-desktop.txt" 2>&1 || true
+    # Set-TestDesktop.ps1 first waits for Windows' user OOBE to finish (vmlab
+    # handoff 20261018-092229): OOBE exiting late clears the autologon values.
+    gfile 1200 'C:\win3d\guest\Set-TestDesktop.ps1' -Reboot >"$EV/test-desktop.txt" 2>&1 || true
+    grep -E '^oobe:' "$EV/test-desktop.txt" | while read -r l; do note "$l"; done
     sleep 60; wait_agent || return 1
     autologon before-install
 }
@@ -181,12 +216,17 @@ autologon() { # autologon NAME: record the Winlogon autologon values (not the pa
 }
 
 session_tests() {
-    # The autologon must survive the install's reboots for the session tests;
-    # if it did not, set it up again (and the evidence shows it).
+    # The autologon must survive the install's reboots for the session tests.
+    # Set-TestDesktop.ps1 waits for OOBE, so this should not fire; if it does,
+    # set it up again, and the run log and autologon-fallback.txt say so.
     autologon after-install
     if ! grep -q '^AutoAdminLogon=1' "$EV/autologon-after-install.txt"; then
-        note "autologon gone after install; running Set-TestDesktop.ps1 -Reboot again"
-        gfile 300 'C:\win3d\guest\Set-TestDesktop.ps1' -Reboot >>"$EV/test-desktop.txt" 2>&1
+        note "autologon fallback fired: values gone after install; running Set-TestDesktop.ps1 -Reboot again"
+        {
+            echo "fired: $(date -Is)"
+            gps "Select-String C:\Windows\Panther\UnattendGC\setupact.log -Pattern 'fEnableAutologon|Clearing Auto-logon values' -ErrorAction SilentlyContinue | ForEach-Object Line" 120
+        } >"$EV/autologon-fallback.txt" 2>&1
+        gfile 1200 'C:\win3d\guest\Set-TestDesktop.ps1' -Reboot >>"$EV/test-desktop.txt" 2>&1
         sleep 60; wait_agent; autologon after-redo
     fi
     tests
@@ -330,6 +370,9 @@ EOF
 
 teardown() {
     say "7 teardown"
+    # The render server logs the PCI-filter line when the guest first opens Vulkan.
+    qemu_log_lines
+    [ -f "$LABDIR/vmlab.wcl" ] && in_lab vmlab status -v >"$EV/status-v-end.txt" 2>&1
     if [ "$KEEP" = 1 ]; then
         note "--keep: $LAB left running; destroy with (cd $LABDIR && vmlab destroy)"
         return 0

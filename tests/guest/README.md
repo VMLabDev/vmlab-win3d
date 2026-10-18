@@ -8,7 +8,7 @@ when the lab declares no `login {}`).
 
 | Script | What it does | Output |
 | --- | --- | --- |
-| `Set-TestDesktop.ps1` | Creates the local user `win3d` and turns on Winlogon autologon for it. Also stops the display from blanking and disables the lock screen. Run it once with `-Reboot`. | The user's desktop in session 1 after the reboot |
+| `Set-TestDesktop.ps1` | Waits for Windows' user OOBE to finish (it clears autologon when it exits), then creates the local user `win3d` and turns on Winlogon autologon for it. Also stops the display from blanking and disables the lock screen. Run it once with `-Reboot`. | The user's desktop in session 1 after the reboot |
 | `Run-Probe.ps1` | Runs one program in the logged-on user's session through a one-off scheduled task with an interactive logon. While it runs, the script samples the loaded modules with Toolhelp, WOW64 included. | `<Name>.json` (the probe's result), `<Name>.modules.json`, `<Name>.run.json`; prints the run summary |
 | `Run-AllProbes.ps1` | Runs every `x64` and `x86` probe through `Run-Probe.ps1`. With `-Warp`, it also runs D3D11 and D3D12 a second time with `--warp`. | All of the above, plus `summary.json` and a table |
 | `Get-Dxdiag.ps1` | Runs `dxdiag /whql:off /t`, waits for the report, and extracts the display device fields. Optional switches: `-Xml` also writes the XML report, `-AsUser` runs dxdiag in the user's session, and `-Parse <file>` parses an existing report. | `dxdiag.txt`, `dxdiag.json` |
