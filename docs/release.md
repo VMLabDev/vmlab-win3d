@@ -6,9 +6,15 @@ A release has four files, all written by `scripts/release.sh` to
 | File | What it is |
 | --- | --- |
 | `vmlab-win3d-<version>-windows-x64.zip` | The signed guest package (`out/package/vmlab-win3d-<x.y.z>/`) and a top-level `README.txt` for the person installing it |
-| `qemu-11.1.1-vmlab-egl-<version>-x86_64-linux.tar.zst` | The vmlab QEMU for NVIDIA hosts: `bin/qemu-system-x86_64`, `install.sh`, `README.txt`, `BUILDINFO` and QEMU's licence files |
+| `qemu-vmlab-egl-<version>-x86_64-linux.tar.zst` | The vmlab QEMU for NVIDIA hosts: `bin/qemu-system-x86_64`, `install.sh`, `README.txt`, `BUILDINFO` and QEMU's licence files |
 | `RELEASE-NOTES.md` | Version, repository commit, the assets and their sha256, the test certificate, the host GPU matrix, the known limits in brief, and every upstream pin |
 | `SHA256SUMS` | sha256 of the other three files |
+
+Releases up to 0.1.0-alpha shipped QEMU 11.1.1 as
+`qemu-11.1.1-vmlab-egl-<version>-x86_64-linux.tar.zst`, which installed into
+`~/.local/opt/qemu-11.1.1-vmlab-egl`. Later releases build the series on
+upstream QEMU master, so the asset and the default prefix no longer name a
+QEMU version; `BUILDINFO` and `--version` do.
 
 The first part of this page is for the person who cuts a release; the
 second is for the person who installs one.
@@ -74,9 +80,9 @@ The script does the following, and stops at the first failure:
 The result:
 
 ```
-out/release/0.1.0-alpha/
-  vmlab-win3d-0.1.0-alpha-windows-x64.zip
-  qemu-11.1.1-vmlab-egl-0.1.0-alpha-x86_64-linux.tar.zst
+out/release/<version>/
+  vmlab-win3d-<version>-windows-x64.zip
+  qemu-vmlab-egl-<version>-x86_64-linux.tar.zst
   RELEASE-NOTES.md
   SHA256SUMS
 ```
@@ -127,10 +133,10 @@ Only hosts whose Venus labs use an NVIDIA GPU need this
 distribution's own QEMU package, whose firmware vmlab passes with `-L`.
 
 ```sh
-tar --zstd -xf qemu-11.1.1-vmlab-egl-<version>-x86_64-linux.tar.zst
-cd qemu-11.1.1-vmlab-egl-<version>
+tar --zstd -xf qemu-vmlab-egl-<version>-x86_64-linux.tar.zst
+cd qemu-vmlab-egl-<version>
 ./install.sh --check      # ldd check only
-./install.sh              # installs into ~/.local/opt/qemu-11.1.1-vmlab-egl
+./install.sh              # installs into ~/.local/opt/qemu-vmlab-egl
 ```
 
 `install.sh` needs no root. It takes an optional prefix instead of the
@@ -144,7 +150,7 @@ to add to each NVIDIA GPU block in `~/.config/vmlab/config.wcl`:
 ```wcl
 gpu "Nvidia1" {
   address     = "0000:01:00.0"
-  qemu_binary = "/home/<you>/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64"
+  qemu_binary = "/home/<you>/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64"
 }
 ```
 

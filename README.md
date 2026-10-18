@@ -76,7 +76,7 @@ A release has two assets, built by `scripts/release.sh`
 - `vmlab-win3d-<version>-windows-x64.zip`, the signed guest package. Unzip
   it in a Windows 10 or 11 guest with Secure Boot off and a Venus GPU, and
   run `Install.cmd` as Administrator. Its `README.txt` has the steps.
-- `qemu-11.1.1-vmlab-egl-<version>-x86_64-linux.tar.zst`, the patched QEMU
+- `qemu-vmlab-egl-<version>-x86_64-linux.tar.zst`, the patched QEMU
   that NVIDIA hosts need. Extract it, run `install.sh`, and paste the
   `qemu_binary` line it prints into the host config's GPU block.
 
@@ -132,7 +132,7 @@ to it are in `patches/` (see [docs/stack.md](docs/stack.md)).
 
 | Project | Use |
 | --- | --- |
-| [QEMU](https://www.qemu.org/) and [virglrenderer](https://gitlab.freedesktop.org/virgl/virglrenderer) | The virtio-gpu device and the host side of Venus. Our egl-headless fix for NVIDIA is the branch [`vmlab/egl-headless-external-dmabuf`](https://github.com/VMLabDev/qemu/tree/vmlab/egl-headless-external-dmabuf) on VMLabDev/qemu, built at the commit `patches/host/PINS` pins (`78bc99a513`) and shipped as a release asset. |
+| [QEMU](https://www.qemu.org/) and [virglrenderer](https://gitlab.freedesktop.org/virgl/virglrenderer) | The virtio-gpu device and the host side of Venus. Our egl-headless fix for NVIDIA is the branch [`vmlab/egl-headless-external-dmabuf`](https://github.com/VMLabDev/qemu/tree/vmlab/egl-headless-external-dmabuf) on VMLabDev/qemu, a series on upstream QEMU master, built at the commit `patches/host/PINS` pins (`d8a6048aae`) and shipped as a release asset. |
 | [vmlab](https://github.com/VMLabDev/vmlab) | The labs every test runs in |
 | Microsoft DirectX SDK (June 2010) samples, [Blender](https://www.blender.org/), the LunarG Vulkan Runtime and the Visual C++ 2010 runtime | Unmodified third-party applications for the acceptance tests. They are downloaded at test time from their official sources and are not redistributed. |
 

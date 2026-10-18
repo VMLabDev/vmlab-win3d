@@ -103,7 +103,7 @@ def notes(out, version, commit, epoch, cert_info, buildinfo, *assets):
     for a in assets:
         p = Path(a)
         what = "Guest driver package for Windows 10 and 11 x64" if p.suffix == ".zip" else \
-            "Patched QEMU 11.1.1 for NVIDIA hosts (x86_64 Linux)"
+            "Patched QEMU for NVIDIA hosts (x86_64 Linux)"
         rows.append(f"| `{p.name}` | {what} | {p.stat().st_size} | `{sha256(p)}` |")
 
     text = f"""# vmlab-win3d {version}
