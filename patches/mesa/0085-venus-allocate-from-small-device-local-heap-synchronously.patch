@@ -1,0 +1,77 @@
+Subject: [PATCH] venus: allocate from a small device-local heap synchronously
+
+vn_device_memory_alloc_simple() submits vkAllocateMemory asynchronously
+and reports VK_SUCCESS. When the host allocation fails, the guest never
+learns it: the host creates no VkDeviceMemory, and the next command that
+names the memory (vkBindBufferMemory2) fails to decode ("failed to look
+up object N of type 8"). That is fatal to the whole Venus context, and the
+application crashes later (compat finding F4: Unigine Heaven and Valley
+with OpenGL on an RTX 5090, an access violation in viogpu_wgl.dll).
+
+The heap that runs out is the small device-local heap of a discrete GPU
+without resizable BAR: 246 MiB on an RTX 5090, the host card's BAR1, which
+every process and VM on the card shares. Patch 0070 (nvva) stops the guest
+from treating it as host-visible, which keeps Zink's streaming buffers out
+of it. Memory of that heap can still be allocated as device-local, and the
+host still has to back it with BAR1, so an allocation there can still
+fail. Drivers expect that and fall back to another heap (Zink, DXVK and
+vkd3d-proton all do), but only if they see the error.
+
+Allocate from a device-local heap that is smaller than the largest
+device-local heap synchronously, so that the caller sees the host's
+result. Where there is one device-local heap (AMD APUs, Intel) or the
+visible heap is all of VRAM (resizable BAR), nothing changes.
+
+Applies after 0070 and 0071 (nvva) and does not touch their code.
+Evidence: docs/unigl.md, docs/evidence/unigl/.
+Origin: vmlab-win3d unigl worker.
+---
+diff --git a/src/virtio/vulkan/vn_device_memory.c b/src/virtio/vulkan/vn_device_memory.c
+index 5487eb2..a479b46 100644
+--- a/src/virtio/vulkan/vn_device_memory.c
++++ b/src/virtio/vulkan/vn_device_memory.c
+@@ -28,6 +28,34 @@
+ 
+ /* device memory commands */
+ 
++/* Whether the memory type is in a small device-local heap: one smaller than
++ * the largest device-local heap, such as the 256 MiB BAR window of a
++ * discrete GPU without resizable BAR. Such a heap runs out in normal use
++ * (on the host every process and VM on the card shares it), and the caller
++ * must see that: Zink, DXVK and vkd3d-proton fall back to another heap on
++ * VK_ERROR_OUT_OF_DEVICE_MEMORY. An asynchronous allocation reports success
++ * instead, and the next command that names the memory fails to decode on
++ * the host, which is fatal to the whole context.
++ */
++static bool
++vn_device_memory_type_in_small_heap(const struct vn_device *dev,
++                                    uint32_t mem_type_index)
++{
++   const VkPhysicalDeviceMemoryProperties *props =
++      &dev->physical_device->memory_properties;
++   const VkMemoryHeap *heap =
++      &props->memoryHeaps[props->memoryTypes[mem_type_index].heapIndex];
++   if (!(heap->flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT))
++      return false;
++
++   for (uint32_t i = 0; i < props->memoryHeapCount; i++) {
++      if ((props->memoryHeaps[i].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT) &&
++          props->memoryHeaps[i].size > heap->size)
++         return true;
++   }
++   return false;
++}
++
+ static inline VkResult
+ vn_device_memory_alloc_simple(struct vn_device *dev,
+                               struct vn_device_memory *mem,
+@@ -35,7 +63,8 @@ vn_device_memory_alloc_simple(struct vn_device *dev,
+ {
+    VkDevice dev_handle = vn_device_to_handle(dev);
+    VkDeviceMemory mem_handle = vn_device_memory_to_handle(mem);
+-   if (VN_PERF(NO_ASYNC_MEM_ALLOC)) {
++   if (VN_PERF(NO_ASYNC_MEM_ALLOC) ||
++       vn_device_memory_type_in_small_heap(dev, alloc_info->memoryTypeIndex)) {
+       return vn_call_vkAllocateMemory(dev->primary_ring, dev_handle,
+                                       alloc_info, NULL, &mem_handle);
+    }
