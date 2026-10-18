@@ -1,0 +1,12 @@
+import <vmlab-host.wcl>
+
+// Host GPUs on zeus. A lab's `gpu {}` names one with `host_gpu`, or takes the default.
+gpu "Intel1"  { address = "0000:00:02.0" }                  // Iris Xe RPL-P (i915/ANV, renderD129)
+gpu "Nvidia1" {                                             // RTX 4060 Laptop GPU (nvidia, renderD128)
+  address     = "0000:01:00.0"
+  default     = true
+  // QEMU (upstream master + our egl-headless external-only dma-buf series)
+  // (VMLabDev/qemu vmlab/egl-headless-external-dmabuf, d8a6048aae); stock
+  // QEMU shows a black console for a Venus guest on NVIDIA.
+  qemu_binary = "/home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64"
+}
