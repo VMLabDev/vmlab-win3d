@@ -16,6 +16,10 @@ lab "win3d-host-probe" {
     // AMD1 is helios's AMD iGPU (0000:72:00.0, RADV, renderD129). Name it:
     // helios's default host GPU is an RTX 5090 (Nvidia1), where Venus does not
     // work with the stock QEMU (docs/known-limits.md).
+    // The templates are Windows evaluation editions. They activate online,
+    // and without a NIC they stay unactivated and wlms.exe shuts the VM down
+    // about an hour after boot. NAT gives the guest internet egress only.
+    nic { nat = true }
     gpu {
       mode     = "vulkan"
       host_gpu = "AMD1"

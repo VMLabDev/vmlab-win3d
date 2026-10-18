@@ -167,6 +167,18 @@ lab_up() {
     qemu_log_lines
     wait_agent || return 1
     in_lab vmlab osinfo "$VM" >"$EV/osinfo.json" 2>&1 || true
+    activate
+}
+
+activate() {
+    # The templates are evaluation editions in notification mode ("grace time
+    # expired"); unactivated, wlms.exe shuts the VM down about an hour after
+    # boot. The lab's NAT NIC lets them activate online, but a fresh clone
+    # does not do it by itself soon enough, so ask (docs/known-limits.md).
+    # A failure is recorded, not fatal: a run finishes within the hour.
+    local slmgr='cscript.exe //nologo C:\Windows\System32\slmgr.vbs'
+    in_lab vmlab exec --timeout 300 "$VM" -- cmd.exe /c "$slmgr /ato & $slmgr /dlv & $slmgr /xpr" 2>&1 | tr -d '\r' >"$EV/activation.txt" || true
+    grep -q 'License Status: Licensed' "$EV/activation.txt" || note "Windows did not activate; see activation.txt"
 }
 
 qemu_log_lines() {
