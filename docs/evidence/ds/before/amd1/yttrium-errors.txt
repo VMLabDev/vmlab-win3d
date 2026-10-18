@@ -1,0 +1,43 @@
+---- d3d11_index run-repro.sh start
+2026-10-18 09:34:35.525 [warning pid=6312 process=d3d11_index.exe] yttrium: WARNING: unsupported behavior owner=d3d10umd function=dcl_input_index_range file=..\src\src\gallium\frontends\d3d10umd\ShaderTGSI.c line=944 expression=true
+2026-10-18 09:34:35.526 [warning pid=6312 process=d3d11_index.exe] yttrium: d3d10umd domain shader translation failed
+2026-10-18 09:34:35.526 [warning pid=6312 process=d3d11_index.exe] yttrium: tessellation shader bind failed owner=d3d10umd hs=00000226abac5cc8 ds=00000226abacc148 hs_state=00000226ae695580 ds_state=0000000000000000 action=SetError
+2026-10-18 09:34:35.526 [error pid=6312 process=d3d11_index.exe] d3d10umd: pfnSetErrorCb hr=0x80004005 caller=BindD3D11TessellationStates:3245 device=00000226a9d8ae40
+2026-10-18 09:34:40.534 [warning pid=6312 process=d3d11_index.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=66756 host_fence_status=1 feedback_after_host_query=1 label=pipe resource flush
+2026-10-18 09:34:40.534 [warning pid=6312 process=d3d11_index.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=pipe resource flush result=2 timeout_ns=5000000000
+2026-10-18 09:34:40.534 [warning pid=6312 process=d3d11_index.exe] yttrium: resource flush wait failed owner=yttrium_resource reason=Venus batch wait failed resource=00000226abacdd50 res_id=13
+2026-10-18 09:34:45.552 [warning pid=6312 process=d3d11_index.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=66470 host_fence_status=1 feedback_after_host_query=1 label=D3D device destroy flush
+2026-10-18 09:34:45.552 [warning pid=6312 process=d3d11_index.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=D3D device destroy flush result=2 timeout_ns=5000000000
+2026-10-18 09:34:50.564 [warning pid=6312 process=d3d11_index.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=68423 host_fence_status=1 feedback_after_host_query=1 label=D3D device destroy flush
+2026-10-18 09:34:50.564 [warning pid=6312 process=d3d11_index.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=D3D device destroy flush result=2 timeout_ns=5000000000
+2026-10-18 09:34:50.564 [warning pid=6312 process=d3d11_index.exe] yttrium: Venus flush failed
+2026-10-18 09:34:55.580 [warning pid=6312 process=d3d11_index.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69370 host_fence_status=1 feedback_after_host_query=1 label=context destroy flush
+2026-10-18 09:34:55.581 [warning pid=6312 process=d3d11_index.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=context destroy flush result=2 timeout_ns=5000000000
+2026-10-18 09:35:00.595 [warning pid=6312 process=d3d11_index.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=68273 host_fence_status=1 feedback_after_host_query=1 label=context destroy flush
+2026-10-18 09:35:00.597 [warning pid=6312 process=d3d11_index.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=context destroy flush result=2 timeout_ns=5000000000
+2026-10-18 09:35:00.597 [warning pid=6312 process=d3d11_index.exe] yttrium: context destroy failed to drain Venus batches before releasing context resources
+2026-10-18 09:35:05.611 [warning pid=6312 process=d3d11_index.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69145 host_fence_status=1 feedback_after_host_query=1 label=batch queue destroy
+2026-10-18 09:35:05.611 [warning pid=6312 process=d3d11_index.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=batch queue destroy result=2 timeout_ns=5000000000
+2026-10-18 09:35:10.626 [warning pid=6312 process=d3d11_index.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69513 host_fence_status=1 feedback_after_host_query=1 label=batch queue destroy
+2026-10-18 09:35:10.626 [warning pid=6312 process=d3d11_index.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=batch queue destroy result=2 timeout_ns=5000000000
+2026-10-18 09:35:10.804 [warning pid=6312 process=d3d11_index.exe] yttrium: WARNING: unsupported behavior owner=d3d10umd function=dcl_input_index_range file=..\src\src\gallium\frontends\d3d10umd\ShaderTGSI.c line=944 expression=true
+2026-10-18 09:35:10.804 [warning pid=6312 process=d3d11_index.exe] yttrium: d3d10umd domain shader translation failed
+2026-10-18 09:35:10.805 [warning pid=6312 process=d3d11_index.exe] yttrium: tessellation shader bind failed owner=d3d10umd hs=00000226ae685508 ds=00000226ae6cc708 hs_state=00000226ae7f9360 ds_state=0000000000000000 action=SetError
+2026-10-18 09:35:10.805 [error pid=6312 process=d3d11_index.exe] d3d10umd: pfnSetErrorCb hr=0x80004005 caller=BindD3D11TessellationStates:3245 device=00000226ab967f60
+2026-10-18 09:35:15.815 [warning pid=6312 process=d3d11_index.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69410 host_fence_status=1 feedback_after_host_query=1 label=pipe resource flush
+2026-10-18 09:35:15.815 [warning pid=6312 process=d3d11_index.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=pipe resource flush result=2 timeout_ns=5000000000
+2026-10-18 09:35:15.815 [warning pid=6312 process=d3d11_index.exe] yttrium: resource flush wait failed owner=yttrium_resource reason=Venus batch wait failed resource=00000226ae7fb1f0 res_id=13
+2026-10-18 09:35:20.833 [warning pid=6312 process=d3d11_index.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=66747 host_fence_status=1 feedback_after_host_query=1 label=D3D device destroy flush
+2026-10-18 09:35:20.833 [warning pid=6312 process=d3d11_index.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=D3D device destroy flush result=2 timeout_ns=5000000000
+2026-10-18 09:35:25.848 [warning pid=6312 process=d3d11_index.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=68438 host_fence_status=1 feedback_after_host_query=1 label=D3D device destroy flush
+2026-10-18 09:35:25.852 [warning pid=6312 process=d3d11_index.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=D3D device destroy flush result=2 timeout_ns=5000000000
+2026-10-18 09:35:25.852 [warning pid=6312 process=d3d11_index.exe] yttrium: Venus flush failed
+2026-10-18 09:35:30.861 [warning pid=6312 process=d3d11_index.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69173 host_fence_status=1 feedback_after_host_query=1 label=context destroy flush
+2026-10-18 09:35:30.861 [warning pid=6312 process=d3d11_index.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=context destroy flush result=2 timeout_ns=5000000000
+2026-10-18 09:35:35.876 [warning pid=6312 process=d3d11_index.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69487 host_fence_status=1 feedback_after_host_query=1 label=context destroy flush
+2026-10-18 09:35:35.876 [warning pid=6312 process=d3d11_index.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=context destroy flush result=2 timeout_ns=5000000000
+2026-10-18 09:35:35.876 [warning pid=6312 process=d3d11_index.exe] yttrium: context destroy failed to drain Venus batches before releasing context resources
+2026-10-18 09:35:40.892 [warning pid=6312 process=d3d11_index.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69459 host_fence_status=1 feedback_after_host_query=1 label=batch queue destroy
+2026-10-18 09:35:40.892 [warning pid=6312 process=d3d11_index.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=batch queue destroy result=2 timeout_ns=5000000000
+2026-10-18 09:35:45.908 [warning pid=6312 process=d3d11_index.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69510 host_fence_status=1 feedback_after_host_query=1 label=batch queue destroy
+2026-10-18 09:35:45.908 [warning pid=6312 process=d3d11_index.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=batch queue destroy result=2 timeout_ns=5000000000

@@ -1,0 +1,185 @@
+Subject: [PATCH] d3d10umd: domain shaders read patch constants with a register index
+
+A domain shader that indexes an array of patch constants with a register
+compiles (d3dcompiler_47, ds_5_0) to
+
+    dcl_indexrange vpc6.xyz 4
+    mov o1.xyz, vpc[r0.x + 6].xyzx
+
+dcl_input_index_range accepted ranges over v[] and vicp[] only, so the
+translation failed (SHADER_TRANSLATION_UNSUPPORTED), CreateDomainShader
+reported E_INVALIDARG through pfnSetErrorCb and the D3D11 runtime removed
+the device. translate_src_operand also asserted an immediate index for
+INPUT_PATCH_CONSTANT.
+
+Patch constants are separate TGSI PATCH inputs (and tessellation factors are
+components of TESSOUTER and TESSINNER), which are not consecutive, so record
+the range and read vpc[base + r] by selecting among the inputs of the range,
+as translate_indexed_input does for v[]. A register of the range that the
+shader does not declare is declared on first use; in a hull shader's join
+phase the patch constants are the fork phases' outputs, as for an immediate
+index.
+
+Ranges over control points (vicp[r][base + r] in a domain shader) and over
+geometry and pixel shader inputs (v[r][base + r], v[base + r]) were already
+handled by 0015 and earlier code; docs/evidence/ds/src/d3d11_index.cpp
+checks all of them. d3dcompiler_47 cannot index outputs of vertex, domain
+or geometry shaders, or tessellation factors in a domain shader, so those
+ranges are not produced from HLSL.
+
+Evidence: docs/ds.md, docs/evidence/ds/ (src/d3d11_index.cpp, pixel
+readback against the CPU and WARP).
+Origin: vmlab-win3d ds worker.
+---
+diff --git a/src/gallium/frontends/d3d10umd/ShaderTGSI.c b/src/gallium/frontends/d3d10umd/ShaderTGSI.c
+index d36b498..511620f 100644
+--- a/src/gallium/frontends/d3d10umd/ShaderTGSI.c
++++ b/src/gallium/frontends/d3d10umd/ShaderTGSI.c
+@@ -449,6 +449,11 @@ struct Shader_xlate {
+       uint count;
+    } input_ranges[SHADER_MAX_INPUTS];
+    uint num_input_ranges;
++   struct {
++      uint first;
++      uint count;
++   } patch_input_ranges[SHADER_MAX_INPUTS];
++   uint num_patch_input_ranges;
+ 
+    struct {
+       struct ureg_dst reg[4];
+@@ -928,6 +933,29 @@ dcl_input_index_range(struct Shader_xlate *sx,
+    const struct Shader_dst_operand *dst = &opcode->dst[0];
+    uint first, count;
+ 
++   /* A range over patch constants (vpc6.xyz..vpc9.xyz read as
++    * vpc[r0.x + 6] in a domain shader or a hull shader's join phase).
++    */
++   if (dst->base.type == DX11_SM5_OPERAND_TYPE_INPUT_PATCH_CONSTANT) {
++      if (dst->base.index_dim != 1 ||
++          dst->base.index[0].index_rep != D3D10_SB_OPERAND_INDEX_IMMEDIATE32) {
++         SHADER_TRANSLATION_UNSUPPORTED(sx, true);
++         return;
++      }
++      first = dst->base.index[0].imm;
++      count = opcode->specific.index_range_count;
++      if (!count || first >= SHADER_MAX_INPUTS ||
++          count > SHADER_MAX_INPUTS - first ||
++          sx->num_patch_input_ranges >= SHADER_MAX_INPUTS) {
++         SHADER_TRANSLATION_UNSUPPORTED(sx, true);
++         return;
++      }
++      sx->patch_input_ranges[sx->num_patch_input_ranges].first = first;
++      sx->patch_input_ranges[sx->num_patch_input_ranges].count = count;
++      sx->num_patch_input_ranges++;
++      return;
++   }
++
+    /* A range over per-vertex inputs (v[n][r] in a geometry shader,
+     * vicp[n][r] in a hull shader) names its first register in the second
+     * index; the vertex index is not part of the range.
+@@ -2177,6 +2205,73 @@ translate_indexed_input(struct Shader_xlate *sx,
+    return ureg_src(selected);
+ }
+ 
++/* The register for patch constant vpcN.  A domain shader may read
++ * registers of an index range that it does not declare itself; declare them
++ * on first use.
++ */
++static struct ureg_src
++patch_input_reg(struct Shader_xlate *sx, uint input)
++{
++   if (sx->patch_inputs[input].declared)
++      return sx->patch_inputs[input].reg;
++
++   if (sx->is_tcs) {
++      if (!sx->outputs[input].reg[0].File) {
++         tessellation_translation_unsupported(
++            sx, "patch-input-has-no-prior-output");
++         return ureg_src(sx->outputs[0].reg[0]);
++      }
++      sx->patch_inputs[input].reg = ureg_src(sx->outputs[input].reg[0]);
++   } else {
++      sx->patch_inputs[input].reg =
++         ureg_DECL_input(sx->ureg, TGSI_SEMANTIC_PATCH, input, 0, 1);
++   }
++   sx->patch_inputs[input].declared = true;
++   return sx->patch_inputs[input].reg;
++}
++
++/* vpc[base + rel]: the patch constants of an index range are separate
++ * TGSI inputs (and tessellation factors are components of TESSOUTER and
++ * TESSINNER), so select among them.
++ */
++static struct ureg_src
++translate_indexed_patch_input(struct Shader_xlate *sx,
++                              uint base,
++                              struct ureg_src rel)
++{
++   struct ureg_program *ureg = sx->ureg;
++   struct ureg_dst selected, predicate;
++   uint count = 0;
++
++   for (uint i = 0; i < sx->num_patch_input_ranges; i++) {
++      const uint first = sx->patch_input_ranges[i].first;
++      const uint last = first + sx->patch_input_ranges[i].count;
++      if (base >= first && base < last)
++         count = MAX2(count, last - base);
++   }
++   if (base >= SHADER_MAX_INPUTS || !count) {
++      SHADER_TRANSLATION_UNSUPPORTED(sx, true);
++      return ureg_src(ureg_DECL_temporary(ureg));
++   }
++
++   if (count <= 1)
++      return patch_input_reg(sx, base);
++
++   selected = ureg_DECL_temporary(ureg);
++   predicate = ureg_DECL_temporary(ureg);
++
++   ureg_MOV(ureg, selected, patch_input_reg(sx, base));
++   for (uint i = 1; i < count; i++) {
++      ureg_USEQ(ureg, predicate, rel, ureg_imm1u(ureg, i));
++      ureg_UCMP(ureg, selected, ureg_src(predicate),
++                patch_input_reg(sx, base + i), ureg_src(selected));
++   }
++
++   ureg_release_temporary(ureg, predicate);
++
++   return ureg_src(selected);
++}
++
+ static struct ureg_src
+ apply_input_vertex_index(struct Shader_xlate *sx,
+                          struct ureg_src reg,
+@@ -2631,10 +2726,27 @@ translate_src_operand(struct Shader_xlate *sx,
+ 
+    case DX11_SM5_OPERAND_TYPE_INPUT_PATCH_CONSTANT:
+       assert(operand->base.index_dim == 1);
+-      assert(operand->base.index[0].index_rep ==
+-             D3D10_SB_OPERAND_INDEX_IMMEDIATE32);
+-      assert(operand->base.index[0].imm < SHADER_MAX_INPUTS);
+-      reg = sx->patch_inputs[operand->base.index[0].imm].reg;
++      switch (operand->base.index[0].index_rep) {
++      case D3D10_SB_OPERAND_INDEX_IMMEDIATE32:
++         assert(operand->base.index[0].imm < SHADER_MAX_INPUTS);
++         reg = sx->patch_inputs[operand->base.index[0].imm].reg;
++         break;
++      case D3D10_SB_OPERAND_INDEX_RELATIVE:
++      case D3D10_SB_OPERAND_INDEX_IMMEDIATE32_PLUS_RELATIVE: {
++         struct ureg_src rel =
++            translate_relative_operand_src(sx, &operand->base.index[0].rel);
++         reg = translate_indexed_patch_input(
++            sx,
++            operand->base.index[0].index_rep ==
++               D3D10_SB_OPERAND_INDEX_RELATIVE ?
++               0 : operand->base.index[0].imm,
++            rel);
++      }
++         break;
++      default:
++         SHADER_TRANSLATION_UNSUPPORTED(sx, true);
++         reg = ureg_src(ureg_DECL_temporary(sx->ureg));
++      }
+       break;
+ 
+    case D3D11_SB_OPERAND_TYPE_INPUT_COVERAGE_MASK:
