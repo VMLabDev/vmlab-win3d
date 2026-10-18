@@ -1,0 +1,20 @@
+{
+  "heaven-d3d11": {
+    "exit": "exit=-1073741819 timed_out=False",
+    "exit_code": -1073741819,
+    "timed_out": false,
+    "duration_s": 13.8,
+    "session_id": 1,
+    "app_local_graphics": [
+      "C:\\apps\\heaven\\bin\\d3dcompiler_42.dll [app_local] 9.27.952.3022"
+    ],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SysWOW64\\dxgi.dll [syswow64] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\d3d11.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\apps\\heaven\\bin\\d3dcompiler_42.dll [app_local] 9.27.952.3022",
+      "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll [syswow64] ",
+      "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)"
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+t=14 guest_pm=163 guest_ws=183 guest_handles=255 guest_va=744 qemu_rss=8072 rs_rss=391 rs_maps=4023 rs_dmabuf=79
+t=26 guest_pm=767 guest_ws=969 guest_handles=255 guest_va=1604 qemu_rss=8115 rs_rss=437 rs_maps=4954 rs_dmabuf=106
+t=37 guest_pm=775 guest_ws=896 guest_handles=255 guest_va=1613 qemu_rss=8118 rs_rss=437 rs_maps=4954 rs_dmabuf=141
+t=49 guest_pm=760 guest_ws=784 guest_handles=243 guest_va=1603 qemu_rss=8106 rs_rss=437 rs_maps=4908 rs_dmabuf=146
+t=61 guest_pm=759 guest_ws=709 guest_handles=243 guest_va=1603 qemu_rss=8106 rs_rss=437 rs_maps=4908 rs_dmabuf=146
+t=73 guest_pm=766 guest_ws=684 guest_handles=243 guest_va=1607 qemu_rss=8107 rs_rss=437 rs_maps=4917 rs_dmabuf=158
+t=84 guest_pm=764 guest_ws=632 guest_handles=238 guest_va=1602 qemu_rss=8107 rs_rss=437 rs_maps=4917 rs_dmabuf=158
+t=96 guest_pm=828 guest_ws=644 guest_handles=240 guest_va=1664 qemu_rss=8122 rs_rss=437 rs_maps=4987 rs_dmabuf=158
+t=113 guest_pm=846 guest_ws=596 guest_handles=240 guest_va=1719 qemu_rss=8122 rs_rss=437 rs_maps=4990 rs_dmabuf=158
+t=125 guest_pm=847 guest_ws=551 guest_handles=240 guest_va=1720 qemu_rss=8129 rs_rss=437 rs_maps=5029 rs_dmabuf=158
+t=143 guest_pm=848 guest_ws=487 guest_handles=238 guest_va=1720 qemu_rss=8129 rs_rss=437 rs_maps=5029 rs_dmabuf=158
+t=155 guest_pm=860 guest_ws=456 guest_handles=236 guest_va=1736 qemu_rss=8128 rs_rss=438 rs_maps=5031 rs_dmabuf=158
+t=167 guest_pm=875 guest_ws=439 guest_handles=236 guest_va=1752 qemu_rss=8132 rs_rss=438 rs_maps=5069 rs_dmabuf=158
+t=179 guest_pm=896 guest_ws=455 guest_handles=236 guest_va=1775 qemu_rss=8144 rs_rss=438 rs_maps=5112 rs_dmabuf=158
+t=191 guest_pm=870 guest_ws=419 guest_handles=236 guest_va=1757 qemu_rss=8130 rs_rss=439 rs_maps=5064 rs_dmabuf=158
+t=202 exited
