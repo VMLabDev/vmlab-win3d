@@ -33,7 +33,7 @@ off.
 - **Also verified on Intel.** The same checks pass on an Intel Iris Xe host
   (ANV) with `patches/mesa/0021` ([zeus](docs/zeus.md)).
 - **Also verified on NVIDIA.** On an RTX 5090 the same checks pass on
-  `windows-11` with vmlab 0.27, when the host config names a patched QEMU
+  `windows-11` and `windows-10` with vmlab 0.27, when the host config names a patched QEMU
   as the GPU's `qemu_binary` ([nvidia](docs/nvidia.md),
   [acceptance](docs/acceptance.md#nvidia-rtx-5090)). One DirectX SDK D3D9
   sample hangs the guest there. On a laptop RTX 4060 the GPU fell off the

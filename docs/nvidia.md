@@ -26,6 +26,9 @@ host config block names the patched QEMU as `qemu_binary`:
 - `nvidia-smi-during-probes.txt`: every `virgl_render_server` on
   `0000:01:00.0`.
 
+`--template windows-10 --host-gpu Nvidia1` also passes 12 of 12
+(`docs/evidence/acceptance/windows-10-nvidia1/`).
+
 The DirectX SDK's D3D9 `BasicHLSL` sample, a stretch application, hangs the
 guest on NVIDIA with a host Xid 69 ([known limits](known-limits.md#host-gpu-support)).
 

@@ -15,7 +15,7 @@ result depends on the host GPU. Four were tried:
 | Host GPU, driver | Host | Result | Needs | Evidence |
 | --- | --- | --- | --- | --- |
 | AMD Radeon iGPU (Granite Ridge), RADV, Mesa 26.2.2 | helios | **Full pass**: every Done check in `docs/brief.md` item 2, on `windows-11` and `windows-10` | A plain vmlab lab that names the AMD GPU (`host_gpu = "AMD1"`; the final runs used vmlab 0.25.0-alpha at commit `6105889`) | [`acceptance.md`](acceptance.md) |
-| NVIDIA RTX 5090, 610.57.04 | helios | **Full pass** on `windows-11`, 12 of 12 Done checks, through `tests/e2e/run.sh --host-gpu Nvidia1` on vmlab 0.27.0-alpha; the guest lists exactly one Venus device. One stretch application, the DirectX SDK's D3D9 `BasicHLSL` x64, hangs the guest (below) | `patches/mesa/0020` (in the package) **and** the patched QEMU (`patches/host/qemu/0001`) as the GPU's `qemu_binary` in the host config. On `Nvidia2`, which has no `qemu_binary` on helios, the probes render but the console is black | [`acceptance.md`](acceptance.md#nvidia-rtx-5090), [`nvidia.md`](nvidia.md) |
+| NVIDIA RTX 5090, 610.57.04 | helios | **Full pass** on `windows-11` and `windows-10`, 12 of 12 Done checks each, through `tests/e2e/run.sh --host-gpu Nvidia1` on vmlab 0.27.0-alpha; the guest lists exactly one Venus device. One stretch application, the DirectX SDK's D3D9 `BasicHLSL` x64, hangs the guest (below) | `patches/mesa/0020` (in the package) **and** the patched QEMU (`patches/host/qemu/0001`) as the GPU's `qemu_binary` in the host config. On `Nvidia2`, which has no `qemu_binary` on helios, the probes render but the console is black | [`acceptance.md`](acceptance.md#nvidia-rtx-5090), [`nvidia.md`](nvidia.md) |
 | Intel Iris Xe (Raptor Lake-P), ANV, Mesa 26.2.2 | Zeus | **Full pass** on `windows-11`, 12 of 12 Done checks. Without `patches/mesa/0021`, dwm crash-loops and the console is black | `patches/mesa/0021` (in the package) | [`zeus.md`](zeus.md) |
 | NVIDIA RTX 4060 Max-Q (laptop), 615.71.09 | Zeus | **Unmet**: install, desktop and console worked; then the GPU fell off the bus (Xid 79) during vulkaninfo and QEMU aborted. Cause unknown | Not known | [`zeus.md`](zeus.md) |
 
@@ -133,7 +133,7 @@ before it writes the values, and prints an `oobe:` line saying how long it
 waited (`test-desktop.txt`). `tests/e2e/run.sh` still records the values
 before and after the install (`autologon-*.txt`) and sets them again when
 they are missing, logging `autologon fallback fired` and writing
-`autologon-fallback.txt`. In the three runs since, on `Nvidia1` and
+`autologon-fallback.txt`. In the four runs since, on `Nvidia1` and
 `Nvidia2`, the wait ended at once or within 5 s, and the fallback did not
 fire. This affects only the tests, not the package.
 
