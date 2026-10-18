@@ -8,8 +8,8 @@ the repro found on the way: every hull shader whose join phase reads what its
 fork phases wrote removed the device, even with immediate indices. The fixes
 are `patches/mesa/0031` and `0032`. Investigated on 2026-10-18 and
 2026-10-19 on helios: NVIDIA 610.57.04 on `Nvidia1`, RADV (Mesa 26.2.2) on
-`AMD1`, vmlab 0.28.0-alpha, QEMU 11.1.1 on AMD1 and the egl-headless patched QEMU 11.1.50 for
-NVIDIA), virglrenderer 1.3.0. Evidence is in `docs/evidence/shaders2/`.
+`AMD1`, vmlab 0.28.0-alpha, QEMU 11.1.1 on AMD1 and the egl-headless patched QEMU 11.1.50 on
+NVIDIA, virglrenderer 1.3.0. Evidence is in `docs/evidence/shaders2/`.
 
 ## Result
 
