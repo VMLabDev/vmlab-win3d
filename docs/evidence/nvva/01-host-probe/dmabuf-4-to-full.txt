@@ -1,0 +1,34 @@
+$ bar1probe 05 4 400 dmabuf 5
+nvidia-smi BAR1 before: 36 MiB
+device NVIDIA GeForce RTX 5090 bus 05
+type 4 heap 2 size 246 MiB
+chunk 0 total 4 MiB: ok (vk 0); heap usage 45 MiB budget 200 MiB
+chunk 1 total 8 MiB: ok (vk 0); heap usage 53 MiB budget 192 MiB
+chunk 2 total 12 MiB: ok (vk 0); heap usage 61 MiB budget 184 MiB
+chunk 3 total 16 MiB: ok (vk 0); heap usage 69 MiB budget 176 MiB
+chunk 4 total 20 MiB: ok (vk 0); heap usage 77 MiB budget 168 MiB
+chunk 5 total 24 MiB: ok (vk 0); heap usage 85 MiB budget 160 MiB
+chunk 6 total 28 MiB: ok (vk 0); heap usage 93 MiB budget 152 MiB
+chunk 7 total 32 MiB: ok (vk 0); heap usage 101 MiB budget 144 MiB
+chunk 8 total 36 MiB: ok (vk 0); heap usage 109 MiB budget 136 MiB
+chunk 9 total 40 MiB: ok (vk 0); heap usage 117 MiB budget 128 MiB
+chunk 10 total 44 MiB: ok (vk 0); heap usage 125 MiB budget 120 MiB
+chunk 11 total 48 MiB: ok (vk 0); heap usage 133 MiB budget 112 MiB
+chunk 12 total 52 MiB: ok (vk 0); heap usage 141 MiB budget 104 MiB
+chunk 13 total 56 MiB: ok (vk 0); heap usage 149 MiB budget 96 MiB
+chunk 14 total 60 MiB: ok (vk 0); heap usage 157 MiB budget 88 MiB
+chunk 15 total 64 MiB: ok (vk 0); heap usage 165 MiB budget 80 MiB
+chunk 16 total 68 MiB: ok (vk 0); heap usage 173 MiB budget 72 MiB
+chunk 17 total 72 MiB: ok (vk 0); heap usage 181 MiB budget 64 MiB
+chunk 18 total 76 MiB: ok (vk 0); heap usage 189 MiB budget 56 MiB
+chunk 19 total 80 MiB: ok (vk 0); heap usage 197 MiB budget 48 MiB
+chunk 20 total 84 MiB: ok (vk 0); heap usage 205 MiB budget 40 MiB
+chunk 21 total 88 MiB: ok (vk 0); heap usage 213 MiB budget 32 MiB
+chunk 22 total 92 MiB: ok (vk 0); heap usage 221 MiB budget 24 MiB
+chunk 23 total 96 MiB: ok (vk 0); heap usage 229 MiB budget 16 MiB
+chunk 24 total 100 MiB: ok (vk 0); heap usage 237 MiB budget 8 MiB
+chunk 25 total 104 MiB: ok (vk 0); heap usage 245 MiB budget 0 MiB
+chunk 26: vkAllocateMemory -2
+holding 5 s
+nvidia-smi BAR1 while held: 245 MiB
+new 'can't alloc VA space' kernel lines: 0

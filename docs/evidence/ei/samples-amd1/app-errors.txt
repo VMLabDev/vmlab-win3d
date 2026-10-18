@@ -1,0 +1,3 @@
+2026-10-18T20:21:56.0291268-07:00 Application Error Faulting application name: dwm.exe, version: 10.0.26100.9278, time stamp: 0x009bcb8a | Faulting module name: viogpu_d3d10.dll, version: 0.0.0.0, time stamp: 0x00000000 | Exception code: 0xc000041d | Fault offset: 0x0000000000115aa4 | Faulting process id: 0x458
+2026-10-18T20:21:57.5861896-07:00 Windows Error Reporting Fault bucket , type 0 | Event Name: APPCRASH | Response: Not available | Cab Id: 0 | Problem signature:
+2026-10-18T20:21:58.9931135-07:00 Windows Error Reporting Fault bucket , type 0 | Event Name: APPCRASH | Response: Not available | Cab Id: 0 | Problem signature:

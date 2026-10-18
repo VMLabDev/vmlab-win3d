@@ -74,16 +74,17 @@ The series has two parts, and the patches apply in name order:
   mixed-case header symlinks that `prepare-build.py` creates, so they are
   build output, not source. The diff was then split by topic. Each patch has
   a header that says what it fixes and which prior-art finding it comes from.
-- **0012 to 0017, 0020 to 0027, 0030 to 0032, 0035, 0040 to 0044 and 0080** are this repository's own fixes, found by
+- **0012 to 0017, 0020 to 0027, 0030 to 0032, 0035, 0040 to 0044, 0070, 0080 and 0086** are this repository's own fixes, found by
   the acceptance and host runs. Each header names the document with the
-  evidence. The series skips 0018, 0019, 0028, 0029, 0033, 0034, 0036 to 0039 and 0045 to 0079.
+  evidence. The series skips 0018, 0019, 0028, 0029, 0033, 0034, 0036 to 0039, 0045 to 0069, 0071 to 0079 and 0081 to 0085.
 
 0005 to 0010, every patch from 0012 to 0026 and 0030 to 0032 change
 `viogpu_d3d10.dll`, the D3D9/D3D10/D3D11 UMD (the `d3d10umd` frontend and the
 Yttrium winsys). 0032 also changes Gallium's `tgsi_to_nir`, in a branch that
 only a TGSI tessellation control shader reaches, which only the UMD makes.
 0001 to 0003 are build and utility fixes that every DLL shares, 0004, 0027
-and 0080 are in WGL, and 0011 is in the Venus ICD.
+and 0080 are in WGL, 0011 and 0070 are in the Venus ICD, and 0086 is in Zink
+(WGL).
 
 ### From the prior art
 
@@ -128,7 +129,9 @@ and 0080 are in WGL, and 0011 is in the Venus ICD.
 | 0042 d3d9-fixed-function-points | Points wider than one pixel keep their colours and texture coordinates, get sprite coordinates only with `POINTSPRITEENABLE`, keep their size under perspective, and honour `PSIZE` in `XYZRHW` vertices | [`docs/ffp.md`](../../docs/ffp.md) |
 | 0043 d3d9-bump-luminance-formats | `L6V5U5` and `X8L8V8U8` bump maps exist (stored as `R8G8B8A8_SNORM`, converted on upload), so `BUMPENVMAPLUMINANCE` works; `CreateTexture` failed with `D3DERR_NOTAVAILABLE` | [`docs/ffp2.md`](../../docs/ffp2.md) |
 | 0044 d3d9-indexed-vertex-blend-palette | `MaxVertexBlendMatrixIndex` is 8, the runtime's matrix palette for indexed vertex blending with hardware vertex processing, instead of 0 | [`docs/ffp2.md`](../../docs/ffp2.md) |
+| 0070 venus-hide-host-access-to-small-bar-heap | The Venus ICD reports a device-local, host-visible type on a heap less than half the largest device-local heap as device-local only, so Vulkan, DXVK, vkd3d-proton and Zink keep host-visible memory out of the host card's BAR1 (246 MiB without resizable BAR, shared by every VM on the card; "can't alloc VA space for mapping") | [`docs/nvva.md`](../../docs/nvva.md) |
 | 0080 wgl-pin-opengl32-so-pixel-formats-set-through-gdi-last | The WGL ICD pins `opengl32.dll`, so a pixel format set through GDI before the program loaded `opengl32.dll` is still known to it (GZDoom's `wglCreateContext` failed with `ERROR_INVALID_PIXEL_FORMAT`: "Unable to create an OpenGL render context") | [`docs/gzdoom.md`](../../docs/gzdoom.md) |
+| 0086 zink-keep-buffers-mappable-without-visible-vram | Zink keeps directly mapped buffers in host-visible memory when the device has no device-local, host-visible type (needed with 0070; Unigine Heaven and Valley crashed). Written by the unigl worker; carried unchanged | [`docs/nvva.md`](../../docs/nvva.md) |
 
 0021 has no mail header. `scripts/pins-table.py` carries its one-line
 description.

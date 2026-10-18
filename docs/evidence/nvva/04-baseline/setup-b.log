@@ -1,0 +1,53 @@
+first-boot: provisioning win...
+first-boot: specialize complete; clearing marker
+first-boot: settling staged AppX (LKG) before first logon
+first-boot: appx: removed MicrosoftWindows.Client.AIX_1000.26100.29.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.AccountsService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.IrisService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.Search_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed NcsiUwpApp_1000.25128.1000.0_neutral_neutral_8wekyb3d8bbwe
+removed MdOdrMcpFilterPackage_1.0.0.0_neutral__cw5n1h2txyewy
+first-boot: installing first-logon XAML registration hook (sysprep-as-SYSTEM workaround)
+first-boot: xaml: hook installed for: MicrosoftWindows.Client.CBS_cw5n1h2txyewy, Microsoft.UI.Xaml.CBS_8wekyb3d8bbwe, MicrosoftWindows.Client.Core_cw5n1h2txyewy
+first-boot: rebooting once to settle shell reconciliation
+first-boot: holding ready until the guest settles (early first logons break the 24H2 shell)
+first-boot: guest settled (uptime 312s)
+first-boot: win ready
+lab "win3d-nvva-b" is up
+pushed 7 file(s), 42217 bytes to win:C:/win3d/guest
+pushed 5 file(s), 174592 bytes to win:C:/win3d/probes/x64
+pushed 5 file(s), 153088 bytes to win:C:/win3d/probes/x86
+oobe: done after 136 s
+created user win3d
+autologon set for VMLABVM-V6O3R6B\win3d
+rebooting in 5 s
+[05:55:20] waiting for the guest agent
+[05:55:22] copying bundle-baseline to C:\vmlab-win3d
+pushed 29 file(s), 102413421 bytes to win:C:/vmlab-win3d
+[05:55:27] running C:\vmlab-win3d\Install.cmd
+2026-10-18T12:55:26.925-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
+2026-10-18T12:55:31.799-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T12:55:36.306-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
+2026-10-18T12:55:36.655-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T12:55:36.676-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-18T12:55:36.680-07:00 [Install]   Signature matches Public Key
+2026-10-18T12:55:36.685-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T12:55:36.687-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T12:55:36.746-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T12:55:36.750-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-18T12:55:36.753-07:00 [Install]   Signature matches Public Key
+2026-10-18T12:55:36.755-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T12:55:36.760-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T12:55:36.849-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-18T12:55:36.856-07:00 [Install]   The operation completed successfully.
+2026-10-18T12:55:37.406-07:00 [Install] test signing is set but not active in this boot
+2026-10-18T12:55:38.253-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T12:55:38.349-07:00 [Install] rebooting; step Driver resumes after the restart
+[05:55:40] Install.cmd exited 0
+[05:55:42] state: RebootPending|Driver|
+[05:56:44] state: Installing|Driver|
+[05:57:17] state: RebootPending|Verify|
+[06:00:58] state: Installed||
+[06:00:58] done: Installed
+[06:01:00] desktop: True 185
+[06:01:00] setup b done

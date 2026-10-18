@@ -86,6 +86,23 @@ NVIDIA failure (`vkGetImageMemoryRequirements resulted in CS error` and a
 black console; `docs/evidence/host/good-none/`, `min-none/`). It is
 historical: `docs/nvidia.md` names the cause.
 
+### Two Windows VMs per RTX 5090 without resizable BAR
+
+Helios's RTX 5090s run with resizable BAR off, so each card has a 256 MiB
+BAR1 aperture that every process and VM on the card shares. Venus guests
+fill it. Each Windows VM takes about 40 MiB at an idle desktop and 60 MiB
+while it renders, mostly for the Yttrium UMD's shared images. With three VMs
+on a card, BAR1 runs out: the host kernel logs `NVRM: dmaAllocMapping_GM107:
+can't alloc VA space for mapping`, and guest Venus contexts die (dwm or
+applications report ring timeouts, often in `vkGetImageSubresourceLayout`).
+`patches/mesa/0070` (with `0086`) keeps Vulkan, DXVK, vkd3d-proton and Zink
+memory out of BAR1, but not the UMD's images.
+
+Run at most two Windows VMs per RTX 5090, counting the host desktop on
+`Nvidia1` as part of the load, or turn on resizable BAR in the host's
+firmware. Integrated GPUs and resizable-BAR hosts are not affected. Cause,
+numbers and the dropped UMD change: [nvva.md](nvva.md).
+
 ### Requires vmlab 0.27.0-alpha or later
 
 vmlab 0.23 did not give a working Venus guest from `gpu { mode = "vulkan" }`.
@@ -148,6 +165,45 @@ they are missing, logging `autologon fallback fired` and writing
 `autologon-fallback.txt`. In the five runs since, on `Nvidia1` and
 `Nvidia2`, the wait ended at once or within 5 s, and the fallback did not
 fire. This affects only the tests, not the package.
+
+### Evaluation templates need the lab NIC and `slmgr /ato`
+
+The local `windows-11` and `windows-10` templates are Enterprise
+Evaluation editions, and their clones boot in notification mode (`slmgr /dlv`: `License Status:
+Notification`, `0xC004F009 (grace time expired)`). In that mode the license
+monitor, `wlms.exe`, shuts the VM down an hour after each boot, with "The
+license period for this installation of Windows has expired". A lab with no
+NIC cannot activate, so a kept lab dies within the hour.
+
+The lab files therefore give the VM a NAT NIC, `nic { nat = true }`
+(`labs/acceptance/vmlab.wcl`, `labs/probe/vmlab.wcl`). The NIC alone is not
+enough. A clone left alone with it was not activated by Windows, and
+`wlms.exe` shut it down 60 minutes after it booted. Activation needs an
+explicit `slmgr /ato`, which takes about a minute:
+
+```
+cscript //nologo C:\Windows\System32\slmgr.vbs /ato
+```
+
+After that, `slmgr /dlv` shows `License Status: Licensed` and
+`slmgr /xpr` shows the evaluation's end date, 90 days later (`Timebased
+activation will expire 1/16/2027`). Activation survives a reboot, and the
+activated clone ran for over an hour without shutting down. `tests/e2e/run.sh` runs
+`slmgr /ato` as soon as the lab is up and writes the result to
+`activation.txt` in the run's evidence; a failed activation is reported but
+does not fail the run. For a lab brought up by hand, run the command above
+once.
+
+The NIC changes what the guest can reach: it has internet egress through
+vmlab's NAT, and the lab's guests can reach each other. The template's
+Windows Update policies stay in place, so the NIC does not turn Windows
+Update on. The rearm count is 1, so `slmgr /rearm` is not a lasting
+alternative. Tried on `windows-11@26100.1742.5` and, for `slmgr /ato`
+only, `windows-10@19045.2006.8`.
+
+Evidence: `docs/evidence/wu/activation/` (`no-ato-shutdown.txt`, the
+unactivated clone's shutdown events; `ato.txt`, activation and the
+reboot; `windows-10-ato.txt`), and the `activation` report of each run in `docs/evidence/wu/`.
 
 ### QEMU crashes on shutdown
 
@@ -357,7 +413,7 @@ D3D9 fixed function goes through the shaders that the Windows runtime
 generates; its coverage and what it still lacks are in the next section.
 
 D3D10 has no probe here. Five unmodified Microsoft D3D12 samples have run
-([d3d12app.md](d3d12app.md); four render, `D3D12ExecuteIndirect` does not, see below). The prior art ran real applications on its own builds of the
+([d3d12app.md](d3d12app.md); all five render, `D3D12ExecuteIndirect` with `patches/vkd3d-proton/0006`, [ei.md](ei.md)). The prior art ran real applications on its own builds of the
 same components:
 
 - GravityMark (D3D11, D3D12, OpenGL), Unigine Heaven (D3D9, D3D11, OpenGL),
@@ -441,7 +497,7 @@ in [`shaders2.md`](shaders2.md#what-remains): a range over a geometry
 shader's packed scalar system values is still rejected, and indexed reads of
 ordinary patch constants in a join phase were not run.
 
-### D3D12: ExecuteIndirect that changes state draws wrongly, and an NVIDIA first-boot dwm crash
+### D3D12: ExecuteIndirect with vertex or index buffer arguments, and an NVIDIA first-boot dwm crash
 
 Five unmodified Microsoft DirectX-Graphics-Samples D3D12 samples now build
 with clang-cl and the MSVC CRT (`build/d3d12-samples/`) and run through the
@@ -450,15 +506,17 @@ installed package with no app-local DLLs (`docs/d3d12app.md`).
 `D3D12nBodyGravity` render and exit 0 on AMD1 and Nvidia1. Two failures
 remain:
 
-- **`ExecuteIndirect` with a command signature that changes state** draws
-  wrongly, with no error. Such a signature changes root constants, root
-  descriptors, or vertex or index buffers. vkd3d-proton implements it with
-  `VK_EXT_device_generated_commands`. RADV and the NVIDIA driver on the host
-  have that extension, but Venus (guest Mesa 26.1.0 and virglrenderer 1.3.0)
-  does not pass it through. vkd3d-proton then drops the state arguments and
-  issues only the draws. `D3D12ExecuteIndirect` shows the clear colour and
-  none of its triangles. Plain indirect draws and dispatches are not
-  affected.
+- **`ExecuteIndirect` with a command signature that sets vertex or index
+  buffer views** draws wrongly, with no error. Venus (guest Mesa 26.1.0 and
+  virglrenderer 1.3.0) does not forward `VK_EXT_device_generated_commands`,
+  which vkd3d-proton uses for state-changing signatures.
+  `patches/vkd3d-proton/0006` emulates signatures that set root constants
+  or root CBV, SRV or UAV addresses: one GPU-patched indirect draw or
+  dispatch per sequence. With it, `D3D12ExecuteIndirect` renders as on WARP
+  on AMD1 and Nvidia1 ([ei.md](ei.md)). Vertex and index buffer view
+  arguments are still dropped. The emulation also moves every root
+  signature's root parameters into a push UBO and root CBVs to raw VAs,
+  with unmeasured cost per draw.
 - **On NVIDIA, dwm.exe can crash in the first boot after the install.** The
   crash is heap corruption, `0xc0000374`, with `viogpu_d3d10.dll` loaded,
   during the first D3D12 sample. D3D12 programs then fail until the next

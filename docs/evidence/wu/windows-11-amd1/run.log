@@ -1,0 +1,115 @@
+
+[04:16:06] == lab win3d-wu-amd1 on AMD1 (template windows-11@26100.1742.5)
+first-boot: provisioning win...
+first-boot: specialize complete; clearing marker
+first-boot: settling staged AppX (LKG) before first logon
+first-boot: appx: removed MicrosoftWindows.Client.AIX_1000.26100.29.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.AccountsService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.IrisService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.Search_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed NcsiUwpApp_1000.25128.1000.0_neutral_neutral_8wekyb3d8bbwe
+removed MdOdrMcpFilterPackage_1.0.0.0_neutral__cw5n1h2txyewy
+first-boot: installing first-logon XAML registration hook (sysprep-as-SYSTEM workaround)
+first-boot: xaml: hook installed for: MicrosoftWindows.Client.CBS_cw5n1h2txyewy, Microsoft.UI.Xaml.CBS_8wekyb3d8bbwe, MicrosoftWindows.Client.Core_cw5n1h2txyewy
+first-boot: rebooting once to settle shell reconciliation
+first-boot: holding ready until the guest settles (early first logons break the 24H2 shell)
+first-boot: guest settled (uptime 303s)
+first-boot: win ready
+lab "win3d-wu-amd1" is up
+pushed 11280 bytes to win:C:/win3d-wu/Test-WindowsUpdate.ps1
+
+[04:25:14] == 1 activation
+  License Status: Notification
+  Notification Reason: 0xC004F009 (grace time expired).
+  Product activated successfully.
+  License Status: Licensed
+      Timebased activation will expire 1/16/2027 11:29:13 AM
+
+[04:29:14] == 2 baseline
+  baseline: oem7.inf (viogpudo.inf, Red Hat, Inc., 2025-07-09, 100.101.104.28500, rank 00F90000, problem 0)
+
+[04:29:21] == 3 Windows Update on
+
+[04:29:24] == 4 search on the template's driver
+win: exec `powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File C:\win3d-wu\Test-WindowsUpdate.ps1 -Action Search -Label search-template` timed out after 3600s
+Traceback (most recent call last):
+  File "<stdin>", line 2, in <module>
+  File "/usr/lib/python3.14/json/__init__.py", line 298, in load
+    return loads(fp.read(),
+        cls=cls, object_hook=object_hook,
+        parse_float=parse_float, parse_int=parse_int,
+        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)
+  File "/usr/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/usr/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+[05:29:24] == 4b the same search with no driver on the device
+  pnputil /delete-driver oem7.inf /uninstall /force: Driver package deleted successfully.
+  basic-display: display.inf (None, Microsoft, 2006-06-21, 10.0.26100.1, rank 00FB2006, problem 0)
+  search-basic-display: display.inf (None, Microsoft, 2006-06-21, 10.0.26100.1, rank 00FB2006, problem 0)
+  search result 2 in 423 s, 4 updates, 0 drivers, 0 for the display device
+    type 1: Windows Malicious Software Removal Tool x64 - v5.146 (KB890830) []
+    type 1: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.91.0) - Current Channel (Broad) []
+    type 1: 2026-10 Security Update (KB5127648) (26100.9711) []
+    type 1: 2026-10 .NET Framework Security Update (KB5127690) []
+
+[05:36:33] == 5 install the bundle
+  install-into-vm.sh -> 0
+  installed: oem7.inf (viogpu3d.inf, Hardsoft Swed., 2026-09-27, 100.6.101.58100, rank 00E00000, problem 0)
+
+[05:39:29] == 6 search, download and install every driver update
+  wu-install: oem7.inf (viogpu3d.inf, Hardsoft Swed., 2026-09-27, 100.6.101.58100, rank 00E00000, problem 0)
+  search result 2 in 18 s, 4 updates, 0 drivers, 0 for the display device
+    type 1: Windows Malicious Software Removal Tool x64 - v5.146 (KB890830) []
+    type 1: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.91.0) - Current Channel (Broad) []
+    type 1: 2026-10 Security Update (KB5127648) (26100.9711) []
+    type 1: 2026-10 .NET Framework Security Update (KB5127690) []
+  after-wu-install: oem7.inf (viogpu3d.inf, Hardsoft Swed., 2026-09-27, 100.6.101.58100, rank 00E00000, problem 0)
+
+[05:39:54] == 7 UsoClient scans
+  uso: oem7.inf (viogpu3d.inf, Hardsoft Swed., 2026-09-27, 100.6.101.58100, rank 00E00000, problem 0)
+  after-uso: oem7.inf (viogpu3d.inf, Hardsoft Swed., 2026-09-27, 100.6.101.58100, rank 00E00000, problem 0)
+
+[05:45:05] == 8 reboot
+  after-reboot: oem7.inf (viogpu3d.inf, Hardsoft Swed., 2026-09-27, 100.6.101.58100, rank 00E00000, problem 0)
+
+[05:47:11] == checks
+PASS  1 the clone has a NAT address
+PASS  1 slmgr /ato activates
+PASS  1 the evaluation has an end date
+PASS  1 still licensed at the end
+PASS  2 baseline: the template's viogpudo  (oem7.inf viogpudo.inf 2025-07-09 rank 00F90000 problem 0)
+PASS  3 Windows Update on: wuauserv and UsoSvc running, WU policies gone
+FAIL  4 Windows Update search succeeded on the template's driver  (result code None, 0 updates in None s)
+PASS  4b viogpudo removed: Microsoft Basic Display drives the device  (display.inf None 2006-06-21 rank 00FB2006 problem 0)
+PASS  4b Windows Update search succeeded with no driver on the device  (result code 2, 4 updates in 423 s)
+PASS  installed: this package drives the device and it is pinned  (oem7.inf viogpu3d.inf 2026-09-27 rank 00E00000 problem 0)
+PASS  after-wu-install: this package drives the device and it is pinned  (oem7.inf viogpu3d.inf 2026-09-27 rank 00E00000 problem 0)
+PASS  after-uso: this package drives the device and it is pinned  (oem7.inf viogpu3d.inf 2026-09-27 rank 00E00000 problem 0)
+PASS  after-reboot: this package drives the device and it is pinned  (oem7.inf viogpu3d.inf 2026-09-27 rank 00E00000 problem 0)
+PASS  6 Windows Update search succeeded with the package installed  (result code 2, 0 driver updates)
+PASS  6 the package survives the driver download and install  (oem7.inf viogpu3d.inf 2026-09-27 rank 00E00000 problem 0)
+PASS  7 UsoClient scans ran  (UsoClient StartScan -> 0x00000000, UsoClient StartInteractiveScan -> 0x00000000, UsoClient StartDownload -> 0x80070057, UsoClient StartInstall -> 0x80070057, UsoClient NoSuchVerb -> 0x80070057)
+
+search-template: 0 updates offered, 0 drivers, 0 for the display device (PCI\VEN_1AF4&DEV_1050)
+search-basic-display: 4 updates offered, 0 drivers, 0 for the display device (PCI\VEN_1AF4&DEV_1050)
+  type 1: Windows Malicious Software Removal Tool x64 - v5.146 (KB890830)
+  type 1: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.91.0) - Current Channel (Broad)
+  type 1: 2026-10 Security Update (KB5127648) (26100.9711)
+  type 1: 2026-10 .NET Framework Security Update (KB5127690)
+wu-install: 4 updates offered, 0 drivers, 0 for the display device (PCI\VEN_1AF4&DEV_1050)
+  type 1: Windows Malicious Software Removal Tool x64 - v5.146 (KB890830)
+  type 1: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.91.0) - Current Channel (Broad)
+  type 1: 2026-10 Security Update (KB5127648) (26100.9711)
+  type 1: 2026-10 .NET Framework Security Update (KB5127690)
+uso event: 2026-10-18T12:43:23.9732565-07:00 26 Windows Update successfully found 2 updates.
+uso event: 2026-10-18T12:43:55.6428449-07:00 26 Windows Update successfully found 2 updates.
+
+1 FAILED
+lab "win3d-wu-amd1" destroyed

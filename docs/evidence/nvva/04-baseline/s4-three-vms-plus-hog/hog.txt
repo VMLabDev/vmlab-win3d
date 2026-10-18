@@ -1,0 +1,4 @@
+device NVIDIA GeForce RTX 5090 bus 05
+type 4 heap 2 size 246 MiB
+chunk 0 total 82 MiB: ok (vk 0); heap usage 232 MiB budget 13 MiB
+holding 390 s

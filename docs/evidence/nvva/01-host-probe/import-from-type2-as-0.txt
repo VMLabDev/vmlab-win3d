@@ -1,0 +1,7 @@
+$ BAR1PROBE_TYPE=2 BAR1PROBE_IMPORT_TYPE=0 bar1probe 05 4 8 import 1
+type 2 heap 1 size 143130 MiB
+  fd memoryTypeBits 0x9 (vk 0), importing as type 0
+chunk 0 total 4 MiB: ok (vk 0); heap usage 7 MiB budget 143130 MiB
+  fd memoryTypeBits 0x9 (vk 0), importing as type 0
+chunk 1 total 8 MiB: ok (vk 0); heap usage 11 MiB budget 143130 MiB
+holding 1 s

@@ -1,0 +1,11 @@
+$ bar1probe 05 16 64 alloc 5
+nvidia-smi BAR1 before: 36 MiB
+device NVIDIA GeForce RTX 5090 bus 05
+type 4 heap 2 size 246 MiB
+chunk 0 total 16 MiB: ok (vk 0); heap usage 53 MiB budget 192 MiB
+chunk 1 total 32 MiB: ok (vk 0); heap usage 69 MiB budget 176 MiB
+chunk 2 total 48 MiB: ok (vk 0); heap usage 85 MiB budget 160 MiB
+chunk 3 total 64 MiB: ok (vk 0); heap usage 101 MiB budget 144 MiB
+holding 5 s
+nvidia-smi BAR1 while held: 101 MiB
+new 'can't alloc VA space' kernel lines: 0

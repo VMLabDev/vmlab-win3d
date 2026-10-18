@@ -59,8 +59,9 @@ vmlab up                                       # in a lab dir like labs/probe/
 scripts/install-into-vm.sh <lab-dir> <vm>      # install, with the reboots
 ```
 
-The lab needs `secure_boot = false` and
-`gpu { mode = "vulkan" host_gpu = "<name>" }`, where `<name>` is the
+The lab needs `secure_boot = false`, `nic { nat = true }` (then run
+`slmgr /ato` in the guest, or the evaluation template shuts down after an
+hour), and `gpu { mode = "vulkan" host_gpu = "<name>" }`, where `<name>` is the
 GPU as declared in the host config, `~/.config/vmlab/config.wcl`
 (for example `gpu "AMD1" { address = "0000:72:00.0" }`), as in
 `labs/probe/vmlab.wcl`. Without `host_gpu` the lab gets the host's default
