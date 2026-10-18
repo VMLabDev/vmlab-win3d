@@ -1,0 +1,1 @@
+7984 window=0x2017A title=[3D Particles (DEBUG)] closed=True
