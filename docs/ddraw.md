@@ -19,7 +19,7 @@ egl-headless patch, and virglrenderer 1.3.0. The evidence is in
 | `ddcaps` (0012 to 0014) | Pass | Pass, with the colour-key and mirror steps now `"hal": true` |
 | Fullscreen exclusive, 32 bpp (640×480, 800×600, 1024×768), x64 and x86 | Works: the mode set, the flip chain, `Flip`, pixel checks on the front buffer, and restoring the desktop mode | The same |
 | Fullscreen exclusive, 16 bpp (640×480×16, 800×600×16), **32-bit (x86) program** | Not run. The mode emulation is Windows' own: its 32-bit `ddraw.dll` offers 8 and 16 bpp modes | Works: 300 flips per mode, every pixel check matching |
-| Fullscreen exclusive, 16 bpp, **64-bit (x64) program** | `SetDisplayMode` fails with `DDERR_UNSUPPORTED`: no 16-bit mode is listed | Unchanged ([16 bpp modes](#16-bpp-modes)) |
+| Fullscreen exclusive, 16 bpp, **64-bit (x64) program** | `SetDisplayMode` fails with `DDERR_UNSUPPORTED`: no 16-bit mode is listed | Unchanged, and not fixable in the driver: `dxgkrnl.sys` drops low-colour source modes ([16 bpp modes](#16-bpp-modes), [`dd16.md`](dd16.md)) |
 | Fullscreen frame rate | 2 to 8 flips per second on Nvidia1 | The same with 0035 alone; 9 to 29 on AMD1. With the present fixes (KMD 0002, Mesa 0026; package 0.1.1-alpha-rc1): 40 to 44 on Nvidia1 and 58 to 60 on AMD1 at 32 bpp ([Frame rate](#frame-rate)) |
 
 ## The repros
@@ -239,12 +239,15 @@ failed with `DDERR_UNSUPPORTED` (`kmd-16bpp-experiment/ddfull-x64.json`).
 A 32-bit process still got its emulated 16-bit modes
 (`kmd-16bpp-experiment/ddfull-x86.json`).
 
-Windows does not pass sub-32-bit source modes from this driver on to
-programs. Low colour depths reach programs only through the 32-bit
-DirectDraw emulation. The patch therefore stays out of `patches/kmd`. The
-desktop keeps 32-bit modes only, as before. A 64-bit DirectDraw program
-that insists on 16 bpp has no path on this stack, and we know of no such
-program.
+Windows does not pass sub-32-bit source modes from any WDDM driver on to
+programs. [`dd16.md`](dd16.md) traces why. `dxgkrnl.sys` leaves R5G6B5,
+X1R5G5B5, A1R5G5B5, R8G8B8 and P8 source modes out of the display mode list
+and refuses a VidPN that uses one. Low colour depths reach programs only
+through the `DWM8And16Bit` emulation, which exists only in the 32-bit
+`user32.dll`, `ddraw.dll` and `apphelp.dll`. The patch therefore stays out of
+`patches/kmd`. The desktop keeps 32-bit modes only, as before. A 64-bit
+DirectDraw program that insists on 16 bpp has no path on Windows 10 or 11,
+and we know of no such program.
 
 ## Proof
 
