@@ -74,7 +74,7 @@ The series has two parts, and the patches apply in name order:
   mixed-case header symlinks that `prepare-build.py` creates, so they are
   build output, not source. The diff was then split by topic. Each patch has
   a header that says what it fixes and which prior-art finding it comes from.
-- **0012 to 0017, 0020 to 0027, 0030 to 0032, 0035 and 0040 to 0042** are this repository's own fixes, found by
+- **0012 to 0017, 0020 to 0027, 0030 to 0032, 0035, 0040 to 0042, 0070 and 0086** are this repository's own fixes, found by
   the acceptance and host runs. Each header names the document with the
   evidence. The series skips 0018, 0019, 0028, 0029, 0033, 0034 and 0036 to 0039.
 
@@ -83,7 +83,7 @@ The series has two parts, and the patches apply in name order:
 Yttrium winsys). 0032 also changes Gallium's `tgsi_to_nir`, in a branch that
 only a TGSI tessellation control shader reaches, which only the UMD makes.
 0001 to 0003 are build and utility fixes that every DLL shares, 0004 and 0027
-are in WGL, and 0011 is in the Venus ICD.
+are in WGL, 0011 and 0070 are in the Venus ICD, and 0086 is in Zink (WGL).
 
 ### From the prior art
 
@@ -126,6 +126,8 @@ are in WGL, and 0011 is in the Venus ICD.
 | 0040 d3d9-swvp-processed-vertices-keep-declaration-vs | Fixed-function draws with software vertex processing keep their colours and texture coordinates (every one rendered black) | [`docs/ffp.md`](../../docs/ffp.md) |
 | 0041 d3d9-fixed-function-fog | Table fog under a perspective projection uses W (from `UpdateWInfo`), vertex fog is clamped per pixel, and pre-transformed vertices get their fog factor from FOG or the specular alpha | [`docs/ffp.md`](../../docs/ffp.md) |
 | 0042 d3d9-fixed-function-points | Points wider than one pixel keep their colours and texture coordinates, get sprite coordinates only with `POINTSPRITEENABLE`, keep their size under perspective, and honour `PSIZE` in `XYZRHW` vertices | [`docs/ffp.md`](../../docs/ffp.md) |
+| 0070 venus-hide-host-access-to-small-bar-heap | The Venus ICD reports a device-local, host-visible type on a heap less than half the largest device-local heap as device-local only, so Vulkan, DXVK, vkd3d-proton and Zink keep host-visible memory out of the host card's BAR1 (246 MiB without resizable BAR, shared by every VM on the card; "can't alloc VA space for mapping") | [`docs/nvva.md`](../../docs/nvva.md) |
+| 0086 zink-keep-buffers-mappable-without-visible-vram | Zink keeps directly mapped buffers in host-visible memory when the device has no device-local, host-visible type (needed with 0070; Unigine Heaven and Valley crashed). Written by the unigl worker; carried unchanged | [`docs/nvva.md`](../../docs/nvva.md) |
 
 0021 has no mail header. `scripts/pins-table.py` carries its one-line
 description.

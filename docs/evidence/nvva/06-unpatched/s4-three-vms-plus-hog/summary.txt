@@ -1,0 +1,11 @@
+stage: s4-three-vms-plus-hog  labs: a b c  minutes: 5  host hog: 82 MiB (dma-buf mapped, so about twice that in BAR1)
+from 2026-10-19T07:28:27+10:00 to 2026-10-19T07:33:38+10:00
+a: runs 13, pass 13, not pass 0
+b: runs 13, pass 13, not pass 0
+c: runs 13, pass 13, not pass 0
+new 'can't alloc VA space' kernel lines: 38
+highest BAR1 used: 214 MiB of 256
+render-server CS errors before/after: 208 172 166  / 208 172 166 
+a yttrium lines: 36, ring failures: 0
+b yttrium lines: 33, ring failures: 0
+c yttrium lines: 23, ring failures: 0
