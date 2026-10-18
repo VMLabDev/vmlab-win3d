@@ -1,0 +1,7 @@
+date: 2026-10-19T07:41:34+10:00
+commit: 6e98c160237aac9e842edd9628ce2a29cc8a11d8
+bundle: /home/wil/dev/vmlab-win3d-wt/unigl/.scratch/pkg-70/vmlab-win3d-0.1.1 (0.1.1 6e98c160237aac9e842edd9628ce2a29cc8a11d8)
+host_gpu: Nvidia1
+kernel: 7.2.3-1-cachyos
+packages: qemu-full 11.1.1-1 virglrenderer 1.3.0-2.1 mesa 3:26.2.2-2 vulkan-radeon 3:26.2.2-2 nvidia-utils 610.57.04-1 
+vmlab: vmlab 0.28.0-alpha

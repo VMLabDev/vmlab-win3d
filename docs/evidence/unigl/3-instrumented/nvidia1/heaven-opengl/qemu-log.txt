@@ -1,0 +1,42 @@
+virgl_render_server[352671]: vkr: failed to look up object 568 of type 8
+virgl_render_server[352671]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[352671]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[354119]: vkr: failed to look up object 632 of type 8
+virgl_render_server[354119]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[354119]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[356634]: vkr: failed to look up object 25 of type 8
+virgl_render_server[356634]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[356634]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[358194]: vkr: failed to look up object 25 of type 8
+virgl_render_server[358194]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[358194]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[359334]: vkr: failed to look up object 25 of type 8
+virgl_render_server[359334]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[359334]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[361810]: vkr: failed to look up object 25 of type 8
+virgl_render_server[361810]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[361810]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[363139]: vkr: failed to look up object 25 of type 8
+virgl_render_server[363139]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[363139]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[364166]: vkr: failed to look up object 25 of type 8
+virgl_render_server[364166]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[364166]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[365453]: vkr: failed to look up object 25 of type 8
+virgl_render_server[365453]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[365453]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[366746]: vkr: failed to look up object 25 of type 8
+virgl_render_server[366746]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[366746]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[375038]: vkr: failed to look up object 25 of type 8
+virgl_render_server[375038]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[375038]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[380845]: vkr: failed to look up object 25 of type 8
+virgl_render_server[380845]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[380845]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[389980]: vkr: failed to look up object 25 of type 8
+virgl_render_server[389980]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[389980]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[395742]: vkr: failed to look up object 25 of type 8
+virgl_render_server[395742]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[395742]: vkr: ring_submit_cmd: vn_dispatch_command failed

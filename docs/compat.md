@@ -224,6 +224,13 @@ This happens on both GPUs.
 
 Both Unigine OpenGL runs crash on Nvidia2. Both pass on AMD1.
 
+**Status: fixed** by `patches/mesa/0070` (nvva), `0085` and `0086`
+([unigl.md](unigl.md)). The cause was the RTX 5090's 246 MiB CPU-visible
+VRAM heap (its BAR1): Venus's asynchronous allocation hid the host's
+out-of-memory error from Zink, and Zink then mapped buffers that were not
+host-visible. Both benchmarks now run cleanly on `Nvidia1` and `AMD1`
+(`docs/evidence/unigl/7-final/`).
+
 Heaven:
 
 - It renders for a while, then crashes at 26 s with `0xC0000005` in
