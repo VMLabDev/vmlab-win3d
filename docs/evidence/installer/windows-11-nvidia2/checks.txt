@@ -16,5 +16,5 @@ PASS  removed-again: the baseline driver is back  (oem7.inf viogpudo.inf 2025-07
 PASS  removed-again: the device installation policy matches the baseline  ({"deny_instance_ids": null, "device_install_key": false, "restrictions_key": false, "values": null})
 PASS  removed-again: the installer says Removed  (Removed )
 PASS  reinstall: viogpu3d and pinned  (oem15.inf viogpu3d.inf 2026-09-27 rank 00E00000 problem 0)
-PASS  reinstall: PnP preferred the hostile viogpudo and the installer forced viogpu3d
+PASS  reinstall: pnputil did not bind viogpu3d (the hostile viogpudo outranks it) and the forced install did
 PASS  rerun: changed nothing

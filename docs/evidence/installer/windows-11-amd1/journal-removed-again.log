@@ -1,0 +1,762 @@
+2026-10-18T10:23:08.854-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
+2026-10-18T10:23:11.540-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T10:23:14.845-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
+2026-10-18T10:23:15.254-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T10:23:15.276-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-18T10:23:15.281-07:00 [Install]   Signature matches Public Key
+2026-10-18T10:23:15.285-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T10:23:15.290-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T10:23:15.365-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T10:23:15.372-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-18T10:23:15.377-07:00 [Install]   Signature matches Public Key
+2026-10-18T10:23:15.381-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T10:23:15.388-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T10:23:15.491-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-18T10:23:15.495-07:00 [Install]   The operation completed successfully.
+2026-10-18T10:23:15.973-07:00 [Install] test signing is set but not active in this boot
+2026-10-18T10:23:16.542-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T10:23:16.603-07:00 [Install] rebooting; step Driver resumes after the restart
+2026-10-18T10:24:01.748-07:00 [Resume] resume: status RebootPending, step Driver
+2026-10-18T10:24:12.311-07:00 [Resume] pnputil.exe /add-driver C:\ProgramData\vmlab-win3d\bundle\driver\viogpu3d.inf /install -> 0
+2026-10-18T10:24:12.365-07:00 [Resume]   Microsoft PnP Utility
+2026-10-18T10:24:12.387-07:00 [Resume]   Adding driver package:  viogpu3d.inf
+2026-10-18T10:24:12.392-07:00 [Resume]   Driver package added successfully.
+2026-10-18T10:24:12.397-07:00 [Resume]   Published Name:         oem15.inf
+2026-10-18T10:24:12.401-07:00 [Resume]   Driver package installed on device: PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18
+2026-10-18T10:24:12.405-07:00 [Resume]   Total driver packages:  1
+2026-10-18T10:24:12.409-07:00 [Resume]   Added driver packages:  1
+2026-10-18T10:24:13.269-07:00 [Resume] driver oem15.inf 100.6.101.58100 installed on PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18
+2026-10-18T10:24:13.486-07:00 [Resume] takeown.exe /F C:\WINDOWS\System32\vulkan-1.dll /A -> 0
+2026-10-18T10:24:13.491-07:00 [Resume]   SUCCESS: The file (or folder): "C:\WINDOWS\System32\vulkan-1.dll" now owned by the administrators group.
+2026-10-18T10:24:13.513-07:00 [Resume] icacls.exe C:\WINDOWS\System32\vulkan-1.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T10:24:13.518-07:00 [Resume]   processed file: C:\WINDOWS\System32\vulkan-1.dll
+2026-10-18T10:24:13.521-07:00 [Resume]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T10:24:13.714-07:00 [Resume] installed C:\WINDOWS\System32\vulkan-1.dll (0871D16D06F2C7C2F60C9B68E5ED3A61A069BF525D8F7CAD2D3C88F3CE71E219)
+2026-10-18T10:24:13.769-07:00 [Resume] installed C:\WINDOWS\System32\vulkaninfo.exe (68266EF104567081F93D00CC347AC3C1849CD3D0E1319F8DC05A576B2E23E83A)
+2026-10-18T10:24:13.849-07:00 [Resume] native d3d12.dll 6B32181599D4D6373F0B49905236B122ED5545C5D061AB4350A80CC095DC15E4 copied to C:\WINDOWS\System32\vmlab-win3d\d3d12-native.dll
+2026-10-18T10:24:13.894-07:00 [Resume] installed C:\WINDOWS\System32\vmlab-win3d\vkd3dcore.dll
+2026-10-18T10:24:13.921-07:00 [Resume] installed C:\WINDOWS\System32\vmlab-win3d\dxgi-vulkan.dll
+2026-10-18T10:24:13.948-07:00 [Resume] takeown.exe /F C:\WINDOWS\System32\d3d12.dll /A -> 0
+2026-10-18T10:24:13.953-07:00 [Resume]   SUCCESS: The file (or folder): "C:\WINDOWS\System32\d3d12.dll" now owned by the administrators group.
+2026-10-18T10:24:13.969-07:00 [Resume] icacls.exe C:\WINDOWS\System32\d3d12.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T10:24:13.974-07:00 [Resume]   processed file: C:\WINDOWS\System32\d3d12.dll
+2026-10-18T10:24:13.978-07:00 [Resume]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T10:24:14.053-07:00 [Resume] installed C:\WINDOWS\System32\d3d12.dll (B5D94F44466887CF5373C8550E3263425034A41E76B0AC11FE8C8A5229ACD9DA)
+2026-10-18T10:24:14.184-07:00 [Resume] takeown.exe /F C:\WINDOWS\SysWOW64\vulkan-1.dll /A -> 0
+2026-10-18T10:24:14.188-07:00 [Resume]   SUCCESS: The file (or folder): "C:\WINDOWS\SysWOW64\vulkan-1.dll" now owned by the administrators group.
+2026-10-18T10:24:14.204-07:00 [Resume] icacls.exe C:\WINDOWS\SysWOW64\vulkan-1.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T10:24:14.212-07:00 [Resume]   processed file: C:\WINDOWS\SysWOW64\vulkan-1.dll
+2026-10-18T10:24:14.218-07:00 [Resume]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T10:24:14.262-07:00 [Resume] installed C:\WINDOWS\SysWOW64\vulkan-1.dll (36EDC9F67CBEC1C5FB8C510AB08EFEA18AFFFBD40D77B829D39F1E76236416CD)
+2026-10-18T10:24:14.311-07:00 [Resume] installed C:\WINDOWS\SysWOW64\vulkaninfo.exe (BB717DB3466B5120B08EFB4A800AD7D4F15CC1C0D5D479C298804539B89C119D)
+2026-10-18T10:24:14.352-07:00 [Resume] native d3d12.dll A43885B075B8043D9FE99F03B26B056B426E1B7D73FAB8D420F4E4FFCB5100AF copied to C:\WINDOWS\SysWOW64\vmlab-win3d\d3d12-native.dll
+2026-10-18T10:24:14.393-07:00 [Resume] installed C:\WINDOWS\SysWOW64\vmlab-win3d\vkd3dcore.dll
+2026-10-18T10:24:14.422-07:00 [Resume] installed C:\WINDOWS\SysWOW64\vmlab-win3d\dxgi-vulkan.dll
+2026-10-18T10:24:14.446-07:00 [Resume] takeown.exe /F C:\WINDOWS\SysWOW64\d3d12.dll /A -> 0
+2026-10-18T10:24:14.449-07:00 [Resume]   SUCCESS: The file (or folder): "C:\WINDOWS\SysWOW64\d3d12.dll" now owned by the administrators group.
+2026-10-18T10:24:14.465-07:00 [Resume] icacls.exe C:\WINDOWS\SysWOW64\d3d12.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T10:24:14.469-07:00 [Resume]   processed file: C:\WINDOWS\SysWOW64\d3d12.dll
+2026-10-18T10:24:14.472-07:00 [Resume]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T10:24:14.511-07:00 [Resume] installed C:\WINDOWS\SysWOW64\d3d12.dll (944CC70E1F65C907C13D598396CBCB2AB9478A231DD653A5DC62C70C8E6BAE02)
+2026-10-18T10:24:15.412-07:00 [Resume] registered startup task vmlab-win3d-repair (-Mode Repair)
+2026-10-18T10:24:15.484-07:00 [Resume] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T10:24:15.534-07:00 [Resume] rebooting; step Verify resumes after the restart
+2026-10-18T10:24:58.373-07:00 [Resume] resume: status RebootPending, step Verify
+2026-10-18T10:25:09.541-07:00 [Resume] removed task vmlab-win3d-resume
+2026-10-18T10:25:09.804-07:00 [Resume] installed: oem15.inf 100.6.101.58100, problem code 0
+2026-10-18T10:27:39.429-07:00 [Install] Install from C:\vmlab-win3d (state: Installed)
+2026-10-18T10:27:41.379-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T10:27:43.353-07:00 [Install] baseline: device installation policy recorded
+2026-10-18T10:27:44.953-07:00 [Install] removing older package oem15.inf (C:\Windows\System32\DriverStore\FileRepository\viogpu3d.inf_amd64_3277819e3c850c24)
+2026-10-18T10:27:45.521-07:00 [Install] pnputil.exe /delete-driver oem15.inf /uninstall /force -> 0
+2026-10-18T10:27:45.534-07:00 [Install]   Microsoft PnP Utility
+2026-10-18T10:27:45.539-07:00 [Install]   Ignoring /force when used with /uninstall to delete driver package.
+2026-10-18T10:27:45.541-07:00 [Install]   Driver package uninstalled.
+2026-10-18T10:27:45.545-07:00 [Install]   Driver package deleted successfully.
+2026-10-18T10:27:50.099-07:00 [Install] pnputil.exe /add-driver C:\ProgramData\vmlab-win3d\bundle\driver\viogpu3d.inf /install -> 0
+2026-10-18T10:27:50.106-07:00 [Install]   Microsoft PnP Utility
+2026-10-18T10:27:50.110-07:00 [Install]   Adding driver package:  viogpu3d.inf
+2026-10-18T10:27:50.115-07:00 [Install]   Driver package added successfully.
+2026-10-18T10:27:50.119-07:00 [Install]   Published Name:         oem15.inf
+2026-10-18T10:27:50.124-07:00 [Install]   Driver package installed on device: PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18
+2026-10-18T10:27:50.128-07:00 [Install]   Total driver packages:  1
+2026-10-18T10:27:50.142-07:00 [Install]   Added driver packages:  1
+2026-10-18T10:27:52.006-07:00 [Install] policy: DenyInstanceIDs\1 = PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18
+2026-10-18T10:27:52.015-07:00 [Install] policy: DenyInstanceIDs = 1
+2026-10-18T10:27:52.049-07:00 [Install] pnputil.exe /enum-devices /instanceid PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18 /drivers -> 0
+2026-10-18T10:27:52.054-07:00 [Install]   Microsoft PnP Utility
+2026-10-18T10:27:52.058-07:00 [Install]   Instance ID:                PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18
+2026-10-18T10:27:52.063-07:00 [Install]   Device Description:         Hardsoft VirtIO GPU 3D controller
+2026-10-18T10:27:52.067-07:00 [Install]   Class Name:                 Display
+2026-10-18T10:27:52.071-07:00 [Install]   Class GUID:                 {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:27:52.075-07:00 [Install]   Manufacturer Name:          Hardsoft Swed.
+2026-10-18T10:27:52.079-07:00 [Install]   Status:                     Started
+2026-10-18T10:27:52.083-07:00 [Install]   Driver Name:                oem15.inf
+2026-10-18T10:27:52.086-07:00 [Install]   Matching Drivers:
+2026-10-18T10:27:52.089-07:00 [Install]       Driver Name:            oem15.inf
+2026-10-18T10:27:52.092-07:00 [Install]       Original Name:          viogpu3d.inf
+2026-10-18T10:27:52.096-07:00 [Install]       Provider Name:          Hardsoft Swed.
+2026-10-18T10:27:52.098-07:00 [Install]       Class Name:             Display
+2026-10-18T10:27:52.102-07:00 [Install]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:27:52.107-07:00 [Install]       Driver Version:         09/27/2026 100.6.101.58100
+2026-10-18T10:27:52.111-07:00 [Install]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:27:52.114-07:00 [Install]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T10:27:52.117-07:00 [Install]       Driver Rank:            00E00000
+2026-10-18T10:27:52.121-07:00 [Install]       Driver Status:          Best Ranked / Installed
+2026-10-18T10:27:52.123-07:00 [Install]       Driver Name:            oem7.inf
+2026-10-18T10:27:52.127-07:00 [Install]       Original Name:          viogpudo.inf
+2026-10-18T10:27:52.130-07:00 [Install]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:27:52.134-07:00 [Install]       Class Name:             Display
+2026-10-18T10:27:52.138-07:00 [Install]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:27:52.140-07:00 [Install]       Driver Version:         07/09/2025 100.101.104.28500
+2026-10-18T10:27:52.144-07:00 [Install]       Signer Name:            Microsoft Windows Hardware Compatibility Publisher
+2026-10-18T10:27:52.148-07:00 [Install]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T10:27:52.150-07:00 [Install]       Driver Rank:            00F90000
+2026-10-18T10:27:52.154-07:00 [Install]       Driver Status:          Outranked
+2026-10-18T10:27:52.156-07:00 [Install]       Driver Name:            oem16.inf
+2026-10-18T10:27:52.160-07:00 [Install]       Original Name:          viogpudo.inf
+2026-10-18T10:27:52.164-07:00 [Install]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:27:52.166-07:00 [Install]       Class Name:             Display
+2026-10-18T10:27:52.169-07:00 [Install]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:27:52.172-07:00 [Install]       Driver Version:         12/31/2026 100.101.104.29900
+2026-10-18T10:27:52.176-07:00 [Install]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:27:52.178-07:00 [Install]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T10:27:52.183-07:00 [Install]       Driver Rank:            00F90000
+2026-10-18T10:27:52.186-07:00 [Install]       Driver Status:          Outranked
+2026-10-18T10:27:52.189-07:00 [Install]       Driver Name:            oem7.inf
+2026-10-18T10:27:52.193-07:00 [Install]       Original Name:          viogpudo.inf
+2026-10-18T10:27:52.196-07:00 [Install]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:27:52.198-07:00 [Install]       Class Name:             Display
+2026-10-18T10:27:52.202-07:00 [Install]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:27:52.204-07:00 [Install]       Driver Version:         07/09/2025 100.101.104.28500
+2026-10-18T10:27:52.208-07:00 [Install]       Signer Name:            Microsoft Windows Hardware Compatibility Publisher
+2026-10-18T10:27:52.212-07:00 [Install]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050
+2026-10-18T10:27:52.215-07:00 [Install]       Driver Rank:            00F93001
+2026-10-18T10:27:52.218-07:00 [Install]       Driver Status:          Outranked
+2026-10-18T10:27:52.225-07:00 [Install]       Driver Name:            oem16.inf
+2026-10-18T10:27:52.229-07:00 [Install]       Original Name:          viogpudo.inf
+2026-10-18T10:27:52.232-07:00 [Install]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:27:52.237-07:00 [Install]       Class Name:             Display
+2026-10-18T10:27:52.241-07:00 [Install]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:27:52.247-07:00 [Install]       Driver Version:         12/31/2026 100.101.104.29900
+2026-10-18T10:27:52.252-07:00 [Install]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:27:52.255-07:00 [Install]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050
+2026-10-18T10:27:52.258-07:00 [Install]       Driver Rank:            00F93001
+2026-10-18T10:27:52.261-07:00 [Install]       Driver Status:          Outranked
+2026-10-18T10:27:52.264-07:00 [Install]       Driver Name:            display.inf
+2026-10-18T10:27:52.267-07:00 [Install]       Provider Name:          Microsoft
+2026-10-18T10:27:52.270-07:00 [Install]       Class Name:             Display
+2026-10-18T10:27:52.273-07:00 [Install]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:27:52.276-07:00 [Install]       Driver Version:         06/21/2006 10.0.26100.1
+2026-10-18T10:27:52.278-07:00 [Install]       Signer Name:            Microsoft Windows
+2026-10-18T10:27:52.281-07:00 [Install]       Matching Device ID:     PCI\CC_0300
+2026-10-18T10:27:52.284-07:00 [Install]       Driver Rank:            00FB2006
+2026-10-18T10:27:52.287-07:00 [Install]       Driver Status:          Outranked
+2026-10-18T10:27:52.295-07:00 [Install] driver oem15.inf 100.6.101.58100 installed on PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18 and pinned
+2026-10-18T10:27:53.486-07:00 [Install] registered startup task vmlab-win3d-repair (-Mode Repair)
+2026-10-18T10:27:53.602-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T10:27:53.930-07:00 [Install] rebooting; step Verify resumes after the restart
+2026-10-18T10:28:37.836-07:00 [Resume] resume: status RebootPending, step Verify
+2026-10-18T10:28:47.625-07:00 [Resume] removed task vmlab-win3d-resume
+2026-10-18T10:28:47.976-07:00 [Resume] installed: oem15.inf 100.6.101.58100, problem code 0
+2026-10-18T10:36:52.879-07:00 [Uninstall] Uninstall (state: Installed)
+2026-10-18T10:36:57.515-07:00 [Uninstall] removed task vmlab-win3d-repair
+2026-10-18T10:36:59.022-07:00 [Uninstall] takeown.exe /F C:\WINDOWS\System32\d3d12.dll /A -> 0
+2026-10-18T10:36:59.056-07:00 [Uninstall]   SUCCESS: The file (or folder): "C:\WINDOWS\System32\d3d12.dll" now owned by the administrators group.
+2026-10-18T10:36:59.087-07:00 [Uninstall] icacls.exe C:\WINDOWS\System32\d3d12.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T10:36:59.091-07:00 [Uninstall]   processed file: C:\WINDOWS\System32\d3d12.dll
+2026-10-18T10:36:59.095-07:00 [Uninstall]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T10:36:59.253-07:00 [Uninstall] installed C:\WINDOWS\System32\d3d12.dll (6B32181599D4D6373F0B49905236B122ED5545C5D061AB4350A80CC095DC15E4)
+2026-10-18T10:36:59.300-07:00 [Uninstall] removed C:\WINDOWS\System32\vmlab-win3d
+2026-10-18T10:36:59.353-07:00 [Uninstall] takeown.exe /F C:\WINDOWS\SysWOW64\d3d12.dll /A -> 0
+2026-10-18T10:36:59.358-07:00 [Uninstall]   SUCCESS: The file (or folder): "C:\WINDOWS\SysWOW64\d3d12.dll" now owned by the administrators group.
+2026-10-18T10:36:59.389-07:00 [Uninstall] icacls.exe C:\WINDOWS\SysWOW64\d3d12.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T10:36:59.393-07:00 [Uninstall]   processed file: C:\WINDOWS\SysWOW64\d3d12.dll
+2026-10-18T10:36:59.406-07:00 [Uninstall]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T10:36:59.468-07:00 [Uninstall] installed C:\WINDOWS\SysWOW64\d3d12.dll (A43885B075B8043D9FE99F03B26B056B426E1B7D73FAB8D420F4E4FFCB5100AF)
+2026-10-18T10:36:59.492-07:00 [Uninstall] removed C:\WINDOWS\SysWOW64\vmlab-win3d
+2026-10-18T10:36:59.586-07:00 [Uninstall] takeown.exe /F C:\WINDOWS\System32\vulkan-1.dll /A -> 0
+2026-10-18T10:36:59.589-07:00 [Uninstall]   SUCCESS: The file (or folder): "C:\WINDOWS\System32\vulkan-1.dll" now owned by the administrators group.
+2026-10-18T10:36:59.616-07:00 [Uninstall] icacls.exe C:\WINDOWS\System32\vulkan-1.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T10:36:59.619-07:00 [Uninstall]   processed file: C:\WINDOWS\System32\vulkan-1.dll
+2026-10-18T10:36:59.623-07:00 [Uninstall]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T10:36:59.663-07:00 [Uninstall] installed C:\WINDOWS\System32\vulkan-1.dll (591D4C316A0A39F96792979CE5EBB1BB380F0015C30707BA7AC611B35AE01CFC)
+2026-10-18T10:36:59.735-07:00 [Uninstall] takeown.exe /F C:\WINDOWS\System32\vulkaninfo.exe /A -> 0
+2026-10-18T10:36:59.739-07:00 [Uninstall]   SUCCESS: The file (or folder): "C:\WINDOWS\System32\vulkaninfo.exe" now owned by the administrators group.
+2026-10-18T10:36:59.760-07:00 [Uninstall] icacls.exe C:\WINDOWS\System32\vulkaninfo.exe /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T10:36:59.764-07:00 [Uninstall]   processed file: C:\WINDOWS\System32\vulkaninfo.exe
+2026-10-18T10:36:59.766-07:00 [Uninstall]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T10:36:59.774-07:00 [Uninstall] removed C:\WINDOWS\System32\vulkaninfo.exe
+2026-10-18T10:36:59.849-07:00 [Uninstall] takeown.exe /F C:\WINDOWS\SysWOW64\vulkan-1.dll /A -> 0
+2026-10-18T10:36:59.853-07:00 [Uninstall]   SUCCESS: The file (or folder): "C:\WINDOWS\SysWOW64\vulkan-1.dll" now owned by the administrators group.
+2026-10-18T10:36:59.874-07:00 [Uninstall] icacls.exe C:\WINDOWS\SysWOW64\vulkan-1.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T10:36:59.878-07:00 [Uninstall]   processed file: C:\WINDOWS\SysWOW64\vulkan-1.dll
+2026-10-18T10:36:59.881-07:00 [Uninstall]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T10:36:59.921-07:00 [Uninstall] installed C:\WINDOWS\SysWOW64\vulkan-1.dll (411A6F91D4E925DBD380CC3C4FA5810B9895A87B6D3072E16707551A2EAC311E)
+2026-10-18T10:36:59.992-07:00 [Uninstall] takeown.exe /F C:\WINDOWS\SysWOW64\vulkaninfo.exe /A -> 0
+2026-10-18T10:37:00.000-07:00 [Uninstall]   SUCCESS: The file (or folder): "C:\WINDOWS\SysWOW64\vulkaninfo.exe" now owned by the administrators group.
+2026-10-18T10:37:00.021-07:00 [Uninstall] icacls.exe C:\WINDOWS\SysWOW64\vulkaninfo.exe /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T10:37:00.024-07:00 [Uninstall]   processed file: C:\WINDOWS\SysWOW64\vulkaninfo.exe
+2026-10-18T10:37:00.029-07:00 [Uninstall]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T10:37:00.036-07:00 [Uninstall] removed C:\WINDOWS\SysWOW64\vulkaninfo.exe
+2026-10-18T10:37:00.095-07:00 [Uninstall] policy: removed DenyInstanceIDs\1 (PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18)
+2026-10-18T10:37:00.105-07:00 [Uninstall] policy: removed DenyInstanceIDs
+2026-10-18T10:37:00.125-07:00 [Uninstall] policy: removed key HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyInstanceIDs
+2026-10-18T10:37:00.133-07:00 [Uninstall] policy: removed key HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions
+2026-10-18T10:37:00.138-07:00 [Uninstall] policy: removed key HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall
+2026-10-18T10:37:02.021-07:00 [Uninstall] pnputil.exe /delete-driver oem15.inf /uninstall /force -> 0
+2026-10-18T10:37:02.027-07:00 [Uninstall]   Microsoft PnP Utility
+2026-10-18T10:37:02.032-07:00 [Uninstall]   Ignoring /force when used with /uninstall to delete driver package.
+2026-10-18T10:37:02.036-07:00 [Uninstall]   Driver package uninstalled.
+2026-10-18T10:37:02.040-07:00 [Uninstall]   Driver package deleted successfully.
+2026-10-18T10:37:02.917-07:00 [Uninstall] pnputil.exe /scan-devices -> 0
+2026-10-18T10:37:02.925-07:00 [Uninstall]   Microsoft PnP Utility
+2026-10-18T10:37:02.929-07:00 [Uninstall]   Scanning for device hardware changes.
+2026-10-18T10:37:02.931-07:00 [Uninstall]   Scan complete.
+2026-10-18T10:37:03.438-07:00 [Uninstall] device uses oem17.inf 2026-12-31 100.101.104.29901, baseline oem7.inf; restoring the baseline driver
+2026-10-18T10:37:03.464-07:00 [Uninstall] pnputil.exe /enum-devices /instanceid PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18 /drivers -> 0
+2026-10-18T10:37:03.469-07:00 [Uninstall]   Microsoft PnP Utility
+2026-10-18T10:37:03.471-07:00 [Uninstall]   Instance ID:                PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18
+2026-10-18T10:37:03.473-07:00 [Uninstall]   Device Description:         Red Hat VirtIO GPU DOD controller
+2026-10-18T10:37:03.477-07:00 [Uninstall]   Class Name:                 Display
+2026-10-18T10:37:03.479-07:00 [Uninstall]   Class GUID:                 {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:37:03.482-07:00 [Uninstall]   Manufacturer Name:          Red Hat, Inc.
+2026-10-18T10:37:03.484-07:00 [Uninstall]   Status:                     Started
+2026-10-18T10:37:03.488-07:00 [Uninstall]   Driver Name:                oem17.inf
+2026-10-18T10:37:03.491-07:00 [Uninstall]   Matching Drivers:
+2026-10-18T10:37:03.493-07:00 [Uninstall]       Driver Name:            oem17.inf
+2026-10-18T10:37:03.497-07:00 [Uninstall]       Original Name:          viogpudo.inf
+2026-10-18T10:37:03.499-07:00 [Uninstall]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:37:03.504-07:00 [Uninstall]       Class Name:             Display
+2026-10-18T10:37:03.506-07:00 [Uninstall]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:37:03.508-07:00 [Uninstall]       Driver Version:         12/31/2026 100.101.104.29901
+2026-10-18T10:37:03.512-07:00 [Uninstall]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:37:03.515-07:00 [Uninstall]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T10:37:03.519-07:00 [Uninstall]       Driver Rank:            00000000
+2026-10-18T10:37:03.521-07:00 [Uninstall]       Driver Status:          Best Ranked
+2026-10-18T10:37:03.523-07:00 [Uninstall]       Driver Name:            oem7.inf
+2026-10-18T10:37:03.528-07:00 [Uninstall]       Original Name:          viogpudo.inf
+2026-10-18T10:37:03.530-07:00 [Uninstall]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:37:03.534-07:00 [Uninstall]       Class Name:             Display
+2026-10-18T10:37:03.537-07:00 [Uninstall]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:37:03.539-07:00 [Uninstall]       Driver Version:         07/09/2025 100.101.104.28500
+2026-10-18T10:37:03.543-07:00 [Uninstall]       Signer Name:            Microsoft Windows Hardware Compatibility Publisher
+2026-10-18T10:37:03.545-07:00 [Uninstall]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T10:37:03.547-07:00 [Uninstall]       Driver Rank:            00F90000
+2026-10-18T10:37:03.550-07:00 [Uninstall]       Driver Status:          Outranked
+2026-10-18T10:37:03.554-07:00 [Uninstall]       Driver Name:            oem16.inf
+2026-10-18T10:37:03.556-07:00 [Uninstall]       Original Name:          viogpudo.inf
+2026-10-18T10:37:03.561-07:00 [Uninstall]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:37:03.563-07:00 [Uninstall]       Class Name:             Display
+2026-10-18T10:37:03.565-07:00 [Uninstall]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:37:03.569-07:00 [Uninstall]       Driver Version:         12/31/2026 100.101.104.29900
+2026-10-18T10:37:03.572-07:00 [Uninstall]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:37:03.574-07:00 [Uninstall]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T10:37:03.578-07:00 [Uninstall]       Driver Rank:            00F90000
+2026-10-18T10:37:03.580-07:00 [Uninstall]       Driver Status:          Outranked
+2026-10-18T10:37:03.585-07:00 [Uninstall]       Driver Name:            oem7.inf
+2026-10-18T10:37:03.587-07:00 [Uninstall]       Original Name:          viogpudo.inf
+2026-10-18T10:37:03.591-07:00 [Uninstall]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:37:03.594-07:00 [Uninstall]       Class Name:             Display
+2026-10-18T10:37:03.598-07:00 [Uninstall]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:37:03.603-07:00 [Uninstall]       Driver Version:         07/09/2025 100.101.104.28500
+2026-10-18T10:37:03.605-07:00 [Uninstall]       Signer Name:            Microsoft Windows Hardware Compatibility Publisher
+2026-10-18T10:37:03.609-07:00 [Uninstall]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050
+2026-10-18T10:37:03.612-07:00 [Uninstall]       Driver Rank:            00F93001
+2026-10-18T10:37:03.616-07:00 [Uninstall]       Driver Status:          Outranked
+2026-10-18T10:37:03.620-07:00 [Uninstall]       Driver Name:            oem16.inf
+2026-10-18T10:37:03.623-07:00 [Uninstall]       Original Name:          viogpudo.inf
+2026-10-18T10:37:03.627-07:00 [Uninstall]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:37:03.631-07:00 [Uninstall]       Class Name:             Display
+2026-10-18T10:37:03.634-07:00 [Uninstall]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:37:03.638-07:00 [Uninstall]       Driver Version:         12/31/2026 100.101.104.29900
+2026-10-18T10:37:03.642-07:00 [Uninstall]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:37:03.645-07:00 [Uninstall]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050
+2026-10-18T10:37:03.649-07:00 [Uninstall]       Driver Rank:            00F93001
+2026-10-18T10:37:03.651-07:00 [Uninstall]       Driver Status:          Outranked
+2026-10-18T10:37:03.656-07:00 [Uninstall]       Driver Name:            oem17.inf
+2026-10-18T10:37:03.658-07:00 [Uninstall]       Original Name:          viogpudo.inf
+2026-10-18T10:37:03.663-07:00 [Uninstall]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:37:03.667-07:00 [Uninstall]       Class Name:             Display
+2026-10-18T10:37:03.669-07:00 [Uninstall]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:37:03.674-07:00 [Uninstall]       Driver Version:         12/31/2026 100.101.104.29901
+2026-10-18T10:37:03.678-07:00 [Uninstall]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:37:03.681-07:00 [Uninstall]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050
+2026-10-18T10:37:03.685-07:00 [Uninstall]       Driver Rank:            00003001
+2026-10-18T10:37:03.689-07:00 [Uninstall]       Driver Status:          Outranked
+2026-10-18T10:37:03.692-07:00 [Uninstall]       Driver Name:            display.inf
+2026-10-18T10:37:03.697-07:00 [Uninstall]       Provider Name:          Microsoft
+2026-10-18T10:37:03.699-07:00 [Uninstall]       Class Name:             Display
+2026-10-18T10:37:03.704-07:00 [Uninstall]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:37:03.708-07:00 [Uninstall]       Driver Version:         06/21/2006 10.0.26100.1
+2026-10-18T10:37:03.712-07:00 [Uninstall]       Signer Name:            Microsoft Windows
+2026-10-18T10:37:03.715-07:00 [Uninstall]       Matching Device ID:     PCI\CC_0300
+2026-10-18T10:37:03.719-07:00 [Uninstall]       Driver Rank:            00FB2006
+2026-10-18T10:37:03.721-07:00 [Uninstall]       Driver Status:          Outranked
+2026-10-18T10:37:05.195-07:00 [Uninstall] UpdateDriverForPlugAndPlayDevices PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01 C:\Windows\System32\DriverStore\FileRepository\viogpudo.inf_amd64_d1816df2ef9c583c\viogpudo.inf FORCE -> True (error 0x00000000, reboot False)
+2026-10-18T10:37:05.335-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\UserModeDriverName
+2026-10-18T10:37:05.342-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\UserModeDriverNameWow
+2026-10-18T10:37:05.360-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\OpenGLDriverName
+2026-10-18T10:37:05.368-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\OpenGLDriverNameWow
+2026-10-18T10:37:05.379-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\OpenGLFlags
+2026-10-18T10:37:05.386-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\OpenGLFlagsWow
+2026-10-18T10:37:05.395-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\OpenGLVersion
+2026-10-18T10:37:05.401-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\OpenGLVersionWow
+2026-10-18T10:37:05.408-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\InstalledDisplayDrivers
+2026-10-18T10:37:05.793-07:00 [Uninstall] sc.exe stop VioGpu3D -> 1062
+2026-10-18T10:37:05.798-07:00 [Uninstall]   [SC] ControlService FAILED 1062:
+2026-10-18T10:37:05.802-07:00 [Uninstall]   The service has not been started.
+2026-10-18T10:37:05.842-07:00 [Uninstall] could not stop VioGpu3D: sc.exe stop VioGpu3D failed with exit code 1062
+2026-10-18T10:37:05.862-07:00 [Uninstall] sc.exe delete VioGpu3D -> 0
+2026-10-18T10:37:05.876-07:00 [Uninstall]   [SC] DeleteService SUCCESS
+2026-10-18T10:37:05.949-07:00 [Uninstall] sc.exe stop vgpusrv -> 0
+2026-10-18T10:37:05.951-07:00 [Uninstall]   SERVICE_NAME: vgpusrv
+2026-10-18T10:37:05.955-07:00 [Uninstall]           TYPE               : 10  WIN32_OWN_PROCESS
+2026-10-18T10:37:05.957-07:00 [Uninstall]           STATE              : 3  STOP_PENDING
+2026-10-18T10:37:05.962-07:00 [Uninstall]                                   (STOPPABLE, NOT_PAUSABLE, ACCEPTS_SHUTDOWN)
+2026-10-18T10:37:05.964-07:00 [Uninstall]           WIN32_EXIT_CODE    : 0  (0x0)
+2026-10-18T10:37:05.968-07:00 [Uninstall]           SERVICE_EXIT_CODE  : 0  (0x0)
+2026-10-18T10:37:05.970-07:00 [Uninstall]           CHECKPOINT         : 0x1
+2026-10-18T10:37:05.975-07:00 [Uninstall]           WAIT_HINT          : 0x1388
+2026-10-18T10:37:05.993-07:00 [Uninstall] sc.exe delete vgpusrv -> 0
+2026-10-18T10:37:05.997-07:00 [Uninstall]   [SC] DeleteService SUCCESS
+2026-10-18T10:37:06.149-07:00 [Uninstall] certutil.exe -delstore Root 0A0DBB7F01B059CE3F03B6A6630E07335A642782 -> 0
+2026-10-18T10:37:06.151-07:00 [Uninstall]   Root "Trusted Root Certification Authorities"
+2026-10-18T10:37:06.156-07:00 [Uninstall]   Deleting Certificate 10: O=vmlab-win3d local test (not for distribution), CN=vmlab-win3d Test Driver Signing:0a0dbb7f01b059ce3f03b6a6630e07335a642782
+2026-10-18T10:37:06.158-07:00 [Uninstall]   CertUtil: -delstore command completed successfully.
+2026-10-18T10:37:06.207-07:00 [Uninstall] certutil.exe -delstore TrustedPublisher 0A0DBB7F01B059CE3F03B6A6630E07335A642782 -> 0
+2026-10-18T10:37:06.212-07:00 [Uninstall]   TrustedPublisher "Trusted Publishers"
+2026-10-18T10:37:06.214-07:00 [Uninstall]   Deleting Certificate 0: O=vmlab-win3d local test (not for distribution), CN=vmlab-win3d Test Driver Signing:0a0dbb7f01b059ce3f03b6a6630e07335a642782
+2026-10-18T10:37:06.218-07:00 [Uninstall]   CertUtil: -delstore command completed successfully.
+2026-10-18T10:37:06.657-07:00 [Uninstall] bcdedit.exe /deletevalue {current} testsigning -> 0
+2026-10-18T10:37:06.661-07:00 [Uninstall]   The operation completed successfully.
+2026-10-18T10:37:06.930-07:00 [Uninstall] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T10:37:07.211-07:00 [Uninstall] rebooting; step VerifyRemoval resumes after the restart
+2026-10-18T10:37:46.909-07:00 [Resume] resume: status Uninstalling, step VerifyRemoval
+2026-10-18T10:38:07.909-07:00 [Resume] removed task vmlab-win3d-resume
+2026-10-18T10:38:07.997-07:00 [Resume] removed; the machine matches its baseline
+2026-10-18T10:38:28.971-07:00 [Install] Install from C:\vmlab-win3d (state: Removed)
+2026-10-18T10:38:30.060-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T10:38:32.081-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
+2026-10-18T10:38:32.292-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T10:38:32.303-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-18T10:38:32.308-07:00 [Install]   Signature matches Public Key
+2026-10-18T10:38:32.310-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T10:38:32.314-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T10:38:32.358-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T10:38:32.362-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-18T10:38:32.364-07:00 [Install]   Signature matches Public Key
+2026-10-18T10:38:32.367-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T10:38:32.371-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T10:38:32.436-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-18T10:38:32.438-07:00 [Install]   The operation completed successfully.
+2026-10-18T10:38:32.612-07:00 [Install] test signing is set but not active in this boot
+2026-10-18T10:38:33.013-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T10:38:33.057-07:00 [Install] rebooting; step Driver resumes after the restart
+2026-10-18T10:39:14.210-07:00 [Resume] resume: status RebootPending, step Driver
+2026-10-18T10:39:22.673-07:00 [Resume] pnputil.exe /add-driver C:\ProgramData\vmlab-win3d\bundle\driver\viogpu3d.inf /install -> 259
+2026-10-18T10:39:22.686-07:00 [Resume]   Microsoft PnP Utility
+2026-10-18T10:39:22.690-07:00 [Resume]   Adding driver package:  viogpu3d.inf
+2026-10-18T10:39:22.695-07:00 [Resume]   Driver package added successfully.
+2026-10-18T10:39:22.699-07:00 [Resume]   Published Name:         oem15.inf
+2026-10-18T10:39:22.704-07:00 [Resume]   Driver package is up-to-date on device: PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18
+2026-10-18T10:39:22.706-07:00 [Resume]   Total driver packages:  1
+2026-10-18T10:39:22.710-07:00 [Resume]   Added driver packages:  0
+2026-10-18T10:39:23.468-07:00 [Resume] PnP chose oem7.inf (Red Hat, Inc. 2025-07-09 100.101.104.28500) over oem15.inf; installing oem15.inf with INSTALLFLAG_FORCE
+2026-10-18T10:39:23.494-07:00 [Resume] pnputil.exe /enum-devices /instanceid PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18 /drivers -> 0
+2026-10-18T10:39:23.499-07:00 [Resume]   Microsoft PnP Utility
+2026-10-18T10:39:23.503-07:00 [Resume]   Instance ID:                PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18
+2026-10-18T10:39:23.508-07:00 [Resume]   Device Description:         Red Hat VirtIO GPU DOD controller
+2026-10-18T10:39:23.510-07:00 [Resume]   Class Name:                 Display
+2026-10-18T10:39:23.514-07:00 [Resume]   Class GUID:                 {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:39:23.519-07:00 [Resume]   Manufacturer Name:          Red Hat, Inc.
+2026-10-18T10:39:23.521-07:00 [Resume]   Status:                     Started
+2026-10-18T10:39:23.525-07:00 [Resume]   Driver Name:                oem7.inf
+2026-10-18T10:39:23.527-07:00 [Resume]   Matching Drivers:
+2026-10-18T10:39:23.532-07:00 [Resume]       Driver Name:            oem17.inf
+2026-10-18T10:39:23.536-07:00 [Resume]       Original Name:          viogpudo.inf
+2026-10-18T10:39:23.538-07:00 [Resume]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:39:23.542-07:00 [Resume]       Class Name:             Display
+2026-10-18T10:39:23.547-07:00 [Resume]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:39:23.549-07:00 [Resume]       Driver Version:         12/31/2026 100.101.104.29901
+2026-10-18T10:39:23.553-07:00 [Resume]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:39:23.558-07:00 [Resume]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T10:39:23.562-07:00 [Resume]       Driver Rank:            00000000
+2026-10-18T10:39:23.564-07:00 [Resume]       Driver Status:          Best Ranked
+2026-10-18T10:39:23.569-07:00 [Resume]       Driver Name:            oem7.inf
+2026-10-18T10:39:23.573-07:00 [Resume]       Original Name:          viogpudo.inf
+2026-10-18T10:39:23.575-07:00 [Resume]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:39:23.579-07:00 [Resume]       Class Name:             Display
+2026-10-18T10:39:23.584-07:00 [Resume]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:39:23.586-07:00 [Resume]       Driver Version:         07/09/2025 100.101.104.28500
+2026-10-18T10:39:23.590-07:00 [Resume]       Signer Name:            Microsoft Windows Hardware Compatibility Publisher
+2026-10-18T10:39:23.595-07:00 [Resume]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T10:39:23.597-07:00 [Resume]       Driver Rank:            00F90000
+2026-10-18T10:39:23.601-07:00 [Resume]       Driver Status:          Outranked / Installed
+2026-10-18T10:39:23.605-07:00 [Resume]       Driver Name:            oem16.inf
+2026-10-18T10:39:23.608-07:00 [Resume]       Original Name:          viogpudo.inf
+2026-10-18T10:39:23.612-07:00 [Resume]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:39:23.616-07:00 [Resume]       Class Name:             Display
+2026-10-18T10:39:23.618-07:00 [Resume]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:39:23.623-07:00 [Resume]       Driver Version:         12/31/2026 100.101.104.29900
+2026-10-18T10:39:23.627-07:00 [Resume]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:39:23.629-07:00 [Resume]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T10:39:23.634-07:00 [Resume]       Driver Rank:            00F90000
+2026-10-18T10:39:23.638-07:00 [Resume]       Driver Status:          Outranked
+2026-10-18T10:39:23.640-07:00 [Resume]       Driver Name:            oem15.inf
+2026-10-18T10:39:23.645-07:00 [Resume]       Original Name:          viogpu3d.inf
+2026-10-18T10:39:23.649-07:00 [Resume]       Provider Name:          Hardsoft Swed.
+2026-10-18T10:39:23.651-07:00 [Resume]       Class Name:             Display
+2026-10-18T10:39:23.655-07:00 [Resume]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:39:23.660-07:00 [Resume]       Driver Version:         09/27/2026 100.6.101.58100
+2026-10-18T10:39:23.664-07:00 [Resume]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:39:23.666-07:00 [Resume]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T10:39:23.671-07:00 [Resume]       Driver Rank:            00E00000
+2026-10-18T10:39:23.675-07:00 [Resume]       Driver Status:          Outranked
+2026-10-18T10:39:23.677-07:00 [Resume]       Driver Name:            oem7.inf
+2026-10-18T10:39:23.682-07:00 [Resume]       Original Name:          viogpudo.inf
+2026-10-18T10:39:23.684-07:00 [Resume]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:39:23.688-07:00 [Resume]       Class Name:             Display
+2026-10-18T10:39:23.692-07:00 [Resume]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:39:23.697-07:00 [Resume]       Driver Version:         07/09/2025 100.101.104.28500
+2026-10-18T10:39:23.699-07:00 [Resume]       Signer Name:            Microsoft Windows Hardware Compatibility Publisher
+2026-10-18T10:39:23.703-07:00 [Resume]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050
+2026-10-18T10:39:23.723-07:00 [Resume]       Driver Rank:            00F93001
+2026-10-18T10:39:23.728-07:00 [Resume]       Driver Status:          Outranked
+2026-10-18T10:39:23.732-07:00 [Resume]       Driver Name:            oem16.inf
+2026-10-18T10:39:23.734-07:00 [Resume]       Original Name:          viogpudo.inf
+2026-10-18T10:39:23.739-07:00 [Resume]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:39:23.743-07:00 [Resume]       Class Name:             Display
+2026-10-18T10:39:23.745-07:00 [Resume]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:39:23.749-07:00 [Resume]       Driver Version:         12/31/2026 100.101.104.29900
+2026-10-18T10:39:23.754-07:00 [Resume]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:39:23.756-07:00 [Resume]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050
+2026-10-18T10:39:23.760-07:00 [Resume]       Driver Rank:            00F93001
+2026-10-18T10:39:23.762-07:00 [Resume]       Driver Status:          Outranked
+2026-10-18T10:39:23.767-07:00 [Resume]       Driver Name:            oem17.inf
+2026-10-18T10:39:23.771-07:00 [Resume]       Original Name:          viogpudo.inf
+2026-10-18T10:39:23.773-07:00 [Resume]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:39:23.778-07:00 [Resume]       Class Name:             Display
+2026-10-18T10:39:23.782-07:00 [Resume]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:39:23.784-07:00 [Resume]       Driver Version:         12/31/2026 100.101.104.29901
+2026-10-18T10:39:23.789-07:00 [Resume]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:39:23.791-07:00 [Resume]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050
+2026-10-18T10:39:23.795-07:00 [Resume]       Driver Rank:            00003001
+2026-10-18T10:39:23.799-07:00 [Resume]       Driver Status:          Outranked
+2026-10-18T10:39:23.802-07:00 [Resume]       Driver Name:            display.inf
+2026-10-18T10:39:23.806-07:00 [Resume]       Provider Name:          Microsoft
+2026-10-18T10:39:23.810-07:00 [Resume]       Class Name:             Display
+2026-10-18T10:39:23.812-07:00 [Resume]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:39:23.817-07:00 [Resume]       Driver Version:         06/21/2006 10.0.26100.1
+2026-10-18T10:39:23.821-07:00 [Resume]       Signer Name:            Microsoft Windows
+2026-10-18T10:39:23.823-07:00 [Resume]       Matching Device ID:     PCI\CC_0300
+2026-10-18T10:39:23.828-07:00 [Resume]       Driver Rank:            00FB2006
+2026-10-18T10:39:23.832-07:00 [Resume]       Driver Status:          Outranked
+2026-10-18T10:39:24.766-07:00 [Resume] UpdateDriverForPlugAndPlayDevices PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01 C:\Windows\System32\DriverStore\FileRepository\viogpu3d.inf_amd64_e24a94dfea8f0416\viogpu3d.inf FORCE -> True (error 0x00000000, reboot False)
+2026-10-18T10:39:25.190-07:00 [Resume] policy: DenyInstanceIDs\1 = PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18
+2026-10-18T10:39:25.203-07:00 [Resume] policy: DenyInstanceIDs = 1
+2026-10-18T10:39:25.236-07:00 [Resume] pnputil.exe /enum-devices /instanceid PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18 /drivers -> 0
+2026-10-18T10:39:25.240-07:00 [Resume]   Microsoft PnP Utility
+2026-10-18T10:39:25.245-07:00 [Resume]   Instance ID:                PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18
+2026-10-18T10:39:25.249-07:00 [Resume]   Device Description:         Hardsoft VirtIO GPU 3D controller
+2026-10-18T10:39:25.258-07:00 [Resume]   Class Name:                 Display
+2026-10-18T10:39:25.264-07:00 [Resume]   Class GUID:                 {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:39:25.272-07:00 [Resume]   Manufacturer Name:          Hardsoft Swed.
+2026-10-18T10:39:25.296-07:00 [Resume]   Status:                     Started
+2026-10-18T10:39:25.299-07:00 [Resume]   Driver Name:                oem15.inf
+2026-10-18T10:39:25.303-07:00 [Resume]   Matching Drivers:
+2026-10-18T10:39:25.308-07:00 [Resume]       Driver Name:            oem17.inf
+2026-10-18T10:39:25.314-07:00 [Resume]       Original Name:          viogpudo.inf
+2026-10-18T10:39:25.319-07:00 [Resume]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:39:25.322-07:00 [Resume]       Class Name:             Display
+2026-10-18T10:39:25.326-07:00 [Resume]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:39:25.329-07:00 [Resume]       Driver Version:         12/31/2026 100.101.104.29901
+2026-10-18T10:39:25.333-07:00 [Resume]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:39:25.338-07:00 [Resume]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T10:39:25.342-07:00 [Resume]       Driver Rank:            00000000
+2026-10-18T10:39:25.345-07:00 [Resume]       Driver Status:          Best Ranked
+2026-10-18T10:39:25.350-07:00 [Resume]       Driver Name:            oem7.inf
+2026-10-18T10:39:25.354-07:00 [Resume]       Original Name:          viogpudo.inf
+2026-10-18T10:39:25.359-07:00 [Resume]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:39:25.363-07:00 [Resume]       Class Name:             Display
+2026-10-18T10:39:25.366-07:00 [Resume]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:39:25.370-07:00 [Resume]       Driver Version:         07/09/2025 100.101.104.28500
+2026-10-18T10:39:25.373-07:00 [Resume]       Signer Name:            Microsoft Windows Hardware Compatibility Publisher
+2026-10-18T10:39:25.377-07:00 [Resume]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T10:39:25.380-07:00 [Resume]       Driver Rank:            00F90000
+2026-10-18T10:39:25.384-07:00 [Resume]       Driver Status:          Outranked
+2026-10-18T10:39:25.394-07:00 [Resume]       Driver Name:            oem16.inf
+2026-10-18T10:39:25.397-07:00 [Resume]       Original Name:          viogpudo.inf
+2026-10-18T10:39:25.401-07:00 [Resume]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:39:25.405-07:00 [Resume]       Class Name:             Display
+2026-10-18T10:39:25.408-07:00 [Resume]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:39:25.412-07:00 [Resume]       Driver Version:         12/31/2026 100.101.104.29900
+2026-10-18T10:39:25.415-07:00 [Resume]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:39:25.422-07:00 [Resume]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T10:39:25.424-07:00 [Resume]       Driver Rank:            00F90000
+2026-10-18T10:39:25.429-07:00 [Resume]       Driver Status:          Outranked
+2026-10-18T10:39:25.432-07:00 [Resume]       Driver Name:            oem15.inf
+2026-10-18T10:39:25.438-07:00 [Resume]       Original Name:          viogpu3d.inf
+2026-10-18T10:39:25.442-07:00 [Resume]       Provider Name:          Hardsoft Swed.
+2026-10-18T10:39:25.445-07:00 [Resume]       Class Name:             Display
+2026-10-18T10:39:25.451-07:00 [Resume]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:39:25.456-07:00 [Resume]       Driver Version:         09/27/2026 100.6.101.58100
+2026-10-18T10:39:25.460-07:00 [Resume]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:39:25.463-07:00 [Resume]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T10:39:25.467-07:00 [Resume]       Driver Rank:            00E00000
+2026-10-18T10:39:25.471-07:00 [Resume]       Driver Status:          Outranked / Installed
+2026-10-18T10:39:25.474-07:00 [Resume]       Driver Name:            oem7.inf
+2026-10-18T10:39:25.478-07:00 [Resume]       Original Name:          viogpudo.inf
+2026-10-18T10:39:25.481-07:00 [Resume]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:39:25.485-07:00 [Resume]       Class Name:             Display
+2026-10-18T10:39:25.487-07:00 [Resume]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:39:25.491-07:00 [Resume]       Driver Version:         07/09/2025 100.101.104.28500
+2026-10-18T10:39:25.495-07:00 [Resume]       Signer Name:            Microsoft Windows Hardware Compatibility Publisher
+2026-10-18T10:39:25.499-07:00 [Resume]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050
+2026-10-18T10:39:25.502-07:00 [Resume]       Driver Rank:            00F93001
+2026-10-18T10:39:25.505-07:00 [Resume]       Driver Status:          Outranked
+2026-10-18T10:39:25.509-07:00 [Resume]       Driver Name:            oem16.inf
+2026-10-18T10:39:25.513-07:00 [Resume]       Original Name:          viogpudo.inf
+2026-10-18T10:39:25.515-07:00 [Resume]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:39:25.519-07:00 [Resume]       Class Name:             Display
+2026-10-18T10:39:25.522-07:00 [Resume]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:39:25.526-07:00 [Resume]       Driver Version:         12/31/2026 100.101.104.29900
+2026-10-18T10:39:25.529-07:00 [Resume]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:39:25.545-07:00 [Resume]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050
+2026-10-18T10:39:25.549-07:00 [Resume]       Driver Rank:            00F93001
+2026-10-18T10:39:25.555-07:00 [Resume]       Driver Status:          Outranked
+2026-10-18T10:39:25.557-07:00 [Resume]       Driver Name:            oem17.inf
+2026-10-18T10:39:25.562-07:00 [Resume]       Original Name:          viogpudo.inf
+2026-10-18T10:39:25.569-07:00 [Resume]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:39:25.579-07:00 [Resume]       Class Name:             Display
+2026-10-18T10:39:25.586-07:00 [Resume]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:39:25.591-07:00 [Resume]       Driver Version:         12/31/2026 100.101.104.29901
+2026-10-18T10:39:25.596-07:00 [Resume]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:39:25.599-07:00 [Resume]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050
+2026-10-18T10:39:25.605-07:00 [Resume]       Driver Rank:            00003001
+2026-10-18T10:39:25.609-07:00 [Resume]       Driver Status:          Outranked
+2026-10-18T10:39:25.613-07:00 [Resume]       Driver Name:            display.inf
+2026-10-18T10:39:25.617-07:00 [Resume]       Provider Name:          Microsoft
+2026-10-18T10:39:25.620-07:00 [Resume]       Class Name:             Display
+2026-10-18T10:39:25.624-07:00 [Resume]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:39:25.627-07:00 [Resume]       Driver Version:         06/21/2006 10.0.26100.1
+2026-10-18T10:39:25.630-07:00 [Resume]       Signer Name:            Microsoft Windows
+2026-10-18T10:39:25.633-07:00 [Resume]       Matching Device ID:     PCI\CC_0300
+2026-10-18T10:39:25.637-07:00 [Resume]       Driver Rank:            00FB2006
+2026-10-18T10:39:25.641-07:00 [Resume]       Driver Status:          Outranked
+2026-10-18T10:39:25.644-07:00 [Resume] driver oem15.inf 100.6.101.58100 installed on PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18 and pinned
+2026-10-18T10:39:25.862-07:00 [Resume] takeown.exe /F C:\WINDOWS\System32\vulkan-1.dll /A -> 0
+2026-10-18T10:39:25.865-07:00 [Resume]   SUCCESS: The file (or folder): "C:\WINDOWS\System32\vulkan-1.dll" now owned by the administrators group.
+2026-10-18T10:39:25.885-07:00 [Resume] icacls.exe C:\WINDOWS\System32\vulkan-1.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T10:39:25.888-07:00 [Resume]   processed file: C:\WINDOWS\System32\vulkan-1.dll
+2026-10-18T10:39:25.891-07:00 [Resume]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T10:39:26.079-07:00 [Resume] installed C:\WINDOWS\System32\vulkan-1.dll (0871D16D06F2C7C2F60C9B68E5ED3A61A069BF525D8F7CAD2D3C88F3CE71E219)
+2026-10-18T10:39:26.135-07:00 [Resume] installed C:\WINDOWS\System32\vulkaninfo.exe (68266EF104567081F93D00CC347AC3C1849CD3D0E1319F8DC05A576B2E23E83A)
+2026-10-18T10:39:26.208-07:00 [Resume] native d3d12.dll 6B32181599D4D6373F0B49905236B122ED5545C5D061AB4350A80CC095DC15E4 copied to C:\WINDOWS\System32\vmlab-win3d\d3d12-native.dll
+2026-10-18T10:39:26.255-07:00 [Resume] installed C:\WINDOWS\System32\vmlab-win3d\vkd3dcore.dll
+2026-10-18T10:39:26.286-07:00 [Resume] installed C:\WINDOWS\System32\vmlab-win3d\dxgi-vulkan.dll
+2026-10-18T10:39:26.314-07:00 [Resume] takeown.exe /F C:\WINDOWS\System32\d3d12.dll /A -> 0
+2026-10-18T10:39:26.318-07:00 [Resume]   SUCCESS: The file (or folder): "C:\WINDOWS\System32\d3d12.dll" now owned by the administrators group.
+2026-10-18T10:39:26.333-07:00 [Resume] icacls.exe C:\WINDOWS\System32\d3d12.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T10:39:26.338-07:00 [Resume]   processed file: C:\WINDOWS\System32\d3d12.dll
+2026-10-18T10:39:26.344-07:00 [Resume]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T10:39:26.403-07:00 [Resume] installed C:\WINDOWS\System32\d3d12.dll (B5D94F44466887CF5373C8550E3263425034A41E76B0AC11FE8C8A5229ACD9DA)
+2026-10-18T10:39:26.525-07:00 [Resume] takeown.exe /F C:\WINDOWS\SysWOW64\vulkan-1.dll /A -> 0
+2026-10-18T10:39:26.530-07:00 [Resume]   SUCCESS: The file (or folder): "C:\WINDOWS\SysWOW64\vulkan-1.dll" now owned by the administrators group.
+2026-10-18T10:39:26.550-07:00 [Resume] icacls.exe C:\WINDOWS\SysWOW64\vulkan-1.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T10:39:26.555-07:00 [Resume]   processed file: C:\WINDOWS\SysWOW64\vulkan-1.dll
+2026-10-18T10:39:26.559-07:00 [Resume]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T10:39:26.609-07:00 [Resume] installed C:\WINDOWS\SysWOW64\vulkan-1.dll (36EDC9F67CBEC1C5FB8C510AB08EFEA18AFFFBD40D77B829D39F1E76236416CD)
+2026-10-18T10:39:26.664-07:00 [Resume] installed C:\WINDOWS\SysWOW64\vulkaninfo.exe (BB717DB3466B5120B08EFB4A800AD7D4F15CC1C0D5D479C298804539B89C119D)
+2026-10-18T10:39:26.699-07:00 [Resume] native d3d12.dll A43885B075B8043D9FE99F03B26B056B426E1B7D73FAB8D420F4E4FFCB5100AF copied to C:\WINDOWS\SysWOW64\vmlab-win3d\d3d12-native.dll
+2026-10-18T10:39:26.743-07:00 [Resume] installed C:\WINDOWS\SysWOW64\vmlab-win3d\vkd3dcore.dll
+2026-10-18T10:39:26.770-07:00 [Resume] installed C:\WINDOWS\SysWOW64\vmlab-win3d\dxgi-vulkan.dll
+2026-10-18T10:39:26.797-07:00 [Resume] takeown.exe /F C:\WINDOWS\SysWOW64\d3d12.dll /A -> 0
+2026-10-18T10:39:26.800-07:00 [Resume]   SUCCESS: The file (or folder): "C:\WINDOWS\SysWOW64\d3d12.dll" now owned by the administrators group.
+2026-10-18T10:39:26.816-07:00 [Resume] icacls.exe C:\WINDOWS\SysWOW64\d3d12.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T10:39:26.821-07:00 [Resume]   processed file: C:\WINDOWS\SysWOW64\d3d12.dll
+2026-10-18T10:39:26.825-07:00 [Resume]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T10:39:26.862-07:00 [Resume] installed C:\WINDOWS\SysWOW64\d3d12.dll (944CC70E1F65C907C13D598396CBCB2AB9478A231DD653A5DC62C70C8E6BAE02)
+2026-10-18T10:39:27.414-07:00 [Resume] registered startup task vmlab-win3d-repair (-Mode Repair)
+2026-10-18T10:39:27.597-07:00 [Resume] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T10:39:27.672-07:00 [Resume] rebooting; step Verify resumes after the restart
+2026-10-18T10:40:13.276-07:00 [Resume] resume: status RebootPending, step Verify
+2026-10-18T10:40:22.032-07:00 [Resume] removed task vmlab-win3d-resume
+2026-10-18T10:40:22.349-07:00 [Resume] installed: oem15.inf 100.6.101.58100, problem code 0
+2026-10-18T10:40:52.219-07:00 [Install] Install from C:\vmlab-win3d (state: Installed)
+2026-10-18T10:40:53.304-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T10:40:56.555-07:00 [Install] driver oem15.inf already installed on PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18
+2026-10-18T10:40:57.782-07:00 [Install] registered startup task vmlab-win3d-repair (-Mode Repair)
+2026-10-18T10:40:57.807-07:00 [Install] nothing changed; no reboot needed
+2026-10-18T10:41:01.818-07:00 [Install] installed: oem15.inf 100.6.101.58100, problem code 0
+2026-10-18T10:41:11.681-07:00 [Uninstall] Uninstall (state: Installed)
+2026-10-18T10:41:14.131-07:00 [Uninstall] removed task vmlab-win3d-repair
+2026-10-18T10:41:15.434-07:00 [Uninstall] takeown.exe /F C:\WINDOWS\System32\d3d12.dll /A -> 0
+2026-10-18T10:41:15.448-07:00 [Uninstall]   SUCCESS: The file (or folder): "C:\WINDOWS\System32\d3d12.dll" now owned by the administrators group.
+2026-10-18T10:41:15.476-07:00 [Uninstall] icacls.exe C:\WINDOWS\System32\d3d12.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T10:41:15.480-07:00 [Uninstall]   processed file: C:\WINDOWS\System32\d3d12.dll
+2026-10-18T10:41:15.482-07:00 [Uninstall]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T10:41:15.633-07:00 [Uninstall] installed C:\WINDOWS\System32\d3d12.dll (6B32181599D4D6373F0B49905236B122ED5545C5D061AB4350A80CC095DC15E4)
+2026-10-18T10:41:15.676-07:00 [Uninstall] removed C:\WINDOWS\System32\vmlab-win3d
+2026-10-18T10:41:15.709-07:00 [Uninstall] takeown.exe /F C:\WINDOWS\SysWOW64\d3d12.dll /A -> 0
+2026-10-18T10:41:15.713-07:00 [Uninstall]   SUCCESS: The file (or folder): "C:\WINDOWS\SysWOW64\d3d12.dll" now owned by the administrators group.
+2026-10-18T10:41:15.731-07:00 [Uninstall] icacls.exe C:\WINDOWS\SysWOW64\d3d12.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T10:41:15.735-07:00 [Uninstall]   processed file: C:\WINDOWS\SysWOW64\d3d12.dll
+2026-10-18T10:41:15.738-07:00 [Uninstall]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T10:41:15.767-07:00 [Uninstall] installed C:\WINDOWS\SysWOW64\d3d12.dll (A43885B075B8043D9FE99F03B26B056B426E1B7D73FAB8D420F4E4FFCB5100AF)
+2026-10-18T10:41:15.783-07:00 [Uninstall] removed C:\WINDOWS\SysWOW64\vmlab-win3d
+2026-10-18T10:41:15.852-07:00 [Uninstall] takeown.exe /F C:\WINDOWS\System32\vulkan-1.dll /A -> 0
+2026-10-18T10:41:15.855-07:00 [Uninstall]   SUCCESS: The file (or folder): "C:\WINDOWS\System32\vulkan-1.dll" now owned by the administrators group.
+2026-10-18T10:41:15.872-07:00 [Uninstall] icacls.exe C:\WINDOWS\System32\vulkan-1.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T10:41:15.876-07:00 [Uninstall]   processed file: C:\WINDOWS\System32\vulkan-1.dll
+2026-10-18T10:41:15.880-07:00 [Uninstall]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T10:41:15.919-07:00 [Uninstall] installed C:\WINDOWS\System32\vulkan-1.dll (591D4C316A0A39F96792979CE5EBB1BB380F0015C30707BA7AC611B35AE01CFC)
+2026-10-18T10:41:15.965-07:00 [Uninstall] takeown.exe /F C:\WINDOWS\System32\vulkaninfo.exe /A -> 0
+2026-10-18T10:41:15.969-07:00 [Uninstall]   SUCCESS: The file (or folder): "C:\WINDOWS\System32\vulkaninfo.exe" now owned by the administrators group.
+2026-10-18T10:41:15.992-07:00 [Uninstall] icacls.exe C:\WINDOWS\System32\vulkaninfo.exe /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T10:41:15.995-07:00 [Uninstall]   processed file: C:\WINDOWS\System32\vulkaninfo.exe
+2026-10-18T10:41:15.999-07:00 [Uninstall]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T10:41:16.006-07:00 [Uninstall] removed C:\WINDOWS\System32\vulkaninfo.exe
+2026-10-18T10:41:16.052-07:00 [Uninstall] takeown.exe /F C:\WINDOWS\SysWOW64\vulkan-1.dll /A -> 0
+2026-10-18T10:41:16.056-07:00 [Uninstall]   SUCCESS: The file (or folder): "C:\WINDOWS\SysWOW64\vulkan-1.dll" now owned by the administrators group.
+2026-10-18T10:41:16.080-07:00 [Uninstall] icacls.exe C:\WINDOWS\SysWOW64\vulkan-1.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T10:41:16.084-07:00 [Uninstall]   processed file: C:\WINDOWS\SysWOW64\vulkan-1.dll
+2026-10-18T10:41:16.088-07:00 [Uninstall]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T10:41:16.121-07:00 [Uninstall] installed C:\WINDOWS\SysWOW64\vulkan-1.dll (411A6F91D4E925DBD380CC3C4FA5810B9895A87B6D3072E16707551A2EAC311E)
+2026-10-18T10:41:16.171-07:00 [Uninstall] takeown.exe /F C:\WINDOWS\SysWOW64\vulkaninfo.exe /A -> 0
+2026-10-18T10:41:16.174-07:00 [Uninstall]   SUCCESS: The file (or folder): "C:\WINDOWS\SysWOW64\vulkaninfo.exe" now owned by the administrators group.
+2026-10-18T10:41:16.191-07:00 [Uninstall] icacls.exe C:\WINDOWS\SysWOW64\vulkaninfo.exe /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T10:41:16.195-07:00 [Uninstall]   processed file: C:\WINDOWS\SysWOW64\vulkaninfo.exe
+2026-10-18T10:41:16.199-07:00 [Uninstall]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T10:41:16.205-07:00 [Uninstall] removed C:\WINDOWS\SysWOW64\vulkaninfo.exe
+2026-10-18T10:41:16.261-07:00 [Uninstall] policy: removed DenyInstanceIDs\1 (PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18)
+2026-10-18T10:41:16.271-07:00 [Uninstall] policy: removed DenyInstanceIDs
+2026-10-18T10:41:16.293-07:00 [Uninstall] policy: removed key HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyInstanceIDs
+2026-10-18T10:41:16.306-07:00 [Uninstall] policy: removed key HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions
+2026-10-18T10:41:16.312-07:00 [Uninstall] policy: removed key HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall
+2026-10-18T10:41:17.922-07:00 [Uninstall] pnputil.exe /delete-driver oem15.inf /uninstall /force -> 0
+2026-10-18T10:41:17.928-07:00 [Uninstall]   Microsoft PnP Utility
+2026-10-18T10:41:17.933-07:00 [Uninstall]   Ignoring /force when used with /uninstall to delete driver package.
+2026-10-18T10:41:17.935-07:00 [Uninstall]   Driver package uninstalled.
+2026-10-18T10:41:17.939-07:00 [Uninstall]   Driver package deleted successfully.
+2026-10-18T10:41:18.889-07:00 [Uninstall] pnputil.exe /scan-devices -> 0
+2026-10-18T10:41:18.894-07:00 [Uninstall]   Microsoft PnP Utility
+2026-10-18T10:41:18.898-07:00 [Uninstall]   Scanning for device hardware changes.
+2026-10-18T10:41:18.900-07:00 [Uninstall]   Scan complete.
+2026-10-18T10:41:19.405-07:00 [Uninstall] device uses oem17.inf 2026-12-31 100.101.104.29901, baseline oem7.inf; restoring the baseline driver
+2026-10-18T10:41:19.433-07:00 [Uninstall] pnputil.exe /enum-devices /instanceid PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18 /drivers -> 0
+2026-10-18T10:41:19.438-07:00 [Uninstall]   Microsoft PnP Utility
+2026-10-18T10:41:19.440-07:00 [Uninstall]   Instance ID:                PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&18
+2026-10-18T10:41:19.444-07:00 [Uninstall]   Device Description:         Red Hat VirtIO GPU DOD controller
+2026-10-18T10:41:19.447-07:00 [Uninstall]   Class Name:                 Display
+2026-10-18T10:41:19.451-07:00 [Uninstall]   Class GUID:                 {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:41:19.453-07:00 [Uninstall]   Manufacturer Name:          Red Hat, Inc.
+2026-10-18T10:41:19.458-07:00 [Uninstall]   Status:                     Started
+2026-10-18T10:41:19.462-07:00 [Uninstall]   Driver Name:                oem17.inf
+2026-10-18T10:41:19.464-07:00 [Uninstall]   Matching Drivers:
+2026-10-18T10:41:19.469-07:00 [Uninstall]       Driver Name:            oem17.inf
+2026-10-18T10:41:19.473-07:00 [Uninstall]       Original Name:          viogpudo.inf
+2026-10-18T10:41:19.477-07:00 [Uninstall]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:41:19.480-07:00 [Uninstall]       Class Name:             Display
+2026-10-18T10:41:19.484-07:00 [Uninstall]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:41:19.486-07:00 [Uninstall]       Driver Version:         12/31/2026 100.101.104.29901
+2026-10-18T10:41:19.491-07:00 [Uninstall]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:41:19.493-07:00 [Uninstall]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T10:41:19.495-07:00 [Uninstall]       Driver Rank:            00000000
+2026-10-18T10:41:19.499-07:00 [Uninstall]       Driver Status:          Best Ranked
+2026-10-18T10:41:19.504-07:00 [Uninstall]       Driver Name:            oem7.inf
+2026-10-18T10:41:19.506-07:00 [Uninstall]       Original Name:          viogpudo.inf
+2026-10-18T10:41:19.508-07:00 [Uninstall]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:41:19.512-07:00 [Uninstall]       Class Name:             Display
+2026-10-18T10:41:19.515-07:00 [Uninstall]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:41:19.518-07:00 [Uninstall]       Driver Version:         07/09/2025 100.101.104.28500
+2026-10-18T10:41:19.520-07:00 [Uninstall]       Signer Name:            Microsoft Windows Hardware Compatibility Publisher
+2026-10-18T10:41:19.525-07:00 [Uninstall]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T10:41:19.527-07:00 [Uninstall]       Driver Rank:            00F90000
+2026-10-18T10:41:19.531-07:00 [Uninstall]       Driver Status:          Outranked
+2026-10-18T10:41:19.533-07:00 [Uninstall]       Driver Name:            oem16.inf
+2026-10-18T10:41:19.538-07:00 [Uninstall]       Original Name:          viogpudo.inf
+2026-10-18T10:41:19.540-07:00 [Uninstall]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:41:19.542-07:00 [Uninstall]       Class Name:             Display
+2026-10-18T10:41:19.546-07:00 [Uninstall]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:41:19.549-07:00 [Uninstall]       Driver Version:         12/31/2026 100.101.104.29900
+2026-10-18T10:41:19.551-07:00 [Uninstall]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:41:19.555-07:00 [Uninstall]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T10:41:19.557-07:00 [Uninstall]       Driver Rank:            00F90000
+2026-10-18T10:41:19.560-07:00 [Uninstall]       Driver Status:          Outranked
+2026-10-18T10:41:19.564-07:00 [Uninstall]       Driver Name:            oem7.inf
+2026-10-18T10:41:19.566-07:00 [Uninstall]       Original Name:          viogpudo.inf
+2026-10-18T10:41:19.569-07:00 [Uninstall]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:41:19.571-07:00 [Uninstall]       Class Name:             Display
+2026-10-18T10:41:19.575-07:00 [Uninstall]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:41:19.577-07:00 [Uninstall]       Driver Version:         07/09/2025 100.101.104.28500
+2026-10-18T10:41:19.579-07:00 [Uninstall]       Signer Name:            Microsoft Windows Hardware Compatibility Publisher
+2026-10-18T10:41:19.582-07:00 [Uninstall]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050
+2026-10-18T10:41:19.586-07:00 [Uninstall]       Driver Rank:            00F93001
+2026-10-18T10:41:19.588-07:00 [Uninstall]       Driver Status:          Outranked
+2026-10-18T10:41:19.590-07:00 [Uninstall]       Driver Name:            oem16.inf
+2026-10-18T10:41:19.595-07:00 [Uninstall]       Original Name:          viogpudo.inf
+2026-10-18T10:41:19.597-07:00 [Uninstall]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:41:19.599-07:00 [Uninstall]       Class Name:             Display
+2026-10-18T10:41:19.601-07:00 [Uninstall]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:41:19.606-07:00 [Uninstall]       Driver Version:         12/31/2026 100.101.104.29900
+2026-10-18T10:41:19.608-07:00 [Uninstall]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:41:19.610-07:00 [Uninstall]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050
+2026-10-18T10:41:19.617-07:00 [Uninstall]       Driver Rank:            00F93001
+2026-10-18T10:41:19.619-07:00 [Uninstall]       Driver Status:          Outranked
+2026-10-18T10:41:19.623-07:00 [Uninstall]       Driver Name:            oem17.inf
+2026-10-18T10:41:19.625-07:00 [Uninstall]       Original Name:          viogpudo.inf
+2026-10-18T10:41:19.630-07:00 [Uninstall]       Provider Name:          Red Hat, Inc.
+2026-10-18T10:41:19.633-07:00 [Uninstall]       Class Name:             Display
+2026-10-18T10:41:19.637-07:00 [Uninstall]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:41:19.639-07:00 [Uninstall]       Driver Version:         12/31/2026 100.101.104.29901
+2026-10-18T10:41:19.643-07:00 [Uninstall]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T10:41:19.646-07:00 [Uninstall]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050
+2026-10-18T10:41:19.648-07:00 [Uninstall]       Driver Rank:            00003001
+2026-10-18T10:41:19.652-07:00 [Uninstall]       Driver Status:          Outranked
+2026-10-18T10:41:19.655-07:00 [Uninstall]       Driver Name:            display.inf
+2026-10-18T10:41:19.657-07:00 [Uninstall]       Provider Name:          Microsoft
+2026-10-18T10:41:19.661-07:00 [Uninstall]       Class Name:             Display
+2026-10-18T10:41:19.663-07:00 [Uninstall]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T10:41:19.665-07:00 [Uninstall]       Driver Version:         06/21/2006 10.0.26100.1
+2026-10-18T10:41:19.670-07:00 [Uninstall]       Signer Name:            Microsoft Windows
+2026-10-18T10:41:19.672-07:00 [Uninstall]       Matching Device ID:     PCI\CC_0300
+2026-10-18T10:41:19.674-07:00 [Uninstall]       Driver Rank:            00FB2006
+2026-10-18T10:41:19.679-07:00 [Uninstall]       Driver Status:          Outranked
+2026-10-18T10:41:20.554-07:00 [Uninstall] UpdateDriverForPlugAndPlayDevices PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01 C:\Windows\System32\DriverStore\FileRepository\viogpudo.inf_amd64_d1816df2ef9c583c\viogpudo.inf FORCE -> True (error 0x00000000, reboot False)
+2026-10-18T10:41:20.667-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\UserModeDriverName
+2026-10-18T10:41:20.674-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\UserModeDriverNameWow
+2026-10-18T10:41:20.684-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\OpenGLDriverName
+2026-10-18T10:41:20.688-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\OpenGLDriverNameWow
+2026-10-18T10:41:20.695-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\OpenGLFlags
+2026-10-18T10:41:20.700-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\OpenGLFlagsWow
+2026-10-18T10:41:20.706-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\OpenGLVersion
+2026-10-18T10:41:20.706-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\OpenGLVersionWow
+2026-10-18T10:41:20.716-07:00 [Uninstall] removed HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0001\InstalledDisplayDrivers
+2026-10-18T10:41:21.029-07:00 [Uninstall] sc.exe stop VioGpu3D -> 1062
+2026-10-18T10:41:21.031-07:00 [Uninstall]   [SC] ControlService FAILED 1062:
+2026-10-18T10:41:21.036-07:00 [Uninstall]   The service has not been started.
+2026-10-18T10:41:21.059-07:00 [Uninstall] could not stop VioGpu3D: sc.exe stop VioGpu3D failed with exit code 1062
+2026-10-18T10:41:21.079-07:00 [Uninstall] sc.exe delete VioGpu3D -> 0
+2026-10-18T10:41:21.084-07:00 [Uninstall]   [SC] DeleteService SUCCESS
+2026-10-18T10:41:21.139-07:00 [Uninstall] sc.exe stop vgpusrv -> 1062
+2026-10-18T10:41:21.141-07:00 [Uninstall]   [SC] ControlService FAILED 1062:
+2026-10-18T10:41:21.145-07:00 [Uninstall]   The service has not been started.
+2026-10-18T10:41:21.150-07:00 [Uninstall] could not stop vgpusrv: sc.exe stop vgpusrv failed with exit code 1062
+2026-10-18T10:41:21.165-07:00 [Uninstall] sc.exe delete vgpusrv -> 0
+2026-10-18T10:41:21.167-07:00 [Uninstall]   [SC] DeleteService SUCCESS
+2026-10-18T10:41:21.305-07:00 [Uninstall] certutil.exe -delstore Root 0A0DBB7F01B059CE3F03B6A6630E07335A642782 -> 0
+2026-10-18T10:41:21.310-07:00 [Uninstall]   Root "Trusted Root Certification Authorities"
+2026-10-18T10:41:21.312-07:00 [Uninstall]   Deleting Certificate 10: O=vmlab-win3d local test (not for distribution), CN=vmlab-win3d Test Driver Signing:0a0dbb7f01b059ce3f03b6a6630e07335a642782
+2026-10-18T10:41:21.316-07:00 [Uninstall]   CertUtil: -delstore command completed successfully.
+2026-10-18T10:41:21.356-07:00 [Uninstall] certutil.exe -delstore TrustedPublisher 0A0DBB7F01B059CE3F03B6A6630E07335A642782 -> 0
+2026-10-18T10:41:21.358-07:00 [Uninstall]   TrustedPublisher "Trusted Publishers"
+2026-10-18T10:41:21.362-07:00 [Uninstall]   Deleting Certificate 0: O=vmlab-win3d local test (not for distribution), CN=vmlab-win3d Test Driver Signing:0a0dbb7f01b059ce3f03b6a6630e07335a642782
+2026-10-18T10:41:21.364-07:00 [Uninstall]   CertUtil: -delstore command completed successfully.
+2026-10-18T10:41:21.435-07:00 [Uninstall] bcdedit.exe /deletevalue {current} testsigning -> 0
+2026-10-18T10:41:21.437-07:00 [Uninstall]   The operation completed successfully.
+2026-10-18T10:41:21.711-07:00 [Uninstall] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T10:41:21.831-07:00 [Uninstall] rebooting; step VerifyRemoval resumes after the restart
+2026-10-18T10:42:00.817-07:00 [Resume] resume: status Uninstalling, step VerifyRemoval
+2026-10-18T10:42:22.494-07:00 [Resume] removed task vmlab-win3d-resume
+2026-10-18T10:42:22.797-07:00 [Resume] removed; the machine matches its baseline

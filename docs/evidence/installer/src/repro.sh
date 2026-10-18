@@ -18,8 +18,9 @@
 #    5 pnputil /scan-devices and UsoClient StartScan: no change
 #    6 reboot: no change
 #    7 uninstall: the baseline viogpudo is back and the policy is gone
-#    8 reinstall with both fakes in the store: PnP picks the hostile one, the
-#      forced install puts this package back; a rerun changes nothing
+#    8 reinstall with both fakes in the store: pnputil does not bind this
+#      package (the hostile one outranks it), the forced install does; a
+#      rerun changes nothing
 #    9 uninstall again
 # Reports go to docs/evidence/installer/windows-11-<gpu>/, with checks.txt
 # judging them. Exit 0 when every check passes.

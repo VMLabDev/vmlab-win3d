@@ -95,7 +95,7 @@ j = journal("reinstalled")
 last = j[j.rfind("Install from"):] if "Install from" in j else ""
 reinstall = j[: j.rfind("Install from")]
 reinstall = reinstall[reinstall.rfind("Install from"):]
-check("reinstall: PnP preferred the hostile viogpudo and the installer forced viogpu3d",
+check("reinstall: pnputil did not bind viogpu3d (the hostile viogpudo outranks it) and the forced install did",
       "INSTALLFLAG_FORCE" in reinstall and "UpdateDriverForPlugAndPlayDevices" in reinstall)
 check("rerun: changed nothing", ours("rerun") and "nothing changed; no reboot needed" in last and "already installed" in last)
 sys.exit(1 if failed else 0)
