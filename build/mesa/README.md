@@ -74,7 +74,7 @@ The series has two parts, and the patches apply in name order:
   mixed-case header symlinks that `prepare-build.py` creates, so they are
   build output, not source. The diff was then split by topic. Each patch has
   a header that says what it fixes and which prior-art finding it comes from.
-- **0012 to 0017 and 0020 to 0022** are this repository's own fixes, found by
+- **0012 to 0017 and 0020 to 0025** are this repository's own fixes, found by
   the acceptance and host runs. Each header names the document with the
   evidence. The series skips 0018 and 0019.
 
@@ -112,6 +112,9 @@ and 0011 is in the Venus ICD.
 | 0020 yttrium-gate-feedback-loop-usage-on-format-support | Drops `ATTACHMENT_FEEDBACK_LOOP` usage when the host driver refuses it for the image (NVIDIA rejects it on LINEAR images; dwm crashed before logon) | [`docs/nvidia.md`](../../docs/nvidia.md) |
 | 0021 yttrium-d3d11-typed-uav-loads-without-formatless-read | WDDM 2.0 D3D11 devices are created without `shaderStorageImageReadWithoutFormat`, with R32 typed UAV loads only, and GetCaps reports `TypedUAVLoadAdditionalFormats` from the host (Intel ANV; dwm crash-looped) | [`docs/zeus.md`](../../docs/zeus.md) |
 | 0022 yttrium-render-shadow-for-linear-colour-with-depth | Depth draws into LINEAR shared back buffers go through an OPTIMAL shadow image and copies, only when the renderer lacks linear colour-attachment support (NVIDIA 610.57.04 raised Xid 69 and hung the guest) | [`docs/xid69.md`](../../docs/xid69.md) |
+| 0023 yttrium-shared-colour-optimal-when-linear-refused | Shared colour images (every D3D9 colour texture outside the system-memory pools) use OPTIMAL tiling when the host refuses LINEAR for the exact create-info (NVIDIA allows LINEAR with one mip level only; mipmapped textures sampled black, DEFAULT-pool ones failed to create) | [`docs/nvtex.md`](../../docs/nvtex.md) |
+| 0024 d3d9-positiont-vs-for-runtime-fixed-function-ps | Pre-transformed fixed-function draws get a generated vertex shader for any declaration (XYZRHW with diffuse, specular or several texture sets failed with E_FAIL on every GPU) | [`docs/nvtex.md`](../../docs/nvtex.md) |
+| 0025 yttrium-packed-16-bit-formats-match-vulkan | D3D R5G6B5 and A1R5G5B5 map to `R5G6B5_UNORM_PACK16` and `A1R5G5B5_UNORM_PACK16` (red and blue were swapped on RADV; R5G6B5 was unsupported, so black, on NVIDIA) | [`docs/nvtex.md`](../../docs/nvtex.md) |
 
 0021 has no mail header. `scripts/pins-table.py` carries its one-line
 description.
@@ -142,15 +145,13 @@ Which patches have run in a guest, and where:
 | Acceptance, Windows 11 and Windows 10, AMD | 0001 to 0014, 0020 | `docs/acceptance.md` |
 | D3D11 samples, Windows 11, AMD | 0001 to 0017, 0020 | `docs/d3d11-apps.md` |
 | Zeus Intel and the helios AMD regression, Windows 11 | 0001 to 0014, 0020, 0021 | `docs/zeus.md` |
+| nvtex proof, Windows 11, `Nvidia1` and `AMD1` (e2e, probes, SDK samples) | 0001 to 0017, 0020 to 0025 | `docs/nvtex.md` |
 
-No recorded run has the full current series, 0015 to 0017 together with
-0021. The two sets touch different code (shader translation and fill mode
-against device creation and typed UAV loads). The full series applies to the
-pinned tarball and builds (`build/mesa/build.sh` on 2026-10-17, hashes under
-[Reproducibility](#reproducibility)), but that build has not run in a guest. The runs
-cover the code paths that the probes, dxdiag and the samples reach, not every
-fix in 0001 to 0011; for the rest, the evidence is the codex session's own
-finding, cited in the patch header.
+The nvtex proof run (2026-10-18) has the full series, 0001 to 0025, built by
+`scripts/build.sh` at commit `e428846`. Before it, no recorded run had 0015
+to 0017 together with 0021. The runs cover the code paths that the probes,
+dxdiag and the samples reach, not every fix in 0001 to 0011; for the rest,
+the evidence is the codex session's own finding, cited in the patch header.
 
 ## Reproducibility
 

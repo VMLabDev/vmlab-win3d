@@ -1,0 +1,40 @@
+Subject: [PATCH] yttrium: map D3D R5G6B5 and A1R5G5B5 to the matching Vulkan PACK16 formats
+
+Gallium names packed formats from the least significant bit and Vulkan
+names its PACK16 formats from the most significant one. The venus2 winsys
+mapped PIPE_FORMAT_B5G6R5_UNORM (D3DFMT_R5G6B5: blue in bits 0-4, red in
+bits 11-15) to VK_FORMAT_B5G6R5_UNORM_PACK16, which has blue in bits 11-15,
+and PIPE_FORMAT_B5G5R5A1_UNORM (D3DFMT_A1R5G5B5) to
+VK_FORMAT_B5G5R5A1_UNORM_PACK16, which also swaps red and blue and moves
+alpha to bit 0. On RADV such textures and render targets came out with red
+and blue swapped. NVIDIA's driver (610.57.04) does not support
+VK_FORMAT_B5G6R5_UNORM_PACK16 at all (vkGetPhysicalDeviceImageFormatProperties2
+returns VK_ERROR_FORMAT_NOT_SUPPORTED), so R5G6B5 textures sampled black there.
+They now map to VK_FORMAT_R5G6B5_UNORM_PACK16 and
+VK_FORMAT_A1R5G5B5_UNORM_PACK16, core formats that both drivers support.
+
+Evidence: docs/nvtex.md, docs/evidence/nvtex/ (src/d3d9_tex.cpp fmt=r5g6b5
+and fmt=a1r5g5b5; host-tests/linearmips.c lists the formats each driver
+supports).
+Origin: vmlab-win3d nvtex worker.
+---
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_format.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_format.c
+index 2878d78..c645eb0 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_format.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_format.c
+@@ -93,10 +93,13 @@ yttrium_venus2_pipe_format(enum pipe_format format)
+       return VK_FORMAT_R8G8B8_SNORM;
+    case PIPE_FORMAT_R8G8B8A8_SNORM:
+       return VK_FORMAT_R8G8B8A8_SNORM;
++   /* Gallium names packed formats from the least significant bit, Vulkan's
++    * PACK16 formats from the most significant one: B5G6R5 (D3D R5G6B5) is
++    * R5G6B5_UNORM_PACK16 and B5G5R5A1 (D3D A1R5G5B5) is A1R5G5B5. */
+    case PIPE_FORMAT_B5G6R5_UNORM:
+-      return VK_FORMAT_B5G6R5_UNORM_PACK16;
++      return VK_FORMAT_R5G6B5_UNORM_PACK16;
+    case PIPE_FORMAT_B5G5R5A1_UNORM:
+-      return VK_FORMAT_B5G5R5A1_UNORM_PACK16;
++      return VK_FORMAT_A1R5G5B5_UNORM_PACK16;
+    case PIPE_FORMAT_B4G4R4A4_UNORM:
+       return VK_FORMAT_A4R4G4B4_UNORM_PACK16;
+    case PIPE_FORMAT_R8_USCALED:

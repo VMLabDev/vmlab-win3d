@@ -1,0 +1,15 @@
+device AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO), driver version 0x6802002
+  B8G8R8A8_UNORM             LINEAR  result 0 maxMipLevels 15 maxArrayLayers 8192 maxExtent 16384x16384
+  B8G8R8A8_UNORM             OPTIMAL result 0 maxMipLevels 15 maxArrayLayers 8192 maxExtent 16384x16384
+  R8G8B8A8_UNORM             LINEAR  result 0 maxMipLevels 15 maxArrayLayers 8192 maxExtent 16384x16384
+  R8G8B8A8_UNORM             OPTIMAL result 0 maxMipLevels 15 maxArrayLayers 8192 maxExtent 16384x16384
+  R5G6B5_UNORM_PACK16        LINEAR  result 0 maxMipLevels 15 maxArrayLayers 8192 maxExtent 16384x16384
+  R5G6B5_UNORM_PACK16        OPTIMAL result 0 maxMipLevels 15 maxArrayLayers 8192 maxExtent 16384x16384
+  B5G6R5_UNORM_PACK16        LINEAR  result 0 maxMipLevels 15 maxArrayLayers 8192 maxExtent 16384x16384
+  B5G6R5_UNORM_PACK16        OPTIMAL result 0 maxMipLevels 15 maxArrayLayers 8192 maxExtent 16384x16384
+  A1R5G5B5_UNORM_PACK16      LINEAR  result 0 maxMipLevels 15 maxArrayLayers 8192 maxExtent 16384x16384
+  A1R5G5B5_UNORM_PACK16      OPTIMAL result 0 maxMipLevels 15 maxArrayLayers 8192 maxExtent 16384x16384
+  A2B10G10R10_UNORM_PACK32   LINEAR  result 0 maxMipLevels 15 maxArrayLayers 8192 maxExtent 16384x16384
+  A2B10G10R10_UNORM_PACK32   OPTIMAL result 0 maxMipLevels 15 maxArrayLayers 8192 maxExtent 16384x16384
+  R16G16B16A16_UNORM         LINEAR  result 0 maxMipLevels 15 maxArrayLayers 8192 maxExtent 16384x16384
+  R16G16B16A16_UNORM         OPTIMAL result 0 maxMipLevels 15 maxArrayLayers 8192 maxExtent 16384x16384

@@ -1,0 +1,152 @@
+Subject: [PATCH] yttrium: shared colour images fall back to OPTIMAL where the host refuses LINEAR
+
+The D3D9 UMD binds every colour texture outside the system-memory pools
+(X8R8G8B8, A8R8G8B8, R5G6B5 and the other colour-copy formats) as
+PIPE_BIND_SHARED, and the venus2 winsys creates shared single-sample colour
+images with VK_IMAGE_TILING_LINEAR so importers can reproduce their layout.
+Vulkan only guarantees LINEAR images with one mip level and one layer.
+NVIDIA's driver (610.57.04, RTX 5090) reports exactly that limit from
+vkGetPhysicalDeviceImageFormatProperties2 (maxMipLevels 1, maxArrayLayers 1);
+RADV allows full chains. On NVIDIA every mipmapped texture of those formats
+therefore failed to create: D3DPOOL_DEFAULT CreateTexture returned
+E_OUTOFMEMORY, D3DPOOL_MANAGED textures were never backed and sampled black
+(the DirectX SDK's BasicHLSL "tiny" and ParallaxOcclusionMapping's disc),
+and fixed-function draws with such a texture failed. DXT textures are not
+colour-copy formats, so they were OPTIMAL and unaffected.
+
+yttrium_venus_shared_colour_tiling() now asks the renderer about the exact
+create-info (format, type, extent, levels, layers, usage, flags). It keeps
+LINEAR where the renderer accepts it and uses OPTIMAL where it does not.
+The creator (yttrium_venus2_create_texture_image_for_bind) and the importer
+(yttrium_venus_import_texture_image_for_bind) both decide through it, from
+the same inputs, so they still agree on the layout. Nothing reads these
+images as linear memory (their row pitch is not recorded), so OPTIMAL needs
+no other change. Single-level 2D images keep LINEAR wherever the renderer
+accepts them, and on RADV (full LINEAR mip chains) every image does.
+
+Evidence: docs/nvtex.md, docs/evidence/nvtex/ (src/d3d9_tex.cpp is the guest
+repro with a pixel readback; host-tests/linearmips.c shows the limit with no
+VM).
+Origin: vmlab-win3d nvtex worker.
+---
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_resource.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_resource.c
+index ec3f868..87970d4 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_resource.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_resource.c
+@@ -1141,6 +1141,74 @@ yttrium_venus2_sampled_image_supported(struct yttrium_venus *venus,
+       (props->sampleCounts & samples);
+ }
+ 
++/*
++ * Shared single-sample colour images are LINEAR so that importers and the
++ * win32 WSI can reproduce their layout.  A renderer may restrict LINEAR
++ * images far more than OPTIMAL ones: NVIDIA 610.57.04 allows one mip level
++ * and one array layer (vkGetPhysicalDeviceImageFormatProperties2), RADV
++ * allows full chains.  The D3D9 UMD binds every video-memory colour texture
++ * as shared, so on such a renderer a mipmapped X8R8G8B8 texture failed to
++ * create: CreateTexture returned E_OUTOFMEMORY for D3DPOOL_DEFAULT, and
++ * D3DPOOL_MANAGED textures sampled as black.  Keep LINEAR where the host
++ * accepts the exact create-info and use OPTIMAL where it refuses it.  The
++ * creator and the importer both decide here, from the same inputs, so they
++ * agree on the layout.
++ */
++static VkImageTiling
++yttrium_venus_shared_colour_tiling(struct yttrium_venus *venus,
++                                   VkFormat vk_format,
++                                   VkImageType image_type,
++                                   uint32_t width,
++                                   uint32_t height,
++                                   uint32_t depth,
++                                   uint32_t levels,
++                                   uint32_t layers,
++                                   VkImageCreateFlags image_flags,
++                                   VkImageUsageFlags usage)
++{
++   VkPhysicalDeviceImageFormatInfo2 image_info = {
++      .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2,
++      .format = vk_format,
++      .type = image_type,
++      .tiling = VK_IMAGE_TILING_LINEAR,
++      .usage = usage,
++      .flags = image_flags |
++               ((usage & (VK_IMAGE_USAGE_SAMPLED_BIT |
++                          VK_IMAGE_USAGE_STORAGE_BIT |
++                          VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)) ?
++                   VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT : 0),
++   };
++   /* yttrium_venus_create_image_tiled drops a refused feedback-loop usage */
++   if ((usage & VK_IMAGE_USAGE_ATTACHMENT_FEEDBACK_LOOP_BIT_EXT) &&
++       !yttrium_venus_feedback_loop_supported(venus, vk_format, image_type,
++                                              VK_IMAGE_TILING_LINEAR,
++                                              image_info.flags, usage))
++      image_info.usage &= ~VK_IMAGE_USAGE_ATTACHMENT_FEEDBACK_LOOP_BIT_EXT;
++   VkImageFormatProperties2 image_props = {
++      .sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2,
++   };
++
++   if (vn_call_vkGetPhysicalDeviceImageFormatProperties2(
++          &venus->vn_ring, venus->physical_device, &image_info,
++          &image_props) == VK_SUCCESS) {
++      const VkImageFormatProperties *props =
++         &image_props.imageFormatProperties;
++      if (width <= props->maxExtent.width &&
++          height <= props->maxExtent.height &&
++          depth <= props->maxExtent.depth &&
++          MAX2(levels, 1) <= props->maxMipLevels &&
++          MAX2(layers, 1) <= props->maxArrayLayers)
++         return VK_IMAGE_TILING_LINEAR;
++   }
++
++   YTTRIUM_LOG("yttrium: Venus renderer refuses a linear shared colour "
++               "image vk_format=%u type=%u extent=%ux%ux%u levels=%u "
++               "layers=%u usage=0x%x flags=0x%x; using optimal tiling\n",
++               vk_format, image_type, width, height, depth, levels, layers,
++               usage, image_info.flags);
++   return VK_IMAGE_TILING_OPTIMAL;
++}
++
+ bool
+ yttrium_venus2_sampled_texture_format_supported(
+    struct yttrium_venus *venus,
+@@ -1237,17 +1305,21 @@ yttrium_venus2_create_texture_image_for_bind(struct yttrium_venus *venus,
+ 
+    /* Shared single-sample colour images use linear tiling and ALIAS so
+     * yttrium_venus2_import_texture_image_for_bind and the win32 WSI
+-    * DXGI_SHARED path can reproduce their memory layout.  Multisampled and
+-    * depth images retain optimal tiling.
++    * DXGI_SHARED path can reproduce their memory layout, unless the renderer
++    * refuses linear tiling for them (yttrium_venus_shared_colour_tiling).
++    * Multisampled and depth images retain optimal tiling.
+     */
+    const bool shared_colour = (bind & PIPE_BIND_SHARED) &&
+                               !yttrium_venus_format_has_depth(vk_format) &&
+                               samples == VK_SAMPLE_COUNT_1_BIT;
+ 
+-   const VkImageTiling tiling = shared_colour ? VK_IMAGE_TILING_LINEAR
+-                                             : VK_IMAGE_TILING_OPTIMAL;
+    if (shared_colour)
+       image_flags |= VK_IMAGE_CREATE_ALIAS_BIT;
++   const VkImageTiling tiling = shared_colour ?
++      yttrium_venus_shared_colour_tiling(venus, vk_format, image_type, width,
++                                         image_height, image_depth, levels,
++                                         image_layers, image_flags, usage) :
++      VK_IMAGE_TILING_OPTIMAL;
+ 
+    if ((usage & VK_IMAGE_USAGE_SAMPLED_BIT) &&
+        !yttrium_venus2_sampled_image_supported(
+@@ -1759,10 +1831,13 @@ yttrium_venus2_import_texture_image_for_bind(
+    const bool shared_colour = (bind & PIPE_BIND_SHARED) &&
+                               !yttrium_venus_format_has_depth(vk_format) &&
+                               samples == VK_SAMPLE_COUNT_1_BIT;
+-   const VkImageTiling tiling = shared_colour ? VK_IMAGE_TILING_LINEAR
+-                                             : VK_IMAGE_TILING_OPTIMAL;
+    if (shared_colour)
+       image_flags |= VK_IMAGE_CREATE_ALIAS_BIT;
++   const VkImageTiling tiling = shared_colour ?
++      yttrium_venus_shared_colour_tiling(venus, vk_format, image_type, width,
++                                         image_height, image_depth, levels,
++                                         image_layers, image_flags, usage) :
++      VK_IMAGE_TILING_OPTIMAL;
+ 
+    if (!yttrium_venus_create_image_tiled(
+           venus, resource, image_type, vk_format, width, image_height,

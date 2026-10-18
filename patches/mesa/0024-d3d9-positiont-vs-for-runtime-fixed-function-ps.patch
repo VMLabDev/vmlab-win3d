@@ -1,0 +1,229 @@
+Subject: [PATCH] d3d9: generate the POSITIONT vertex shader for any runtime fixed-function pixel shader
+
+For pre-transformed vertices (D3DFVF_XYZRHW, a POSITIONT declaration) the
+D3D9 runtime sends its generated fixed-function pixel shader (the "$FF"
+comment) and no vertex shader, so the UMD has to supply one. It did so only
+for two declarations: POSITIONT with COLOR0 and no texture bound, and
+POSITIONT with TEXCOORD0 and exactly one 2D texture. Every other
+pre-transformed fixed-function draw failed with E_FAIL ("unsupported D3D9
+draw without a translated VS/PS pair"), among them the common
+XYZRHW|DIFFUSE|TEX1 vertex of 2D sprites, HUDs and older games, and any
+multi-texture one, on every host GPU.
+
+The vertex shader for such a draw is now built from the pixel shader's
+inputs, as for application pixel shaders with POSITIONT: POSITIONT becomes
+the clip-space position and every colour and texture-coordinate input the
+pixel shader reads is passed through from the declaration. A declaration
+without a diffuse colour gives opaque white, as fixed-function vertex
+processing does, rather than the zero default input.
+
+Evidence: docs/nvtex.md, docs/evidence/nvtex/ (src/d3d9_tex.cpp,
+path=ff-rhw-diffuse).
+Origin: vmlab-win3d nvtex worker.
+---
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Draw.cpp b/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
+index c6bba44..4069ec6 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
+@@ -537,7 +537,7 @@ static bool
+ D3D9CanUsePositionTDiffuseFixedFunction(const D3D9Device *device);
+ 
+ static bool
+-D3D9InitPositionTTexture0RuntimePsFixedFunctionVsInfo(
++D3D9InitPositionTRuntimePsFixedFunctionVsInfo(
+    const D3D9Device *device, const D3D9Object *ps, D3D9Object *vs_shader);
+ 
+ static bool
+@@ -876,25 +876,30 @@ D3D9CanUsePositionTDiffuseFixedFunction(const D3D9Device *device)
+ }
+ 
+ static bool
+-D3D9InitPositionTTexture0RuntimePsFixedFunctionVsInfo(
++D3D9AppendUniqueVsInput(D3D9Object *shader, uint16_t usage);
++
++/*
++ * Pre-transformed (POSITIONT) fixed-function draws reach the UMD with the
++ * runtime's generated fixed-function pixel shader and no vertex shader.  The
++ * generated vertex shader passes POSITIONT through as a clip-space position
++ * and passes every colour and texture-coordinate element of the declaration
++ * through, plus the diffuse colour, which defaults to white.  That pixel
++ * shader is ps_2_0, whose inputs are fixed registers (v0, v1, t0 to t7)
++ * rather than declared usages, so the declaration, not the shader, says
++ * what to feed.  Earlier only POSITIONT+TEXCOORD0 with one 2D texture was
++ * accepted, so the common XYZRHW|DIFFUSE|TEX1 vertex (and any
++ * multi-texture one) failed with E_FAIL.
++ */
++static bool
++D3D9InitPositionTRuntimePsFixedFunctionVsInfo(
+    const D3D9Device *device, const D3D9Object *ps, D3D9Object *vs_shader)
+ {
+-   if (!device || !ps || !vs_shader || !device->pixel_shader ||
+-       !device->textures[0])
++   if (!device || !ps || !vs_shader || !device->pixel_shader)
+       return false;
+    if (ps->kind != D3D9_OBJECT_SHADER || !ps->translated_ps_cso ||
+        !D3D9ShaderHasRuntimeFixedFunctionComment(ps))
+       return false;
+ 
+-   for (UINT i = 1; i < ARRAYSIZE(device->textures); ++i) {
+-      if (device->textures[i])
+-         return false;
+-   }
+-
+-   if ((ps->translated_ps_sampler_mask & 1) == 0 ||
+-       ps->translated_ps_sampler_targets[0] != TGSI_TEXTURE_2D)
+-      return false;
+-
+    const D3D9Object *decl = (const D3D9Object *)device->vertex_shader_decl;
+    if (!decl || decl->kind != D3D9_OBJECT_VERTEX_DECL)
+       return false;
+@@ -902,35 +907,30 @@ D3D9InitPositionTTexture0RuntimePsFixedFunctionVsInfo(
+    const D3DDDIVERTEXELEMENT *elements =
+       (const D3DDDIVERTEXELEMENT *)decl->data;
+    const UINT element_count = (UINT)(decl->size / sizeof(*elements));
+-   uint16_t position_usage = NINE_DECLUSAGE_NONE;
+-   bool texcoord0 = false;
++   bool position_t = false;
++
++   memset(vs_shader, 0, sizeof(*vs_shader));
++   vs_shader->kind = D3D9_OBJECT_SHADER;
++   if (!D3D9AppendUniqueVsInput(vs_shader, NINE_DECLUSAGE_i(POSITIONT, 0)) ||
++       !D3D9AppendUniqueVsInput(vs_shader, NINE_DECLUSAGE_i(COLOR, 0)))
++      return false;
+ 
+    for (UINT i = 0; i < element_count; ++i) {
+       const D3DDDIVERTEXELEMENT *element = &elements[i];
+       if (element->Stream == 0xff || element->Type == D3DDECLTYPE_UNUSED)
+          break;
+-
+       const uint16_t usage = D3D9DeclElementUsage(element);
++      const unsigned base = usage % NINE_DECLUSAGE_COUNT;
+       if (usage == NINE_DECLUSAGE_i(POSITIONT, 0) &&
+-          element->Type == D3DDECLTYPE_FLOAT4) {
+-         position_usage = usage;
+-      } else if (usage == NINE_DECLUSAGE_i(TEXCOORD, 0) &&
+-                 element->Type == D3DDECLTYPE_FLOAT2) {
+-         texcoord0 = true;
+-      } else {
++          element->Type == D3DDECLTYPE_FLOAT4)
++         position_t = true;
++      else if ((base == NINE_DECLUSAGE_COLOR ||
++                base == NINE_DECLUSAGE_TEXCOORD) &&
++               !D3D9AppendUniqueVsInput(vs_shader, usage))
+          return false;
+-      }
+    }
+ 
+-   if (position_usage == NINE_DECLUSAGE_NONE || !texcoord0)
+-      return false;
+-
+-   memset(vs_shader, 0, sizeof(*vs_shader));
+-   vs_shader->kind = D3D9_OBJECT_SHADER;
+-   vs_shader->translated_vs_num_inputs = 2;
+-   vs_shader->translated_vs_input_map[0] = position_usage;
+-   vs_shader->translated_vs_input_map[1] = NINE_DECLUSAGE_i(TEXCOORD, 0);
+-   return true;
++   return position_t;
+ }
+ 
+ static bool
+@@ -1081,6 +1081,27 @@ D3D9InitPositionTDiffuseFixedFunctionVsInfo(D3D9Object *shader)
+    shader->translated_vs_input_map[1] = NINE_DECLUSAGE_i(COLOR, 0);
+ }
+ 
++static bool
++D3D9ActiveDeclHasUsage(const D3D9Device *device, uint16_t usage)
++{
++   const D3D9Object *decl = (const D3D9Object *)device->vertex_shader_decl;
++   if (!decl || decl->kind != D3D9_OBJECT_VERTEX_DECL)
++      return false;
++
++   const D3DDDIVERTEXELEMENT *elements =
++      (const D3DDDIVERTEXELEMENT *)decl->data;
++   const UINT element_count = (UINT)(decl->size / sizeof(*elements));
++   for (UINT i = 0; i < element_count; ++i) {
++      if (elements[i].Stream == 0xff ||
++          elements[i].Type == D3DDECLTYPE_UNUSED)
++         break;
++      if (D3D9DeclElementUsage(&elements[i]) == usage)
++         return true;
++   }
++
++   return false;
++}
++
+ static void *
+ D3D9CreatePositionTPsInputFixedFunctionVs(D3D9Device *device,
+                                           const D3D9Object *shader)
+@@ -1140,7 +1161,14 @@ D3D9CreatePositionTPsInputFixedFunctionVs(D3D9Device *device,
+ 
+       struct ureg_dst output =
+          ureg_DECL_output(ureg, (enum tgsi_semantic)semantic, index);
+-      ureg_MOV(ureg, output, inputs[input]);
++      /* Fixed-function vertex processing gives a vertex without a diffuse
++       * colour opaque white, not the zero default input. */
++      if (shader->translated_vs_input_map[input] ==
++             NINE_DECLUSAGE_i(COLOR, 0) &&
++          !D3D9ActiveDeclHasUsage(device, NINE_DECLUSAGE_i(COLOR, 0)))
++         ureg_MOV(ureg, output, ureg_imm1f(ureg, 1.0f));
++      else
++         ureg_MOV(ureg, output, inputs[input]);
+    }
+ 
+    ureg_release_temporary(ureg, tmp);
+@@ -2756,10 +2784,10 @@ D3D9DrawDiffuse(D3D9Device *device, D3DPRIMITIVETYPE primitive_type,
+       D3D9CanUsePositionTDiffuseFixedFunction(device);
+    const D3D9Object *current_ps =
+       translated_ps ? (const D3D9Object *)device->pixel_shader : NULL;
+-   const bool generate_position_t_texture0_runtime_ps_vs =
++   const bool generate_position_t_runtime_ps_vs =
+       !generate_position_t_ps_input_vs && !generate_position_t_diffuse_vs &&
+       !device->vertex_shader_func && !translated_vs && translated_ps &&
+-      D3D9InitPositionTTexture0RuntimePsFixedFunctionVsInfo(
++      D3D9InitPositionTRuntimePsFixedFunctionVsInfo(
+          device, current_ps, &fixed_function_vs_shader);
+    /* DrawPrimitive2 can carry runtime-processed SWVP vertices. */
+    const bool generate_position_t_runtime_processed_diffuse_vs =
+@@ -2780,13 +2808,13 @@ D3D9DrawDiffuse(D3D9Device *device, D3DPRIMITIVETYPE primitive_type,
+     */
+    const bool replace_position_t_runtime_ff_vs =
+       runtime_fixed_function_pair && D3D9ActiveVertexDeclHasPositionT(device) &&
+-      D3D9InitPositionTTexture0RuntimePsFixedFunctionVsInfo(
++      D3D9InitPositionTRuntimePsFixedFunctionVsInfo(
+          device, current_ps, &fixed_function_vs_shader);
+ 
+    if (((!translated_vs || replace_position_t_runtime_ff_vs) &&
+         !generate_position_t_ps_input_vs &&
+         !generate_position_t_diffuse_vs &&
+-        !generate_position_t_texture0_runtime_ps_vs &&
++        !generate_position_t_runtime_ps_vs &&
+         !generate_position_t_runtime_processed_diffuse_vs &&
+         !generate_position_t_runtime_processed_vs &&
+         !replace_position_t_runtime_ff_vs) || !translated_ps)
+@@ -2806,7 +2834,7 @@ D3D9DrawDiffuse(D3D9Device *device, D3DPRIMITIVETYPE primitive_type,
+       translated_ps ? (const D3D9Object *)device->pixel_shader : NULL;
+    const D3D9Object *translated_vs_shader =
+       (generate_position_t_ps_input_vs || generate_position_t_diffuse_vs ||
+-       generate_position_t_texture0_runtime_ps_vs ||
++       generate_position_t_runtime_ps_vs ||
+        generate_position_t_runtime_processed_diffuse_vs ||
+        generate_position_t_runtime_processed_vs ||
+        replace_position_t_runtime_ff_vs) ?
+@@ -2883,7 +2911,7 @@ D3D9DrawDiffuse(D3D9Device *device, D3DPRIMITIVETYPE primitive_type,
+       mode == MESA_PRIM_POINTS &&
+       (translated_vs_point_size || D3D9PointSize(device) > 1.0f);
+    if (generate_position_t_ps_input_vs || generate_position_t_diffuse_vs ||
+-       generate_position_t_texture0_runtime_ps_vs ||
++       generate_position_t_runtime_ps_vs ||
+        generate_position_t_runtime_processed_diffuse_vs ||
+        generate_position_t_runtime_processed_vs ||
+        replace_position_t_runtime_ff_vs) {
+@@ -2891,7 +2919,7 @@ D3D9DrawDiffuse(D3D9Device *device, D3DPRIMITIVETYPE primitive_type,
+          (generate_position_t_ps_input_vs ||
+           replace_position_t_runtime_ff_vs ||
+           generate_position_t_runtime_processed_vs ||
+-          generate_position_t_texture0_runtime_ps_vs) ?
++          generate_position_t_runtime_ps_vs) ?
+          D3D9CreatePositionTPsInputFixedFunctionVs(device,
+                                                    &fixed_function_vs_shader) :
+          D3D9CreatePositionTDiffuseFixedFunctionVs(device);

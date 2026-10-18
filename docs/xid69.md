@@ -152,16 +152,14 @@ to it. The small drop on Nvidia1 was not investigated.
 
 ## Open items
 
-- **Textured meshes render black on NVIDIA.** With 0022, BasicHLSL's `tiny`
-  and ParallaxOcclusionMapping's disc render as black silhouettes on Nvidia1.
-  On AMD1 they are textured. Untextured geometry, the text and the DXUT UI
-  render correctly, and all of these go through the same shadow passes. The
-  black meshes are the ones sampling mipmapped textures: `tiny_skin` is
-  `D3DFMT_X8R8G8B8` with 9 levels, in `D3DPOOL_MANAGED`. Before 0022 this
-  could not be seen, because these samples hung first. The cause is not
-  investigated. A first fixed-function texture probe failed its draw with
-  `E_FAIL` on both GPUs, because the UMD does not support that
-  fixed-function setup, and it was dropped.
+- **Textured meshes rendered black on NVIDIA.** Fixed by
+  `patches/mesa/0023`. With 0022 alone, BasicHLSL's `tiny` and
+  ParallaxOcclusionMapping's disc rendered as black silhouettes on Nvidia1.
+  The cause was not the shadow pass. Every mipmapped D3D9 colour texture
+  outside the system-memory pools was a LINEAR image, and NVIDIA allows
+  LINEAR images with one mip level only, so the texture was never created.
+  The fixed-function texture probe's `E_FAIL` was a separate gap in the UMD,
+  fixed by 0024 ([`nvtex.md`](nvtex.md)).
 - **BasicHLSL x86** exited at once with `0xC000012F`
   (`STATUS_INVALID_IMAGE_NOT_MZ`) in the first patched lab, before loading any
   graphics module. The x86 D3D9 probe ran in the same lab with the same
@@ -174,8 +172,8 @@ to it. The small drop on Nvidia1 was not investigated.
   `vkGetPhysicalDeviceImageFormatProperties`, to match the format features,
   or support linear colour attachments next to depth. The minimal repro is
   `host-tests/lindepth.c`.
-- `build/mesa/README.md` lists the patch series and is not in this slice. It
-  needs a 0022 row.
+- `build/mesa/README.md` lists the patch series. It has the 0022 row now,
+  and rows for 0023 to 0025.
 
 ## Evidence index (`docs/evidence/xid69/`)
 

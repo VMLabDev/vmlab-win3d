@@ -1,0 +1,296 @@
+2026-10-18 07:55:03.784 d3d9ddi: OpenAdapter data=00000048def3ce60 hAdapter=0000000040000000 funcs=0000020a155791f0 callbacks=00000048def3cc30 version=0x00002003 runtimeInterface=0x00000009 runtimeVersion=0x00011000
+2026-10-18 07:55:03.811 d3d9ddi: GetCaps enter hAdapter=0000020a15546db0 data=00000048def3d4a8 type=13 pInfo=0000000000000000 pData=0000020a15578130 size=304
+2026-10-18 07:55:03.812 d3d9ddi: GetCaps D3D9 caps=0x00020000 caps2=0xe0020000 dev=0x061bbff0 dev2=0x00000041 vs=0xfffe0300 ps=0xffff0300
+2026-10-18 07:55:03.814 d3d9ddi: GetCaps enter hAdapter=0000020a15546db0 data=00000048def3d4a8 type=3 pInfo=0000000000000000 pData=00000048def3d510 size=4
+2026-10-18 07:55:03.814 d3d9ddi: GetCaps FORMATCOUNT count=46
+2026-10-18 07:55:03.814 d3d9ddi: GetCaps enter hAdapter=0000020a15546db0 data=00000048def3d4a8 type=6 pInfo=0000000000000000 pData=00000048def3d490 size=4
+2026-10-18 07:55:03.814 d3d9ddi: GetCaps QUERYCOUNT count=2
+2026-10-18 07:55:03.814 d3d9ddi: GetCaps enter hAdapter=0000020a15546db0 data=00000048def3d4a8 type=34 pInfo=0000000000000000 pData=00000048def3d520 size=4
+2026-10-18 07:55:03.814 d3d9ddi: GetCaps GAMMA caps=0x00000001
+2026-10-18 07:55:03.815 d3d9ddi: GetCaps enter hAdapter=0000020a15546db0 data=00000048def3d4a8 type=13 pInfo=0000000000000000 pData=0000020a15578130 size=304
+2026-10-18 07:55:03.815 d3d9ddi: GetCaps D3D9 caps=0x00020000 caps2=0xe0020000 dev=0x061bbff0 dev2=0x00000041 vs=0xfffe0300 ps=0xffff0300
+2026-10-18 07:55:03.815 d3d9ddi: GetCaps enter hAdapter=0000020a15546db0 data=00000048def3d4a8 type=3 pInfo=0000000000000000 pData=00000048def3d510 size=4
+2026-10-18 07:55:03.815 d3d9ddi: GetCaps FORMATCOUNT count=46
+2026-10-18 07:55:03.815 d3d9ddi: GetCaps enter hAdapter=0000020a15546db0 data=00000048def3d4a8 type=6 pInfo=0000000000000000 pData=00000048def3d490 size=4
+2026-10-18 07:55:03.815 d3d9ddi: GetCaps QUERYCOUNT count=2
+2026-10-18 07:55:03.815 d3d9ddi: GetCaps enter hAdapter=0000020a15546db0 data=00000048def3d4a8 type=34 pInfo=0000000000000000 pData=00000048def3d520 size=4
+2026-10-18 07:55:03.816 d3d9ddi: GetCaps GAMMA caps=0x00000001
+2026-10-18 07:55:03.816 d3d9ddi: GetCaps enter hAdapter=0000020a15546db0 data=00000048def3d4a8 type=4 pInfo=0000000000000000 pData=0000020a17955fb0 size=920
+2026-10-18 07:55:03.816 d3d9ddi: GetCaps FORMATDATA bytes=920 count=46 x8r8g8b8=0x008aec1f a8r8g8b8=0x00dae01f
+2026-10-18 07:55:03.816 d3d9ddi: GetCaps enter hAdapter=0000020a15546db0 data=00000048def3d4a8 type=7 pInfo=0000000000000000 pData=0000020a15556cc0 size=8
+2026-10-18 07:55:03.816 d3d9ddi: GetCaps QUERYDATA bytes=8 count=2
+2026-10-18 07:55:03.817 d3d9ddi: OpenAdapter data=00000048def3c6f0 hAdapter=0000000040000000 funcs=0000020a15632a70 callbacks=00000048def3c4c0 version=0x00002003 runtimeInterface=0x00000009 runtimeVersion=0x00011000
+2026-10-18 07:55:03.854 d3d9ddi: GetCaps enter hAdapter=0000020a15634180 data=00000048def3cd38 type=13 pInfo=0000000000000000 pData=0000020a17956490 size=304
+2026-10-18 07:55:03.855 d3d9ddi: GetCaps D3D9 caps=0x00020000 caps2=0xe0020000 dev=0x061bbff0 dev2=0x00000041 vs=0xfffe0300 ps=0xffff0300
+2026-10-18 07:55:03.856 d3d9ddi: GetCaps enter hAdapter=0000020a15634180 data=00000048def3cd38 type=3 pInfo=0000000000000000 pData=00000048def3cda0 size=4
+2026-10-18 07:55:03.856 d3d9ddi: GetCaps FORMATCOUNT count=46
+2026-10-18 07:55:03.856 d3d9ddi: GetCaps enter hAdapter=0000020a15634180 data=00000048def3cd38 type=6 pInfo=0000000000000000 pData=00000048def3cd20 size=4
+2026-10-18 07:55:03.856 d3d9ddi: GetCaps QUERYCOUNT count=2
+2026-10-18 07:55:03.856 d3d9ddi: GetCaps enter hAdapter=0000020a15634180 data=00000048def3cd38 type=34 pInfo=0000000000000000 pData=00000048def3cdb0 size=4
+2026-10-18 07:55:03.856 d3d9ddi: GetCaps GAMMA caps=0x00000001
+2026-10-18 07:55:03.856 d3d9ddi: GetCaps enter hAdapter=0000020a15634180 data=00000048def3cd38 type=13 pInfo=0000000000000000 pData=0000020a17956490 size=304
+2026-10-18 07:55:03.858 d3d9ddi: GetCaps D3D9 caps=0x00020000 caps2=0xe0020000 dev=0x061bbff0 dev2=0x00000041 vs=0xfffe0300 ps=0xffff0300
+2026-10-18 07:55:03.858 d3d9ddi: GetCaps enter hAdapter=0000020a15634180 data=00000048def3cd38 type=3 pInfo=0000000000000000 pData=00000048def3cda0 size=4
+2026-10-18 07:55:03.858 d3d9ddi: GetCaps FORMATCOUNT count=46
+2026-10-18 07:55:03.858 d3d9ddi: GetCaps enter hAdapter=0000020a15634180 data=00000048def3cd38 type=6 pInfo=0000000000000000 pData=00000048def3cd20 size=4
+2026-10-18 07:55:03.858 d3d9ddi: GetCaps QUERYCOUNT count=2
+2026-10-18 07:55:03.858 d3d9ddi: GetCaps enter hAdapter=0000020a15634180 data=00000048def3cd38 type=34 pInfo=0000000000000000 pData=00000048def3cdb0 size=4
+2026-10-18 07:55:03.858 d3d9ddi: GetCaps GAMMA caps=0x00000001
+2026-10-18 07:55:03.859 d3d9ddi: GetCaps enter hAdapter=0000020a15634180 data=00000048def3cd38 type=4 pInfo=0000000000000000 pData=0000020a1782e850 size=920
+2026-10-18 07:55:03.859 d3d9ddi: GetCaps FORMATDATA bytes=920 count=46 x8r8g8b8=0x008aec1f a8r8g8b8=0x00dae01f
+2026-10-18 07:55:03.859 d3d9ddi: GetCaps enter hAdapter=0000020a15634180 data=00000048def3cd38 type=7 pInfo=0000000000000000 pData=0000020a15556d00 size=8
+2026-10-18 07:55:03.859 d3d9ddi: GetCaps QUERYDATA bytes=8 count=2
+2026-10-18 07:55:03.866 d3d9ddi: OpenAdapter data=00000048def3c7c0 hAdapter=0000000040000000 funcs=0000020a15635490 callbacks=00000048def3c590 version=0x00002003 runtimeInterface=0x00000009 runtimeVersion=0x00011000
+2026-10-18 07:55:03.885 d3d9ddi: CreateDevice hAdapter=0000020a15634740 data=00000048def3c530 pDeviceFuncs=0000020a15635018 hRTDevice=0000020a15634900 interface=0x00000009 version=0x00011000 flags=0x00000003 cmd=0000000000000000/0 alloc=0000000000000000/0 patch=0000000000000000/0
+2026-10-18 07:55:03.917 d3d9ddi: GetCaps enter hAdapter=0000020a15634740 data=00000048def3ce08 type=13 pInfo=0000000000000000 pData=0000020a17956490 size=304
+2026-10-18 07:55:03.921 d3d9ddi: GetCaps D3D9 caps=0x00020000 caps2=0xe0020000 dev=0x061bbff0 dev2=0x00000041 vs=0xfffe0300 ps=0xffff0300
+2026-10-18 07:55:03.921 d3d9ddi: GetCaps enter hAdapter=0000020a15634740 data=00000048def3ce08 type=3 pInfo=0000000000000000 pData=00000048def3ce70 size=4
+2026-10-18 07:55:03.922 d3d9ddi: GetCaps FORMATCOUNT count=46
+2026-10-18 07:55:03.922 d3d9ddi: GetCaps enter hAdapter=0000020a15634740 data=00000048def3ce08 type=6 pInfo=0000000000000000 pData=00000048def3cdf0 size=4
+2026-10-18 07:55:03.923 d3d9ddi: GetCaps QUERYCOUNT count=2
+2026-10-18 07:55:03.923 d3d9ddi: GetCaps enter hAdapter=0000020a15634740 data=00000048def3ce08 type=34 pInfo=0000000000000000 pData=00000048def3ce80 size=4
+2026-10-18 07:55:03.923 d3d9ddi: GetCaps GAMMA caps=0x00000001
+2026-10-18 07:55:03.923 d3d9ddi: GetCaps enter hAdapter=0000020a15634740 data=00000048def3ce08 type=13 pInfo=0000000000000000 pData=0000020a17956490 size=304
+2026-10-18 07:55:03.923 d3d9ddi: GetCaps D3D9 caps=0x00020000 caps2=0xe0020000 dev=0x061bbff0 dev2=0x00000041 vs=0xfffe0300 ps=0xffff0300
+2026-10-18 07:55:03.923 d3d9ddi: GetCaps enter hAdapter=0000020a15634740 data=00000048def3ce08 type=3 pInfo=0000000000000000 pData=00000048def3ce70 size=4
+2026-10-18 07:55:03.923 d3d9ddi: GetCaps FORMATCOUNT count=46
+2026-10-18 07:55:03.923 d3d9ddi: GetCaps enter hAdapter=0000020a15634740 data=00000048def3ce08 type=6 pInfo=0000000000000000 pData=00000048def3cdf0 size=4
+2026-10-18 07:55:03.925 d3d9ddi: GetCaps QUERYCOUNT count=2
+2026-10-18 07:55:03.925 d3d9ddi: GetCaps enter hAdapter=0000020a15634740 data=00000048def3ce08 type=34 pInfo=0000000000000000 pData=00000048def3ce80 size=4
+2026-10-18 07:55:03.925 d3d9ddi: GetCaps GAMMA caps=0x00000001
+2026-10-18 07:55:03.925 d3d9ddi: GetCaps enter hAdapter=0000020a15634740 data=00000048def3ce08 type=4 pInfo=0000000000000000 pData=0000020a15639bb0 size=920
+2026-10-18 07:55:03.926 d3d9ddi: GetCaps FORMATDATA bytes=920 count=46 x8r8g8b8=0x008aec1f a8r8g8b8=0x00dae01f
+2026-10-18 07:55:03.926 d3d9ddi: GetCaps enter hAdapter=0000020a15634740 data=00000048def3ce08 type=7 pInfo=0000000000000000 pData=0000020a15556cb0 size=8
+2026-10-18 07:55:03.926 d3d9ddi: GetCaps QUERYDATA bytes=8 count=2
+2026-10-18 07:55:03.926 d3d9ddi: Flush hDevice=0000020a19e6ed50 pipe=0000020a1ad62040
+2026-10-18 07:55:03.926 d3d9ddi: CreateResource hDevice=0000020a19e6ed50 data=00000048def3d160 resource=0000020a15639ee0 format=22 pool=3 surfaces=1 levels=0 flags=0x00001081 rt=1 primary=0 discard_rt=1 texture=0 vb=0 ib=0 z=0 vidpn=0 multisample=0
+2026-10-18 07:55:03.928 d3d9ddi: CreateResource surface[0] 512x512x0 sysmem=0000000000000000 pitch=0 slice_pitch=0
+2026-10-18 07:55:03.928 d3d9ddi: CreateResource pipe=0000020a1a045010 allocation=0x40000800 target=2 format=282 bind=0x100082 size=512x512 levels=1 display_pipe=0000000000000000 display_allocation=0x0
+2026-10-18 07:55:03.929 d3d9ddi: CreateResource default RT0 resource=0000020a17956490
+2026-10-18 07:55:03.929 d3d9ddi: CreateResource success resource=0000020a17956490 runtime=0000020a15639ee0
+2026-10-18 07:55:03.930 d3d9ddi: CreateResource hDevice=0000020a19e6ed50 data=00000048def3d810 resource=0000020a1782eb50 format=100 pool=2 surfaces=1 levels=0 flags=0x02080004 rt=0 primary=0 discard_rt=0 texture=0 vb=1 ib=0 z=0 vidpn=0 multisample=0
+2026-10-18 07:55:03.930 d3d9ddi: CreateResource surface[0] 65536x1x0 sysmem=0000000000000000 pitch=0 slice_pitch=0
+2026-10-18 07:55:03.931 d3d9ddi: CreateResource pipe=0000020a19d4adc0 allocation=0x40000840 target=0 format=73 bind=0x10 size=65536x1 levels=1 display_pipe=0000000000000000 display_allocation=0x0
+2026-10-18 07:55:03.931 d3d9ddi: CreateResource success resource=0000020a1782ec10 runtime=0000020a1782eb50
+2026-10-18 07:55:03.931 d3d9ddi: CreateResource hDevice=0000020a19e6ed50 data=00000048def3d810 resource=0000020a1782ee20 format=100 pool=2 surfaces=1 levels=0 flags=0x02080044 rt=0 primary=0 discard_rt=0 texture=0 vb=1 ib=0 z=0 vidpn=0 multisample=0
+2026-10-18 07:55:03.931 d3d9ddi: CreateResource surface[0] 65536x1x0 sysmem=0000000000000000 pitch=0 slice_pitch=0
+2026-10-18 07:55:03.933 d3d9ddi: CreateResource pipe=0000020a19d4b6d0 allocation=0x40000880 target=0 format=73 bind=0x10 size=65536x1 levels=1 display_pipe=0000000000000000 display_allocation=0x0
+2026-10-18 07:55:03.933 d3d9ddi: CreateResource success resource=0000020a1782eee0 runtime=0000020a1782ee20
+2026-10-18 07:55:03.934 d3d9ddi: CreateResource hDevice=0000020a19e6ed50 data=00000048def3d810 resource=0000020a1a480b90 format=100 pool=2 surfaces=1 levels=0 flags=0x02080044 rt=0 primary=0 discard_rt=0 texture=0 vb=1 ib=0 z=0 vidpn=0 multisample=0
+2026-10-18 07:55:03.934 d3d9ddi: CreateResource surface[0] 65536x1x0 sysmem=0000000000000000 pitch=0 slice_pitch=0
+2026-10-18 07:55:03.935 d3d9ddi: CreateResource pipe=0000020a19d4bfe0 allocation=0x400008c0 target=0 format=73 bind=0x10 size=65536x1 levels=1 display_pipe=0000000000000000 display_allocation=0x0
+2026-10-18 07:55:03.935 d3d9ddi: CreateResource success resource=0000020a1a480c50 runtime=0000020a1a480b90
+2026-10-18 07:55:03.935 d3d9ddi: CreateResource hDevice=0000020a19e6ed50 data=00000048def3d800 resource=0000020a1a480e50 format=101 pool=2 surfaces=1 levels=0 flags=0x02100044 rt=0 primary=0 discard_rt=0 texture=0 vb=0 ib=1 z=0 vidpn=0 multisample=0
+2026-10-18 07:55:03.935 d3d9ddi: CreateResource surface[0] 4096x1x0 sysmem=0000000000000000 pitch=0 slice_pitch=0
+2026-10-18 07:55:03.937 d3d9ddi: CreateResource pipe=0000020a19d4d900 allocation=0x40000900 target=0 format=73 bind=0x20 size=4096x1 levels=1 display_pipe=0000000000000000 display_allocation=0x0
+2026-10-18 07:55:03.937 d3d9ddi: CreateResource success resource=0000020a19d4c940 runtime=0000020a1a480e50
+2026-10-18 07:55:03.937 d3d9ddi: SetViewport x=0 y=0 w=512 h=512
+2026-10-18 07:55:03.939 d3d9ddi: SetZRange min=0.000000 max=1.000000
+2026-10-18 07:55:03.939 d3d9ddi: SetViewport x=0 y=0 w=512 h=512
+2026-10-18 07:55:03.939 d3d9ddi: SetZRange min=0.000000 max=1.000000
+2026-10-18 07:55:03.939 WARNING: d3d9ddi: unsupported D3D9 tessellation state owner=d3d9-state reason=patch-tessellation-not-implemented fallback=ignore-unadvertised-state state=164 value=0x00000000
+2026-10-18 07:55:03.939 WARNING: d3d9ddi: D3D9 runtime reserved render state owner=d3d9-state reason=unassigned-ddi-slot fallback=ignore-runtime-metadata state=196 value=0xffffffff
+2026-10-18 07:55:03.940 d3d9ddi: CreateResource hDevice=0000020a19e6ed50 data=00000048def3da80 resource=0000020a17a2eec0 format=22 pool=1 surfaces=9 levels=9 flags=0x00010000 rt=0 primary=0 discard_rt=0 texture=1 vb=0 ib=0 z=0 vidpn=0 multisample=0
+2026-10-18 07:55:03.940 d3d9ddi: CreateResource surface[0] 256x256x0 sysmem=0000020a1a480fc0 pitch=1024 slice_pitch=0
+2026-10-18 07:55:03.941 d3d9ddi: CreateResource surface[1] 128x128x0 sysmem=0000020a1a4c0fc0 pitch=512 slice_pitch=0
+2026-10-18 07:55:03.941 d3d9ddi: CreateResource surface[2] 64x64x0 sysmem=0000020a1a4d0fc0 pitch=256 slice_pitch=0
+2026-10-18 07:55:03.941 d3d9ddi: CreateResource surface[3] 32x32x0 sysmem=0000020a1a4d4fc0 pitch=128 slice_pitch=0
+2026-10-18 07:55:03.941 d3d9ddi: CreateResource surface[4] 16x16x0 sysmem=0000020a1a4d5fc0 pitch=64 slice_pitch=0
+2026-10-18 07:55:03.941 d3d9ddi: CreateResource surface[5] 8x8x0 sysmem=0000020a1a4d63c0 pitch=32 slice_pitch=0
+2026-10-18 07:55:03.941 d3d9ddi: CreateResource surface[6] 4x4x0 sysmem=0000020a1a4d64c0 pitch=16 slice_pitch=0
+2026-10-18 07:55:03.942 d3d9ddi: CreateResource surface[7] 2x2x0 sysmem=0000020a1a4d6500 pitch=8 slice_pitch=0
+2026-10-18 07:55:03.942 d3d9ddi: CreateResource surface[8] 1x1x0 sysmem=0000020a1a4d6510 pitch=4 slice_pitch=0
+2026-10-18 07:55:03.942 d3d9ddi: CreateResource pipe resource has no D3DKMT allocation resource=0000020a19d4c9c0 pipe=0000020a19d72540 format=282 bind=0x8
+2026-10-18 07:55:03.942 d3d9ddi: CreateResource pipe=0000020a19d72540 allocation=0x0 target=2 format=282 bind=0x8 size=256x256 levels=9 display_pipe=0000000000000000 display_allocation=0x0
+2026-10-18 07:55:03.943 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=0 allocation=0x0 size=256x256x1
+2026-10-18 07:55:03.943 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=1 allocation=0x0 size=128x128x1
+2026-10-18 07:55:03.943 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=2 allocation=0x0 size=64x64x1
+2026-10-18 07:55:03.943 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=3 allocation=0x0 size=32x32x1
+2026-10-18 07:55:03.943 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=4 allocation=0x0 size=16x16x1
+2026-10-18 07:55:03.943 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=5 allocation=0x0 size=8x8x1
+2026-10-18 07:55:03.944 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=6 allocation=0x0 size=4x4x1
+2026-10-18 07:55:03.944 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=7 allocation=0x0 size=2x2x1
+2026-10-18 07:55:03.944 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=8 allocation=0x0 size=1x1x1
+2026-10-18 07:55:03.944 d3d9ddi: CreateResource success resource=0000020a19d4c9c0 runtime=0000020a17a2eec0
+2026-10-18 07:55:03.944 d3d9ddi: Lock resource=0000020a19d4c9c0 sub=0 flags=0x00000080
+2026-10-18 07:55:03.944 d3d9ddi: Lock notify-only maps CPU backing resource=0000020a19d4c9c0 sub=0 flags=0x00000080 box=0,0,0 256x256x1 pitch=1024 write=1
+2026-10-18 07:55:03.944 d3d9ddi: Unlock resource=0000020a19d4c9c0 sub=0
+2026-10-18 07:55:03.945 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=0 allocation=0x0 size=256x256x1
+2026-10-18 07:55:03.945 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=1 allocation=0x0 size=128x128x1
+2026-10-18 07:55:03.945 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=2 allocation=0x0 size=64x64x1
+2026-10-18 07:55:03.945 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=3 allocation=0x0 size=32x32x1
+2026-10-18 07:55:03.945 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=4 allocation=0x0 size=16x16x1
+2026-10-18 07:55:03.945 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=5 allocation=0x0 size=8x8x1
+2026-10-18 07:55:03.945 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=6 allocation=0x0 size=4x4x1
+2026-10-18 07:55:03.945 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=7 allocation=0x0 size=2x2x1
+2026-10-18 07:55:03.947 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=8 allocation=0x0 size=1x1x1
+2026-10-18 07:55:03.947 d3d9ddi: Unlock completes notify-only lock resource=0000020a19d4c9c0 sub=0 flags=0x00000001 dirty=0
+2026-10-18 07:55:03.947 d3d9ddi: Lock resource=0000020a19d4c9c0 sub=0 flags=0x00000080
+2026-10-18 07:55:03.947 d3d9ddi: Lock notify-only maps CPU backing resource=0000020a19d4c9c0 sub=1 flags=0x00000080 box=0,0,0 128x128x1 pitch=512 write=1
+2026-10-18 07:55:03.947 d3d9ddi: Unlock resource=0000020a19d4c9c0 sub=0
+2026-10-18 07:55:03.947 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=0 allocation=0x0 size=256x256x1
+2026-10-18 07:55:03.947 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=1 allocation=0x0 size=128x128x1
+2026-10-18 07:55:03.948 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=2 allocation=0x0 size=64x64x1
+2026-10-18 07:55:03.948 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=3 allocation=0x0 size=32x32x1
+2026-10-18 07:55:03.948 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=4 allocation=0x0 size=16x16x1
+2026-10-18 07:55:03.948 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=5 allocation=0x0 size=8x8x1
+2026-10-18 07:55:03.948 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=6 allocation=0x0 size=4x4x1
+2026-10-18 07:55:03.948 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=7 allocation=0x0 size=2x2x1
+2026-10-18 07:55:03.949 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=8 allocation=0x0 size=1x1x1
+2026-10-18 07:55:03.949 d3d9ddi: Unlock completes notify-only lock resource=0000020a19d4c9c0 sub=1 flags=0x00000001 dirty=0
+2026-10-18 07:55:03.949 d3d9ddi: Lock resource=0000020a19d4c9c0 sub=0 flags=0x00000080
+2026-10-18 07:55:03.949 d3d9ddi: Lock notify-only maps CPU backing resource=0000020a19d4c9c0 sub=2 flags=0x00000080 box=0,0,0 64x64x1 pitch=256 write=1
+2026-10-18 07:55:03.950 d3d9ddi: Unlock resource=0000020a19d4c9c0 sub=0
+2026-10-18 07:55:03.950 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=0 allocation=0x0 size=256x256x1
+2026-10-18 07:55:03.950 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=1 allocation=0x0 size=128x128x1
+2026-10-18 07:55:03.950 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=2 allocation=0x0 size=64x64x1
+2026-10-18 07:55:03.950 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=3 allocation=0x0 size=32x32x1
+2026-10-18 07:55:03.950 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=4 allocation=0x0 size=16x16x1
+2026-10-18 07:55:03.952 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=5 allocation=0x0 size=8x8x1
+2026-10-18 07:55:03.952 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=6 allocation=0x0 size=4x4x1
+2026-10-18 07:55:03.952 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=7 allocation=0x0 size=2x2x1
+2026-10-18 07:55:03.952 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=8 allocation=0x0 size=1x1x1
+2026-10-18 07:55:03.952 d3d9ddi: Unlock completes notify-only lock resource=0000020a19d4c9c0 sub=2 flags=0x00000001 dirty=0
+2026-10-18 07:55:03.952 d3d9ddi: Lock resource=0000020a19d4c9c0 sub=0 flags=0x00000080
+2026-10-18 07:55:03.952 d3d9ddi: Lock notify-only maps CPU backing resource=0000020a19d4c9c0 sub=3 flags=0x00000080 box=0,0,0 32x32x1 pitch=128 write=1
+2026-10-18 07:55:03.952 d3d9ddi: Unlock resource=0000020a19d4c9c0 sub=0
+2026-10-18 07:55:03.952 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=0 allocation=0x0 size=256x256x1
+2026-10-18 07:55:03.952 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=1 allocation=0x0 size=128x128x1
+2026-10-18 07:55:03.952 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=2 allocation=0x0 size=64x64x1
+2026-10-18 07:55:03.952 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=3 allocation=0x0 size=32x32x1
+2026-10-18 07:55:03.952 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=4 allocation=0x0 size=16x16x1
+2026-10-18 07:55:03.952 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=5 allocation=0x0 size=8x8x1
+2026-10-18 07:55:03.952 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=6 allocation=0x0 size=4x4x1
+2026-10-18 07:55:03.952 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=7 allocation=0x0 size=2x2x1
+2026-10-18 07:55:03.955 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=8 allocation=0x0 size=1x1x1
+2026-10-18 07:55:03.955 d3d9ddi: Unlock completes notify-only lock resource=0000020a19d4c9c0 sub=3 flags=0x00000001 dirty=0
+2026-10-18 07:55:03.956 d3d9ddi: Lock resource=0000020a19d4c9c0 sub=0 flags=0x00000080
+2026-10-18 07:55:03.956 d3d9ddi: Lock notify-only maps CPU backing resource=0000020a19d4c9c0 sub=4 flags=0x00000080 box=0,0,0 16x16x1 pitch=64 write=1
+2026-10-18 07:55:03.956 d3d9ddi: Unlock resource=0000020a19d4c9c0 sub=0
+2026-10-18 07:55:03.956 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=0 allocation=0x0 size=256x256x1
+2026-10-18 07:55:03.957 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=1 allocation=0x0 size=128x128x1
+2026-10-18 07:55:03.957 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=2 allocation=0x0 size=64x64x1
+2026-10-18 07:55:03.957 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=3 allocation=0x0 size=32x32x1
+2026-10-18 07:55:03.957 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=4 allocation=0x0 size=16x16x1
+2026-10-18 07:55:03.957 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=5 allocation=0x0 size=8x8x1
+2026-10-18 07:55:03.957 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=6 allocation=0x0 size=4x4x1
+2026-10-18 07:55:03.957 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=7 allocation=0x0 size=2x2x1
+2026-10-18 07:55:03.957 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=8 allocation=0x0 size=1x1x1
+2026-10-18 07:55:03.959 d3d9ddi: Unlock completes notify-only lock resource=0000020a19d4c9c0 sub=4 flags=0x00000001 dirty=0
+2026-10-18 07:55:03.959 d3d9ddi: Lock resource=0000020a19d4c9c0 sub=0 flags=0x00000080
+2026-10-18 07:55:03.959 d3d9ddi: Lock notify-only maps CPU backing resource=0000020a19d4c9c0 sub=5 flags=0x00000080 box=0,0,0 8x8x1 pitch=32 write=1
+2026-10-18 07:55:03.959 d3d9ddi: Unlock resource=0000020a19d4c9c0 sub=0
+2026-10-18 07:55:03.959 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=0 allocation=0x0 size=256x256x1
+2026-10-18 07:55:03.959 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=1 allocation=0x0 size=128x128x1
+2026-10-18 07:55:03.959 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=2 allocation=0x0 size=64x64x1
+2026-10-18 07:55:03.960 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=3 allocation=0x0 size=32x32x1
+2026-10-18 07:55:03.960 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=4 allocation=0x0 size=16x16x1
+2026-10-18 07:55:03.960 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=5 allocation=0x0 size=8x8x1
+2026-10-18 07:55:03.960 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=6 allocation=0x0 size=4x4x1
+2026-10-18 07:55:03.960 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=7 allocation=0x0 size=2x2x1
+2026-10-18 07:55:03.960 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=8 allocation=0x0 size=1x1x1
+2026-10-18 07:55:03.960 d3d9ddi: Unlock completes notify-only lock resource=0000020a19d4c9c0 sub=5 flags=0x00000001 dirty=0
+2026-10-18 07:55:03.962 d3d9ddi: Lock resource=0000020a19d4c9c0 sub=0 flags=0x00000080
+2026-10-18 07:55:03.962 d3d9ddi: Lock notify-only maps CPU backing resource=0000020a19d4c9c0 sub=6 flags=0x00000080 box=0,0,0 4x4x1 pitch=16 write=1
+2026-10-18 07:55:03.962 d3d9ddi: Unlock resource=0000020a19d4c9c0 sub=0
+2026-10-18 07:55:03.962 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=0 allocation=0x0 size=256x256x1
+2026-10-18 07:55:03.962 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=1 allocation=0x0 size=128x128x1
+2026-10-18 07:55:03.962 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=2 allocation=0x0 size=64x64x1
+2026-10-18 07:55:03.963 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=3 allocation=0x0 size=32x32x1
+2026-10-18 07:55:03.963 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=4 allocation=0x0 size=16x16x1
+2026-10-18 07:55:03.963 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=5 allocation=0x0 size=8x8x1
+2026-10-18 07:55:03.963 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=6 allocation=0x0 size=4x4x1
+2026-10-18 07:55:03.963 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=7 allocation=0x0 size=2x2x1
+2026-10-18 07:55:03.964 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=8 allocation=0x0 size=1x1x1
+2026-10-18 07:55:03.964 d3d9ddi: Unlock completes notify-only lock resource=0000020a19d4c9c0 sub=6 flags=0x00000001 dirty=0
+2026-10-18 07:55:03.964 d3d9ddi: Lock resource=0000020a19d4c9c0 sub=0 flags=0x00000080
+2026-10-18 07:55:03.965 d3d9ddi: Lock notify-only maps CPU backing resource=0000020a19d4c9c0 sub=7 flags=0x00000080 box=0,0,0 2x2x1 pitch=8 write=1
+2026-10-18 07:55:03.965 d3d9ddi: Unlock resource=0000020a19d4c9c0 sub=0
+2026-10-18 07:55:03.965 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=0 allocation=0x0 size=256x256x1
+2026-10-18 07:55:03.965 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=1 allocation=0x0 size=128x128x1
+2026-10-18 07:55:03.965 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=2 allocation=0x0 size=64x64x1
+2026-10-18 07:55:03.965 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=3 allocation=0x0 size=32x32x1
+2026-10-18 07:55:03.965 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=4 allocation=0x0 size=16x16x1
+2026-10-18 07:55:03.965 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=5 allocation=0x0 size=8x8x1
+2026-10-18 07:55:03.965 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=6 allocation=0x0 size=4x4x1
+2026-10-18 07:55:03.965 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=7 allocation=0x0 size=2x2x1
+2026-10-18 07:55:03.967 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=8 allocation=0x0 size=1x1x1
+2026-10-18 07:55:03.967 d3d9ddi: Unlock completes notify-only lock resource=0000020a19d4c9c0 sub=7 flags=0x00000001 dirty=0
+2026-10-18 07:55:03.967 d3d9ddi: Lock resource=0000020a19d4c9c0 sub=0 flags=0x00000080
+2026-10-18 07:55:03.967 d3d9ddi: Lock notify-only maps CPU backing resource=0000020a19d4c9c0 sub=8 flags=0x00000080 box=0,0,0 1x1x1 pitch=4 write=1
+2026-10-18 07:55:03.967 d3d9ddi: Unlock resource=0000020a19d4c9c0 sub=0
+2026-10-18 07:55:03.967 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=0 allocation=0x0 size=256x256x1
+2026-10-18 07:55:03.967 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=1 allocation=0x0 size=128x128x1
+2026-10-18 07:55:03.968 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=2 allocation=0x0 size=64x64x1
+2026-10-18 07:55:03.968 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=3 allocation=0x0 size=32x32x1
+2026-10-18 07:55:03.968 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=4 allocation=0x0 size=16x16x1
+2026-10-18 07:55:03.968 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=5 allocation=0x0 size=8x8x1
+2026-10-18 07:55:03.968 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=6 allocation=0x0 size=4x4x1
+2026-10-18 07:55:03.968 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=7 allocation=0x0 size=2x2x1
+2026-10-18 07:55:03.968 d3d9ddi: UploadSubResource resource=0000020a19d4c9c0 sub=8 allocation=0x0 size=1x1x1
+2026-10-18 07:55:03.968 d3d9ddi: Unlock completes notify-only lock resource=0000020a19d4c9c0 sub=8 flags=0x00000001 dirty=0
+2026-10-18 07:55:03.968 d3d9ddi: CreateResource hDevice=0000020a19e6ed50 data=00000048def3dec0 resource=0000020a19d717e0 format=22 pool=1 surfaces=1 levels=0 flags=0x00000000 rt=0 primary=0 discard_rt=0 texture=0 vb=0 ib=0 z=0 vidpn=0 multisample=0
+2026-10-18 07:55:03.968 d3d9ddi: CreateResource surface[0] 512x512x0 sysmem=0000020a1af2c060 pitch=2048 slice_pitch=0
+2026-10-18 07:55:03.968 d3d9ddi: CreateResource CPU-only plain resource=0000020a19d4cac0 format=22 pool=1 size=512x512
+2026-10-18 07:55:03.968 d3d9ddi: CreateResource success resource=0000020a19d4cac0 runtime=0000020a19d717e0
+2026-10-18 07:55:03.972 d3d9ddi: SetRenderTarget hDevice=0000020a19e6ed50 data=00000048def3e6f8 rt=0 resource=0000020a17956490 sub=0
+2026-10-18 07:55:03.973 d3d9ddi: SetDepthStencil hDevice=0000020a19e6ed50 data=00000048def3e6d8 resource=0000000000000000
+2026-10-18 07:55:03.973 d3d9ddi: Clear hDevice=0000020a19e6ed50 data=00000048def3e718 flags=0x00000001 rects=1 color=0xff141428 depth=1.000000 stencil=0
+2026-10-18 07:55:03.973 d3d9ddi: CreateVertexShaderDecl data=00000048def3e650 elements=0000020a19d73960 count=3
+2026-10-18 07:55:03.973 d3d9ddi:   elem[0] stream=0 offset=0 type=3 method=0 usage=9 usage_index=0
+2026-10-18 07:55:03.973 d3d9ddi:   elem[1] stream=0 offset=16 type=4 method=0 usage=10 usage_index=0
+2026-10-18 07:55:03.973 d3d9ddi:   elem[2] stream=0 offset=20 type=1 method=0 usage=5 usage_index=0
+2026-10-18 07:55:03.973 d3d9ddi: CreateVertexShaderDecl handle=0000020a19d73e60
+2026-10-18 07:55:03.975 d3d9ddi: SetVertexShaderDecl decl=0000020a19d73e60
+2026-10-18 07:55:03.975 d3d9ddi: CreateResource hDevice=0000020a19e6ed50 data=00000048def3d8c0 resource=0000020a19d71ba0 format=22 pool=2 surfaces=9 levels=9 flags=0x00010080 rt=0 primary=0 discard_rt=0 texture=1 vb=0 ib=0 z=0 vidpn=0 multisample=0
+2026-10-18 07:55:03.975 d3d9ddi: CreateResource surface[0] 256x256x0 sysmem=0000000000000000 pitch=0 slice_pitch=0
+2026-10-18 07:55:03.975 d3d9ddi: CreateResource surface[1] 128x128x0 sysmem=0000000000000000 pitch=0 slice_pitch=0
+2026-10-18 07:55:03.975 d3d9ddi: CreateResource surface[2] 64x64x0 sysmem=0000000000000000 pitch=0 slice_pitch=0
+2026-10-18 07:55:03.975 d3d9ddi: CreateResource surface[3] 32x32x0 sysmem=0000000000000000 pitch=0 slice_pitch=0
+2026-10-18 07:55:03.976 d3d9ddi: CreateResource surface[4] 16x16x0 sysmem=0000000000000000 pitch=0 slice_pitch=0
+2026-10-18 07:55:03.976 d3d9ddi: CreateResource surface[5] 8x8x0 sysmem=0000000000000000 pitch=0 slice_pitch=0
+2026-10-18 07:55:03.976 d3d9ddi: CreateResource surface[6] 4x4x0 sysmem=0000000000000000 pitch=0 slice_pitch=0
+2026-10-18 07:55:03.976 d3d9ddi: CreateResource surface[7] 2x2x0 sysmem=0000000000000000 pitch=0 slice_pitch=0
+2026-10-18 07:55:03.976 d3d9ddi: CreateResource surface[8] 1x1x0 sysmem=0000000000000000 pitch=0 slice_pitch=0
+2026-10-18 07:55:03.978 d3d9ddi: CreateResource pipe=0000020a1a0464d0 allocation=0x40000980 target=2 format=282 bind=0x10000a size=256x256 levels=9 display_pipe=0000000000000000 display_allocation=0x0
+2026-10-18 07:55:03.982 d3d9ddi: CreateResource success resource=0000020a19d4ce40 runtime=0000020a19d71ba0
+2026-10-18 07:55:03.987 d3d9ddi: CreatePixelShader data=00000048def3e690 tokens=0000020a15639fc0 size=124
+2026-10-18 07:55:03.989 d3d9ddi: translated D3D9 PS with Nine shader=0000020a1a046de0 version=2.0 size=124 byte_size=124 fog=0 mode=0 zfog=1 projected=0x00 flatshade=0 ps1x_samplers=0x0000 sampler_overrides=0x0000000000000000/0x0000 fetch4=0x0000 ati1=0x0000 projected_fallback=0x0000 cso=0000020a1a04bd30
+2026-10-18 07:55:03.989 d3d9ddi: CreatePixelShader handle=0000020a1a046de0
+2026-10-18 07:55:03.989 d3d9ddi: SetPixelShader shader=0000020a1a046de0
+2026-10-18 07:55:03.989 d3d9ddi: SetStreamSourceUm stream=0 stride=28 ptr=00000048def3e9c0
+2026-10-18 07:55:03.989 d3d9ddi: DrawPrimitive data=00000048def3e730 primitive=5 start=0 count=2
+2026-10-18 07:55:03.989 d3d9ddi: translated D3D9 PS with Nine shader=0000020a1a046de0 version=2.0 size=124 byte_size=124 fog=0 mode=0 zfog=1 projected=0x00 flatshade=0 ps1x_samplers=0x0000 sampler_overrides=0x0000000000000002/0x0001 fetch4=0x0000 ati1=0x0000 projected_fallback=0x0000 cso=0000020a1a04deb0
+2026-10-18 07:55:03.991 WARNING: d3d9ddi: unsupported D3D9 draw without a translated VS/PS pair; fixed-function and app shaders must use Nine shader translation
+2026-10-18 07:55:03.991 d3d9ddi: Lock resource=0000020a19d4cac0 sub=0 flags=0x00000080
+2026-10-18 07:55:03.991 d3d9ddi: Lock notify-only maps CPU backing resource=0000020a19d4cac0 sub=0 flags=0x00000080 box=0,0,0 512x512x1 pitch=2048 write=1
+2026-10-18 07:55:03.991 d3d9ddi: Unlock resource=0000020a19d4cac0 sub=0
+2026-10-18 07:55:03.991 d3d9ddi: Unlock completes notify-only lock resource=0000020a19d4cac0 sub=0 flags=0x00000001 dirty=1
+2026-10-18 07:55:03.992 d3d9ddi: Blt data=00000048def3e380 dst=0000020a19d4cac0/0 src=0000020a17956490/0
+2026-10-18 07:55:03.992 d3d9ddi: ReadbackResource resource=0000020a17956490 pipe=0000020a1a045010 readback=0000020a1a5b4590 format=282 size=512x512x1
+2026-10-18 07:55:04.000 d3d9ddi: ReadbackTextureLock resource=0000020a17956490 sub=0 box=0,0,0 512x512x1 usage=0x1
+2026-10-18 07:55:04.007 d3d9ddi: CopyTextureToCpuDestination dst=0000020a19d4cac0/0 src=0000020a17956490/0 box=512x512
+2026-10-18 07:55:04.008 d3d9ddi: Blt hr=0x00000000
+2026-10-18 07:55:04.008 d3d9ddi: Lock resource=0000020a19d4cac0 sub=0 flags=0x00000081
+2026-10-18 07:55:04.008 d3d9ddi: Lock notify-only maps CPU backing resource=0000020a19d4cac0 sub=0 flags=0x00000081 box=0,0,0 512x512x1 pitch=2048 write=0
+2026-10-18 07:55:04.008 d3d9ddi: Unlock resource=0000020a19d4cac0 sub=0
+2026-10-18 07:55:04.008 d3d9ddi: Unlock completes notify-only lock resource=0000020a19d4cac0 sub=0 flags=0x00000001 dirty=0
+2026-10-18 07:55:04.009 d3d9ddi: Flush hDevice=0000020a19e6ed50 pipe=0000020a1ad62040
+2026-10-18 07:55:04.009 d3d9ddi: Present data=00000048def3e4a8 src=0000020a17956490/0 dst=0000000000000000/0 flags=0x00000001
+2026-10-18 07:55:04.009 d3d9ddi: Present flush_frontbuffer src=0x40000800 dst=0x0 pipe=0000020a1a045010
+2026-10-18 07:55:04.028 d3d9ddi: Present hr=0x00000000
+2026-10-18 07:55:04.028 d3d9ddi: Clear hDevice=0000020a19e6ed50 data=00000048def3e718 flags=0x00000001 rects=1 color=0xff141428 depth=1.000000 stencil=0
+2026-10-18 07:55:04.030 d3d9ddi: SetStreamSourceUm stream=0 stride=28 ptr=00000048def3e9c0
+2026-10-18 07:55:04.030 d3d9ddi: DrawPrimitive data=00000048def3e730 primitive=5 start=0 count=2
+2026-10-18 07:55:04.044 d3d9ddi: Flush hDevice=0000020a19e6ed50 pipe=0000020a1ad62040
+2026-10-18 07:55:04.044 d3d9ddi: Present data=00000048def3e4a8 src=0000020a17956490/0 dst=0000000000000000/0 flags=0x00000001
+2026-10-18 07:55:04.044 d3d9ddi: Present flush_frontbuffer src=0x40000800 dst=0x0 pipe=0000020a1a045010
+2026-10-18 07:55:04.056 d3d9ddi: Present hr=0x00000000
+2026-10-18 07:55:04.056 d3d9ddi: Clear hDevice=0000020a19e6ed50 data=00000048def3e718 flags=0x00000001 rects=1 color=0xff141428 depth=1.000000 stencil=0
+2026-10-18 07:55:04.057 d3d9ddi: SetStreamSourceUm stream=0 stride=28 ptr=00000048def3e9c0
+2026-10-18 07:55:04.057 d3d9ddi: DrawPrimitive data=00000048def3e730 primitive=5 start=0 count=2
+2026-10-18 07:55:04.073 d3d9ddi: Flush hDevice=0000020a19e6ed50 pipe=0000020a1ad62040
+2026-10-18 07:55:04.073 d3d9ddi: Present data=00000048def3e4a8 src=0000020a17956490/0 dst=0000000000000000/0 flags=0x00000001
+2026-10-18 07:55:04.073 d3d9ddi: Present flush_frontbuffer src=0x40000800 dst=0x0 pipe=0000020a1a045010
+2026-10-18 07:55:04.087 d3d9ddi: Present hr=0x00000000
+2026-10-18 07:55:04.095 WARNING: yttrium: D3D9 render completion event is CPU-signaled, not GPU-complete

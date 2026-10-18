@@ -1,0 +1,29 @@
+== d3d9_tex 64-bit, adapter Hardsoft VirtIO GPU 3D controller
+PASS path=hlsl fmt=x8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=0000ff corner=0000ff matches_level=2 want_level=2
+PASS path=hlsl fmt=x8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=256 depth=none levels_created=9 centre=ff0000 corner=ff0000 matches_level=0 want_level=0
+PASS path=hlsl fmt=x8 pool=managed levels=1 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=1 centre=ff0000 corner=ff0000 matches_level=0 want_level=0
+PASS path=hlsl fmt=a8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=0000ff corner=0000ff matches_level=2 want_level=2
+PASS path=hlsl fmt=dxt1 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=0000ff corner=0000ff matches_level=2 want_level=2
+PASS path=hlsl fmt=r5g6b5 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=0000ff corner=0000ff matches_level=2 want_level=2
+PASS path=hlsl fmt=r5g6b5 pool=managed levels=1 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=1 centre=ff0000 corner=ff0000 matches_level=0 want_level=0
+PASS path=hlsl fmt=a1r5g5b5 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=0000ff corner=0000ff matches_level=2 want_level=2
+PASS path=hlsl fmt=x8 pool=default levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=0000ff corner=0000ff matches_level=2 want_level=2
+PASS path=hlsl fmt=x8 pool=dynamic levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=0000ff corner=0000ff matches_level=2 want_level=2
+PASS path=hlsl fmt=x8 pool=managed levels=0 mip=point maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=0000ff corner=0000ff matches_level=2 want_level=2
+PASS path=hlsl fmt=x8 pool=managed levels=0 mip=none maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=ff0000 corner=ff0000 matches_level=0 want_level=0
+PASS path=hlsl fmt=x8 pool=managed levels=0 mip=point maxmip=3 bias=0 size=64 depth=none levels_created=9 centre=ffff00 corner=ffff00 matches_level=3 want_level=3
+PASS path=hlsl fmt=x8 pool=managed levels=0 mip=point maxmip=0 bias=1 size=64 depth=none levels_created=9 centre=ffff00 corner=ffff00 matches_level=3 want_level=3
+PASS path=hlsl3 fmt=x8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=0000ff corner=0000ff matches_level=2 want_level=2
+PASS path=hlsl fmt=x8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=d24x8 levels_created=9 centre=0000ff corner=0000ff matches_level=2 want_level=2
+PASS path=hlsl fmt=x8 pool=managed levels=1 mip=linear maxmip=0 bias=0 size=64 depth=d24x8 levels_created=1 centre=ff0000 corner=ff0000 matches_level=0 want_level=0
+PASS path=hlsl fmt=a8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=d24x8 levels_created=9 centre=0000ff corner=0000ff matches_level=2 want_level=2
+PASS path=ff-rhw fmt=x8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=0000ff corner=0000ff matches_level=2 want_level=2
+PASS path=ff-rhw fmt=x8 pool=managed levels=1 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=1 centre=ff0000 corner=ff0000 matches_level=0 want_level=0
+PASS path=ff-rhw-diffuse fmt=x8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=0000ff corner=0000ff matches_level=2 want_level=2
+PASS path=ff-rhw-diffuse fmt=x8 pool=managed levels=1 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=1 centre=ff0000 corner=ff0000 matches_level=0 want_level=0
+PASS path=ff-rhw-mod fmt=x8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=0000ff corner=0000ff matches_level=2 want_level=2
+PASS path=ff-rhw-diffuse fmt=x8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=d24x8 levels_created=9 centre=0000ff corner=0000ff matches_level=2 want_level=2
+PASS path=ff-xyz fmt=x8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=0000ff corner=0000ff matches_level=2 want_level=2
+PASS path=ff-xyz-lit fmt=x8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=0000ff corner=0000ff matches_level=2 want_level=2
+PASS path=ff-xyz fmt=x8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=d24x8 levels_created=9 centre=0000ff corner=0000ff matches_level=2 want_level=2
+== done 27 of 27 passed
