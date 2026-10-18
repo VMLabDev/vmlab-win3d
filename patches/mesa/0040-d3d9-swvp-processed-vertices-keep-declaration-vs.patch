@@ -1,0 +1,34 @@
+Subject: [PATCH] d3d9: keep the declaration-built vertex shader for software-processed vertices
+
+With D3DCREATE_SOFTWARE_VERTEXPROCESSING (or MIXED with software
+processing on) the D3D9 runtime transforms and lights the vertices itself
+and draws them with DrawPrimitive2: POSITIONT, COLOR0, COLOR1, FOG and the
+texture coordinates in its own vertex buffer, with its generated
+fixed-function pixel shader and no vertex shader. Two of the UMD's
+POSITIONT vertex shader builders matched such a draw. The one built from
+the declaration ran first; the one built from the pixel shader's input map
+then overwrote its inputs. A ps_2_0 shader declares its inputs by register
+(v0, v1, t#), so that map is empty and the vertex shader passed only the
+position: every software-processed fixed-function draw lost its colours and
+texture coordinates and rendered black, on every host GPU.
+
+The pixel-shader-input builder now runs only when the declaration builder
+did not.
+
+Evidence: docs/ffp.md, docs/evidence/ffp/ (src/d3d9_ffp.cpp, --swvp).
+Origin: vmlab-win3d ffp worker.
+---
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Draw.cpp b/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
+index 4069ec6..7d4272e 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
+@@ -2797,7 +2797,8 @@ D3D9DrawDiffuse(D3D9Device *device, D3DPRIMITIVETYPE primitive_type,
+       D3D9InitPositionTDiffuseFixedFunctionVsInfo(&fixed_function_vs_shader);
+    const bool generate_position_t_runtime_processed_vs =
+       runtime_transformed_vertices && D3D9ActiveVertexDeclHasPositionT(device) &&
+-      !generate_position_t_runtime_processed_diffuse_vs && translated_ps &&
++      !generate_position_t_runtime_processed_diffuse_vs &&
++      !generate_position_t_runtime_ps_vs && translated_ps &&
+       D3D9InitPositionTPsInputFixedFunctionVsInfo(&fixed_function_vs_shader,
+                                                   current_ps);
+    /*

@@ -1,0 +1,249 @@
+Subject: [PATCH] d3d9: point expansion keeps vertex attributes, perspective size and per-vertex PSIZE
+
+D3D9 points larger than one pixel are expanded to quads by a geometry
+shader. It wrote only the position and two sprite texture coordinates:
+
+- Colours, the other texture coordinates and the fog factor were dropped,
+  so a point drawn with its diffuse colour came out black. The shader now
+  passes through COLOR0, COLOR1, the eight texture coordinate sets and the
+  fog factor.
+- The sprite coordinates replaced texture coordinates 0 and 1 also with
+  D3DRS_POINTSPRITEENABLE off. They now replace all eight, and only for
+  point sprites; without it a point keeps its vertex's coordinates.
+- A point size from the vertex shader (D3DRS_POINTSCALEENABLE in fixed
+  function, or oPts) was not scaled by the clip-space w, so scaled points
+  under a perspective projection had the wrong size.
+- A PSIZE element in a pre-transformed (XYZRHW) declaration was ignored.
+  The generated POSITIONT vertex shader now passes it to the geometry
+  shader.
+
+Evidence: docs/ffp.md, docs/evidence/ffp/ (src/d3d9_ffp.cpp, pt_*).
+Origin: vmlab-win3d ffp worker.
+---
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Draw.cpp b/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
+index fc66a89..78927fd 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
+@@ -936,7 +936,8 @@ D3D9InitPositionTRuntimePsFixedFunctionVsInfo(
+          position_t = true;
+       else if ((base == NINE_DECLUSAGE_COLOR ||
+                 base == NINE_DECLUSAGE_TEXCOORD ||
+-                usage == NINE_DECLUSAGE_FOG) &&
++                usage == NINE_DECLUSAGE_FOG ||
++                usage == NINE_DECLUSAGE_PSIZE) &&
+                !D3D9AppendUniqueVsInput(vs_shader, usage))
+          return false;
+    }
+@@ -1170,6 +1171,12 @@ D3D9CreatePositionTPsInputFixedFunctionVs(D3D9Device *device,
+          return NULL;
+       }
+ 
++      /* A PSIZE element goes to the point expansion geometry shader in the
++       * generic slot the Nine vertex shaders use. */
++      if (shader->translated_vs_input_map[input] == NINE_DECLUSAGE_PSIZE) {
++         semantic = TGSI_SEMANTIC_GENERIC;
++         index = D3D9_NINE_POINT_SIZE_GENERIC;
++      }
+       struct ureg_dst output =
+          ureg_DECL_output(ureg, (enum tgsi_semantic)semantic, index);
+       /* Fixed-function vertex processing gives a vertex without a diffuse
+@@ -1400,13 +1407,32 @@ struct D3D9AutoShaderState
+    }
+ };
+ 
++/*
++ * D3D9 points wider than one pixel are expanded to two triangles here.  The
++ * size is in pixels: the vertex shader's point size when it writes one,
++ * otherwise D3DRS_POINTSIZE (x_scale and y_scale then already hold
++ * size / viewport extent).  The offsets are scaled by the clip-space w, so
++ * points keep their pixel size under a perspective projection.
++ *
++ * Every varying a D3D9 pixel shader can read from fixed-function or sm1-3
++ * vertex processing is passed through: COLOR0, COLOR1 (GENERIC 8), the
++ * eight texture coordinate sets and the fog factor (GENERIC 16).  With
++ * D3DRS_POINTSPRITEENABLE the texture coordinates are replaced by the
++ * sprite's (0,0) top-left to (1,1) bottom-right.  Without it each corner
++ * keeps the vertex's coordinates and colours, as D3D9 draws a point of
++ * size > 1 with the vertex's attributes.
++ */
+ static void *
+-D3D9CreatePointPositionGs(struct pipe_context *pipe, float x_scale,
++D3D9CreatePointPositionGs(D3D9Device *device, float x_scale,
+                           float y_scale, bool use_input_point_size,
+                           bool use_generic_point_size,
+-                          float point_size_min, float point_size_max)
++                          float point_size_min, float point_size_max,
++                          bool sprite)
+ {
++   struct pipe_context *pipe = device->pipe;
+    struct ureg_program *ureg = ureg_create(MESA_SHADER_GEOMETRY);
++   if (!ureg)
++      return NULL;
+    struct ureg_src pos =
+       ureg_src_dimension(ureg_DECL_input(ureg, TGSI_SEMANTIC_POSITION, 0,
+                                          0, 1), 0);
+@@ -1418,70 +1444,80 @@ D3D9CreatePointPositionGs(struct pipe_context *pipe, float x_scale,
+                          TGSI_SEMANTIC_PSIZE,
+                          use_generic_point_size ?
+                          D3D9_NINE_POINT_SIZE_GENERIC : 0, 0, 1), 0) :
+-      pos;
++      ureg_imm1f(ureg, 1.0f);
++   struct ureg_dst size = ureg_DECL_temporary(ureg);
+    struct ureg_dst delta = ureg_DECL_temporary(ureg);
+-   struct ureg_dst clamped_point_size = ureg_dst_undef();
+    struct ureg_dst out_pos =
+       ureg_DECL_output(ureg, TGSI_SEMANTIC_POSITION, 0);
+-   struct ureg_dst out_texcoord0 =
+-      ureg_DECL_output(ureg, TGSI_SEMANTIC_GENERIC, 0);
+-   struct ureg_dst out_texcoord1 =
+-      ureg_DECL_output(ureg, TGSI_SEMANTIC_GENERIC, 1);
++
++   const unsigned texcoord_sn = device->screen->caps.tgsi_texcoord ?
++      TGSI_SEMANTIC_TEXCOORD : TGSI_SEMANTIC_GENERIC;
++   struct {
++      unsigned semantic, index;
++      bool texcoord;
++   } varyings[11];
++   unsigned varying_count = 0;
++   varyings[varying_count++] = {TGSI_SEMANTIC_COLOR, 0, false};
++   varyings[varying_count++] = {TGSI_SEMANTIC_GENERIC, 8, false};
++   for (unsigned t = 0; t < 8; ++t)
++      varyings[varying_count++] = {texcoord_sn, t, true};
++   varyings[varying_count++] = {TGSI_SEMANTIC_GENERIC, 16, false};
++   struct ureg_src in_varying[ARRAY_SIZE(varyings)];
++   struct ureg_dst out_varying[ARRAY_SIZE(varyings)];
++   for (unsigned v = 0; v < varying_count; ++v) {
++      in_varying[v] = ureg_src_dimension(
++         ureg_DECL_input(ureg, (enum tgsi_semantic)varyings[v].semantic, varyings[v].index, 0, 1),
++         0);
++      out_varying[v] =
++         ureg_DECL_output(ureg, (enum tgsi_semantic)varyings[v].semantic, varyings[v].index);
++   }
+ 
+    ureg_property(ureg, TGSI_PROPERTY_GS_INPUT_PRIM, MESA_PRIM_POINTS);
+    ureg_property(ureg, TGSI_PROPERTY_GS_OUTPUT_PRIM,
+                  MESA_PRIM_TRIANGLE_STRIP);
+-   ureg_property(ureg, TGSI_PROPERTY_GS_MAX_OUTPUT_VERTICES, 6);
++   ureg_property(ureg, TGSI_PROPERTY_GS_MAX_OUTPUT_VERTICES, 4);
+    ureg_property(ureg, TGSI_PROPERTY_GS_INVOCATIONS, 1);
+ 
++   /* size.xy = clamped point size * (x_scale, y_scale) * w */
++   ureg_MOV(ureg, ureg_writemask(size, TGSI_WRITEMASK_X),
++            ureg_scalar(point_size, TGSI_SWIZZLE_X));
+    if (use_input_point_size) {
+-      clamped_point_size = ureg_DECL_temporary(ureg);
+-      ureg_MAX(ureg, ureg_writemask(clamped_point_size, TGSI_WRITEMASK_X),
+-               ureg_scalar(point_size, TGSI_SWIZZLE_X),
++      ureg_MAX(ureg, ureg_writemask(size, TGSI_WRITEMASK_X),
++               ureg_scalar(ureg_src(size), TGSI_SWIZZLE_X),
+                ureg_imm1f(ureg, point_size_min));
+-      ureg_MIN(ureg, ureg_writemask(clamped_point_size, TGSI_WRITEMASK_X),
+-               ureg_scalar(ureg_src(clamped_point_size), TGSI_SWIZZLE_X),
++      ureg_MIN(ureg, ureg_writemask(size, TGSI_WRITEMASK_X),
++               ureg_scalar(ureg_src(size), TGSI_SWIZZLE_X),
+                ureg_imm1f(ureg, point_size_max));
+-      point_size = ureg_src(clamped_point_size);
+    }
++   ureg_MUL(ureg, ureg_writemask(size, TGSI_WRITEMASK_X),
++            ureg_scalar(ureg_src(size), TGSI_SWIZZLE_X),
++            ureg_scalar(pos, TGSI_SWIZZLE_W));
++   ureg_MUL(ureg, ureg_writemask(size, TGSI_WRITEMASK_XY),
++            ureg_scalar(ureg_src(size), TGSI_SWIZZLE_X),
++            ureg_imm4f(ureg, x_scale, y_scale, 0.0f, 0.0f));
+ 
+-   const UINT vertex_indices[6] = {0, 1, 2, 2, 1, 3};
+-   for (UINT vertex = 0; vertex < 6; ++vertex) {
+-      const UINT i = vertex_indices[vertex];
++   for (UINT i = 0; i < 4; ++i) {
+       const float x_sign = (i & 1) ? 1.0f : -1.0f;
+       const float y_sign = (i & 2) ? -1.0f : 1.0f;
+       const float s = (i & 1) ? 1.0f : 0.0f;
+       const float t = (i & 2) ? 1.0f : 0.0f;
+ 
++      ureg_MUL(ureg, ureg_writemask(delta, TGSI_WRITEMASK_XY),
++               ureg_src(size), ureg_imm4f(ureg, x_sign, y_sign, 0.0f, 0.0f));
+       ureg_MOV(ureg, out_pos, pos);
+-      ureg_MUL(ureg, ureg_writemask(delta, TGSI_WRITEMASK_X),
+-               ureg_scalar(point_size, use_input_point_size ?
+-                            TGSI_SWIZZLE_X : TGSI_SWIZZLE_W),
+-               ureg_imm1f(ureg, x_scale));
+-      ureg_MAD(ureg, ureg_writemask(out_pos, TGSI_WRITEMASK_X),
+-               ureg_scalar(ureg_src(delta), TGSI_SWIZZLE_X),
+-               ureg_imm1f(ureg, x_sign),
+-               ureg_scalar(pos, TGSI_SWIZZLE_X));
+-      ureg_MUL(ureg, ureg_writemask(delta, TGSI_WRITEMASK_Y),
+-               ureg_scalar(point_size, use_input_point_size ?
+-                            TGSI_SWIZZLE_X : TGSI_SWIZZLE_W),
+-               ureg_imm1f(ureg, y_scale));
+-      ureg_MAD(ureg, ureg_writemask(out_pos, TGSI_WRITEMASK_Y),
+-               ureg_scalar(ureg_src(delta), TGSI_SWIZZLE_Y),
+-               ureg_imm1f(ureg, y_sign),
+-               ureg_scalar(pos, TGSI_SWIZZLE_Y));
+-      ureg_MOV(ureg, out_texcoord0,
+-               ureg_imm4f(ureg, s, t, 0.0f, 0.0f));
+-      ureg_MOV(ureg, out_texcoord1,
+-               ureg_imm4f(ureg, s, t, 0.0f, 0.0f));
++      ureg_ADD(ureg, ureg_writemask(out_pos, TGSI_WRITEMASK_XY),
++               pos, ureg_src(delta));
++      for (unsigned v = 0; v < varying_count; ++v) {
++         if (sprite && varyings[v].texcoord)
++            ureg_MOV(ureg, out_varying[v], ureg_imm4f(ureg, s, t, 0.0f, 1.0f));
++         else
++            ureg_MOV(ureg, out_varying[v], in_varying[v]);
++      }
+       ureg_EMIT(ureg, ureg_imm1u(ureg, 0));
+-      if (vertex == 2)
+-         ureg_ENDPRIM(ureg, ureg_imm1u(ureg, 0));
+    }
+    ureg_ENDPRIM(ureg, ureg_imm1u(ureg, 0));
+-   if (!ureg_dst_is_undef(clamped_point_size))
+-      ureg_release_temporary(ureg, clamped_point_size);
+    ureg_release_temporary(ureg, delta);
++   ureg_release_temporary(ureg, size);
+    ureg_END(ureg);
+    return ureg_create_shader_and_destroy(ureg, pipe);
+ }
+@@ -2946,9 +2982,20 @@ D3D9DrawDiffuse(D3D9Device *device, D3DPRIMITIVETYPE primitive_type,
+           &worker_vertex_uploads))
+       return E_FAIL;
+ 
++   /* The generated POSITIONT vertex shader passes a PSIZE element through
++    * (D3D9InitPositionTRuntimePsFixedFunctionVsInfo). */
++   bool generated_vs_point_size = false;
++   if (translated_vs_shader == &fixed_function_vs_shader) {
++      for (UINT i = 0; i < fixed_function_vs_shader.translated_vs_num_inputs; ++i) {
++         if (fixed_function_vs_shader.translated_vs_input_map[i] ==
++             NINE_DECLUSAGE_PSIZE)
++            generated_vs_point_size = true;
++      }
++   }
+    const bool point_position_gs =
+       mode == MESA_PRIM_POINTS &&
+-      (translated_vs_point_size || D3D9PointSize(device) > 1.0f);
++      (translated_vs_point_size || generated_vs_point_size ||
++       D3D9PointSize(device) > 1.0f);
+    if (generate_position_t_ps_input_vs || generate_position_t_diffuse_vs ||
+        generate_position_t_runtime_ps_vs ||
+        generate_position_t_runtime_processed_diffuse_vs ||
+@@ -2991,13 +3038,15 @@ D3D9DrawDiffuse(D3D9Device *device, D3DPRIMITIVETYPE primitive_type,
+       if (point_size_max <= 0.0f)
+          point_size_max = 8192.0f;
+ 
+-      point_gs = translated_vs_point_size ?
+-         D3D9CreatePointPositionGs(pipe, 1.0f / width, 1.0f / height, true,
+-                                   translated_vs_point_size,
+-                                   point_size_min, point_size_max) :
+-         D3D9CreatePointPositionGs(pipe, point_size / width,
++      const bool sprite =
++         device->render_states[D3DRS_POINTSPRITEENABLE] != 0;
++      point_gs = translated_vs_point_size || generated_vs_point_size ?
++         D3D9CreatePointPositionGs(device, 1.0f / width, 1.0f / height, true,
++                                   true,
++                                   point_size_min, point_size_max, sprite) :
++         D3D9CreatePointPositionGs(device, point_size / width,
+                                    point_size / height, false, false,
+-                                   point_size_min, point_size_max);
++                                   point_size_min, point_size_max, sprite);
+    }
+ 
+    unsigned constants_size = 0;

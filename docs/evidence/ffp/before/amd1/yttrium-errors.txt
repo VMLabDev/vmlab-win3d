@@ -1,0 +1,11 @@
+---- d3d9_ffp run-repro.sh start
+2026-10-18 11:54:01.235 [warning pid=1348 process=d3d9_ffp.exe] d3d9ddi: unsupported D3D9 tessellation state owner=d3d9-state reason=patch-tessellation-not-implemented fallback=ignore-unadvertised-state state=164 value=0x00000000
+2026-10-18 11:54:01.235 [warning pid=1348 process=d3d9_ffp.exe] d3d9ddi: D3D9 runtime reserved render state owner=d3d9-state reason=unassigned-ddi-slot fallback=ignore-runtime-metadata state=196 value=0xffffffff
+2026-10-18 11:54:01.280 [warning pid=1348 process=d3d9_ffp.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-18 11:54:17.431 [warning pid=1348 process=d3d9_ffp.exe] yttrium: WARNING: line endpoint rasterization fallback owner=venus2-raster reason=line-last-pixel-not-represented-in-Vulkan-pipeline fallback=host-default-line-rasterization topology=1 samples=1
+2026-10-18 11:54:40.563 [warning pid=1964 process=d3d9_ffp.exe] d3d9ddi: unsupported D3D9 tessellation state owner=d3d9-state reason=patch-tessellation-not-implemented fallback=ignore-unadvertised-state state=164 value=0x00000000
+2026-10-18 11:54:40.563 [warning pid=1964 process=d3d9_ffp.exe] d3d9ddi: D3D9 runtime reserved render state owner=d3d9-state reason=unassigned-ddi-slot fallback=ignore-runtime-metadata state=196 value=0xffffffff
+2026-10-18 11:54:40.601 [warning pid=1964 process=d3d9_ffp.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-18 11:54:52.859 [warning pid=1964 process=d3d9_ffp.exe] yttrium: WARNING: line endpoint rasterization fallback owner=venus2-raster reason=line-last-pixel-not-represented-in-Vulkan-pipeline fallback=host-default-line-rasterization topology=1 samples=1
+2026-10-18 11:54:57.047 [warning pid=2948 process=d3d9_ffp.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-18 11:55:30.703 [warning pid=4796 process=d3d9_ffp.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete

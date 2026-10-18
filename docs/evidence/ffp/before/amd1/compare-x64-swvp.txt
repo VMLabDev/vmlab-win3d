@@ -1,0 +1,170 @@
+case                        x64-swvp              
+b_sel_tex-rhw               pass                  
+b_sel_tex-xyz               pass                  
+b_sel_diff-rhw              FAIL d=204 k=64       
+b_sel_diff-xyz              FAIL d=204 k=64       
+b_sel_tf-rhw                pass                  
+b_sel_tf-xyz                pass                  
+b_sel_spec-rhw              FAIL d=223 k=64       
+b_sel_spec-xyz              FAIL d=223 k=64       
+b_mod-rhw                   FAIL d=242 k=64       
+b_mod-xyz                   FAIL d=242 k=64       
+b_mod2x-rhw                 FAIL d=229 k=64       
+b_mod2x-xyz                 FAIL d=229 k=64       
+b_mod4x-rhw                 FAIL d=204 k=64       
+b_mod4x-xyz                 FAIL d=204 k=64       
+b_add-rhw                   FAIL d=140 k=64       
+b_add-xyz                   FAIL d=140 k=64       
+b_addsigned-rhw             FAIL d=255 k=64       
+b_addsigned-xyz             FAIL d=255 k=64       
+b_addsigned2x-rhw           FAIL d=255 k=64       
+b_addsigned2x-xyz           FAIL d=255 k=64       
+b_subtract-rhw              FAIL d=255 k=64       
+b_subtract-xyz              FAIL d=255 k=64       
+b_addsmooth-rhw             FAIL d=153 k=64       
+b_addsmooth-xyz             FAIL d=153 k=64       
+b_blendtexalpha-rhw         FAIL d=148 k=64       
+b_blendtexalpha-xyz         FAIL d=148 k=64       
+b_blenddiffalpha-rhw        FAIL d=140 k=64       
+b_blenddiffalpha-xyz        FAIL d=140 k=64       
+b_blendfactoralpha-rhw      FAIL d=197 k=64       
+b_blendfactoralpha-xyz      FAIL d=197 k=64       
+b_blendcurrentalpha-rhw     FAIL d=102 k=64       
+b_blendcurrentalpha-xyz     FAIL d=102 k=64       
+b_blendtexalphapm-rhw       FAIL d=128 k=64       
+b_blendtexalphapm-xyz       FAIL d=128 k=64       
+b_modalpha_addcolor-rhw     FAIL d=156 k=64       
+b_modalpha_addcolor-xyz     FAIL d=156 k=64       
+b_modcolor_addalpha-rhw     FAIL d=66 k=64        
+b_modcolor_addalpha-xyz     FAIL d=66 k=64        
+b_dot3-rhw                  pass                  
+b_dot3-xyz                  pass                  
+b_dot3_alpha-rhw            FAIL d=114 k=64       
+b_dot3_alpha-xyz            FAIL d=114 k=64       
+b_lerp-rhw                  FAIL d=194 k=64       
+b_lerp-xyz                  FAIL d=194 k=64       
+b_multiplyadd-rhw           FAIL d=146 k=64       
+b_multiplyadd-xyz           FAIL d=146 k=64       
+b_complement-rhw            FAIL d=217 k=64       
+b_complement-xyz            FAIL d=217 k=64       
+b_alpharep-rhw              FAIL d=217 k=64       
+b_alpharep-xyz              FAIL d=217 k=64       
+b_comp_alpharep-rhw         FAIL d=144 k=64       
+b_comp_alpharep-xyz         FAIL d=144 k=64       
+b_2stage_add-rhw            FAIL d=58 k=64        
+b_2stage_add-xyz            FAIL d=58 k=64        
+b_2stage_lightmap-rhw       pass                  
+b_2stage_lightmap-xyz       pass                  
+b_3stage-rhw                FAIL d=122 k=64       
+b_3stage-xyz                FAIL d=122 k=64       
+b_4stage-rhw                FAIL d=255 k=64       
+b_4stage-xyz                FAIL d=255 k=64       
+b_disable_stage1-rhw        FAIL d=242 k=64       
+b_disable_stage1-xyz        FAIL d=242 k=64       
+b_temp-rhw                  FAIL d=146 k=64       
+b_temp-xyz                  FAIL d=146 k=64       
+b_specularenable-rhw        FAIL d=149 k=64       
+b_specularenable-xyz        FAIL d=149 k=64       
+b_constant-rhw              pass                  
+b_constant-xyz              pass                  
+b_defaults-rhw              pass                  
+b_defaults-xyz              pass                  
+tg_identity                 FAIL d=240 k=64       
+tg_rhw_identity             FAIL d=240 k=64       
+tg_index1                   FAIL d=240 k=64       
+tg_count2                   FAIL d=211 k=64       
+tg_count2_rhw               FAIL d=240 k=64       
+tg_count3_projected         FAIL d=198 k=64       
+tg_count4_projected         FAIL d=222 k=64       
+tg_campos                   FAIL d=240 k=64       
+tg_campos_world             FAIL d=208 k=16       
+tg_camnormal                FAIL d=195 k=64       
+tg_camnormal_rot            pass                  
+tg_camreflect               FAIL d=137 k=64       
+tg_camreflect_nolocal       FAIL d=199 k=64       
+tg_sphere                   FAIL d=207 k=64       
+tg_count3_normal_projected  pass                  
+fv_linear                   FAIL d=255 k=64       
+fv_exp                      FAIL d=216 k=64       
+fv_exp2                     FAIL d=239 k=64       
+ft_linear                   FAIL d=223 k=48       
+ft_exp                      FAIL d=197 k=64       
+ft_exp2                     FAIL d=220 k=64       
+fv_linear_tex               FAIL d=255 k=64       
+fv_range                    FAIL d=255 k=64       
+ft_linear_persp             FAIL d=223 k=56       
+ft_exp_persp                FAIL d=175 k=56       
+fv_linear_persp             FAIL d=192 k=56       
+fv_exp2_persp               FAIL d=166 k=56       
+fog_rhw_spec                FAIL d=242 k=64       
+fog_rhw_table               pass                  
+fog_rhw_nospec              FAIL d=255 k=64       
+lt_dir                      FAIL d=217 k=64       
+lt_dir_spec                 FAIL d=217 k=64       
+lt_dir_spec_nolocal         FAIL d=217 k=64       
+lt_point                    FAIL d=225 k=64       
+lt_point_spec               FAIL d=225 k=64       
+lt_point_range              FAIL d=235 k=64       
+lt_spot                     FAIL d=235 k=64       
+lt_spot_falloff             FAIL d=235 k=64       
+lt_three                    FAIL d=208 k=64       
+lt_ambient_only             FAIL d=235 k=64       
+lt_scaled_nonorm            FAIL d=217 k=64       
+lt_scaled_norm              FAIL d=217 k=64       
+lt_colorvertex              FAIL d=241 k=64       
+lt_colorvertex_off          FAIL d=217 k=64       
+lt_colorvertex_spec_src     FAIL d=237 k=64       
+lt_colorvertex_nodiffuse    FAIL d=217 k=64       
+lt_tex_modulate             FAIL d=253 k=64       
+lt_persp_point              FAIL d=222 k=64       
+lt_backface_cull_off        FAIL d=217 k=64       
+at_greater                  FAIL d=140 k=32       
+at_greaterequal             FAIL d=140 k=16       
+at_less                     FAIL d=204 k=64       
+at_lessequal                FAIL d=204 k=64       
+at_notequal                 FAIL d=140 k=64       
+at_never                    pass                  
+at_xyz_diffuse              FAIL d=111 k=24       
+ab_alpha                    FAIL d=107 k=64       
+ab_add                      FAIL d=127 k=64       
+ab_srcalpha_one             FAIL d=160 k=64       
+ab_modulate                 FAIL d=107 k=64       
+ab_modulate2x               FAIL d=213 k=64       
+ab_zero_srccolor            FAIL d=107 k=64       
+ab_invdestcolor             FAIL d=106 k=64       
+ab_destalpha                FAIL d=106 k=64       
+ab_premul                   FAIL d=107 k=64       
+ab_bothsrcalpha             FAIL d=107 k=64       
+ab_srcalphasat              FAIL d=127 k=64       
+ab_revsubtract              FAIL d=128 k=64       
+ab_subtract                 FAIL d=85 k=24        
+ab_min                      FAIL d=128 k=64       
+ab_max                      FAIL d=85 k=24        
+ab_blendfactor              FAIL d=53 k=56        
+ab_separate_alpha           FAIL d=107 k=64       
+ab_atest_and_blend          FAIL d=107 k=40       
+ab_fog_blend                FAIL d=176 k=64       
+pt_size_rhw                 FAIL d=239 k=16       
+pt_size_xyz                 FAIL d=239 k=16       
+pt_sprite_rhw               pass                  
+pt_sprite_xyz               pass                  
+pt_sprite_notex_coords      pass                  
+pt_psize_rhw                FAIL d=128 k=8        
+pt_psize_xyz                FAIL d=128 k=8        
+pt_size_max                 pass                  
+pt_size_min                 FAIL d=239 k=16       
+pt_scale                    FAIL d=132 k=16       
+pt_scale_ab                 FAIL d=127 k=16       
+xf_world_view               FAIL d=249 k=20       
+xf_persp                    FAIL d=254 k=32       
+xf_persp_tex                FAIL d=254 k=32       
+xf_near_clip                pass                  
+xf_cull                     FAIL d=239 k=32       
+xf_viewport                 FAIL d=249 k=20       
+xf_indexed_vb               FAIL d=254 k=52       
+xf_clipplane                pass                  
+xf_vertexblend              FAIL d=252 k=48       
+xf_depth                    FAIL d=255 k=58       
+xf_flat_shade               FAIL d=255 k=64       
+xf_lines                    FAIL d=255 k=8        
+x64-swvp: 22 of 168 pass
