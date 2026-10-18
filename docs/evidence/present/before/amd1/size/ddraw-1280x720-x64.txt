@@ -1,0 +1,9 @@
+mode: ddraw
+size: 1280x720
+seconds: 10.11
+calls: 105
+rate_per_s: 10.4
+call_ms: n=105 mean=95.26 p50=91.64 p95=117.73 max=142.11
+frame_ms: n=104 mean=94.91 p50=92.48 p95=117.79 max=141.67
+vblank_ms: n=575 mean=17.58 p50=16.77 p95=20.50 max=69.11
+result: FAIL

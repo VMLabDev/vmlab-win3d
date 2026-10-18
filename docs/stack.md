@@ -41,7 +41,7 @@ flowchart TD
   end
 
   KMD["viogpu3d.sys<br/>Yttrium WDDM 2.0 KMD"]
-  DEV["virtio-vga-gl, venus=true, blob=true<br/>(QEMU 11.1.1; on NVIDIA the vmlab QEMU)"]
+  DEV["virtio-vga-gl, venus=true, blob=true<br/>(QEMU 11.1.1)"]
   VRS["virgl_render_server<br/>(virglrenderer 1.3.0)"]
   RADV["RADV (Mesa 26.2.2) on the AMD iGPU, renderD129"]
 
@@ -198,7 +198,7 @@ resource support and a 60 Hz VidPN timer. It needs the
 | --- | --- |
 | What | `virtio-vga-gl,venus=true,blob=true,hostmem=4G`, the only display adapter; `-display egl-headless` on the render node of the host GPU |
 | Set by | vmlab 0.25 or later: `gpu { mode = "vulkan" host_gpu = "AMD1" }` (`labs/probe/vmlab.wcl`), with `AMD1` declared in the host config `~/.config/vmlab/config.wcl` as `gpu "AMD1" { address = "0000:72:00.0" }`. vmlab 0.24 took the address in the lab file, as `gpu.address`; the evidence from before 0.25 used that form |
-| Upstream | QEMU 11.1.1 (Arch `qemu-full 11.1.1-1`), not built here. NVIDIA GPUs run the vmlab QEMU instead (Host patches, below) |
+| Upstream | QEMU 11.1.1 (Arch `qemu-full 11.1.1-1`), not built here |
 
 `docs/host.md` shows why each of these settings is required. It measured
 them on vmlab 0.23, with `qemu_args`, before vmlab emitted them itself.
@@ -229,7 +229,7 @@ labs that select them explicitly. Nothing is installed on the host
 
 | Path | What it is for |
 | --- | --- |
-| `patches/host/build-qemu.sh`, `patches/host/bump-qemu.sh` and the `qemu` pin in `patches/host/PINS` | The vmlab QEMU: upstream QEMU master (11.1.50 at `a19f59a72d`, which has the shutdown-crash fix `baca25172d`) plus the series on the [VMLabDev/qemu](https://github.com/VMLabDev/qemu/tree/vmlab/egl-headless-external-dmabuf) branch `vmlab/egl-headless-external-dmabuf`, at the pinned commit. Its egl-headless display shows LINEAR scanout dma-bufs that the host's EGL imports as external only. NVIDIA needs it for a visible console; AMD and Intel do not. The build is native against the host's libraries, not in Docker. On vmlab 0.26 or later the host config names it as the NVIDIA GPU's `qemu_binary` ([`nvidia.md`](nvidia.md)); the Zeus runs, on 0.24, used an isolated supervisor (`labs/zeus/vmlab-iso.sh`) |
+| `patches/host/build-qemu.sh`, `patches/host/bump-qemu.sh` and the `qemu` pin in `patches/host/PINS` | The vmlab QEMU: QEMU 11.1.1 plus the series on the [VMLabDev/qemu](https://github.com/VMLabDev/qemu/tree/vmlab/egl-headless-external-dmabuf) branch `vmlab/egl-headless-external-dmabuf`, at the pinned commit. Its egl-headless display shows LINEAR scanout dma-bufs that the host's EGL imports as external only. NVIDIA needs it for a visible console; AMD and Intel do not. The build is native against the host's libraries, not in Docker. On vmlab 0.26 or later the host config names it as the NVIDIA GPU's `qemu_binary` ([`nvidia.md`](nvidia.md)); the Zeus runs, on 0.24, used an isolated supervisor (`labs/zeus/vmlab-iso.sh`) |
 | `patches/host/virglrenderer/0001` and `patches/host/build-virglrenderer.sh` | A diagnostic render server: stock virglrenderer 1.3.0 that also logs failed image creation with its create-info. It is selected with `RENDER_SERVER_EXEC_PATH` and used only to investigate a failure ([`nvidia.md`](nvidia.md), [`zeus.md`](zeus.md)) |
 | `patches/host/virglrenderer/workaround/0002` | The host-side workaround for the NVIDIA feedback-loop fault, kept as documentation. `patches/mesa/0020` replaced it; `build-virglrenderer.sh` applies it only with `WITH_WORKAROUND=1` |
 
@@ -310,8 +310,9 @@ committed.
 | dxvk | 1 | [`0001`](../patches/dxvk/0001-dxgi-Keep-the-swap-chain-description-when-a-resize-fails.patch) | dxgi: Keep the swap-chain description when a resize fails. | [`build/d3d12/README.md`](../build/d3d12/README.md) |
 | host/virglrenderer | 1 | [`0001`](../patches/host/virglrenderer/0001-vkr-log-image-creation.patch) | vkr: log failed image creation and memory allocation, with the create-info (diagnostic render server) | [`docs/nvidia.md`](nvidia.md) |
 | host/virglrenderer/workaround | 1 | [`0002`](../patches/host/virglrenderer/workaround/0002-vkr-drop-unsupported-feedback-loop-usage.patch) | vkr: retry vkCreateImage and the image-format queries without feedback-loop usage (superseded by mesa/0020; built only with WITH_WORKAROUND=1) | [`docs/nvidia.md`](nvidia.md) |
-| kmd | 1 | [`0001`](../patches/kmd/0001-kmd-r10-copy.patch) | Convert R10G10B10A2 sources to 8-bit RGBA or BGRA in the KMD's CPU present blit (the prior art's r10 KMD) | [`build/kmd/README.md`](../build/kmd/README.md) |
-| mesa | 25 | [`0001`](../patches/mesa/0001-build-winddk-includes-and-x86-atomics.patch) | build: add the WDK include path and drop x86-unsafe 64-bit Interlocked calls | [`build/mesa/README.md`](../build/mesa/README.md) |
+| kmd | 2 | [`0001`](../patches/kmd/0001-kmd-r10-copy.patch) | Convert R10G10B10A2 sources to 8-bit RGBA or BGRA in the KMD's CPU present blit (the prior art's r10 KMD) | [`build/kmd/README.md`](../build/kmd/README.md) |
+| | | [`0002`](../patches/kmd/0002-kmd-cache-gdi-shadow-and-staging-surfaces.patch) | viogpu3d: map GDI shadow and staging surfaces cached | [`docs/present.md`](present.md) |
+| mesa | 27 | [`0001`](../patches/mesa/0001-build-winddk-includes-and-x86-atomics.patch) | build: add the WDK include path and drop x86-unsafe 64-bit Interlocked calls | [`build/mesa/README.md`](../build/mesa/README.md) |
 | | | [`0002`](../patches/mesa/0002-util-xmlconfig-case-insensitive-exe-match.patch) | util/xmlconfig: match drirc executable names case-insensitively on Windows | [`build/mesa/README.md`](../build/mesa/README.md) |
 | | | [`0003`](../patches/mesa/0003-util-u_queue-windows-loader-lock-join.patch) | util/u_queue: do not join worker threads under the loader lock on Windows | [`build/mesa/README.md`](../build/mesa/README.md) |
 | | | [`0004`](../patches/mesa/0004-wgl-unbind-through-stw-on-delete.patch) | wgl: unbind the current context through stw_make_current on delete | [`build/mesa/README.md`](../build/mesa/README.md) |
@@ -334,6 +335,8 @@ committed.
 | | | [`0023`](../patches/mesa/0023-yttrium-shared-colour-optimal-when-linear-refused.patch) | yttrium: shared colour images fall back to OPTIMAL where the host refuses LINEAR | [`docs/nvtex.md`](nvtex.md) |
 | | | [`0024`](../patches/mesa/0024-d3d9-positiont-vs-for-runtime-fixed-function-ps.patch) | d3d9: generate the POSITIONT vertex shader for any runtime fixed-function pixel shader | [`docs/nvtex.md`](nvtex.md) |
 | | | [`0025`](../patches/mesa/0025-yttrium-packed-16-bit-formats-match-vulkan.patch) | yttrium: map D3D R5G6B5 and A1R5G5B5 to the matching Vulkan PACK16 formats | [`docs/nvtex.md`](nvtex.md) |
+| | | [`0026`](../patches/mesa/0026-d3d9-ddraw-present-sources-in-host-cached-memory.patch) | d3d9: put DirectDraw present sources in host-cached memory | [`docs/present.md`](present.md) |
+| | | [`0027`](../patches/mesa/0027-wgl-present-windows-opaque.patch) | wgl: present windows opaque through kopper | [`docs/present.md`](present.md) |
 | | | [`0030`](../patches/mesa/0030-d3d10umd-domain-shader-indexed-patch-constants.patch) | d3d10umd: domain shaders read patch constants with a register index | [`docs/ds.md`](ds.md) |
 | | | [`0035`](../patches/mesa/0035-d3d9-hardware-colour-key-and-mirror-blits.patch) | d3d9: hardware source colour-key and mirror blits for DirectDraw | [`docs/ddraw.md`](ddraw.md) |
 | vkd3d-proton | 5 | [`0001`](../patches/vkd3d-proton/0001-vkd3d-Reject-root-signatures-with-overlapping-regist.patch) | vkd3d: Reject root signatures with overlapping register bindings. | [`build/d3d12/README.md`](../build/d3d12/README.md) |

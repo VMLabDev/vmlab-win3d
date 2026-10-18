@@ -1,0 +1,9 @@
+mode: d3d9-imm
+size: 1280x720
+seconds: 10.50
+calls: 203
+rate_per_s: 19.3
+call_ms: n=203 mean=48.65 p50=46.95 p95=62.77 max=81.92
+frame_ms: n=202 mean=49.37 p50=47.89 p95=63.30 max=83.67
+vblank_ms: n=630 mean=16.66 p50=16.74 p95=19.95 max=31.66
+result: FAIL

@@ -1,0 +1,8 @@
+mode: d3d9-imm
+seconds: 15.13
+calls: 895
+rate_per_s: 59.2
+call_ms: n=895 mean=16.30 p50=15.74 p95=20.92 max=61.43
+frame_ms: n=894 mean=16.76 p50=16.16 p95=21.62 max=62.55
+vblank_ms: n=908 mean=16.67 p50=16.78 p95=18.57 max=26.87
+result: PASS

@@ -1,0 +1,9 @@
+mode: d3d9
+size: 640x480
+seconds: 16.00
+calls: 816
+rate_per_s: 51.0
+call_ms: n=816 mean=18.09 p50=16.73 p95=26.77 max=105.45
+frame_ms: n=815 mean=18.38 p50=16.98 p95=27.01 max=105.73
+vblank_ms: n=948 mean=16.87 p50=16.91 p95=18.80 max=98.62
+result: PASS

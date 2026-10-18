@@ -1,0 +1,10 @@
+renderer: zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY))
+pixel_format: 39 color=32 alpha=8
+clear: 204 51 51 alpha=0.00
+sample 1: 204 51 51 opaque
+sample 2: 204 51 51 opaque
+sample 3: 204 51 51 opaque
+frames: 990
+samples: 29
+bad_samples: 0
+result: PASS

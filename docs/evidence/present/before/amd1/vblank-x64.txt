@@ -1,0 +1,8 @@
+mode: vblank
+seconds: 15.01
+calls: 0
+rate_per_s: 0.0
+call_ms: n=0
+frame_ms: n=0
+vblank_ms: n=900 mean=16.67 p50=16.86 p95=17.88 max=21.41
+result: PASS

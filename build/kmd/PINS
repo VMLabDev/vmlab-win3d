@@ -15,3 +15,5 @@ debian              image docker.io/library/debian  sha256:2c037a04925515fdd6ea8
 #     byte-identical copy of the codex patch R/kmd-r10-copy.patch
 #     (R=/home/wil/dev/virtio/.scratch/prototype/driver-integrated-3d/20261016-001605-8bac),
 #     base b99d951a (R/kmd-r10-copy-base.txt): 10-bit to 8-bit present-blit conversion.
+#   0002-kmd-cache-gdi-shadow-and-staging-surfaces.patch  sha256 e980108d32c23c1726046a40259d2f45dab7ec6400dc3080230c66485a510f81
+#     this repository (docs/present.md): maps the Blt present destination cached.

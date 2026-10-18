@@ -1,0 +1,9 @@
+mode: ddraw
+size: 640x480
+seconds: 15.08
+calls: 1023
+rate_per_s: 67.8
+call_ms: n=1023 mean=14.65 p50=14.53 p95=17.21 max=29.53
+frame_ms: n=1022 mean=14.67 p50=14.56 p95=17.22 max=29.56
+vblank_ms: n=904 mean=16.66 p50=16.76 p95=17.96 max=19.91
+result: PASS

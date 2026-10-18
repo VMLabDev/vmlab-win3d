@@ -1,0 +1,42 @@
+Subject: [PATCH] viogpu3d: map GDI shadow and staging surfaces cached
+
+The destination of every Blt present (a windowed D3D9 Present, a DirectDraw
+Blt to the primary, a blt-model DXGI Present) is a shadow or staging
+surface that dxgkrnl creates through GetStandardAllocationDriverData. These
+live in guest RAM in segment 1, which is declared cache coherent, but the
+allocation never set Flags.Cached, so VidMm mapped them write-combined. The
+KMD's Venus Blt present writes them with the CPU, converting pixel by pixel
+when the formats differ, and on hosts with an AMD CPU, whose KVM keeps the
+guest's memory type, that ran at about 100 MB/s in the presenting thread's
+kernel time: 16 ms per 640x480 Present, 38 ms at 1280x720. D3D9 at
+interval one fell to 25 to 31 fps on helios.
+
+Only these surfaces change (VIRGL_RESOURCE_FLAG_MAP_COHERENT, which the KMD
+sets for exactly these two standard types). Marking every guest-RAM
+allocation cached broke Venus device creation and is not done.
+
+Evidence: docs/present.md, docs/evidence/present/.
+Origin: vmlab-win3d present worker.
+---
+diff --git a/viogpu/viogpu3d/viogpu_allocation.cpp b/viogpu/viogpu3d/viogpu_allocation.cpp
+index d330c4e..6bbfb49 100644
+--- a/viogpu/viogpu3d/viogpu_allocation.cpp
++++ b/viogpu/viogpu3d/viogpu_allocation.cpp
+@@ -870,6 +870,17 @@ NTSTATUS VioGpuAllocation::DxgkCreateAllocation(VioGpuAdapter *adapter, DXGKARG_
+     allocationInfo->PreferredSegment.Direction0 = 0;
+ 
+     allocationInfo->Flags.CpuVisible = TRUE;
++    /* Shadow and staging surfaces are the guest-RAM surfaces dxgkrnl
++     * creates for GDI and DWM, among them the destination of every Blt
++     * present, which DWM then reads with the CPU to compose the window. They
++     * live in segment 1, which is cache coherent: the host reaches guest RAM
++     * with the CPU. Without Cached, VidMm maps them write-combined, and every
++     * CPU read of them is uncached on hosts whose KVM honours the guest's
++     * memory type (AMD CPUs). */
++    if (!is_blob && allocation->IsCoherent())
++    {
++        allocationInfo->Flags.Cached = TRUE;
++    }
+ #if VIOGPU_WDDM2
+     /* Render and BLT Present still use physical allocation lists. WDDM 2
+      * allocations referenced through those lists must explicitly permit
