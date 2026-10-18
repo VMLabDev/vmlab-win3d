@@ -1,0 +1,216 @@
+
+[02:42:51] == vmlab-win3d on zeus: nvidia, x86_64/windows-11@26100.1742.5
+date: 2026-10-19T02:42:51+10:00
+host: Zeus 7.2.4-3-cachyos, 20 threads, 93 GiB
+staging: repo 2c3d8cd-dirty
+tests/e2e from main 4fc24ae
+package 2c3d8cd854f40281d5892ee56d7a180fce684ab2
+template: x86_64/windows-11@26100.1742.5
+qemu: /usr/bin/qemu-system-x86_64 QEMU emulator version 11.1.1
+qemu_binary (Nvidia1): /home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64 QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+packages: qemu-full 11.1.1-2 qemu-base 11.1.1-2 virglrenderer 1.3.0-2.1 mesa 3:26.2.2-2 vulkan-intel 3:26.2.2-2 nvidia-utils 615.71.09-1 
+vmlab: vmlab 0.28.0-alpha
+venus gpu: /dev/dri/renderD128 0000:01:00.0 VGA compatible controller: NVIDIA Corporation AD107M [GeForce RTX 4060 Max-Q / Mobile] (rev a1)
+NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09
+runtime pm: control auto, status active; Runtime D3 status: Enabled (fine-grained); DynamicPowerManagement: 2
+keepawake: 0
+guest env: VN_PERF=no_fence_feedback,no_semaphore_feedback,no_event_feedback,no_query_feedback
+
+[02:42:53] == 1 package (built on helios, staged by labs/zeus/stage.sh)
+
+[02:42:53] == 2 fresh lab win3d-zeus-nvidia from x86_64/windows-11@26100.1742.5
+[02:42:53] destroying the previous win3d-zeus-nvidia
+lab "win3d-zeus-nvidia" destroyed
+ok: lab "win3d-zeus-nvidia" — 1 vm(s), 0 container(s), 0 segment(s)
+first-boot: provisioning win...
+first-boot: agent busy (win: no vmlab-agent answered on the agent channel — the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: specialize complete; clearing marker
+first-boot: settling staged AppX (LKG) before first logon
+first-boot: appx: removed MicrosoftWindows.Client.AIX_1000.26100.29.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.AccountsService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.IrisService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.Search_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed NcsiUwpApp_1000.25128.1000.0_neutral_neutral_8wekyb3d8bbwe
+removed MdOdrMcpFilterPackage_1.0.0.0_neutral__cw5n1h2txyewy
+first-boot: rebooting once to settle shell reconciliation
+first-boot: win ready
+lab "win3d-zeus-nvidia" is up
+
+[02:45:02] == 3 guest scripts, probes and the baseline
+pushed 7 file(s), 42217 bytes to win:C:/win3d/guest
+pushed 1 file(s), 2321 bytes to win:C:/win3d/e2e
+pushed 5 file(s), 174592 bytes to win:C:/win3d/probes/x64
+pushed 5 file(s), 153088 bytes to win:C:/win3d/probes/x86
+pushed 2800056 bytes to win:C:/win3d/lunarg/x64/vulkaninfo.exe
+pushed 2403256 bytes to win:C:/win3d/lunarg/x86/vulkaninfo.exe
+[02:45:08] baseline: Red Hat VirtIO GPU DOD controller (problem 0)
+
+[02:45:08] == 3b test desktop (autologon user win3d)
+[02:46:42] autologon before-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-8UPI02U AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-8UPI02U\win3d 
+VN_PERF=no_fence_feedback,no_semaphore_feedback,no_event_feedback,no_query_feedback
+
+[02:46:43] == 4 install: scripts/install-into-vm.sh /home/wil/win3d-zeus/work/nvidia/lab win
+[02:46:43] waiting for the guest agent
+[02:46:44] copying vmlab-win3d-0.1.1 to C:\vmlab-win3d
+pushed 29 file(s), 102406757 bytes to win:C:/vmlab-win3d
+[02:46:46] running C:\vmlab-win3d\Install.cmd
+2026-10-18T09:46:46.767-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
+2026-10-18T09:46:50.379-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T09:46:52.720-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
+2026-10-18T09:46:52.943-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T09:46:52.952-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-18T09:46:52.954-07:00 [Install]   Signature matches Public Key
+2026-10-18T09:46:52.956-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T09:46:52.958-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T09:46:52.991-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T09:46:52.994-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-18T09:46:52.996-07:00 [Install]   Signature matches Public Key
+2026-10-18T09:46:52.997-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T09:46:53.000-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T09:46:53.052-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-18T09:46:53.054-07:00 [Install]   The operation completed successfully.
+2026-10-18T09:46:53.390-07:00 [Install] test signing is set but not active in this boot
+2026-10-18T09:46:54.316-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T09:46:54.464-07:00 [Install] rebooting; step Driver resumes after the restart
+[02:46:55] Install.cmd exited 0
+[02:46:56] state: RebootPending|Driver|
+[02:47:46] state: RebootPending|Verify|
+[02:48:38] state: Installed||
+[02:48:38] done: Installed
+[02:48:43] autologon after-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-8UPI02U AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-8UPI02U\win3d 
+
+[02:48:43] == 5 interactive-session tests
+[02:48:45] desktop: True 47
+[02:49:01] desktop: True 63
+[02:49:17] desktop: True 79
+[02:49:33] desktop: True 95
+[02:49:48] desktop: True 111
+[02:50:04] desktop: True 127
+
+[02:50:07] == 5a vulkaninfo --summary
+    "exit_code":  0,
+    "exit_code_hex":  "0x00000000",
+	deviceType         = PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
+	deviceName         = Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU)
+	driverName         = venus
+exit 0 
+	deviceType         = PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
+	deviceName         = Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU)
+	driverName         = venus
+exit 0 
+	deviceType         = PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
+	deviceName         = Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU)
+	driverName         = venus
+	deviceType         = PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
+	deviceName         = Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU)
+	driverName         = venus
+
+[02:50:18] == 5b probes
+[02:50:18] probe x64-d3d9_probe
+[02:50:43]   Run-Probe exit 0
+  console: 10/12 frames show the probe window; animating=True
+[02:50:43] probe x86-d3d9_probe
+[02:51:08]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+[02:51:09] probe x64-d3d11_probe
+[02:51:34]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+[02:51:34] probe x86-d3d11_probe
+[02:51:59]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+[02:51:59] probe x64-d3d12_probe
+[02:52:25]   Run-Probe exit 0
+  console: 8/12 frames show the probe window; animating=True
+[02:52:25] probe x86-d3d12_probe
+[02:52:52]   Run-Probe exit 0
+  console: 8/13 frames show the probe window; animating=True
+[02:52:52] probe x64-opengl_probe
+[02:53:17]   Run-Probe exit 0
+  console: 8/12 frames show the probe window; animating=True
+[02:53:17] probe x86-opengl_probe
+[02:53:42]   Run-Probe exit 2
+  console: 8/12 frames show the probe window; animating=True
+[02:53:43] probe x64-vulkan_probe
+[02:54:08]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+[02:54:08] probe x86-vulkan_probe
+[02:54:33]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+
+[02:54:33] == 5c dxdiag
+                        "D3D Status":  "Enabled",
+                        "AGP Status":  "Enabled"
+                    }
+                ]
+}
+
+[02:54:59] == 5d uavtest (D3D11 typed UAV loads)
+pushed 68096 bytes to win:C:/win3d/uavtest.exe
+adapter: Hardsoft VirtIO GPU 3D controller
+feature level: 0xb000
+TypedUAVLoadAdditionalFormats: 1
+UAV typed load R32_FLOAT: 1
+UAV typed load R32_UINT: 1
+UAV typed load R32_SINT: 1
+UAV typed load R8G8B8A8_UNORM: 1
+UAV typed load R16G16B16A16_FLOAT: 1
+R32_FLOAT: 352/4096 texels wrong (first 784); texel 5 = 0x41300000
+R32_UINT: 1568/4096 texels wrong (first 64); texel 5 = 0x0000000b
+result: fail
+
+[02:55:09] == 6 collect evidence
+pulled 53308 bytes to /home/wil/win3d-zeus/work/nvidia/results.zip
+
+[02:55:12] == 7 teardown
+lab "win3d-zeus-nvidia" destroyed
+
+[02:55:13] == result (ok)
+Item  Result Check
+------------------------------------------------------------------------------
+1     pass   scripts/build.sh builds the package
+             staged; exit 0
+2     pass   documented install command (scripts/install-into-vm.sh)
+             exit 0; Installed
+2+    pass   display device on our driver, problem code 0
+             Hardsoft VirtIO GPU 3D controller
+2     pass   vulkaninfo --summary (x64) lists the Venus device
+             Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU)
+2+    pass   vulkaninfo --summary (x86) lists the Venus device
+             Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU)
+2+    pass   vulkaninfo --summary (x64) lists exactly one Venus device
+             1 Venus: Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU)
+2+    pass   LunarG vulkaninfo 1.4.363 (x64, pinned) lists Venus through the installed loader
+             Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU)
+2+    pass   LunarG vulkaninfo 1.4.363 (x86, pinned) lists Venus through the installed loader
+             Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU)
+2     pass   Direct3D 9 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 46.99 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 9 (x86) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 44.61 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 11 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 58.96 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 11 (x86) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 58.87 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 12 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 51.92 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 12 (x86) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 51.25 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   OpenGL (x64) renders on the GPU and shows on the console
+             zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU) (NVIDIA_PROPRIETARY)), 53.41 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     FAIL   OpenGL (x86) renders on the GPU and shows on the console
+             exit 2, readback_mismatch: ; readback mismatch
+2+    pass   Vulkan (x64) renders on the GPU and shows on the console
+             Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU), 58.48 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating
+2+    pass   Vulkan (x86) renders on the GPU and shows on the console
+             Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU), 58.57 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   dxdiag reports hardware acceleration on our driver
+             hardware_acceleration=True, card 'Hardsoft VirtIO GPU 3D controller', D3D Enabled, DDraw Enabled, WDDM 2.0
+2+    pass   dxdiag: Direct3D acceleration on our full WDDM device
+             D3D Status Enabled, Full Device (POST), WDDM 2.0
+------------------------------------------------------------------------------
+FAIL: 11 of 12 Done checks pass ('+' rows are extra and do not count)

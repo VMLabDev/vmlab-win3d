@@ -1,0 +1,84 @@
+[07:43:15] waiting for the guest agent
+[07:43:17] copying bundle-0070 to C:\vmlab-win3d
+pushed 29 file(s), 102412909 bytes to win:C:/vmlab-win3d
+[07:43:22] running C:\vmlab-win3d\Install.cmd
+2026-10-18T14:43:22.243-07:00 [Install] Install from C:\vmlab-win3d (state: Installed)
+2026-10-18T14:43:24.768-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T14:43:30.652-07:00 [Install] policy: removed DenyInstanceIDs\1 (PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&20)
+2026-10-18T14:43:30.672-07:00 [Install] policy: removed DenyInstanceIDs
+2026-10-18T14:43:30.708-07:00 [Install] policy: removed key HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyInstanceIDs
+2026-10-18T14:43:30.721-07:00 [Install] policy: removed key HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions
+2026-10-18T14:43:30.744-07:00 [Install] policy: removed key HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall
+2026-10-18T14:43:30.766-07:00 [Install] removing older package oem15.inf (C:\Windows\System32\DriverStore\FileRepository\viogpu3d.inf_amd64_e24a94dfea8f0416)
+2026-10-18T14:43:37.058-07:00 [Install] pnputil.exe /delete-driver oem15.inf /uninstall /force -> 0
+2026-10-18T14:43:37.088-07:00 [Install]   Microsoft PnP Utility
+2026-10-18T14:43:37.096-07:00 [Install]   Ignoring /force when used with /uninstall to delete driver package.
+2026-10-18T14:43:37.106-07:00 [Install]   Driver package uninstalled.
+2026-10-18T14:43:37.114-07:00 [Install]   Driver package deleted successfully.
+2026-10-18T14:43:46.411-07:00 [Install] pnputil.exe /add-driver C:\ProgramData\vmlab-win3d\bundle\driver\viogpu3d.inf /install -> 0
+2026-10-18T14:43:46.447-07:00 [Install]   Microsoft PnP Utility
+2026-10-18T14:43:46.458-07:00 [Install]   Adding driver package:  viogpu3d.inf
+2026-10-18T14:43:46.480-07:00 [Install]   Driver package added successfully.
+2026-10-18T14:43:46.491-07:00 [Install]   Published Name:         oem15.inf
+2026-10-18T14:43:46.514-07:00 [Install]   Driver package installed on device: PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&20
+2026-10-18T14:43:46.514-07:00 [Install]   Total driver packages:  1
+2026-10-18T14:43:46.549-07:00 [Install]   Added driver packages:  1
+2026-10-18T14:43:49.620-07:00 [Install] policy: DenyInstanceIDs\1 = PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&20
+2026-10-18T14:43:49.643-07:00 [Install] policy: DenyInstanceIDs = 1
+2026-10-18T14:43:49.696-07:00 [Install] pnputil.exe /enum-devices /instanceid PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&20 /drivers -> 0
+2026-10-18T14:43:49.705-07:00 [Install]   Microsoft PnP Utility
+2026-10-18T14:43:49.717-07:00 [Install]   Instance ID:                PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&20
+2026-10-18T14:43:49.724-07:00 [Install]   Device Description:         Hardsoft VirtIO GPU 3D controller
+2026-10-18T14:43:49.728-07:00 [Install]   Class Name:                 Display
+2026-10-18T14:43:49.740-07:00 [Install]   Class GUID:                 {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T14:43:49.746-07:00 [Install]   Manufacturer Name:          Hardsoft Swed.
+2026-10-18T14:43:49.755-07:00 [Install]   Status:                     Started
+2026-10-18T14:43:49.768-07:00 [Install]   Driver Name:                oem15.inf
+2026-10-18T14:43:49.779-07:00 [Install]   Matching Drivers:
+2026-10-18T14:43:49.788-07:00 [Install]       Driver Name:            oem15.inf
+2026-10-18T14:43:49.797-07:00 [Install]       Original Name:          viogpu3d.inf
+2026-10-18T14:43:49.801-07:00 [Install]       Provider Name:          Hardsoft Swed.
+2026-10-18T14:43:49.806-07:00 [Install]       Class Name:             Display
+2026-10-18T14:43:49.815-07:00 [Install]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T14:43:49.826-07:00 [Install]       Driver Version:         09/27/2026 100.6.101.58100
+2026-10-18T14:43:49.840-07:00 [Install]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T14:43:49.848-07:00 [Install]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T14:43:49.855-07:00 [Install]       Driver Rank:            00E00000
+2026-10-18T14:43:49.860-07:00 [Install]       Driver Status:          Best Ranked / Installed
+2026-10-18T14:43:49.867-07:00 [Install]       Driver Name:            oem7.inf
+2026-10-18T14:43:49.872-07:00 [Install]       Original Name:          viogpudo.inf
+2026-10-18T14:43:49.882-07:00 [Install]       Provider Name:          Red Hat, Inc.
+2026-10-18T14:43:49.889-07:00 [Install]       Class Name:             Display
+2026-10-18T14:43:49.898-07:00 [Install]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T14:43:49.916-07:00 [Install]       Driver Version:         07/09/2025 100.101.104.28500
+2026-10-18T14:43:49.930-07:00 [Install]       Signer Name:            Microsoft Windows Hardware Compatibility Publisher
+2026-10-18T14:43:49.939-07:00 [Install]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T14:43:49.951-07:00 [Install]       Driver Rank:            00F90000
+2026-10-18T14:43:49.958-07:00 [Install]       Driver Status:          Outranked
+2026-10-18T14:43:49.964-07:00 [Install]       Driver Name:            oem7.inf
+2026-10-18T14:43:49.975-07:00 [Install]       Original Name:          viogpudo.inf
+2026-10-18T14:43:49.981-07:00 [Install]       Provider Name:          Red Hat, Inc.
+2026-10-18T14:43:49.990-07:00 [Install]       Class Name:             Display
+2026-10-18T14:43:49.997-07:00 [Install]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T14:43:50.020-07:00 [Install]       Driver Version:         07/09/2025 100.101.104.28500
+2026-10-18T14:43:50.026-07:00 [Install]       Signer Name:            Microsoft Windows Hardware Compatibility Publisher
+2026-10-18T14:43:50.032-07:00 [Install]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050
+2026-10-18T14:43:50.039-07:00 [Install]       Driver Rank:            00F93001
+2026-10-18T14:43:50.044-07:00 [Install]       Driver Status:          Outranked
+2026-10-18T14:43:50.055-07:00 [Install]       Driver Name:            display.inf
+2026-10-18T14:43:50.066-07:00 [Install]       Provider Name:          Microsoft
+2026-10-18T14:43:50.076-07:00 [Install]       Class Name:             Display
+2026-10-18T14:43:50.088-07:00 [Install]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T14:43:50.115-07:00 [Install]       Driver Version:         06/21/2006 10.0.26100.1
+2026-10-18T14:43:50.123-07:00 [Install]       Signer Name:            Microsoft Windows
+2026-10-18T14:43:50.129-07:00 [Install]       Matching Device ID:     PCI\CC_0300
+2026-10-18T14:43:50.137-07:00 [Install]       Driver Rank:            00FB2006
+2026-10-18T14:43:50.150-07:00 [Install]       Driver Status:          Outranked
+2026-10-18T14:43:50.174-07:00 [Install] driver oem15.inf 100.6.101.58100 installed on PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&20 and pinned
+2026-10-18T14:43:51.682-07:00 [Install] registered startup task vmlab-win3d-repair (-Mode Repair)
+2026-10-18T14:43:51.967-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T14:43:52.245-07:00 [Install] rebooting; step Verify resumes after the restart
+[07:43:55] Install.cmd exited 0
+[07:43:58] state: RebootPending|Verify|
+[07:45:49] state: Installed||
+[07:45:49] done: Installed

@@ -2,13 +2,13 @@
     "name":  "x64-d3d12_probe",
     "exe":  "C:\\win3d\\probes\\x64\\d3d12_probe.exe",
     "arguments":  "--seconds 20 --out C:\\win3d\\results\\probes\\x64-d3d12_probe.json",
-    "user":  "VMLABVM-M9R3R6L\\win3d",
+    "user":  "VMLABVM-7RVN3CC\\win3d",
     "session_id":  1,
-    "pid":  2224,
+    "pid":  5848,
     "wow64":  false,
-    "started":  "2026-10-18T14:45:04.4755534-07:00",
-    "ended":  "2026-10-18T14:45:28.4711330-07:00",
-    "duration_s":  24,
+    "started":  "2026-10-18T21:57:02.2369927-07:00",
+    "ended":  "2026-10-18T21:57:25.6745216-07:00",
+    "duration_s":  23.4,
     "timed_out":  false,
     "exit_code":  0,
     "exit_code_hex":  "0x00000000",
@@ -28,9 +28,9 @@
                              "C:\\WINDOWS\\system32\\libvulkan_virtio.dll [system32] ",
                              "C:\\WINDOWS\\SYSTEM32\\vmlab-win3d\\dxgi-vulkan.dll [system_subdir] 10.0.17763.1 (WinBuild.160101.0800)",
                              "C:\\WINDOWS\\SYSTEM32\\d3dcompiler_47.dll [system32] 10.0.26100.9457 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
                              "C:\\WINDOWS\\system32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
-                             "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] ",
-                             "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)"
+                             "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] "
                          ],
     "app_local_modules":  [
 

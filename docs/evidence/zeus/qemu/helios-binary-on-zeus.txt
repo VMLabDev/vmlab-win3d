@@ -1,0 +1,15 @@
+# helios-built QEMU (~/.local/opt/qemu-vmlab-egl on helios, d8a6048aae, build-qemu.sh 2026-10-18) packed like scripts/release.sh and tried on Zeus
+$ ./install.sh --check
+ldd: every shared library the binary needs is present and new enough
+rc=0
+$ ./install.sh
+ldd: every shared library the binary needs is present and new enough
+installed: /home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64
+rc=127
+/home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64: CPU ISA level is lower than required
+$ readelf -n (helios binary)
+      Properties: x86 ISA needed: x86-64-baseline, x86-64-v2, x86-64-v3, x86-64-v4
+# Zeus CPU: model name	: 13th Gen Intel(R) Core(TM) i7-13700H
+  x86-64-v4
+  x86-64-v3 (supported, searched)
+  x86-64-v2 (supported, searched)

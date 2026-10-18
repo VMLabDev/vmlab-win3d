@@ -1,0 +1,1 @@
+392 window=0xD00E2 title=[3D Particles (DEBUG)] closed=True

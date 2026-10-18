@@ -37,8 +37,9 @@ off.
   as the GPU's `qemu_binary` ([nvidia](docs/nvidia.md),
   [acceptance](docs/acceptance.md#nvidia-rtx-5090)), on both cards. The
   DirectX SDK D3D9 samples render there too after `patches/mesa/0022` to
-  `0025` ([xid69](docs/xid69.md), [nvtex](docs/nvtex.md)). On a laptop RTX 4060 the GPU fell off the
-  bus during a run ([zeus](docs/zeus.md)).
+  `0025` ([xid69](docs/xid69.md), [nvtex](docs/nvtex.md)). On a laptop RTX 4060 (driver 615.71) Vulkan,
+  D3D12 and OpenGL clients hang because Venus feedback writes never reach the
+  guest; D3D9 and D3D11 work ([zeus](docs/zeus.md)).
 - Uninstall returns the guest to its state before the install
   ([evidence](docs/evidence/package/README.md)).
 
@@ -58,8 +59,9 @@ vmlab up                                       # in a lab dir like labs/probe/
 scripts/install-into-vm.sh <lab-dir> <vm>      # install, with the reboots
 ```
 
-The lab needs `secure_boot = false` and
-`gpu { mode = "vulkan" host_gpu = "<name>" }`, where `<name>` is the
+The lab needs `secure_boot = false`, `nic { nat = true }` (then run
+`slmgr /ato` in the guest, or the evaluation template shuts down after an
+hour), and `gpu { mode = "vulkan" host_gpu = "<name>" }`, where `<name>` is the
 GPU as declared in the host config, `~/.config/vmlab/config.wcl`
 (for example `gpu "AMD1" { address = "0000:72:00.0" }`), as in
 `labs/probe/vmlab.wcl`. Without `host_gpu` the lab gets the host's default

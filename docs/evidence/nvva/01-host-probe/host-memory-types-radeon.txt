@@ -1,0 +1,39 @@
+	memoryHeaps[0]:
+		size   = 34067726336 (0x7ee984000) (31.73 GiB)
+		flags:
+	memoryHeaps[1]:
+		size   = 68135452672 (0xfdd308000) (63.46 GiB)
+		flags: count = 1
+	memoryTypes[0]:
+		heapIndex     = 1
+		propertyFlags = 0x0001: count = 1
+	memoryTypes[1]:
+		heapIndex     = 1
+		propertyFlags = 0x0001: count = 1
+	memoryTypes[2]:
+		heapIndex     = 0
+		propertyFlags = 0x0006: count = 2
+	memoryTypes[3]:
+		heapIndex     = 1
+		propertyFlags = 0x0007: count = 3
+	memoryTypes[4]:
+		heapIndex     = 1
+		propertyFlags = 0x0007: count = 3
+	memoryTypes[5]:
+		heapIndex     = 0
+		propertyFlags = 0x000e: count = 3
+	memoryTypes[6]:
+		heapIndex     = 0
+		propertyFlags = 0x000e: count = 3
+	memoryTypes[7]:
+		heapIndex     = 1
+		propertyFlags = 0x00c1: count = 3
+	memoryTypes[8]:
+		heapIndex     = 0
+		propertyFlags = 0x00c6: count = 4
+	memoryTypes[9]:
+		heapIndex     = 1
+		propertyFlags = 0x00c7: count = 5
+	memoryTypes[10]:
+		heapIndex     = 0
+		propertyFlags = 0x00ce: count = 5

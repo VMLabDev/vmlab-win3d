@@ -1,0 +1,1 @@
+1828 window=0x40342 title=[Freedoom: Phase 2 - Crispy Doom 7.2.0] closed=True

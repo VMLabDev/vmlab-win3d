@@ -1,0 +1,39 @@
+Subject: [PATCH] d3d9: report the runtime's matrix palette for indexed vertex blending
+
+The UMD reported MaxVertexBlendMatrixIndex 0, which says indexed vertex
+blending is not available with hardware vertex processing, so applications
+that check the cap switch to software vertex processing for it. The D3D9
+runtime does support it on this UMD: it turns the fixed-function state into
+a vs_2_0 shader that picks world matrices by index from the constants
+(base c175, 8 registers per matrix, as its SetVertexShaderConst calls and
+generated shader show). That leaves room for matrices 0 to 8 in 256
+constants, and the runtime uploads none above 8, so a vertex with index 9
+or more is transformed by unset constants.
+
+Report 8: indices 0 to 8 render as on the reference rasterizer with
+hardware vertex processing; applications that need more still fall back to
+software vertex processing, which supports 256 matrices.
+
+Evidence: docs/ffp2.md, docs/evidence/ffp2/ (src/d3d9_ffp2.cpp,
+vb_indexed_*).
+Origin: vmlab-win3d ffp2 worker.
+---
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Adapter.cpp b/src/gallium/frontends/d3d10umd/D3D9Adapter.cpp
+index 52ce2f7..d99ea58 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Adapter.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9Adapter.cpp
+@@ -188,7 +188,13 @@ D3D9FillCaps(const D3D9Adapter *adapter, D3DCAPS9 *caps)
+    caps->MaxActiveLights = 0x00000008;
+    caps->MaxUserClipPlanes = 0x00000008;
+    caps->MaxVertexBlendMatrices = 0x00000004;
+-   caps->MaxVertexBlendMatrixIndex = 0x00000000;
++   /* With hardware vertex processing the runtime turns indexed vertex
++    * blending into a vs_2_0 shader that keeps world matrices 0 to 8 in the
++    * constants from c175, 8 registers each, and uploads no higher matrix.
++    * That palette works; 0 told applications there was none, so they fell
++    * back to software vertex processing. Applications that need higher
++    * indices still have to. */
++   caps->MaxVertexBlendMatrixIndex = 8;
+    caps->MaxPointSize = D3D9FloatFromBits(0x46000000);
+    caps->MaxPrimitiveCount = 0x007fffff;
+    caps->MaxVertexIndex = 0x00ffffff;

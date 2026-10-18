@@ -1,0 +1,29 @@
+d3d9_ffp2-x64-hw             exit 0  RESULT ran=49 failed_hr=0
+d3d9_ffp2-x86-hw             exit 0  RESULT ran=49 failed_hr=0
+d3d9_ffp2-x64-swvp           exit 0  RESULT ran=49 failed_hr=0
+d3d9_ffp2-x64-mixhw          exit 0  RESULT ran=49 failed_hr=0
+d3d9_ffp2-x64-mixsw          exit 1  RESULT ran=49 failed_hr=1
+d3d9_ffp2-x64-ref            exit 1  RESULT ran=49 failed_hr=1
+d3d9_ffp2-x86-ref            exit 1  RESULT ran=49 failed_hr=1
+d3d9_ffp2-x64-refswvp        exit 0  RESULT ran=49 failed_hr=0
+vs x64-ref: x64-hw: 48 of 49 pass
+vs x86-ref: x86-hw: 48 of 49 pass
+vs x64-refswvp: x64-swvp: 49 of 49 pass
+vs x64-ref: x64-mixhw: 48 of 49 pass
+vs x64-refswvp: x64-mixsw: 48 of 49 pass
+vs x64-refswvp: x64-hw: 49 of 49 pass
+d3d9_ffp-x64-hw              exit 0  RESULT ran=168 failed_hr=0
+d3d9_ffp-x86-hw              exit 0  RESULT ran=168 failed_hr=0
+d3d9_ffp-x64-swvp            exit 0  RESULT ran=168 failed_hr=0
+d3d9_ffp-x64-mixhw           exit 0  RESULT ran=168 failed_hr=0
+d3d9_ffp-x64-mixsw           exit 0  RESULT ran=168 failed_hr=0
+d3d9_ffp-x64-ref             exit 0  RESULT ran=168 failed_hr=0
+d3d9_ffp-x86-ref             exit 0  RESULT ran=168 failed_hr=0
+d3d9_ffp-x64-refswvp         exit 0  RESULT ran=168 failed_hr=0
+vs x64-ref: x64-hw: 166 of 168 pass
+vs x86-ref: x86-hw: 166 of 168 pass
+vs x64-refswvp: x64-swvp: 168 of 168 pass
+vs x64-ref: x64-mixhw: 166 of 168 pass
+vs x64-refswvp: x64-mixsw: 168 of 168 pass
+vs x64-refswvp: x64-hw: 168 of 168 pass
+AFTER-DONE

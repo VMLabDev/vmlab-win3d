@@ -1,0 +1,4 @@
+      1 [warning pid=5012 process=crispy-doom.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=Nx8 usage=0x80017; creating the image without it
+      1 [warning pid=5012 process=crispy-doom.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=Nx408 usage=0x80017; creating the image without it
+      1 [warning pid=5012 process=crispy-doom.exe] d3d9ddi: unsupported D3D9 tessellation state owner=d3d9-state reason=patch-tessellation-not-implemented fallback=ignore-unadvertised-state state=164 value=0x00000000
+      1 [warning pid=5012 process=crispy-doom.exe] d3d9ddi: D3D9 runtime reserved render state owner=d3d9-state reason=unassigned-ddi-slot fallback=ignore-runtime-metadata state=196 value=0xffffffff

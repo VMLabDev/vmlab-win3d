@@ -50,12 +50,13 @@ On the host:
   helios that is `Nvidia1`, an RTX 5090; the labs here name their GPU
   explicitly.
 
-The VM needs two settings, as in `labs/probe/vmlab.wcl`:
+The VM needs these settings, as in `labs/probe/vmlab.wcl`:
 
 | Setting | Why |
 | --- | --- |
 | `secure_boot = false` | The package is test-signed (decision 0001). Windows ignores `testsigning` while Secure Boot is on, so `Install.cmd` refuses to run. This cannot be changed from inside the guest. |
 | `gpu { mode = "vulkan" host_gpu = "AMD1" }` | vmlab's Venus mode. vmlab emits one `virtio-vga-gl,venus=true,blob=true,hostmem=4G` adapter. `host_gpu` names a host GPU from the host config: vmlab puts egl-headless on its render node and sets `VK_LOADER_DRIVERS_SELECT` in QEMU's environment from its kernel driver, so virglrenderer uses that GPU's driver (RADV for `AMD1`). vmlab 0.27 also loads a Vulkan layer that hides every other host GPU, so the guest sees one Venus device. The KMD needs the device's `VIRTIO_GPU_F_VIRGL` feature; the INF matches its hardware ID, `PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01`. |
+| `nic { nat = true }`, then `slmgr /ato` in the guest | The Windows templates are evaluation editions. Without an online activation the licensing monitor (`wlms.exe`) shuts the VM down about an hour after boot. `tests/e2e/run.sh` runs `cscript //nologo C:\Windows\System32\slmgr.vbs /ato` after bring-up. Activation needs outbound internet ([wu.md](wu.md)). |
 
 `vulkan_icd = "<path to ICD JSON>"` on the host config's `gpu "<name>" {}`
 block overrides the ICD choice when the driver name is not enough. A
@@ -71,6 +72,7 @@ lab "win3d-package" {
   vm "win11" {
     template = "x86_64/windows-11@26100.1742.5"
     secure_boot = false
+    nic { nat = true }
     gpu {
       mode     = "vulkan"
       host_gpu = "AMD1"

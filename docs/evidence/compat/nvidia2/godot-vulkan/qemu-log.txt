@@ -1,0 +1,6 @@
+virgl_render_server[3048572]: vkr: vkQueueSubmit resulted in CS error
+virgl_render_server[3048572]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3048572]: vkr: vkCreateGraphicsPipelines resulted in CS error
+virgl_render_server[3048572]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[3048572]: vkr: vkCreateGraphicsPipelines resulted in CS error
+virgl_render_server[3048572]: vkr: ring_submit_cmd: vn_dispatch_command failed

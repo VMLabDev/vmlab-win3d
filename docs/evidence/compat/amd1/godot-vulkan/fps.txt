@@ -1,0 +1,1 @@
+60.1 average over 162 s (Godot --print-fps)

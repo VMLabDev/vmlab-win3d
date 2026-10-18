@@ -1,0 +1,140 @@
+Subject: [PATCH] d3d10umd: output index ranges in every shader stage
+
+A dcl_indexrange over outputs, with stores to o[r + n], was accepted only
+in a hull shader's fork and join phases (tessellation factors and patch
+constants, 0015). Anywhere else -- a vertex, domain, geometry or pixel
+shader, or a hull shader's control-point phase -- dcl_indexrange reached
+dcl_tcs_tess_factor_index_range, which rejected it as unsupported. The
+translation failed and the UMD reported E_FAIL or E_INVALIDARG through
+pfnSetErrorCb (for a domain shader at the first draw, when the
+tessellation pair binds), so the D3D11 runtime removed the device.
+
+d3dcompiler_47 never emits such a range from HLSL (o[r] = ... is error
+X3500, "array reference cannot be used as an l-value; not natively
+addressable"), but the bytecode is valid SM4/SM5 and WARP runs it.
+
+The TGSI outputs of consecutive D3D output registers are not consecutive
+(the position and other system values sit between them, and a register's
+components may be in different TGSI outputs), so TGSI indirect addressing
+cannot express the store. Record the range in every stage and send the
+store through the select-and-store sequence that patch phases already use
+(prepare_tcs_indexed_output_stores, emit_tcs_indexed_output_stores):
+the value goes to a temporary, then each register of the range is written
+under UIF index == register, through the TGSI output its immediate stores
+use. A register of the range that the shader does not declare takes no
+store. A geometry shader's packed scalar system values (gs_value) stay
+unsupported in a range.
+
+docs/evidence/shaders2/src/d3d11_index2.cpp assembles such shaders (vs-out,
+hs-cp-out, ds-out, gs-out, ps-out) into d3dcompiler_47 skeletons and
+compares the read-back with the CPU and with WARP.
+
+Evidence: docs/shaders2.md, docs/evidence/shaders2/.
+Origin: vmlab-win3d shaders2 worker.
+---
+diff --git a/src/gallium/frontends/d3d10umd/ShaderTGSI.c b/src/gallium/frontends/d3d10umd/ShaderTGSI.c
+index 511620f..7f82f53 100644
+--- a/src/gallium/frontends/d3d10umd/ShaderTGSI.c
++++ b/src/gallium/frontends/d3d10umd/ShaderTGSI.c
+@@ -998,13 +998,19 @@ dcl_input_index_range(struct Shader_xlate *sx,
+    sx->num_input_ranges++;
+ }
+ 
++/* dcl_indexrange over outputs.  The range is recorded per register in
++ * tcs_tess_factor_range_first/end and indexed stores go through
++ * prepare_tcs_indexed_output_stores and emit_tcs_indexed_output_stores, in
++ * every stage: TGSI outputs of consecutive D3D registers need not be
++ * consecutive, so an indexed store selects its register instead of using
++ * TGSI indirect addressing.
++ */
+ static void
+-dcl_tcs_tess_factor_index_range(struct Shader_xlate *sx,
+-                                 const struct Shader_opcode *opcode)
++dcl_output_index_range(struct Shader_xlate *sx,
++                       const struct Shader_opcode *opcode)
+ {
+    const struct Shader_dst_operand *dst = &opcode->dst[0];
+-   if (!sx->is_tcs || !sx->tcs_patch_phase_active ||
+-       dst->base.type != D3D10_SB_OPERAND_TYPE_OUTPUT ||
++   if (dst->base.type != D3D10_SB_OPERAND_TYPE_OUTPUT ||
+        dst->base.index_dim != 1 ||
+        dst->base.index[0].index_rep != D3D10_SB_OPERAND_INDEX_IMMEDIATE32) {
+       SHADER_TRANSLATION_UNSUPPORTED(sx, true);
+@@ -1019,6 +1025,19 @@ dcl_tcs_tess_factor_index_range(struct Shader_xlate *sx,
+       return;
+    }
+ 
++   /* Outside a hull shader's patch phases (vertex, domain, geometry and
++    * pixel shaders, a hull shader's control-point phase) the range covers
++    * ordinary outputs, written through the registers their immediate
++    * stores use.
++    */
++   if (!sx->is_tcs || !sx->tcs_patch_phase_active) {
++      for (unsigned i = first; i < first + count; ++i) {
++         sx->tcs_tess_factor_range_first[i] = first;
++         sx->tcs_tess_factor_range_end[i] = first + count;
++      }
++      return;
++   }
++
+    /* D3D scalar tessellation-factor registers are packed into components
+     * of TGSI TESSOUTER/TESSINNER, not consecutive TGSI output registers.
+     * A range over ordinary patch constants (o6.x..o13.x written as
+@@ -2048,8 +2067,6 @@ prepare_tcs_indexed_output_stores(struct Shader_xlate *sx,
+                                    const struct Shader_opcode *opcode)
+ {
+    assert(!sx->num_tcs_indexed_output_stores);
+-   if (!sx->is_tcs || !sx->tcs_patch_phase_active)
+-      return;
+ 
+    for (unsigned i = 0; i < opcode->num_dst; ++i) {
+       const struct Shader_dst_operand *dst = &opcode->dst[i];
+@@ -2072,6 +2089,17 @@ prepare_tcs_indexed_output_stores(struct Shader_xlate *sx,
+          return;
+       }
+ 
++      /* A geometry shader's packed scalar system values are written
++       * through gs_value, which an indexed store does not know about.
++       */
++      for (unsigned o = sx->tcs_tess_factor_range_first[base];
++           o < sx->tcs_tess_factor_range_end[base]; ++o) {
++         if (sx->outputs[o].gs_scalar_mask) {
++            SHADER_TRANSLATION_UNSUPPORTED(sx, true);
++            return;
++         }
++      }
++
+       const unsigned slot = sx->num_tcs_indexed_output_stores++;
+       sx->tcs_indexed_output_stores[slot].operand = dst;
+       sx->tcs_indexed_output_stores[slot].first =
+@@ -2149,6 +2177,21 @@ emit_tcs_indexed_output_stores(struct Shader_xlate *sx)
+                      ureg_writemask(sx->outputs[output].reg[0],
+                                     sx->tcs_tess_factor_writemask[output]),
+                      value);
++         } else if (!sx->is_tcs || !sx->tcs_patch_phase_active) {
++            /* An ordinary output, as an immediate store to it would write
++             * it; a register of the range the shader does not declare
++             * takes no store.
++             */
++            struct ureg_dst reg = sx->outputs[output].reg[0];
++            for (unsigned c = 0; c < 4; ++c) {
++               if (store_writemask & (1u << c)) {
++                  reg = sx->outputs[output].reg[c];
++                  break;
++               }
++            }
++            if (reg.File != TGSI_FILE_NULL)
++               ureg_MOV(ureg, ureg_writemask(reg, store_writemask),
++                        ureg_src(sx->tcs_indexed_output_stores[slot].value));
+          } else {
+             /* An ordinary patch constant keeps the store's own mask. */
+             ureg_MOV(ureg,
+@@ -6768,7 +6811,7 @@ Shader_tgsi_translate(const unsigned *code,
+       }
+       case D3D10_SB_OPCODE_DCL_INDEX_RANGE:
+          if (opcode.dst[0].base.type == D3D10_SB_OPERAND_TYPE_OUTPUT)
+-            dcl_tcs_tess_factor_index_range(sx, &opcode);
++            dcl_output_index_range(sx, &opcode);
+          else
+             dcl_input_index_range(sx, &opcode);
+          break;

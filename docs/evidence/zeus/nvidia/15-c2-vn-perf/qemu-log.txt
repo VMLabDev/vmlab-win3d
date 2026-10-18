@@ -1,0 +1,19 @@
+     51 vmlab-pci-filter: 0000:01:00.0: kept NVIDIA GeForce RTX 4060 Laptop GPU, hid 0
+      2 virtio_gpu_virgl_process_cmd: ctrl 0x102, error 0x1203
+    334 vmlab-pci-filter: 0000:01:00.0: kept NVIDIA GeForce RTX 4060 Laptop GPU, hid 0
+      1 virgl_render_server[298846]: vkr: destroying context 136 (opengl_probe.exe) with a valid instance
+      1 virgl_render_server[298846]: vkr: destroying device with valid objects
+      1 virgl_render_server[298891]: vkr: destroying context 138 (yttrium) with a valid instance
+      1 virgl_render_server[298891]: vkr: destroying device with valid objects
+      1 virgl_render_server[298842]: vkr: destroying context 135 (yttrium) with a valid instance
+      1 virgl_render_server[298842]: vkr: destroying device with valid objects
+      1 virgl_render_server[295961]: vkr: destroying context 68 (yttrium) with a valid instance
+      1 virgl_render_server[295961]: vkr: destroying device with valid objects
+      1 virtio_gpu_virgl_process_cmd: ctrl 0x102, error 0x1203
+    114 vmlab-pci-filter: 0000:01:00.0: kept NVIDIA GeForce RTX 4060 Laptop GPU, hid 0
+      1 virgl_render_server[311721]: vkr: destroying context 68 (yttrium) with a valid instance
+      1 virgl_render_server[311721]: vkr: destroying device with valid objects
+      1 virgl_render_server[311566]: vkr: destroying context 66 (yttrium) with a valid instance
+      1 virgl_render_server[311566]: vkr: destroying device with valid objects
+      2 virtio_gpu_virgl_process_cmd: ctrl 0x102, error 0x1203
+    116 vmlab-pci-filter: 0000:01:00.0: kept NVIDIA GeForce RTX 4060 Laptop GPU, hid 0

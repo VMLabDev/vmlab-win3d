@@ -1,0 +1,1 @@
+7156 window=0x702DA title=[Unigine Valley Benchmark 1.0 Basic (Direct3D9)] closed=True

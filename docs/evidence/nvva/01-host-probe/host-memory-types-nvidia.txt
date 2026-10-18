@@ -1,0 +1,48 @@
+	memoryHeaps[0]:
+		size   = 34190917632 (0x7f5f00000) (31.84 GiB)
+		flags: count = 1
+	memoryHeaps[1]:
+		size   = 150083546112 (0x22f1ad2c00) (139.78 GiB)
+		flags:
+	memoryHeaps[2]:
+		size   = 257949696 (0x0f600000) (246.00 MiB)
+		flags: count = 1
+	memoryTypes[0]:
+		heapIndex     = 1
+		propertyFlags = 0x0000:
+	memoryTypes[1]:
+		heapIndex     = 0
+		propertyFlags = 0x0001: count = 1
+	memoryTypes[2]:
+		heapIndex     = 1
+		propertyFlags = 0x0006: count = 2
+	memoryTypes[3]:
+		heapIndex     = 1
+		propertyFlags = 0x000e: count = 3
+	memoryTypes[4]:
+		heapIndex     = 2
+		propertyFlags = 0x0007: count = 3
+	memoryHeaps[0]:
+		size   = 34190917632 (0x7f5f00000) (31.84 GiB)
+		flags: count = 1
+	memoryHeaps[1]:
+		size   = 150083546112 (0x22f1ad2c00) (139.78 GiB)
+		flags:
+	memoryHeaps[2]:
+		size   = 257949696 (0x0f600000) (246.00 MiB)
+		flags: count = 1
+	memoryTypes[0]:
+		heapIndex     = 1
+		propertyFlags = 0x0000:
+	memoryTypes[1]:
+		heapIndex     = 0
+		propertyFlags = 0x0001: count = 1
+	memoryTypes[2]:
+		heapIndex     = 1
+		propertyFlags = 0x0006: count = 2
+	memoryTypes[3]:
+		heapIndex     = 1
+		propertyFlags = 0x000e: count = 3
+	memoryTypes[4]:
+		heapIndex     = 2
+		propertyFlags = 0x0007: count = 3

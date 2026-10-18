@@ -1,0 +1,1 @@
+3484 window=0x90098 title=[3D Particles (DEBUG)] closed=True

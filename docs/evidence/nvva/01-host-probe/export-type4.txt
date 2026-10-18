@@ -1,0 +1,8 @@
+$ BAR1PROBE_TYPE=4 bar1probe 05 16 32 export 4   (3 guest VMs idle on the card)
+BAR1 before: 66 MiB
+device NVIDIA GeForce RTX 5090 bus 05
+type 4 heap 2 size 246 MiB
+chunk 0 total 16 MiB: ok (vk 0); heap usage 83 MiB budget 162 MiB
+chunk 1 total 32 MiB: ok (vk 0); heap usage 99 MiB budget 146 MiB
+holding 4 s
+BAR1 held: 99 MiB

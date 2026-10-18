@@ -1,0 +1,14 @@
+2026-10-19T06:26:24+10:00 a x64-d3d11 rc=0 result=pass 27s
+2026-10-19T06:26:49+10:00 a x64-d3d9 rc=0 result=pass 25s
+2026-10-19T06:27:21+10:00 a x64-d3d12 rc=0 result=pass 32s
+2026-10-19T06:27:46+10:00 a x64-opengl rc=0 result=pass 25s
+2026-10-19T06:28:16+10:00 a x64-vulkan rc=0 result=pass 30s
+2026-10-19T06:28:44+10:00 a x86-d3d11 rc=0 result=pass 28s
+2026-10-19T06:29:10+10:00 a x86-d3d9 rc=0 result=pass 26s
+2026-10-19T06:29:39+10:00 a x86-d3d12 rc=0 result=pass 29s
+2026-10-19T06:30:02+10:00 a x86-opengl rc=0 result=pass 23s
+2026-10-19T06:30:31+10:00 a x86-vulkan rc=0 result=pass 29s
+2026-10-19T06:30:58+10:00 a x64-d3d11 rc=0 result=pass 27s
+2026-10-19T06:31:22+10:00 a x64-d3d9 rc=0 result=pass 24s
+2026-10-19T06:31:51+10:00 a x64-d3d12 rc=0 result=pass 29s
+2026-10-19T06:32:13+10:00 a x64-opengl rc=0 result=pass 22s
