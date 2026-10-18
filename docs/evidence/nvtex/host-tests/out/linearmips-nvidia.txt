@@ -1,0 +1,30 @@
+device NVIDIA GeForce RTX 5090, driver version 0x988e4100
+  B8G8R8A8_UNORM             LINEAR  result 0 maxMipLevels 1 maxArrayLayers 1 maxExtent 32768x32768
+  B8G8R8A8_UNORM             OPTIMAL result 0 maxMipLevels 16 maxArrayLayers 2048 maxExtent 32768x32768
+  R8G8B8A8_UNORM             LINEAR  result 0 maxMipLevels 1 maxArrayLayers 1 maxExtent 32768x32768
+  R8G8B8A8_UNORM             OPTIMAL result 0 maxMipLevels 16 maxArrayLayers 2048 maxExtent 32768x32768
+  R5G6B5_UNORM_PACK16        LINEAR  result 0 maxMipLevels 1 maxArrayLayers 1 maxExtent 32768x32768
+  R5G6B5_UNORM_PACK16        OPTIMAL result 0 maxMipLevels 16 maxArrayLayers 2048 maxExtent 32768x32768
+  B5G6R5_UNORM_PACK16        LINEAR  result -11 maxMipLevels 0 maxArrayLayers 0 maxExtent 0x0
+  B5G6R5_UNORM_PACK16        OPTIMAL result -11 maxMipLevels 0 maxArrayLayers 0 maxExtent 0x0
+  A1R5G5B5_UNORM_PACK16      LINEAR  result 0 maxMipLevels 1 maxArrayLayers 1 maxExtent 32768x32768
+  A1R5G5B5_UNORM_PACK16      OPTIMAL result 0 maxMipLevels 16 maxArrayLayers 2048 maxExtent 32768x32768
+  A2B10G10R10_UNORM_PACK32   LINEAR  result 0 maxMipLevels 1 maxArrayLayers 1 maxExtent 32768x32768
+  A2B10G10R10_UNORM_PACK32   OPTIMAL result 0 maxMipLevels 16 maxArrayLayers 2048 maxExtent 32768x32768
+  R16G16B16A16_UNORM         LINEAR  result 0 maxMipLevels 1 maxArrayLayers 1 maxExtent 32768x32768
+  R16G16B16A16_UNORM         OPTIMAL result 0 maxMipLevels 16 maxArrayLayers 2048 maxExtent 32768x32768
+device NVIDIA GeForce RTX 5090, driver version 0x988e4100
+  B8G8R8A8_UNORM             LINEAR  result 0 maxMipLevels 1 maxArrayLayers 1 maxExtent 32768x32768
+  B8G8R8A8_UNORM             OPTIMAL result 0 maxMipLevels 16 maxArrayLayers 2048 maxExtent 32768x32768
+  R8G8B8A8_UNORM             LINEAR  result 0 maxMipLevels 1 maxArrayLayers 1 maxExtent 32768x32768
+  R8G8B8A8_UNORM             OPTIMAL result 0 maxMipLevels 16 maxArrayLayers 2048 maxExtent 32768x32768
+  R5G6B5_UNORM_PACK16        LINEAR  result 0 maxMipLevels 1 maxArrayLayers 1 maxExtent 32768x32768
+  R5G6B5_UNORM_PACK16        OPTIMAL result 0 maxMipLevels 16 maxArrayLayers 2048 maxExtent 32768x32768
+  B5G6R5_UNORM_PACK16        LINEAR  result -11 maxMipLevels 0 maxArrayLayers 0 maxExtent 0x0
+  B5G6R5_UNORM_PACK16        OPTIMAL result -11 maxMipLevels 0 maxArrayLayers 0 maxExtent 0x0
+  A1R5G5B5_UNORM_PACK16      LINEAR  result 0 maxMipLevels 1 maxArrayLayers 1 maxExtent 32768x32768
+  A1R5G5B5_UNORM_PACK16      OPTIMAL result 0 maxMipLevels 16 maxArrayLayers 2048 maxExtent 32768x32768
+  A2B10G10R10_UNORM_PACK32   LINEAR  result 0 maxMipLevels 1 maxArrayLayers 1 maxExtent 32768x32768
+  A2B10G10R10_UNORM_PACK32   OPTIMAL result 0 maxMipLevels 16 maxArrayLayers 2048 maxExtent 32768x32768
+  R16G16B16A16_UNORM         LINEAR  result 0 maxMipLevels 1 maxArrayLayers 1 maxExtent 32768x32768
+  R16G16B16A16_UNORM         OPTIMAL result 0 maxMipLevels 16 maxArrayLayers 2048 maxExtent 32768x32768
