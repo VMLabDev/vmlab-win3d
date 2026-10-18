@@ -1,0 +1,6 @@
+stage: s2-two-vms  labs: a b  minutes: 5  host hog: 0 MiB (dma-buf mapped, so about twice that in BAR1)
+from 2026-10-19T06:13:40+10:00 to 2026-10-19T06:19:07+10:00
+a: runs 12, pass 12, not pass 0
+b: runs 8, pass 8, not pass 0
+new 'can't alloc VA space' kernel lines: 0
+highest BAR1 used: 71 MiB of 256

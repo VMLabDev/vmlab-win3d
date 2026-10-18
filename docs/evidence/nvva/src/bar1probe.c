@@ -12,6 +12,11 @@
  *   dmabuf  vkAllocateMemory with dma-buf export + vkGetMemoryFdKHR + mmap
  *           of the fd, then a write to every page (what virglrenderer and
  *           QEMU do for a Venus guest's host-visible blob)
+ *   export  as dmabuf, without the mmap (an exported blob the guest never
+ *           maps, such as a shared device-local image)
+ *
+ * BAR1PROBE_TYPE=<index> picks that memory type instead of the first
+ * device-local, host-visible one (for example a system-memory type).
  *
  * After each chunk it prints the heap's VK_EXT_memory_budget usage and
  * budget, so the card-wide BAR1 use can be compared with nvidia-smi.
@@ -33,7 +38,7 @@ static void on_sigbus(int s) { (void)s; siglongjmp(jb, 1); }
 int main(int argc, char **argv)
 {
    if (argc < 5) {
-      fprintf(stderr, "usage: %s <pci-bus-hex> <chunk-MiB> <max-MiB> alloc|map|dmabuf [hold-s]\n", argv[0]);
+      fprintf(stderr, "usage: %s <pci-bus-hex> <chunk-MiB> <max-MiB> alloc|map|dmabuf|export [hold-s]\n", argv[0]);
       return 2;
    }
    unsigned bus = strtoul(argv[1], NULL, 16);
@@ -45,7 +50,8 @@ int main(int argc, char **argv)
    VkDeviceSize max = strtoull(argv[3], NULL, 0) << 20;
    const char *mode = argv[4];
    int hold = argc > 5 ? atoi(argv[5]) : 0;
-   int dmabuf = !strcmp(mode, "dmabuf");
+   int export_only = !strcmp(mode, "export");
+   int dmabuf = !strcmp(mode, "dmabuf") || export_only;
    int map = !strcmp(mode, "map");
 
    VkApplicationInfo app = { .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO, .apiVersion = VK_API_VERSION_1_3 };
@@ -73,6 +79,8 @@ int main(int argc, char **argv)
    uint32_t type = UINT32_MAX;
    for (uint32_t i = 0; i < mp.memoryTypeCount; i++)
       if ((mp.memoryTypes[i].propertyFlags & want) == want) { type = i; break; }
+   if (getenv("BAR1PROBE_TYPE"))
+      type = strtoul(getenv("BAR1PROBE_TYPE"), NULL, 0);
    if (type == UINT32_MAX) { fprintf(stderr, "no device-local host-visible type\n"); return 1; }
    uint32_t heap = mp.memoryTypes[type].heapIndex;
    printf("type %u heap %u size %llu MiB\n", type, heap, (unsigned long long)(mp.memoryHeaps[heap].size >> 20));
@@ -114,7 +122,7 @@ int main(int argc, char **argv)
          int fd = -1;
          r = getfd(dev, &gi, &fd);
          if (r) what = "vkGetMemoryFdKHR failed";
-         else {
+         else if (!export_only) {
             void *p = mmap(NULL, chunk, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
             if (p == MAP_FAILED) { what = "mmap failed"; printf("  mmap errno %d %s\n", errno, strerror(errno)); }
             else if (sigsetjmp(jb, 1)) what = "SIGBUS on first touch";
