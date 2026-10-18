@@ -7,7 +7,8 @@ the host's GPU through virtio-gpu Venus.
 **Status:** the Done criteria in [brief.md](brief.md) are met on an AMD host
 (RADV), on fresh Windows 11 and Windows 10 labs
 ([acceptance](acceptance.md)). The same checks also pass on an Intel host
-(ANV, [zeus](zeus.md)). NVIDIA works only in part
+(ANV, [zeus](zeus.md)) and on both NVIDIA RTX 5090s with the patched QEMU
+([nvidia](nvidia.md)). The laptop RTX 4060 on Zeus failed
 ([known limits](known-limits.md#host-gpu-support)).
 
 Start with [install](install.md) to build and use the package. Read
@@ -62,6 +63,8 @@ or Intel GPU as declared in the host config, `~/.config/vmlab/config.wcl`
 | [d3d11-apps.md](d3d11-apps.md) | See why two DirectX SDK D3D11 samples did not show, the UMD fixes `patches/mesa/0015` to `0017`, and the DXUT window bug |
 | [nvidia.md](nvidia.md) | See why Venus failed on the RTX 5090 and what fixes it: `patches/mesa/0020` and a patched QEMU |
 | [zeus.md](zeus.md) | See the package on an Intel Iris Xe (passes with `patches/mesa/0021`) and a laptop RTX 4060 (failed) |
+| [xid69.md](xid69.md) | See why D3D9 depth draws into the back buffer hung the RTX 5090 (Xid 69) and how `patches/mesa/0022` fixed it |
+| [nvtex.md](nvtex.md) | See why mipmapped textures were black on NVIDIA, and the fixed-function and 16-bit format fixes `patches/mesa/0023` to `0025` |
 
 ## Building
 
