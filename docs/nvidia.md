@@ -193,7 +193,7 @@ another worker owns it.
 ### The host-side workaround, kept as documentation
 
 Before the guest fix existed, a host-side workaround in virglrenderer proved
-the diagnosis: `patches/host/virglrenderer/workaround/0002-*.patch`. When the
+the diagnosis: `patches/host/virglrenderer/workaround/0003-*.patch` (numbered 0002 until the render-server fix of [`n5.md`](n5.md) took that number). When the
 driver refuses the feedback-loop bit, `vkCreateImage` and both image-format
 queries retry without it. With that render server alone, dwm survived, the
 user logged on, and D3D9, D3D11 and D3D12 passed. The image-format part then
@@ -403,7 +403,7 @@ it. The validation layer used in the diagnosis came from Arch's
 | Diagnostic render server (`patches/host/virglrenderer/0001`), selected with `RENDER_SERVER_EXEC_PATH` | Named the failing `vkCreateImage` and its create-info |
 | Native host test program | Reproduced the refusal without a VM; RADV accepts |
 | Validation layer on the render server (`VKR_DEBUG=validate`) | Confirmed the refusal; the remaining messages (vertex attribute type mismatches, dma-buf memory bound to images without external info, `SPV_EXT_shader_viewport_index_layer`) are not fatal on either GPU |
-| Host workaround (`workaround/0002`), first version | Crashed the render server: `vkr_image_create_and_add` replaces `args->device`, so the retry used a driver handle. Fixed by restoring the handle |
+| Host workaround (`workaround/0003`, then `0002`), first version | Crashed the render server: `vkr_image_create_and_add` replaces `args->device`, so the retry used a driver handle. Fixed by restoring the handle |
 | Host workaround, final | Desktop, D3D9, D3D11 and D3D12 passed; Vulkan and OpenGL needed the image-format part too |
 | Console: GL texture import test on the host | Found the external-only LINEAR import |
 | QEMU patch v1 (shared VAO) | Worked from a cold boot, black after a guest reboot; v2 creates the VAO per draw |

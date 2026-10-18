@@ -34,7 +34,7 @@ SUBJECT_FALLBACK = {
         "R32 typed UAV loads only, and TypedUAVLoadAdditionalFormats from the host (Intel ANV)",
     "host/virglrenderer/0001-vkr-log-image-creation.patch":
         "vkr: log failed image creation and memory allocation, with the create-info (diagnostic render server)",
-    "host/virglrenderer/workaround/0002-vkr-drop-unsupported-feedback-loop-usage.patch":
+    "host/virglrenderer/workaround/0003-vkr-drop-unsupported-feedback-loop-usage.patch":
         "vkr: retry vkCreateImage and the image-format queries without feedback-loop usage "
         "(superseded by mesa/0020; built only with WITH_WORKAROUND=1)",
 }
