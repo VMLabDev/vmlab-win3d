@@ -13,7 +13,11 @@ docs/install.md:
   - UserModeDriverName and UserModeDriverNameWow name viogpu_d3d10.dll three
     times (D3D9, D3D10, D3D11) and InstalledDisplayDrivers matches; there is
     no yttrium12 (D3D12) entry;
-  - drop TdrDebugMode and EnablePreemption, which are machine-wide.
+  - drop TdrDebugMode and EnablePreemption, which are machine-wide;
+  - lower FeatureScore from upstream's F9 to E0, so the package outranks any
+    other driver for the same hardware ID that keeps the usual display
+    score, such as Red Hat's viogpudo, whatever its DriverVer date
+    (docs/installer.md, "Ranking").
 
 Every edit is checked: if the template no longer has the line an edit
 expects, the script fails rather than writing a different INF.
@@ -34,6 +38,9 @@ WANT = {
     "OpenGLDriverName": r"%11%\viogpu_wgl.dll",
     "OpenGLDriverNameWow": r"%16425%\viogpu_wgl.dll",
 }
+# PnP ranks a driver 0xSSGGTHHH, lower first: signer score, FeatureScore,
+# identifier type, hardware ID position. Upstream and viogpudo both say F9.
+FEATURE_SCORE = ("F9", "E0")
 DWORDS = {"OpenGLFlags": "3", "OpenGLFlagsWow": "3", "OpenGLVersion": "4096", "OpenGLVersionWow": "4096"}
 VULKAN = [
     r'HKLM,"SOFTWARE\Khronos\Vulkan\Drivers","%11%\virtio_icd.x86_64.json",%REG_DWORD%,0',
@@ -61,11 +68,17 @@ def main():
             if m.group(5).strip() != DWORDS[m.group(2)]:
                 sys.exit(f"{m.group(2)} is {m.group(5)!r} in the template, expected {DWORDS[m.group(2)]}")
             seen.add(m.group(2))
+        f = re.match(r"^(\s*FeatureScore\s*=\s*)(\w+)\s*$", code, re.I)
+        if f:
+            if f.group(2).upper() != FEATURE_SCORE[0]:
+                sys.exit(f"FeatureScore is {f.group(2)!r} in the template, expected {FEATURE_SCORE[0]}")
+            line = f.group(1) + FEATURE_SCORE[1]
+            seen.add("FeatureScore")
         if re.search(r"yttrium12|lvp_icd|vulkan_lvp", code, re.I):
             sys.exit(f"unexpected entry left by stampinf: {line}")
         result.append(line)
 
-    missing = [k for k in list(WANT) + list(DWORDS) if k not in seen]
+    missing = [k for k in list(WANT) + list(DWORDS) + ["FeatureScore"] if k not in seen]
     if missing:
         sys.exit(f"template lacks {missing}")
     text = "\n".join(result)
