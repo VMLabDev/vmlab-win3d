@@ -1,0 +1,28 @@
+ADAPTER Hardsoft VirtIO GPU 3D controller type=hal
+CASE fmt=D16 dz=+0.004 bias=-0.008 expect=green got=ff00ff00 hr=0x00000000 ok
+CASE fmt=D16 dz=+0.004 bias=-0.002 expect=red got=ff00ff00 hr=0x00000000 FAIL
+CASE fmt=D16 dz=+0.004 bias=+0.000 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D16 dz=-0.004 bias=+0.008 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D16 dz=-0.004 bias=+0.002 expect=green got=ff00ff00 hr=0x00000000 ok
+SCALE fmt=D16 threshold=0.002000 scale=2.000
+CASE fmt=D24X8 dz=+0.004 bias=-0.008 expect=green got=ff00ff00 hr=0x00000000 ok
+CASE fmt=D24X8 dz=+0.004 bias=-0.002 expect=red got=ff00ff00 hr=0x00000000 FAIL
+CASE fmt=D24X8 dz=+0.004 bias=+0.000 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D24X8 dz=-0.004 bias=+0.008 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D24X8 dz=-0.004 bias=+0.002 expect=green got=ff00ff00 hr=0x00000000 ok
+SCALE fmt=D24X8 threshold=0.002000 scale=2.000
+CASE fmt=D24S8 dz=+0.004 bias=-0.008 expect=green got=ff00ff00 hr=0x00000000 ok
+CASE fmt=D24S8 dz=+0.004 bias=-0.002 expect=red got=ff00ff00 hr=0x00000000 FAIL
+CASE fmt=D24S8 dz=+0.004 bias=+0.000 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D24S8 dz=-0.004 bias=+0.008 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D24S8 dz=-0.004 bias=+0.002 expect=green got=ff00ff00 hr=0x00000000 ok
+SCALE fmt=D24S8 threshold=0.002000 scale=2.000
+SKIP fmt=D32 (not supported)
+CASE fmt=D32F_LOCKABLE dz=+0.004 bias=-0.008 expect=green got=ff00ff00 hr=0x00000000 ok
+CASE fmt=D32F_LOCKABLE dz=+0.004 bias=-0.002 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D32F_LOCKABLE dz=+0.004 bias=+0.000 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D32F_LOCKABLE dz=-0.004 bias=+0.008 expect=red got=ffff0000 hr=0x00000000 ok
+CASE fmt=D32F_LOCKABLE dz=-0.004 bias=+0.002 expect=green got=ff00ff00 hr=0x00000000 ok
+SCALE fmt=D32F_LOCKABLE threshold=0.004000 scale=1.000
+SKIP fmt=D24FS8 (not supported)
+RESULT ran=20 failed=3

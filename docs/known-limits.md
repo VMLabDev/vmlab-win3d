@@ -406,8 +406,9 @@ OpenGL and Vulkan, x64 and x86), two diagnostic probes (`probes/dxut-enum`,
     an OpenGL context. Heaven D3D11 crashed once with heap corruption.
   - Nvidia2: 5 of 12 runs pass. Godot's Vulkan renderer causes a host Xid 69
     (ErrorCode `0x13d`). GZDoom Vulkan and both Unigine OpenGL runs crash.
-    Unigine D3D9 skips its draws that use depth bias, because the device
-    lacks the float depth-bias representation.
+    Unigine D3D9 skipped its draws that use depth bias, because the device
+    lacks the float depth-bias representation (fixed by `patches/mesa/0090`;
+    see the Unigine section below).
 
 D3D9 fixed function goes through the shaders that the Windows runtime
 generates; its coverage and what it still lacks are in the next section.
@@ -446,6 +447,30 @@ VRAM visible to the CPU now live in host memory, which the GPU reads over
 PCIe. A guest driver that still allocates host-visible VRAM can fail to map
 it when BAR1 is full; with `0070` no driver in the package sees such a
 memory type.
+
+### 32-bit Unigine: Valley D3D9 runs out of address space; Heaven D3D11 has a use-after-free
+
+[unid3d.md](unid3d.md) has the evidence.
+
+- D3D9 depth bias works on NVIDIA since `patches/mesa/0090`. Before it,
+  Unigine D3D9 skipped every draw that used a depth bias.
+- Unigine Valley's D3D9 renderer, a 32-bit process, uses 3.75 GiB of its
+  4 GiB address space within 90 s. The UMD's ordered-context-worker upload
+  path creates about 4 MiB of mapped upload buffers per lock and keeps
+  hundreds of them alive. Allocations then fail. Venus commands go out
+  malformed (`vkCmdBeginRenderPass` or `vkCmdPipelineBarrier` resulted in a
+  CS error), and Valley hangs or crashes. Heaven's D3D9 renderer (2 GiB, not
+  large-address-aware) can fail the same way on NVIDIA at exit. As a
+  workaround, `ORDERED_CONTEXT_WORKER=0` in
+  `C:\ProgramData\Yttrium\yttrium.ini` turns the worker off for every
+  program. Valley D3D9 then ran cleanly on AMD1 at 6 fps and 1.7 GiB. The
+  file is not part of the package. It is a diagnostic option, and other
+  programs have not been tested with it.
+- Unigine Heaven D3D11 on AMD1 crashes intermittently with heap corruption.
+  Under PageHeap it crashed in 2 of 5 runs, in both cases on a use-after-free
+  of a queued flush label (`yttrium_threaded_set_flush_label`) run by the
+  threaded context's worker. The cause in the modified
+  `u_threaded_context` is not found.
 
 ### D3D9 fixed function: what is and is not covered
 

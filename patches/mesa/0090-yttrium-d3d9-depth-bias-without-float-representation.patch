@@ -1,0 +1,161 @@
+Subject: [PATCH] yttrium: convert D3D9 depth bias when the float representation is missing
+
+D3D9's D3DRS_DEPTHBIAS is unscaled: an offset in the depth buffer's own
+units. Patch 0006 passes it to Vulkan with VK_EXT_depth_bias_control's
+float representation. NVIDIA's driver reports depthBiasControl and
+leastRepresentableValueForceUnormRepresentation but not
+floatRepresentation, so every pipeline with a D3D9 depth bias failed
+("unscaled depth bias requires Vulkan float representation") and its
+draws were skipped: Unigine Heaven and Valley D3D9 rendered dark frames
+and Valley crashed.
+
+Without the float representation, convert the bias to Vulkan's integer
+units by dividing by r, the format's minimum resolvable difference, as
+DXVK's D3D9 does: 2^-16 for D16, 2^-24 for D24, and for D32F 2^-24 under
+the force-UNORM representation (which this patch now enables only when
+the device reports it, also for the existing D24 case), or 2^-23 when
+force-UNORM is missing too. Devices with the float representation (RADV)
+keep the float path.
+
+Also request depthBiasExact for these pipelines where the device offers
+it. Without it NVIDIA applies twice the bias on D16 and D24 (measured with
+docs/evidence/unid3d/src/d3d9_depthbias.cpp: scale 2.0 on D16, D24X8 and
+D24S8, 1.0 on D32F), which the spec allows "to ensure a minimum resolvable
+distance".
+
+Evidence: docs/unid3d.md, docs/evidence/unid3d/.
+Origin: vmlab-win3d unid3d worker.
+---
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c
+index b2bf7a0..b347499 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c
+@@ -992,6 +992,11 @@ yttrium_venus_create_device_objects(struct yttrium_venus *venus)
+       have_depth_bias_control_ext && depth_bias_control.depthBiasControl;
+    venus->depth_bias_float =
+       venus->depth_bias_control && depth_bias_control.floatRepresentation;
++   venus->depth_bias_force_unorm =
++      venus->depth_bias_control &&
++      depth_bias_control.leastRepresentableValueForceUnormRepresentation;
++   venus->depth_bias_exact =
++      venus->depth_bias_control && depth_bias_control.depthBiasExact;
+    venus->transform_feedback =
+       have_transform_feedback_ext && transform_feedback.transformFeedback;
+    venus->vertex_attribute_instance_rate_divisor =
+@@ -1139,8 +1144,10 @@ yttrium_venus_create_device_objects(struct yttrium_venus *venus)
+                venus->custom_border_colors,
+                venus->max_custom_border_color_samplers);
+    depth_bias_control.depthBiasControl = venus->depth_bias_control;
++   depth_bias_control.leastRepresentableValueForceUnormRepresentation =
++      venus->depth_bias_force_unorm;
+    depth_bias_control.floatRepresentation = venus->depth_bias_float;
+-   depth_bias_control.depthBiasExact = VK_FALSE;
++   depth_bias_control.depthBiasExact = venus->depth_bias_exact;
+    transform_feedback.transformFeedback = venus->transform_feedback;
+    transform_feedback.geometryStreams = VK_FALSE;
+    vertex_divisor.vertexAttributeInstanceRateDivisor =
+@@ -4091,28 +4098,72 @@ yttrium_venus2_pipeline_init(struct yttrium_venus *venus,
+       .viewportCount = MAX2(draw_state->viewport_count, 1),
+       .scissorCount = MAX2(draw_state->viewport_count, 1),
+    };
+-   const bool float_depth_bias =
++   /* D3D9 depth bias is unscaled: a depth offset in the depth buffer's
++    * own units. With VK_EXT_depth_bias_control's float representation it
++    * passes through. Without it (NVIDIA), convert it to Vulkan's integer
++    * units by dividing by r, the format's minimum resolvable difference,
++    * as DXVK's D3D9 does: 2^-16 for D16, 2^-24 for D24, and 2^-24 for
++    * D32F under the force-UNORM representation. Without force-UNORM a
++    * float format's r depends on each primitive's exponent; 2^-23 is the
++    * value for depths in [1/2, 1), where most of the depth range lies.
++    * Request an exact bias where the device offers it: NVIDIA otherwise
++    * doubles r for UNORM formats (docs/unid3d.md).
++    */
++   const bool unscaled_depth_bias =
+       draw_state->depth_bias_unscaled && has_depth &&
+       draw_state->depth_bias_constant_factor != 0.0f;
+-   if (float_depth_bias && !venus->depth_bias_float) {
+-      YTTRIUM_WARN("yttrium: unscaled depth bias requires Vulkan float representation\n");
+-      yttrium_venus2_pipeline_fini(venus, pipeline);
+-      return false;
++   const bool float_depth_bias =
++      unscaled_depth_bias && venus->depth_bias_float;
++   float depth_bias_constant_factor = draw_state->depth_bias_constant_factor;
++   bool depth_format_is_float = false;
++   if (has_depth) {
++      switch (depth_resource->vk_format) {
++      case VK_FORMAT_D32_SFLOAT:
++      case VK_FORMAT_D32_SFLOAT_S8_UINT:
++         depth_format_is_float = true;
++         break;
++      default:
++         break;
++      }
++   }
++   if (unscaled_depth_bias && !float_depth_bias) {
++      float r_inverse;
++      switch (depth_resource->vk_format) {
++      case VK_FORMAT_D16_UNORM:
++      case VK_FORMAT_D16_UNORM_S8_UINT:
++         r_inverse = (float)(1u << 16);
++         break;
++      case VK_FORMAT_X8_D24_UNORM_PACK32:
++      case VK_FORMAT_D24_UNORM_S8_UINT:
++         r_inverse = (float)(1u << 24);
++         break;
++      default:
++         r_inverse = venus->depth_bias_force_unorm ?
++            (float)(1u << 24) : (float)(1u << 23);
++         break;
++      }
++      depth_bias_constant_factor *= r_inverse;
+    }
+    const bool force_unorm_depth_bias =
+-      venus->depth_bias_control && has_depth &&
++      venus->depth_bias_force_unorm && has_depth && !float_depth_bias &&
+       (depth_resource->vk_format == VK_FORMAT_D24_UNORM_S8_UINT ||
+-       depth_resource->vk_format == VK_FORMAT_X8_D24_UNORM_PACK32);
++       depth_resource->vk_format == VK_FORMAT_X8_D24_UNORM_PACK32 ||
++       (unscaled_depth_bias && depth_format_is_float));
++   const bool exact_depth_bias =
++      unscaled_depth_bias && venus->depth_bias_exact;
+    const VkDepthBiasRepresentationInfoEXT depth_bias_representation = {
+       .sType = VK_STRUCTURE_TYPE_DEPTH_BIAS_REPRESENTATION_INFO_EXT,
+       .depthBiasRepresentation =
+          float_depth_bias ? VK_DEPTH_BIAS_REPRESENTATION_FLOAT_EXT :
+-         VK_DEPTH_BIAS_REPRESENTATION_LEAST_REPRESENTABLE_VALUE_FORCE_UNORM_EXT,
+-      .depthBiasExact = VK_FALSE,
++         force_unorm_depth_bias ?
++         VK_DEPTH_BIAS_REPRESENTATION_LEAST_REPRESENTABLE_VALUE_FORCE_UNORM_EXT :
++         VK_DEPTH_BIAS_REPRESENTATION_LEAST_REPRESENTABLE_VALUE_FORMAT_EXT,
++      .depthBiasExact = exact_depth_bias,
+    };
+    const VkPipelineRasterizationStateCreateInfo raster = {
+       .sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+-      .pNext = (float_depth_bias || force_unorm_depth_bias) ?
++      .pNext = (float_depth_bias || force_unorm_depth_bias ||
++                exact_depth_bias) ?
+          &depth_bias_representation : NULL,
+       .depthClampEnable = draw_state->depth_clamp_enable,
+       .rasterizerDiscardEnable = draw_state->rasterizer_discard_enable,
+@@ -4122,7 +4173,7 @@ yttrium_venus2_pipeline_init(struct yttrium_venus *venus,
+       .cullMode = draw_state->cull_mode,
+       .frontFace = draw_state->front_face,
+       .depthBiasEnable = draw_state->depth_bias_enable,
+-      .depthBiasConstantFactor = draw_state->depth_bias_constant_factor,
++      .depthBiasConstantFactor = depth_bias_constant_factor,
+       .depthBiasClamp = draw_state->depth_bias_clamp,
+       .depthBiasSlopeFactor = draw_state->depth_bias_slope_factor,
+       .lineWidth = 1.0f,
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h
+index 2992225..9140e5d 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h
+@@ -720,6 +720,8 @@ struct yttrium_venus {
+    VkPhysicalDeviceTransformFeedbackPropertiesEXT transform_feedback_props;
+    bool depth_bias_control;
+    bool depth_bias_float;
++   bool depth_bias_force_unorm;
++   bool depth_bias_exact;
+    bool depth_clamp;
+    bool fill_mode_non_solid;
+    bool dual_src_blend;

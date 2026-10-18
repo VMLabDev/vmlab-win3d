@@ -1,0 +1,1 @@
+1300 window=0x50258 title=[Unigine Valley Benchmark 1.0 Basic (Direct3D9)] closed=True

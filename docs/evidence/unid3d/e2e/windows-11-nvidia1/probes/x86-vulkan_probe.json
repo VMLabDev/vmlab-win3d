@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "probe": "vulkan",
+  "api": "Vulkan",
+  "arch": "x86",
+  "result": "api_failure",
+  "exit_code": 1,
+  "exe": "C:\\win3d\\probes\\x86\\vulkan_probe.exe",
+  "pid": 4516,
+  "session_id": 1,
+  "os_version": "10.0.26100",
+  "finished_utc": "2026-10-19T05:21:20Z",
+  "args": {"seconds": 20, "warp": false, "width": 1024, "height": 640},
+  "adapter": {
+    "name": "Virtio-GPU Venus (NVIDIA GeForce RTX 5090)",
+    "vendor": "NVIDIA",
+    "vendor_id": "0x10de",
+    "device_id": "0x2b85",
+    "driver_version_raw": 109056000,
+    "software": false
+  },
+  "device": {
+    "loader": "C:\\WINDOWS\\SYSTEM32\\vulkan-1.dll",
+    "instance_version": "1.4.363",
+    "physical_device_count": 1,
+    "physical_devices": ["Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (discrete_gpu, vendor 0x10de, device 0x2b85, API 1.4.334)"],
+    "device_type": "discrete_gpu",
+    "device_api_version": "1.4.334",
+    "driver_name": "venus",
+    "driver_info": "Mesa 26.1.0",
+    "driver_id": 22,
+    "swapchain_format": "B8G8R8A8_UNORM"
+  },
+  "frames_presented": 0,
+  "elapsed_seconds": 16.248,
+  "avg_fps": 0.00,
+  "window_closed_early": false,
+  "readback": {
+    "ok": false,
+    "tolerance": 2,
+    "pixels": [
+      {"name": "red_top_left", "x": 48, "y": 48, "expected": [255, 0, 0], "actual": null, "match": false},
+      {"name": "blue_top_right", "x": 976, "y": 48, "expected": [0, 0, 255], "actual": null, "match": false},
+      {"name": "green_bottom_left", "x": 48, "y": 592, "expected": [0, 255, 0], "actual": null, "match": false}
+    ]
+  },
+  "errors": [
+    "vkCreateSwapchainKHR failed: VK_ERROR_INITIALIZATION_FAILED (-3)"
+  ]
+}

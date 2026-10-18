@@ -74,9 +74,9 @@ The series has two parts, and the patches apply in name order:
   mixed-case header symlinks that `prepare-build.py` creates, so they are
   build output, not source. The diff was then split by topic. Each patch has
   a header that says what it fixes and which prior-art finding it comes from.
-- **0012 to 0017, 0020 to 0027, 0030 to 0032, 0035, 0040 to 0044, 0070, 0085 and 0086** are this repository's own fixes, found by
+- **0012 to 0017, 0020 to 0027, 0030 to 0032, 0035, 0040 to 0044, 0070, 0085, 0086 and 0090** are this repository's own fixes, found by
   the acceptance and host runs. Each header names the document with the
-  evidence. The series skips 0018, 0019, 0028, 0029, 0033, 0034 and 0036 to 0039.
+  evidence. The series skips 0018, 0019, 0028, 0029, 0033, 0034, 0036 to 0039, 0045 to 0069, 0071 to 0084 and 0087 to 0089.
 
 0005 to 0010, every patch from 0012 to 0026 and 0030 to 0032 change
 `viogpu_d3d10.dll`, the D3D9/D3D10/D3D11 UMD (the `d3d10umd` frontend and the
@@ -131,6 +131,7 @@ are in WGL, 0011, 0070 and 0085 are in the Venus ICD, and 0086 is in Zink (WGL).
 | 0070 venus-hide-host-access-to-small-bar-heap | The Venus ICD reports a device-local, host-visible type on a heap less than half the largest device-local heap as device-local only, so Vulkan, DXVK, vkd3d-proton and Zink keep host-visible memory out of the host card's BAR1 (246 MiB without resizable BAR, shared by every VM on the card; "can't alloc VA space for mapping") | [`docs/nvva.md`](../../docs/nvva.md) |
 | 0085 venus-allocate-from-small-device-local-heap-synchronously | The Venus ICD allocates from a device-local heap smaller than the largest one (the RTX 5090's 246 MiB BAR window) synchronously, so a host out-of-memory reaches the driver's fallback instead of failing the whole context (Unigine OpenGL crashed on NVIDIA) | [`docs/unigl.md`](../../docs/unigl.md) |
 | 0086 zink-keep-buffers-mappable-without-visible-vram | Zink keeps buffers it maps directly in host-visible memory when the device has no device-local, host-visible type (needed with 0070) and when an allocation from that heap fails (reachable with 0085), instead of mapping device-local-only memory (`vkr: mem is not exportable`; Unigine Heaven and Valley crashed in `viogpu_wgl.dll`) | [`docs/unigl.md`](../../docs/unigl.md) |
+| 0090 yttrium-d3d9-depth-bias-without-float-representation | D3D9 depth bias works on devices without `VK_EXT_depth_bias_control`'s float representation (NVIDIA): it is converted to integer units for the depth format and requested exact. Before, every pipeline with a D3D9 depth bias failed and its draws were skipped | [`docs/unid3d.md`](../../docs/unid3d.md) |
 
 0021 has no mail header. `scripts/pins-table.py` carries its one-line
 description.
@@ -165,6 +166,7 @@ Which patches have run in a guest, and where:
 | ffp proof, Windows 11, `Nvidia2` and `AMD1` (e2e, probes, `d3d9_ffp`, `Text3D`) | 0001 to 0017, 0020 to 0025, 0030, 0040 to 0042 | `docs/ffp.md` |
 | ffp2 proof, Windows 11 on `Nvidia2` and `AMD1`, Windows 10 on `Nvidia2` (e2e, `d3d9_ffp2`, `d3d9_ffp`) | 0001 to 0017, 0020 to 0027, 0030, 0035, 0040 to 0044 | `docs/ffp2.md` |
 | unigl proof, Windows 11 on `Nvidia1` and `AMD1` (e2e, Unigine Heaven and Valley OpenGL) | 0001 to 0017, 0020 to 0027, 0030, 0035, 0040 to 0044, 0070, 0085, 0086 | `docs/unigl.md` |
+| unid3d proof, Windows 11 on `AMD1`, `Nvidia1` and `Nvidia2` (e2e, `d3d9_depthbias`, Unigine D3D9 and D3D11) | 0001 to 0017, 0020 to 0027, 0030 to 0032, 0035, 0040 to 0044, 0090 | `docs/unid3d.md` |
 
 The nvtex proof run (2026-10-18) has the full series, 0001 to 0025, built by
 `scripts/build.sh` at commit `e428846`. Before it, no recorded run had 0015

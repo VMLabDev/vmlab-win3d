@@ -1,0 +1,29 @@
+pid 1820
+private  commit   regions=  2230 MiB=  2846.3
+private  reserve  regions=   293 MiB=   417.2
+mapped   commit   regions=    44 MiB=   162.8
+mapped   reserve  regions=     4 MiB=    22.8
+image    commit   regions=   291 MiB=    60.3
+image    reserve  regions=    50 MiB=     1.2
+free below 4 GiB MiB=585.4 largest=378.3
+committed private regions by total size:
+  size=0x400000 count=370 MiB=1480.0
+  size=0x121000 count=179 MiB=202.1
+  size=0x2001000 count=4 MiB=128.0
+  size=0x1558000 count=4 MiB=85.4
+  size=0x2000000 count=2 MiB=64.0
+  size=0xfcf000 count=3 MiB=47.4
+  size=0x100000 count=35 MiB=35.0
+  size=0x1001000 count=2 MiB=32.0
+  size=0x1f78000 count=1 MiB=31.5
+  size=0x1cb1000 count=1 MiB=28.7
+  size=0x1ad8000 count=1 MiB=26.8
+  size=0x17e6000 count=1 MiB=23.9
+  size=0x363000 count=7 MiB=23.7
+  size=0x178b000 count=1 MiB=23.5
+  size=0x1778000 count=1 MiB=23.5
+  size=0x1505000 count=1 MiB=21.0
+  size=0x1093000 count=1 MiB=16.6
+  size=0x1000000 count=1 MiB=16.0
+  size=0xe17000 count=1 MiB=14.1
+  size=0xd1a000 count=1 MiB=13.1

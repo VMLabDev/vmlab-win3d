@@ -1,0 +1,17 @@
+== Application log (errors, last 15 min)
+2026-10-18T14:23:29.7597461-07:00 Application Error 1000: Faulting application name: Valley.exe, version: 1.0.0.0, time stamp: 0x511cbdf2 Faulting module name: Unigine_x86.dll, version: 0.0.0.0, time stamp: 0x511cbdf2 Exception code: 0xc0000005 Fault offset: 0x003cc176 Faulting process id: 0x1600 Faulting application start time: 0x1DD5F46C3B62FA7 Faulting application path: C:\apps\valley\bin\Valley.exe Faulting module path: C:\apps\valley\bin\Unigine_x86.dll Report Id: ffd2f843-5c40-40d5-89d7-e5fa5b5c903e Faulting package full name: Faulting package-relative application ID: 
+== System log (errors and warnings, last 15 min)
+2026-10-18T20:42:05.5423740-07:00 Microsoft-Windows-Time-Service 134: NtpClient was unable to set a manual peer to use as a time source because of DNS resolution error on 'time.windows.com,0x9'. NtpClient will try again in 15 minutes and double the reattempt interval thereafter. The error was: No such host is known. (0x80072AF9)
+2026-10-18T20:41:56.9076848-07:00 Microsoft-Windows-Wininit 15: Credential Guard and/or VBS Key Isolation are configured but the secure kernel is not running; continuing without them.
+2026-10-18T20:41:54.8120429-07:00 Microsoft-Windows-HAL 18: The performance counter is not readable from user mode. System performance may be degraded.
+2026-10-18T20:41:54.8120363-07:00 Microsoft-Windows-HAL 17: The clock interrupt is backed by a platform timer instead of a per-processor source. System performance may be degraded.
+2026-10-18T20:40:23.0194365-07:00 Service Control Manager 7023: The netprofm service terminated with the following error: The device is not ready.
+2026-10-18T20:40:16.3759566-07:00 Microsoft-Windows-Wininit 15: Credential Guard and/or VBS Key Isolation are configured but the secure kernel is not running; continuing without them.
+2026-10-18T20:40:00.9422915-07:00 Microsoft-Windows-HAL 18: The performance counter is not readable from user mode. System performance may be degraded.
+2026-10-18T20:40:00.9422847-07:00 Microsoft-Windows-HAL 17: The clock interrupt is backed by a platform timer instead of a per-processor source. System performance may be degraded.
+== Yttrium UMD log
+2026-10-18 13:52:16.174 [warning pid=1216 process=dwm.exe] yttrium: forced-sample draw dwm.exe fs=33 requested=16 hw=8 expand=16 coverage=expanded rt_format=0 512x512
+2026-10-18 13:52:16.179 [warning pid=1216 process=dwm.exe] yttrium: forced-sample draw dwm.exe fs=33 requested=16 hw=8 expand=16 coverage=expanded rt_format=0 512x512
+2026-10-18 13:57:36.656 [warning pid=1196 process=dwm.exe] yttrium: forced-sample draw dwm.exe fs=54 requested=16 hw=8 expand=16 coverage=expanded rt_format=0 512x512
+2026-10-18 13:57:36.659 [warning pid=1196 process=dwm.exe] yttrium: forced-sample draw dwm.exe fs=54 requested=16 hw=8 expand=16 coverage=expanded rt_format=0 512x512
+== windows on the user desktop
