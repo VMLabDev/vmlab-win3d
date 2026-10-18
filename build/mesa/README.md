@@ -74,14 +74,14 @@ The series has two parts, and the patches apply in name order:
   mixed-case header symlinks that `prepare-build.py` creates, so they are
   build output, not source. The diff was then split by topic. Each patch has
   a header that says what it fixes and which prior-art finding it comes from.
-- **0012 to 0017, 0020 to 0027, 0030, 0035 and 0040 to 0042** are this repository's own fixes, found by
+- **0012 to 0017, 0020 to 0027, 0030, 0035, 0040 to 0042, 0065 and 0066** are this repository's own fixes, found by
   the acceptance and host runs. Each header names the document with the
   evidence. The series skips 0018, 0019, 0026 to 0029 and 0031 to 0039.
 
 0005 to 0010 and every patch from 0012 to 0026 change `viogpu_d3d10.dll`, the
 D3D9/D3D10/D3D11 UMD (the `d3d10umd` frontend and the Yttrium winsys). 0001
 to 0003 are build and utility fixes that every DLL shares, 0004 and 0027 are in WGL,
-and 0011 is in the Venus ICD.
+and 0011, 0065 and 0066 are in the Venus ICD.
 
 ### From the prior art
 
@@ -122,6 +122,8 @@ and 0011 is in the Venus ICD.
 | 0040 d3d9-swvp-processed-vertices-keep-declaration-vs | Fixed-function draws with software vertex processing keep their colours and texture coordinates (every one rendered black) | [`docs/ffp.md`](../../docs/ffp.md) |
 | 0041 d3d9-fixed-function-fog | Table fog under a perspective projection uses W (from `UpdateWInfo`), vertex fog is clamped per pixel, and pre-transformed vertices get their fog factor from FOG or the specular alpha | [`docs/ffp.md`](../../docs/ffp.md) |
 | 0042 d3d9-fixed-function-points | Points wider than one pixel keep their colours and texture coordinates, get sprite coordinates only with `POINTSPRITEENABLE`, keep their size under perspective, and honour `PSIZE` in `XYZRHW` vertices | [`docs/ffp.md`](../../docs/ffp.md) |
+| 0065 venus-feedback-buffers-in-host-cached-memory | Venus's fence, semaphore, event and query feedback buffers use a `HOST_COHERENT` and `HOST_CACHED` memory type when there is one. On the RTX 4060 Laptop host the guest never saw the GPU's writes to the uncached type, so every Vulkan, D3D12 and OpenGL client hung on its first fence | [`docs/nvfb.md`](../../docs/nvfb.md) |
+| 0066 venus-disable-feedback-when-writes-do-not-arrive | At device creation, one fence feedback write is checked; if it does not reach the guest, feedback is disabled for that device instead of hanging its waits | [`docs/nvfb.md`](../../docs/nvfb.md) |
 
 0021 has no mail header. `scripts/pins-table.py` carries its one-line
 description.

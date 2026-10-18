@@ -12,9 +12,9 @@ remains. Evidence is in `docs/evidence/nvfb/`. Investigated on 2026-10-19.
 | Item | Result |
 | --- | --- |
 | Cause | In the guest, the host GPU's writes to NVIDIA memory type 2 (`HOST_VISIBLE` and `HOST_COHERENT`, uncached system memory) are not visible to the guest CPU. The guest reads a stale line from the CPU cache, and the GPU's write never invalidates that line. Venus put its feedback buffer (fence, semaphore, event and query status) in that type. The host itself sees the same writes |
-| Owner | The guest Venus driver chose the memory type. The underlying behaviour is the host platform's: an Intel CPU host with this NVIDIA GPU. On helios (an AMD CPU) the RTX 5090s show the same write in every type |
+| Owner | The guest Venus driver chose the memory type. The underlying behaviour belongs to the host platform, an Intel CPU host with this NVIDIA GPU. On helios (an AMD CPU) the RTX 5090s pass with feedback in type 2; fbguest was not run in a helios guest |
 | Fix | `patches/mesa/0065`: Venus feedback buffers use a `HOST_COHERENT` and `HOST_CACHED` type (NVIDIA type 3), where the GPU's writes reach the guest. `patches/mesa/0066`: at device creation Venus checks that one fence feedback write lands, and disables feedback for that device if it does not |
-| Zeus Nvidia1, `tests/e2e/run.sh --template windows-11`, package defaults | Run 1 **12 of 12**; run 2 **11 of 12**: one OpenGL readback came back black. That readback fault is older and separate from feedback ([below](#the-black-opengl-readback)) |
+| Zeus Nvidia1, `tests/e2e/run.sh --template windows-11`, package defaults Runs 1 and 3 **12 of 12**; run 2 **11 of 12**: one OpenGL readback came back black. That readback fault is older and separate from feedback ([below](#the-black-opengl-readback)) |
 | Regressions | See [Proof](#proof) |
 
 ## The symptom
@@ -122,7 +122,8 @@ the package uses the host's own virglrenderer (decision D3).
 | Zeus Nvidia1, fbguest with feedback on, `6dabb22` | `zeus/12-fixed-feedback-on/` | Fence waits work (Venus feedback now in type 3). Type 2 still misses for the test's own reads: that is the host's behaviour, and no package component reads GPU-written type-2 memory |
 | Zeus Nvidia1, 0066 without 0065 (an experimental bundle, built from this branch with 0065 removed), feedback on | `zeus/14-selftest-only-feedback-on/` | The self-test fallback works. fbguest's fence waits all complete, where `main`'s timed out (`01-main-feedback-on/`). The Vulkan probe passes (56 fps, x64 and x86), and D3D12 passes at 51 fps, as fast as with `VN_PERF` set. The first D3D12 run of each architecture in the fresh lab ran at only 0.06 and 0.18 fps (x64 also read back only the clear colour); later runs did not. OpenGL hit the black readback below |
 | helios AMD1, `tests/e2e/run.sh --template windows-11`, `6dabb22` | `helios/amd1-e2e/` | **12 of 12** |
-| helios Nvidia1, e2e | NV1 | NVRESULT |
+| Zeus Nvidia1, e2e run 3, the same | on Zeus only (below) | **12 of 12** (the run's summary line). Zeus's SSH then began asking for a Tailscale re-authentication, so this run's evidence directory was not fetched. It is on Zeus in `~/win3d-nvfb/e2e/docs/evidence/acceptance/windows-11-nvidia1/` |
+| helios Nvidia1, e2e | — | **Not run**: Nvidia1 stayed at the two-VM limit for our labs (the 2026-10-19 BAR1 rule) until the time box ran out |
 | Zeus Intel1, `tests/e2e/run.sh --template windows-11 --host-gpu Intel1`, `6dabb22` | `zeus/15-e2e-intel1/` | **12 of 12** |
 
 Startup cost of 0066: when the check passes it is one submission and one
@@ -172,6 +173,11 @@ image from the copy.
   for that belongs on the host (vkr could back such allocations with the
   cached type) or in KVM, not in the guest.
 - 0065 and 0066 belong upstream in Mesa's Venus driver.
+- The regression run on helios Nvidia1 (an RTX 5090, where feedback worked
+  in type 2) was not run; AMD1 and Zeus Intel1 passed.
+- Zeus cleanup: the labs are destroyed, but `~/win3d-nvfb/` (the staging
+  tree, run 3's evidence) is still on Zeus. Zeus's Tailscale SSH asks for a
+  browser re-authentication, which needs the user.
 
 ## Files
 
