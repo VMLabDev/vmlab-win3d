@@ -1,0 +1,6 @@
+AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)
+fmt 44 linear v1 0x1dd83 v3 0x80040018001dd83 color_attachment(linear) yes
+fmt 37 linear v1 0x1dd83 v3 0x80040018001dd83 color_attachment(linear) yes
+fmt 50 linear v1 0x1dd81 v3 0x80040000001dd81 color_attachment(linear) yes
+fmt 9 linear v1 0x1dd83 v3 0x80040018001dd83 color_attachment(linear) yes
+fmt 97 linear v1 0x1dd83 v3 0x80040018001dd83 color_attachment(linear) yes

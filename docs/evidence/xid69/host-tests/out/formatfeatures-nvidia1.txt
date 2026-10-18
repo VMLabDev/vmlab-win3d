@@ -1,0 +1,7 @@
+vmlab-pci-filter: 0000:01:00.0: kept NVIDIA GeForce RTX 5090, hid 1
+NVIDIA GeForce RTX 5090
+fmt 44 linear v1 0x1dd03 v3 0x80040418001dd03 color_attachment(linear) no
+fmt 37 linear v1 0x1dd03 v3 0x80040418001dd03 color_attachment(linear) no
+fmt 50 linear v1 0x1dd01 v3 0x80040400001dd01 color_attachment(linear) no
+fmt 9 linear v1 0x1dd03 v3 0x80040418001dd03 color_attachment(linear) no
+fmt 97 linear v1 0x1dd07 v3 0x80040418001dd07 color_attachment(linear) no

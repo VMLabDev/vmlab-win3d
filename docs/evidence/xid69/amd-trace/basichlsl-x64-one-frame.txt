@@ -1,0 +1,149 @@
+# One frame of BasicHLSL x64 on AMD1 with D3D10UMD_D3D9_TRACE=1 (C:\ProgramData\Yttrium\yttrium-user.log, d3d9ddi lines only).
+# The 168-index draw (DrawIndexedPrimitive count=56, 58 vertices) is the first draw after Clear(target|zbuffer): the DXUT light-direction arrow.
+DrawIndexedPrimitive data=00000000006df2f8 primitive=4 base=0 min=0 vertices=4432 start=0 count=6841 index=0000000005c323c0 stride=2
+Draw primitive=4 count=6841 start=0 offset=0 vertices=20523 indexed=1 index_bias=0 index_start=0 index_size=2 rhw=0
+Lock resource=0000000005c325c0 sub=0 flags=0x00000004
+Lock maps pipe resource resource=0000000005c325c0 sub=0 flags=0x00000004 box=0,0,0 393216x1x1
+Unlock resource=0000000005c325c0 sub=0
+Unlock pipe resource=0000000005c325c0 sub=0
+SetVertexShaderDecl decl=0000000005c2bd90
+SetStreamSource stream=0 vb=0000000005c325c0 offset=0 stride=24
+SetIndices index=0000000005c320c0 stride=2
+SetVertexShaderFunc shader=0000000005e208f0
+SetPixelShader shader=0000000005d93640
+DrawIndexedPrimitive data=00000000006defd8 primitive=4 base=0 min=11280 vertices=4 start=16920 count=2 index=0000000005c320c0 stride=2
+Draw primitive=4 count=2 start=0 offset=0 vertices=6 indexed=1 index_bias=0 index_start=16920 index_size=2 rhw=0
+Lock resource=0000000005c325c0 sub=0 flags=0x00000004
+Lock maps pipe resource resource=0000000005c325c0 sub=0 flags=0x00000004 box=0,0,0 393216x1x1
+Unlock resource=0000000005c325c0 sub=0
+Unlock pipe resource=0000000005c325c0 sub=0
+DrawIndexedPrimitive data=00000000006defd8 primitive=4 base=0 min=11284 vertices=128 start=16926 count=64 index=0000000005c320c0 stride=2
+Draw primitive=4 count=64 start=0 offset=0 vertices=192 indexed=1 index_bias=0 index_start=16926 index_size=2 rhw=0
+Lock resource=0000000005c325c0 sub=0 flags=0x00000004
+Lock maps pipe resource resource=0000000005c325c0 sub=0 flags=0x00000004 box=0,0,0 393216x1x1
+Unlock resource=0000000005c325c0 sub=0
+Unlock pipe resource=0000000005c325c0 sub=0
+DrawIndexedPrimitive data=00000000006defd8 primitive=4 base=0 min=11412 vertices=4 start=17118 count=2 index=0000000005c320c0 stride=2
+Draw primitive=4 count=2 start=0 offset=0 vertices=6 indexed=1 index_bias=0 index_start=17118 index_size=2 rhw=0
+Lock resource=0000000005c325c0 sub=0 flags=0x00000004
+Lock maps pipe resource resource=0000000005c325c0 sub=0 flags=0x00000004 box=0,0,0 393216x1x1
+Unlock resource=0000000005c325c0 sub=0
+Unlock pipe resource=0000000005c325c0 sub=0
+DrawIndexedPrimitive data=00000000006defd8 primitive=4 base=0 min=11416 vertices=104 start=17124 count=52 index=0000000005c320c0 stride=2
+Draw primitive=4 count=52 start=0 offset=0 vertices=156 indexed=1 index_bias=0 index_start=17124 index_size=2 rhw=0
+Lock resource=0000000005c325c0 sub=0 flags=0x00000004
+Lock maps pipe resource resource=0000000005c325c0 sub=0 flags=0x00000004 box=0,0,0 393216x1x1
+Unlock resource=0000000005c325c0 sub=0
+Unlock pipe resource=0000000005c325c0 sub=0
+DrawIndexedPrimitive data=00000000006defd8 primitive=4 base=0 min=11520 vertices=4 start=17280 count=2 index=0000000005c320c0 stride=2
+Draw primitive=4 count=2 start=0 offset=0 vertices=6 indexed=1 index_bias=0 index_start=17280 index_size=2 rhw=0
+Lock resource=0000000005c325c0 sub=0 flags=0x00000004
+Lock maps pipe resource resource=0000000005c325c0 sub=0 flags=0x00000004 box=0,0,0 393216x1x1
+Unlock resource=0000000005c325c0 sub=0
+Unlock pipe resource=0000000005c325c0 sub=0
+DrawIndexedPrimitive data=00000000006defd8 primitive=4 base=0 min=11524 vertices=128 start=17286 count=64 index=0000000005c320c0 stride=2
+Draw primitive=4 count=64 start=0 offset=0 vertices=192 indexed=1 index_bias=0 index_start=17286 index_size=2 rhw=0
+SetViewport x=0 y=0 w=640 h=480
+SetZRange min=0.000000 max=1.000000
+Lock resource=0000000005c325c0 sub=0 flags=0x00000004
+Lock maps pipe resource resource=0000000005c325c0 sub=0 flags=0x00000004 box=0,0,0 393216x1x1
+Unlock resource=0000000005c325c0 sub=0
+Unlock pipe resource=0000000005c325c0 sub=0
+SetVertexShaderDecl decl=0000000005c2bd90
+SetStreamSource stream=0 vb=0000000005c325c0 offset=0 stride=24
+SetIndices index=0000000005c320c0 stride=2
+SetVertexShaderFunc shader=0000000005e208f0
+DrawIndexedPrimitive data=00000000006defd8 primitive=4 base=0 min=11652 vertices=72 start=17478 count=36 index=0000000005c320c0 stride=2
+Draw primitive=4 count=36 start=0 offset=0 vertices=108 indexed=1 index_bias=0 index_start=17478 index_size=2 rhw=0
+Lock resource=0000000005c325c0 sub=0 flags=0x00000004
+Lock maps pipe resource resource=0000000005c325c0 sub=0 flags=0x00000004 box=0,0,0 393216x1x1
+Unlock resource=0000000005c325c0 sub=0
+Unlock pipe resource=0000000005c325c0 sub=0
+DrawIndexedPrimitive data=00000000006defd8 primitive=4 base=0 min=11724 vertices=8 start=17586 count=4 index=0000000005c320c0 stride=2
+Draw primitive=4 count=4 start=0 offset=0 vertices=12 indexed=1 index_bias=0 index_start=17586 index_size=2 rhw=0
+Lock resource=0000000005c325c0 sub=0 flags=0x00000004
+Lock maps pipe resource resource=0000000005c325c0 sub=0 flags=0x00000004 box=0,0,0 393216x1x1
+Unlock resource=0000000005c325c0 sub=0
+Unlock pipe resource=0000000005c325c0 sub=0
+DrawIndexedPrimitive data=00000000006defd8 primitive=4 base=0 min=11732 vertices=120 start=17598 count=60 index=0000000005c320c0 stride=2
+Draw primitive=4 count=60 start=0 offset=0 vertices=180 indexed=1 index_bias=0 index_start=17598 index_size=2 rhw=0
+Lock resource=0000000005c325c0 sub=0 flags=0x00000004
+Lock maps pipe resource resource=0000000005c325c0 sub=0 flags=0x00000004 box=0,0,0 393216x1x1
+Unlock resource=0000000005c325c0 sub=0
+Unlock pipe resource=0000000005c325c0 sub=0
+DrawIndexedPrimitive data=00000000006defd8 primitive=4 base=0 min=11852 vertices=12 start=17778 count=6 index=0000000005c320c0 stride=2
+Draw primitive=4 count=6 start=0 offset=0 vertices=18 indexed=1 index_bias=0 index_start=17778 index_size=2 rhw=0
+Lock resource=0000000005c325c0 sub=0 flags=0x00000004
+Lock maps pipe resource resource=0000000005c325c0 sub=0 flags=0x00000004 box=0,0,0 393216x1x1
+Unlock resource=0000000005c325c0 sub=0
+Unlock pipe resource=0000000005c325c0 sub=0
+DrawIndexedPrimitive data=00000000006defd8 primitive=4 base=0 min=11864 vertices=160 start=17796 count=80 index=0000000005c320c0 stride=2
+Draw primitive=4 count=80 start=0 offset=0 vertices=240 indexed=1 index_bias=0 index_start=17796 index_size=2 rhw=0
+Lock resource=0000000005c325c0 sub=0 flags=0x00000004
+Lock maps pipe resource resource=0000000005c325c0 sub=0 flags=0x00000004 box=0,0,0 393216x1x1
+Unlock resource=0000000005c325c0 sub=0
+Unlock pipe resource=0000000005c325c0 sub=0
+DrawIndexedPrimitive data=00000000006defd8 primitive=4 base=0 min=12024 vertices=4 start=18036 count=2 index=0000000005c320c0 stride=2
+Draw primitive=4 count=2 start=0 offset=0 vertices=6 indexed=1 index_bias=0 index_start=18036 index_size=2 rhw=0
+Lock resource=0000000005c325c0 sub=0 flags=0x00000004
+Lock maps pipe resource resource=0000000005c325c0 sub=0 flags=0x00000004 box=0,0,0 393216x1x1
+Unlock resource=0000000005c325c0 sub=0
+Unlock pipe resource=0000000005c325c0 sub=0
+DrawIndexedPrimitive data=00000000006defd8 primitive=4 base=0 min=12028 vertices=128 start=18042 count=64 index=0000000005c320c0 stride=2
+Draw primitive=4 count=64 start=0 offset=0 vertices=192 indexed=1 index_bias=0 index_start=18042 index_size=2 rhw=0
+Lock resource=0000000005c325c0 sub=0 flags=0x00000004
+Lock maps pipe resource resource=0000000005c325c0 sub=0 flags=0x00000004 box=0,0,0 393216x1x1
+Unlock resource=0000000005c325c0 sub=0
+Unlock pipe resource=0000000005c325c0 sub=0
+DrawIndexedPrimitive data=00000000006defd8 primitive=4 base=0 min=12156 vertices=4 start=18234 count=2 index=0000000005c320c0 stride=2
+Draw primitive=4 count=2 start=0 offset=0 vertices=6 indexed=1 index_bias=0 index_start=18234 index_size=2 rhw=0
+SetViewport x=0 y=0 w=640 h=480
+SetZRange min=0.000000 max=1.000000
+Lock resource=0000000005c327c0 sub=0 flags=0x00000004
+Lock maps pipe resource resource=0000000005c327c0 sub=0 flags=0x00000004 box=0,0,0 393216x1x1
+Unlock resource=0000000005c327c0 sub=0
+Unlock pipe resource=0000000005c327c0 sub=0
+SetVertexShaderDecl decl=0000000005dd2a90
+SetStreamSource stream=0 vb=0000000005c327c0 offset=0 stride=24
+SetIndices index=0000000005c31f40 stride=2
+SetVertexShaderFunc shader=0000000005e208f0
+DrawIndexedPrimitive data=00000000006defb8 primitive=4 base=0 min=12000 vertices=972 start=18000 count=486 index=0000000005c31f40 stride=2
+Draw primitive=4 count=486 start=0 offset=0 vertices=1458 indexed=1 index_bias=0 index_start=18000 index_size=2 rhw=0
+Flush hDevice=000000000585adc0 pipe=00000000064c9040
+Present data=00000000006df308 src=0000000000a6b000/0 dst=0000000000000000/0 flags=0x00000001
+Present flush_frontbuffer src=0x40000d40 dst=0x0 pipe=0000000000b5e010
+Present hr=0x00000000
+Clear hDevice=000000000585adc0 data=00000000006df288 flags=0x00000003 rects=1 color=0x8c004040 depth=1.000000 stencil=0
+SetVertexShaderDecl decl=0000000005c35810
+SetStreamSource stream=0 vb=0000000005c31dc0 offset=0 stride=24
+SetStreamSource stream=1 vb=0000000000000000 offset=0 stride=0
+SetStreamSource stream=2 vb=0000000000000000 offset=0 stride=0
+SetStreamSource stream=3 vb=0000000000000000 offset=0 stride=0
+SetStreamSource stream=4 vb=0000000000000000 offset=0 stride=0
+SetStreamSource stream=5 vb=0000000000000000 offset=0 stride=0
+SetStreamSource stream=6 vb=0000000000000000 offset=0 stride=0
+SetStreamSource stream=7 vb=0000000000000000 offset=0 stride=0
+SetStreamSource stream=8 vb=0000000000000000 offset=0 stride=0
+SetStreamSource stream=9 vb=0000000000000000 offset=0 stride=0
+SetStreamSource stream=10 vb=0000000000000000 offset=0 stride=0
+SetStreamSource stream=11 vb=0000000000000000 offset=0 stride=0
+SetStreamSource stream=12 vb=0000000000000000 offset=0 stride=0
+SetStreamSource stream=13 vb=0000000000000000 offset=0 stride=0
+SetStreamSource stream=14 vb=0000000000000000 offset=0 stride=0
+SetStreamSource stream=15 vb=0000000000000000 offset=0 stride=0
+SetIndices index=0000000005c32040 stride=2
+SetVertexShaderFunc shader=0000000005c33570
+SetPixelShader shader=0000000005c33180
+DrawIndexedPrimitive data=00000000006df008 primitive=4 base=0 min=0 vertices=58 start=0 count=56 index=0000000005c32040 stride=2
+Draw primitive=4 count=56 start=0 offset=0 vertices=168 indexed=1 index_bias=0 index_start=0 index_size=2 rhw=0
+SetVertexShaderFunc shader=0000000005c33570
+SetPixelShader shader=0000000005c33180
+DrawIndexedPrimitive data=00000000006df008 primitive=4 base=0 min=58 vertices=98 start=168 count=96 index=0000000005c32040 stride=2
+Draw primitive=4 count=96 start=0 offset=0 vertices=288 indexed=1 index_bias=0 index_start=168 index_size=2 rhw=0
+SetVertexShaderFunc shader=0000000005dd2cc0
+SetPixelShader shader=0000000005e33040
+SetVertexShaderDecl decl=0000000005c2c800
+SetVertexShaderFunc shader=0000000005dd2cc0
+SetStreamSource stream=0 vb=0000000005c32340 offset=0 stride=32
+SetIndices index=0000000005c323c0 stride=2
+DrawIndexedPrimitive data=00000000006df2f8 primitive=4 base=0 min=0 vertices=4432 start=0 count=6841 index=0000000005c323c0 stride=2

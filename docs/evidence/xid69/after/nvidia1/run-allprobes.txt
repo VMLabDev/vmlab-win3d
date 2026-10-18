@@ -1,0 +1,17 @@
+
+name             exit_code result adapter                                                                          software readback_ok avg_fps first_error
+----             --------- ------ -------                                                                          -------- ----------- ------- -----------
+x64-d3d11_probe          0 pass   Hardsoft VirtIO GPU 3D controller                                                   False        True   56.57            
+x64-d3d12_probe          0 pass   Hardsoft VirtIO GPU 3D controller                                                   False        True   50.42            
+x64-d3d9_probe           0 pass   Hardsoft VirtIO GPU 3D controller                                                   False        True   17.88            
+x64-opengl_probe         0 pass   zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY))    False        True   62.41            
+x64-vulkan_probe         0 pass   Virtio-GPU Venus (NVIDIA GeForce RTX 5090)                                          False        True   54.62            
+x86-d3d11_probe          0 pass   Hardsoft VirtIO GPU 3D controller                                                   False        True   56.72            
+x86-d3d12_probe          0 pass   Hardsoft VirtIO GPU 3D controller                                                   False        True   49.39            
+x86-d3d9_probe           0 pass   Hardsoft VirtIO GPU 3D controller                                                   False        True   17.91            
+x86-opengl_probe         0 pass   zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY))    False        True   60.60            
+x86-vulkan_probe         0 pass   Virtio-GPU Venus (NVIDIA GeForce RTX 5090)                                          False        True   55.73            
+
+
+
+EXIT 0

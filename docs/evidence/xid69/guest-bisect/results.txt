@@ -1,0 +1,25 @@
+# d3d9_indexed.exe (docs/evidence/xid69/src) on Nvidia1, lab win3d-xid69-nvidia1,
+# package at 99ad0c1 (patches/mesa 0001-0021), render server under
+# VKR_DEBUG=validate. 10 s per run, 28 quads = 168 indices per draw.
+# "frames" is the probe's own count; "Xid" is the host kernel log during the run.
+mode        depth   result                                   Xid
+static16    none    done frames=342 fails=0                  none
+static32    none    done frames=303 fails=0                  none
+up16        none    done frames=286 fails=0                  none
+up32        none    slow (112 frames at 8 s), closed at 12 s none
+basevertex  none    done frames=298 fails=0                  none
+strip16     none    done frames=318 fails=0                  none
+dynamic16   none    done frames=286 fails=0                  none
+dynvb       none    done frames=270 fails=0                  none
+static16    d16     hung; guest app killed                   16:17:06 Xid 69 ce97 26c a8 9c
+static16    d32     CreateDevice 0x8876086a (D3DFMT_D32 not offered)  none
+static16    d24s8   hung; guest app killed                   16:20:35 Xid 69 ce97 26c a8 9c
+static16    d24x8   hung; guest app killed                   16:23:56 Xid 69 ce97 26c a8 9c
+
+# The same probe after patches/mesa/0022 (UMD swapped in the same lab):
+static16    d24x8   done frames=341 fails=0                  none
+
+# Validation messages from the three render servers that hit the Xid
+# (pids 774852, 824064, 915189): only the long-standing
+# VUID-vkBindBufferMemory-memory-02726 / VUID-vkBindImageMemory-memory-02728
+# (dma-buf export handle types), one or two each. Nothing about the draw.
