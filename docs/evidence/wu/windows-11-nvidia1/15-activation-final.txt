@@ -14,6 +14,6 @@ License Status: Licensed
 Timebased activation expiration: 129572 minute(s) (90 day(s))
 Remaining Windows rearm count: 1
 Remaining SKU rearm count: 1
-Trusted time: 10/18/2026 9:24:33 AM
+Trusted time: 10/18/2026 9:59:42 AM
 
 

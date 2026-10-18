@@ -2,7 +2,7 @@
     "criteria":  "IsInstalled=0 and IsHidden=0",
     "server_selection":  "ssWindowsUpdate",
     "result_code":  2,
-    "seconds":  18,
+    "seconds":  13,
     "warnings":  [
 
                  ],
@@ -30,8 +30,8 @@
                         "for_this_device":  false
                     },
                     {
-                        "title":  "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.89.0) - Current Channel (Broad)",
-                        "update_id":  "480d4b8f-4d30-407d-99c2-096a0cb2baa1",
+                        "title":  "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.91.0) - Current Channel (Broad)",
+                        "update_id":  "6568d9af-9ee1-43a5-b5a7-26e8ac1178f6",
                         "revision":  200,
                         "type":  1,
                         "categories":  [
@@ -44,7 +44,7 @@
                         "driver_model":  null,
                         "driver_provider":  null,
                         "driver_ver_date":  null,
-                        "size":  23639160,
+                        "size":  23700600,
                         "for_this_device":  false
                     },
                     {
@@ -82,34 +82,15 @@
                         "for_this_device":  false
                     }
                 ],
-    "label":  "wu-install",
-    "bound_before":  {
-                         "inf":  "oem15.inf",
-                         "original":  "viogpu3d.inf",
-                         "provider":  "Hardsoft Swed.",
-                         "date":  "2026-09-27",
-                         "version":  "100.6.101.58100",
-                         "rank":  "00E00000",
-                         "matching_id":  "pci\\ven_1af4\u0026dev_1050\u0026subsys_11001af4\u0026rev_01",
-                         "problem_code":  0
-                     },
-    "driver_updates":  0,
-    "download":  null,
-    "install":  null,
-    "bound_after":  {
-                        "inf":  "oem15.inf",
-                        "original":  "viogpu3d.inf",
-                        "provider":  "Hardsoft Swed.",
-                        "date":  "2026-09-27",
-                        "version":  "100.6.101.58100",
-                        "rank":  "00E00000",
-                        "matching_id":  "pci\\ven_1af4\u0026dev_1050\u0026subsys_11001af4\u0026rev_01",
-                        "problem_code":  0
-                    },
-    "policy":  {
-                   "restrictions":  {
-                                        "DenyInstanceIDs":  1
-                                    },
-                   "deny_instance_ids":  "1=PCI\\VEN_1AF4\u0026DEV_1050\u0026SUBSYS_11001AF4\u0026REV_01\\3\u002611583659\u00260\u002620"
-               }
+    "label":  "search-basic-display",
+    "bound":  {
+                  "inf":  "display.inf",
+                  "original":  null,
+                  "provider":  "Microsoft",
+                  "date":  "2006-06-21",
+                  "version":  "10.0.26100.1",
+                  "rank":  "00FB2006",
+                  "matching_id":  "PCI\\CC_0300",
+                  "problem_code":  0
+              }
 }

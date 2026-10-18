@@ -1,6 +1,6 @@
 {
     "label":  "enable",
-    "time":  "2026-10-18T08:56:03.6247795-07:00",
+    "time":  "2026-10-18T09:32:27.4653715-07:00",
     "before":  {
                    "services":  [
                                     {
@@ -15,7 +15,7 @@
                                     },
                                     {
                                         "name":  "TrustedInstaller",
-                                        "status":  "Stopped",
+                                        "status":  "Running",
                                         "start":  "Manual"
                                     },
                                     {
@@ -60,7 +60,7 @@
                                    },
                                    {
                                        "name":  "TrustedInstaller",
-                                       "status":  "Stopped",
+                                       "status":  "Running",
                                        "start":  "Manual"
                                    },
                                    {

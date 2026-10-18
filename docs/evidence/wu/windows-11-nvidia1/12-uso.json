@@ -3,25 +3,31 @@
     "runs":  [
                  {
                      "command":  "UsoClient StartScan",
-                     "exit":  0,
-                     "output":  ""
+                     "exit":  "0x00000000"
+                 },
+                 {
+                     "command":  "UsoClient StartInteractiveScan",
+                     "exit":  "0x00000000"
                  },
                  {
                      "command":  "UsoClient StartDownload",
-                     "exit":  -2147024809,
-                     "output":  ""
+                     "exit":  "0x80070057"
                  },
                  {
                      "command":  "UsoClient StartInstall",
-                     "exit":  -2147024809,
-                     "output":  ""
+                     "exit":  "0x80070057"
+                 },
+                 {
+                     "command":  "UsoClient NoSuchVerb",
+                     "exit":  "0x80070057"
                  }
              ],
     "events":  [
-
+                   "2026-10-18T09:55:15.7132605-07:00 26 Windows Update successfully found 2 updates.",
+                   "2026-10-18T09:55:40.0098961-07:00 26 Windows Update successfully found 2 updates."
                ],
     "bound":  {
-                  "inf":  "oem15.inf",
+                  "inf":  "oem7.inf",
                   "original":  "viogpu3d.inf",
                   "provider":  "Hardsoft Swed.",
                   "date":  "2026-09-27",

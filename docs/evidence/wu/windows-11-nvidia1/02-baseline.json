@@ -1,6 +1,6 @@
 {
     "label":  "baseline",
-    "time":  "2026-10-18T08:55:58.8283748-07:00",
+    "time":  "2026-10-18T09:32:13.9618011-07:00",
     "instance_id":  "PCI\\VEN_1AF4\u0026DEV_1050\u0026SUBSYS_11001AF4\u0026REV_01\\3\u002611583659\u00260\u002620",
     "status":  "OK",
     "bound":  {
@@ -32,7 +32,7 @@
                                             },
                                             {
                                                 "name":  "TrustedInstaller",
-                                                "status":  "Stopped",
+                                                "status":  "Running",
                                                 "start":  "Manual"
                                             },
                                             {
@@ -47,8 +47,8 @@
                                             },
                                             {
                                                 "name":  "wuauserv",
-                                                "status":  "Running",
-                                                "start":  "Manual"
+                                                "status":  "Stopped",
+                                                "start":  "Disabled"
                                             }
                                         ],
                            "policy":  {

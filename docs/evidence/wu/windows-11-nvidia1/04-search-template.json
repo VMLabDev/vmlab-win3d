@@ -2,7 +2,7 @@
     "criteria":  "IsInstalled=0 and IsHidden=0",
     "server_selection":  "ssWindowsUpdate",
     "result_code":  2,
-    "seconds":  879,
+    "seconds":  953,
     "warnings":  [
 
                  ],
@@ -30,8 +30,8 @@
                         "for_this_device":  false
                     },
                     {
-                        "title":  "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.89.0) - Current Channel (Broad)",
-                        "update_id":  "480d4b8f-4d30-407d-99c2-096a0cb2baa1",
+                        "title":  "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.91.0) - Current Channel (Broad)",
+                        "update_id":  "6568d9af-9ee1-43a5-b5a7-26e8ac1178f6",
                         "revision":  200,
                         "type":  1,
                         "categories":  [
@@ -44,7 +44,7 @@
                         "driver_model":  null,
                         "driver_provider":  null,
                         "driver_ver_date":  null,
-                        "size":  23639160,
+                        "size":  23700600,
                         "for_this_device":  false
                     },
                     {

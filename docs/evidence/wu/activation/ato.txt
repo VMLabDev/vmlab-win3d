@@ -1,3 +1,4 @@
+## after slmgr /ato and a reboot at about 01:35; the last block below was read at about 02:47 (uptime and the WLMS events: none after the activation)
 ## slmgr /ato
 Activating Windows(R), EnterpriseEval edition (3f4c0546-36c6-46a8-a37f-be13cdd0cf25) ...
 Product activated successfully.
@@ -44,4 +45,16 @@ Trusted time: 10/18/2026 8:35:48 AM
 
 Windows(R), EnterpriseEval edition:
     Timebased activation will expire 1/16/2027 8:33:48 AM
+
+uptime 01:12:09.5906147
+
+TimeCreated            Id Message                                                                                      
+-----------            -- -------                                                                                      
+10/18/2026 3:28:14 PM 100 The license period for this installation of Windows has expired.  The operating system will  
+                          shutdown every hour.                                                                         
+10/18/2026 8:23:38 AM 101 The license period for this installation of Windows has expired. The operating system is     
+                          shutting down.                                                                               
+10/18/2026 7:53:38 AM 100 The license period for this installation of Windows has expired.  The operating system will  
+                          shutdown every hour.                                                                         
+
 

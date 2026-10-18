@@ -1,4 +1,4 @@
-## booted 2026-10-19T01:52:00+10:00
+## booted 2026-10-19T02:30:47+10:00
    IPv4 Address. . . . . . . . . . . : 10.213.0.2
    Default Gateway . . . . . . . . . : 10.213.0.1
 ## slmgr /dlv
@@ -18,7 +18,7 @@ License Status: Notification
 Notification Reason: 0xC004F009 (grace time expired).
 Remaining Windows rearm count: 1
 Remaining SKU rearm count: 1
-Trusted time: 10/18/2026 8:52:00 AM
+Trusted time: 10/18/2026 9:30:46 AM
 
 
 ## slmgr /ato
@@ -42,10 +42,10 @@ License Status: Licensed
 Timebased activation expiration: 129600 minute(s) (90 day(s))
 Remaining Windows rearm count: 1
 Remaining SKU rearm count: 1
-Trusted time: 10/18/2026 8:55:55 AM
+Trusted time: 10/18/2026 9:32:08 AM
 
 
 ## slmgr /xpr
 Windows(R), EnterpriseEval edition:
-    Timebased activation will expire 1/16/2027 8:55:55 AM
+    Timebased activation will expire 1/16/2027 9:32:08 AM
 
