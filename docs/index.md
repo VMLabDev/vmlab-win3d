@@ -74,6 +74,7 @@ or Intel GPU as declared in the host config, `~/.config/vmlab/config.wcl`
 | [present.md](present.md) | See why presents were slow (CPU reads of write-combined memory) and why Blender was translucent on Windows 10, and the fixes `patches/kmd/0002` and `patches/mesa/0026`, `0027` |
 | [n5.md](n5.md) | See why D3D9 presents run below the refresh rate on NVIDIA hosts (slow wake-ups on virglrenderer's exportable fences) and the host-side virglrenderer fix |
 | [ffp.md](ffp.md) | See how D3D9 fixed function was tested against the reference rasterizer, and the software-vertex-processing, fog and point fixes `patches/mesa/0040` to `0042` |
+| [ffp2.md](ffp2.md) | See D3D9 vertex blending, bump mapping, cube texgen, mixed devices and Windows 10 tested against the reference, and the bump-format and blend-palette changes `patches/mesa/0043` and `0044` |
 
 ## Building
 

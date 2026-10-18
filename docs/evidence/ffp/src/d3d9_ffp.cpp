@@ -3,11 +3,13 @@
  * GetRenderTargetData and logs an 8x8 grid of pixels (at 4 + 8i), so the
  * same run on the reference rasterizer gives the expected values.
  *
- *   d3d9_ffp.exe [--ref] [--swvp] [--log FILE] [--only SUBSTR]...
+ *   d3d9_ffp.exe [--ref] [--swvp] [--mixed] [--log FILE] [--only SUBSTR]...
  *
  *   --ref   D3DDEVTYPE_REF (d3dref9.dll from the DirectX SDK in the system
  *           directory) instead of D3DDEVTYPE_HAL
  *   --swvp  D3DCREATE_SOFTWARE_VERTEXPROCESSING (default: hardware)
+ *   --mixed D3DCREATE_MIXED_VERTEXPROCESSING, switched to hardware or, with
+ *           --swvp, software vertex processing by SetSoftwareVertexProcessing
  *   --only  run the cases whose name contains SUBSTR (repeatable)
  *
  * Log lines:
@@ -1255,6 +1257,7 @@ static const Case cases[] = {
 static LRESULT CALLBACK wndproc(HWND h, UINT m, WPARAM w, LPARAM l) { return DefWindowProcW(h, m, w, l); }
 
 static const DWORD CLEARC = 0x80406080;
+static bool g_mixed, g_sw;
 
 static bool run_case(IDirect3D9 *d3d, HWND hwnd, D3DDEVTYPE type, DWORD vp, const Case &k)
 {
@@ -1274,6 +1277,7 @@ static bool run_case(IDirect3D9 *d3d, HWND hwnd, D3DDEVTYPE type, DWORD vp, cons
         logf("CASE %s tol=%d hr=0x%08lx px=create-device-failed\n", k.name, k.tol, (unsigned long)hr);
         return false;
     }
+    if (g_mixed) CK(c.dev->SetSoftwareVertexProcessing(g_sw));
     IDirect3DSurface9 *rt = NULL, *ds = NULL, *sys = NULL;
     CK(c.dev->CreateRenderTarget(W, H, D3DFMT_A8R8G8B8, D3DMULTISAMPLE_NONE, 0, FALSE, &rt, NULL));
     CK(c.dev->CreateDepthStencilSurface(W, H, D3DFMT_D24S8, D3DMULTISAMPLE_NONE, 0, TRUE, &ds, NULL));
@@ -1339,7 +1343,8 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE, LPWSTR, int)
         char a[512];
         WideCharToMultiByte(CP_UTF8, 0, argv[i], -1, a, sizeof a, NULL, NULL);
         if (!strcmp(a, "--ref")) type = D3DDEVTYPE_REF;
-        else if (!strcmp(a, "--swvp")) vp = D3DCREATE_SOFTWARE_VERTEXPROCESSING;
+        else if (!strcmp(a, "--swvp")) vp = D3DCREATE_SOFTWARE_VERTEXPROCESSING, g_sw = true;
+        else if (!strcmp(a, "--mixed")) g_mixed = true;
         else if (!strcmp(a, "--log") && i + 1 < argc)
             WideCharToMultiByte(CP_UTF8, 0, argv[++i], -1, logpath, sizeof logpath, NULL, NULL);
         else if (!strcmp(a, "--only") && i + 1 < argc) {
@@ -1347,6 +1352,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE, LPWSTR, int)
             only.push_back(a);
         }
     }
+    if (g_mixed) vp = D3DCREATE_MIXED_VERTEXPROCESSING;
     if (!logpath[0]) {
         GetModuleFileNameA(NULL, logpath, MAX_PATH);
         char *s = strrchr(logpath, '\\');
@@ -1354,8 +1360,8 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE, LPWSTR, int)
     }
     logf_ = fopen(logpath, "w");
     if (!logf_) return 255;
-    logf("d3d9_ffp device=%s vp=%s arch=%s\n", type == D3DDEVTYPE_REF ? "ref" : "hal",
-         vp == D3DCREATE_SOFTWARE_VERTEXPROCESSING ? "sw" : "hw", sizeof(void *) == 8 ? "x64" : "x86");
+    logf("d3d9_ffp device=%s vp=%s%s arch=%s\n", type == D3DDEVTYPE_REF ? "ref" : "hal", g_mixed ? "mixed-" : "",
+         g_sw ? "sw" : "hw", sizeof(void *) == 8 ? "x64" : "x86");
 
     WNDCLASSW wc;
     memset(&wc, 0, sizeof wc);

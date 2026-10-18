@@ -1,0 +1,25 @@
+import <vmlab.wcl>
+
+// Acceptance lab for tests/e2e/run.sh: the labs/probe/vmlab.wcl shape
+// (vmlab >= 0.25.0-alpha; docs/host.md, docs/install.md). run.sh copies this
+// file into .scratch/e2e/<template>[-<gpu>]/lab/ and rewrites the lab name,
+// the template line for --template and host_gpu for --host-gpu; as committed
+// it is the windows-11 lab on AMD1.
+lab "win3d-ffp2-e2e-w11-nvidia2" {
+  vm "win" {
+    template = "x86_64/windows-11@26100.1742.5"
+    // The package is test-signed (decision 0001); Secure Boot must be off.
+    secure_boot = false
+    // The templates' agent cannot be updated in place (the service does not
+    // restart onto it), and a late restart dropped the agent channel mid-exec
+    // on windows-10. Keep the template's agent.
+    agent_update = false
+    // AMD1 is the host config's AMD iGPU (0000:72:00.0, RADV, renderD129).
+    // run.sh --host-gpu Nvidia1 or Nvidia2 picks an RTX 5090, which needs
+    // qemu_binary on its host GPU profile (docs/nvidia.md).
+    gpu {
+      mode     = "vulkan"
+      host_gpu = "Nvidia2"
+    }
+  }
+}

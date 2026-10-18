@@ -378,16 +378,24 @@ processing ([`ffp.md`](ffp.md)). With `patches/mesa/0040` to `0042` every
 case matches on `Nvidia2` and `AMD1` except two spotlight cases, where the
 Windows runtime's own vertex processing differs from the reference's by up
 to 12/255 on a few pixels; the reference fed by the runtime's software
-vertex processing matches the driver exactly. Not tested:
+vertex processing matches the driver exactly. Not tested: `PREMODULATE`,
+W-buffering, multisampling and wide lines.
 
-- vertex blending with more than one weight, indexed vertex blending and
-  tweening;
-- bump-environment-map stage operations (`BUMPENVMAP`, `BUMPENVMAPLUMINANCE`)
-  and `PREMODULATE`;
-- texture coordinate generation into cube and volume textures;
-- W-buffering, multisampling and wide lines;
-- `D3DCREATE_MIXED_VERTEXPROCESSING` switching between the two modes;
-- Windows 10 (the UMD is the same DLL).
+`docs/evidence/ffp2/src/d3d9_ffp2.cpp` adds 49 cases ([`ffp2.md`](ffp2.md)):
+vertex blending with up to three weights, indexed blending and tweening,
+bump environment mapping, cube and volume texture coordinates, and mixed
+devices that switch between hardware and software vertex processing. Both
+probes also ran on Windows 10. With `patches/mesa/0043` (the `L6V5U5` and
+`X8L8V8U8` bump maps) every case matches on `Nvidia2` and `AMD1`. The
+exception is `vb_indexed_color`, where the reference's own vertex
+processing loses the device. Limits:
+
+- with hardware vertex processing, indexed vertex blending works for matrix
+  indices 0 to 8 only. That is the palette of the runtime's generated
+  shader, and `MaxVertexBlendMatrixIndex` reports 8 (`0044`). Larger
+  palettes need software or mixed vertex processing;
+- a dynamic `D3DPOOL_DEFAULT` texture in `L6V5U5` or `X8L8V8U8` shows
+  `Lock` the converted `R8G8B8A8_SNORM` layout.
 
 Table fog chooses W fog from the projection's W range, which the runtime
 reports through `UpdateWInfo`; a perspective projection reported with
