@@ -1,0 +1,2 @@
+virtio_gpu_virgl_process_cmd: ctrl 0x10c, error 0x1200
+virtio_gpu_virgl_process_cmd: ctrl 0x10c, error 0x1200

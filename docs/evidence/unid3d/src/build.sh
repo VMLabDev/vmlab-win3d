@@ -13,5 +13,8 @@ docker run --rm --user "$(id -u):$(id -g)" -v "$repo:/w" -w /w "$image" bash -c 
     $t-w64-mingw32-clang++ -O2 -Wall -std=c++17 -municode -mwindows -static -s \
       -Wl,--no-insert-timestamp -o .scratch/unid3d-probes/$a/d3d9_depthbias.exe \
       docs/evidence/unid3d/src/d3d9_depthbias.cpp -ld3d9
+    $t-w64-mingw32-clang++ -O2 -Wall -std=c++17 -municode -static -s \
+      -Wl,--no-insert-timestamp -o .scratch/unid3d-probes/$a/vaquery.exe \
+      docs/evidence/unid3d/src/vaquery.cpp
   done'
 ls -l "$repo/.scratch/unid3d-probes"/*/
