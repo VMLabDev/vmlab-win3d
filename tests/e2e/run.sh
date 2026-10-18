@@ -279,7 +279,7 @@ fetch_pin() { # fetch_pin NAME: download a tests/e2e/PINS entry into the cache, 
     read -r _ sha url < <(grep "^$name " "$HERE/PINS") || return 1
     f=$REPO/.scratch/e2e/cache/$(basename "$url")
     mkdir -p "$(dirname "$f")"
-    [ -f "$f" ] || curl -sSfLo "$f.part" "$url" && { [ -f "$f" ] || mv "$f.part" "$f"; } || return 1
+    [ -f "$f" ] || { curl -sSfLo "$f.part.$$" "$url" && mv "$f.part.$$" "$f"; } || return 1
     echo "$sha  $f" | sha256sum -c --quiet - >&2 || { note "sha256 mismatch for $name"; return 1; }
     echo "$f"
 }

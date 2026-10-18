@@ -92,81 +92,110 @@ install, and dxdiag's Direct3D status on its own.
 ## Host stack
 
 Each run records the host in `docs/evidence/acceptance/<template>/host.txt`.
-For the AMD runs below (the NVIDIA runs: "NVIDIA RTX 5090"):
+For the 0.1.1-alpha-rc1 runs below:
 
 | Item | Value |
 | --- | --- |
-| Host GPU used for Venus | AMD Granite Ridge iGPU (Radeon Graphics), PCI `0000:72:00.0`, `/dev/dri/renderD129`, RADV |
-| QEMU | 11.1.1 (`qemu-full 11.1.1-1`) |
+| Host GPUs used for Venus | `AMD1`: AMD Granite Ridge iGPU, PCI `0000:72:00.0`, `/dev/dri/renderD129`, RADV. `Nvidia1`: RTX 5090, `0000:01:00.0`, `renderD128`. `Nvidia2`: RTX 5090, `0000:05:00.0`, `renderD130` |
+| QEMU | AMD1: 11.1.1 (`qemu-full 11.1.1-1`) from `PATH`. Nvidia1 and Nvidia2: the host config's `qemu_binary`, `~/.local/opt/qemu-vmlab-egl`, QEMU 11.1.50 (VMLabDev/qemu `d8a6048aae11`, the commit `patches/host/PINS` pins) |
 | virglrenderer | 1.3.0 (`1.3.0-2.1`) |
 | Mesa / RADV | 26.2.2 (`mesa 3:26.2.2-2`, `vulkan-radeon 3:26.2.2-2`) |
-| vmlab | 0.25.0-alpha |
+| NVIDIA driver | 610.57.04 (`nvidia-utils 610.57.04-1`) |
+| vmlab | 0.28.0-alpha |
 | Kernel | 7.2.3-1-cachyos |
 
-vmlab 0.25 picked `host_gpu=AMD1` (`status-v.txt`) and started QEMU with
-`-device virtio-vga-gl,venus=true,blob=true,hostmem=4G -display
-egl-headless,rendernode=/dev/dri/renderD129` and
-`VK_LOADER_DRIVERS_SELECT=*radeon*` in its environment
-(`qemu-argv-env.txt`). That is the same QEMU line vmlab 0.24 gave from the
-lab's `address`.
+`status-v.txt` records the GPU vmlab picked: `host_gpu=AMD1`, or
+`host_gpu=Nvidia1` / `Nvidia2` with
+`qemu=/home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64`.
+`qemu-argv-env.txt` has QEMU's command line, its environment and the
+`vmlab-pci-filter:` line. Each NVIDIA run kept only its own card (`kept
+NVIDIA GeForce RTX 5090, hid 1`), and every guest listed exactly one Venus
+device.
 
 ## Results
 
-**Both templates pass every Done check in item 2, and item 1.** Both runs
-tested commit `6105889`, one package, built once:
+**Release candidate 0.1.1-alpha-rc1 passes every Done check in items 1 and
+2, on both templates and all three host GPUs: five runs, 12 of 12 each.**
+All five ran one package:
 
-- `6105889` is main at `f842ad6` (Mesa patches 0001 to 0017, 0020 and 0021;
-  `patches/vulkan-tools/0001`; the DXVK, vkd3d-proton and KMD patches) plus
-  this branch's switch of `labs/acceptance/vmlab.wcl` and `tests/e2e/run.sh`
-  to vmlab 0.25's `host_gpu`. Nothing under `build/`, `installer/`,
-  `probes/`, `patches/` or `scripts/build.sh` differs from main.
-- **windows-11** built the package with `scripts/build.sh` from an empty
-  `out/` (`build.txt`, mode `built`).
-- **windows-10** reused that bundle (`build.txt`, mode `reused`, built at
-  `6105889`), so both templates ran the same signed files.
+- `scripts/release.sh 0.1.1-alpha-rc1` built it from a fresh clone of commit
+  `0ee5ba1` (main at `82d8e51`, plus `installer/VERSION` 0.1.1 and a
+  `release.sh` version pattern that accepts `-rc1`), with the shared test
+  certificate (`WIN3D_SIGNING_DIR`). Mesa patches 0001 to 0017, 0020 to
+  0027, 0030, 0035 and 0040 to 0042; KMD patches 0001 and 0002; the
+  installer's FeatureScore and device pin; QEMU at the pinned master-based
+  commit. `docs/evidence/rc/` has the release record.
+- Assets (`docs/evidence/rc/release/SHA256SUMS`):
+  `vmlab-win3d-0.1.1-alpha-rc1-windows-x64.zip`
+  `150406672d6e43373c643e940acf97337e058e094f45ea2c4eed2660e85205f0`;
+  `qemu-vmlab-egl-0.1.1-alpha-rc1-x86_64-linux.tar.zst`
+  `940ceefdd96966952526bc5c793828e4b970eb761b110d69edc984690c601be5`;
+  `RELEASE-NOTES.md`
+  `b27109e8098fb352bd453b2da80e832d3e4c25a21fe844960b3278c29faab67e`.
+  The zip holds the same `manifest.json`
+  (`b9523c1b4c1127300288530ef684434fa56d947057b780b01ac2ce2d6c097339`) as
+  the bundle the runs installed.
+- Every run reused that bundle (`build.txt`, mode `reused`, built at
+  `0ee5ba1`). Runs that started after `0c0788c` record that commit; it
+  changes only `tests/e2e/` (below).
 
-Earlier runs in this round, with the same package sources, are replaced by
-the final ones:
+| Template | AMD1 | Nvidia1 | Nvidia2 |
+| --- | --- | --- | --- |
+| windows-11 | **12 of 12**; apps render | **12 of 12**; apps render | **12 of 12**; apps render |
+| windows-10 | **12 of 12**; apps render | **12 of 12**; apps render | not run |
 
-- windows-11 on vmlab 0.24 at `ee2fac5`: 12 of 12. Its evidence is in git
-  history.
-- windows-10, first attempt: stopped at `vmlab validate`. vmlab had been
-  upgraded to 0.25.0-alpha a few seconds earlier, and 0.25 rejects a lab's
-  `gpu` `address`.
-- windows-10 on vmlab 0.25 at `ff9aa1b`, through a `run.sh` rewrite of the
-  address to `host_gpu` that `labs/acceptance/vmlab.wcl` has since made
-  unnecessary: 12 of 12. Its evidence was not committed.
+The windows-11 runs lost their first `--apps` pass to slow downloads, and
+the AMD1 and Nvidia2 runs were restarted once:
+
+- Run in parallel, the first windows-11 runs on AMD1 and Nvidia2 wrote the
+  same download file, and the LunarG runtime failed its sha256 check. They
+  were stopped before the install, their labs destroyed, and both rerun
+  from a fresh lab. `0c0788c` gives each run its own download file and its
+  own apps staging directory.
+- Helios's direct downloads from Microsoft and blender.org ran at about
+  1 KB/s that night. The three windows-11 runs reached `--apps` before the
+  DirectX SDK and Blender were in the cache, so their apps step was stopped
+  after the Done evidence was collected, with the labs kept (`--keep`). The
+  pinned files were then fetched through a proxy, from Blender mirrors for
+  Blender, and checked against `tests/e2e/PINS`. After a reboot of each lab,
+  `tests/e2e/apps.sh` ran against it (`apps/apps-rerun.log`). The
+  windows-10 runs had the cache and ran `--apps` straight through.
 
 <!-- e2e:results -->
 ### windows-11
 
-Run 2026-10-17T21:34:50+10:00 at commit `61058896dca4`, template `x86_64/windows-11@26100.1742.5`. **PASS: 12 of 12 Done checks pass** (run stage: ok). Evidence: `docs/evidence/acceptance/windows-11/`; `results.txt` is the script's own table.
+Host GPU: AMD1, /dev/dri/renderD129 0000:72:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI] Granite Ridge [Radeon Graphics] (rev c1). QEMU: QEMU emulator version 11.1.1 (from PATH).
+
+Run 2026-10-18T23:48:12+10:00 at commit `0ee5ba149e10`, template `x86_64/windows-11@26100.1742.5`. **PASS: 12 of 12 Done checks pass** (run stage: ok). Evidence: `docs/evidence/acceptance/windows-11/`; `results.txt` is the script's own table.
 
 | Done item | Check | Result | Evidence | Note |
 | --- | --- | --- | --- | --- |
-| 1 | scripts/build.sh builds the package | **pass** | `build.txt` | built; exit 0 |
+| 1 | scripts/build.sh builds the package | **pass** | `build.txt` | reused; exit 0 |
 | 2 | documented install command (scripts/install-into-vm.sh) | **pass** | `install.log` | exit 0; Installed |
 | 2 (extra) | display device on our driver, problem code 0 | **pass** | `installed-gpu-state.json` | Hardsoft VirtIO GPU 3D controller |
 | 2 | vulkaninfo --summary (x64) lists the Venus device | **pass** | `vulkaninfo/vulkaninfo-x64.txt` | Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) |
 | 2 (extra) | vulkaninfo --summary (x86) lists the Venus device | **pass** | `vulkaninfo/vulkaninfo-x86.txt` | Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) |
+| 2 (extra) | vulkaninfo --summary (x64) lists exactly one Venus device | **pass** | `vulkaninfo/vulkaninfo-x64.txt` | 1 Venus: Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) |
 | 2 (extra) | LunarG vulkaninfo 1.4.363 (x64, pinned) lists Venus through the installed loader | **pass** | `vulkaninfo/lunarg-vulkaninfo-x64.txt` | Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) |
 | 2 (extra) | LunarG vulkaninfo 1.4.363 (x86, pinned) lists Venus through the installed loader | **pass** | `vulkaninfo/lunarg-vulkaninfo-x86.txt` | Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) |
-| 2 | Direct3D 9 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d9_probe.run.json`, `probes/x64-d3d9_probe.modules.txt`, `console-x64-d3d9_probe.png` | Hardsoft VirtIO GPU 3D controller, 32.92 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 9 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d9_probe.run.json`, `probes/x86-d3d9_probe.modules.txt`, `console-x86-d3d9_probe.png` | Hardsoft VirtIO GPU 3D controller, 34.2 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 11 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d11_probe.run.json`, `probes/x64-d3d11_probe.modules.txt`, `console-x64-d3d11_probe.png` | Hardsoft VirtIO GPU 3D controller, 59.81 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 11 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d11_probe.run.json`, `probes/x86-d3d11_probe.modules.txt`, `console-x86-d3d11_probe.png` | Hardsoft VirtIO GPU 3D controller, 59.75 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 12 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d12_probe.run.json`, `probes/x64-d3d12_probe.modules.txt`, `console-x64-d3d12_probe.png` | Hardsoft VirtIO GPU 3D controller, 57.61 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 12 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d12_probe.run.json`, `probes/x86-d3d12_probe.modules.txt`, `console-x86-d3d12_probe.png` | Hardsoft VirtIO GPU 3D controller, 57.91 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | OpenGL (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-opengl_probe.run.json`, `probes/x64-opengl_probe.modules.txt`, `console-x64-opengl_probe.png` | zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 65.09 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | OpenGL (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-opengl_probe.run.json`, `probes/x86-opengl_probe.modules.txt`, `console-x86-opengl_probe.png` | zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 63.5 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 (extra) | Vulkan (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-vulkan_probe.run.json`, `probes/x64-vulkan_probe.modules.txt`, `console-x64-vulkan_probe.png` | Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 59.79 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 (extra) | Vulkan (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-vulkan_probe.run.json`, `probes/x86-vulkan_probe.modules.txt`, `console-x86-vulkan_probe.png` | Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 59.74 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 9 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d9_probe.run.json`, `probes/x64-d3d9_probe.modules.txt`, `console-x64-d3d9_probe.png` | Hardsoft VirtIO GPU 3D controller, 59.64 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 9 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d9_probe.run.json`, `probes/x86-d3d9_probe.modules.txt`, `console-x86-d3d9_probe.png` | Hardsoft VirtIO GPU 3D controller, 58.44 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 11 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d11_probe.run.json`, `probes/x64-d3d11_probe.modules.txt`, `console-x64-d3d11_probe.png` | Hardsoft VirtIO GPU 3D controller, 59.87 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 11 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d11_probe.run.json`, `probes/x86-d3d11_probe.modules.txt`, `console-x86-d3d11_probe.png` | Hardsoft VirtIO GPU 3D controller, 59.86 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 12 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d12_probe.run.json`, `probes/x64-d3d12_probe.modules.txt`, `console-x64-d3d12_probe.png` | Hardsoft VirtIO GPU 3D controller, 58.07 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 12 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d12_probe.run.json`, `probes/x86-d3d12_probe.modules.txt`, `console-x86-d3d12_probe.png` | Hardsoft VirtIO GPU 3D controller, 58.16 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | OpenGL (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-opengl_probe.run.json`, `probes/x64-opengl_probe.modules.txt`, `console-x64-opengl_probe.png` | zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 65.67 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | OpenGL (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-opengl_probe.run.json`, `probes/x86-opengl_probe.modules.txt`, `console-x86-opengl_probe.png` | zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 65.05 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 (extra) | Vulkan (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-vulkan_probe.run.json`, `probes/x64-vulkan_probe.modules.txt`, `console-x64-vulkan_probe.png` | Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 59.81 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 (extra) | Vulkan (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-vulkan_probe.run.json`, `probes/x86-vulkan_probe.modules.txt`, `console-x86-vulkan_probe.png` | Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 59.72 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating |
 | 2 | dxdiag reports hardware acceleration on our driver | **pass** | `dxdiag/dxdiag.json` | hardware_acceleration=True, card 'Hardsoft VirtIO GPU 3D controller', D3D Enabled, DDraw Enabled, WDDM 2.0 |
 | 2 (extra) | dxdiag: Direct3D acceleration on our full WDDM device | **pass** | `dxdiag/dxdiag.json` | D3D Status Enabled, Full Device (POST), WDDM 2.0 |
 
 ### windows-10
 
-Run 2026-10-17T21:54:27+10:00 at commit `61058896dca4`, template `x86_64/windows-10@19045.2006.8`. **PASS: 12 of 12 Done checks pass** (run stage: ok). Evidence: `docs/evidence/acceptance/windows-10/`; `results.txt` is the script's own table.
+Host GPU: AMD1, /dev/dri/renderD129 0000:72:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI] Granite Ridge [Radeon Graphics] (rev c1). QEMU: QEMU emulator version 11.1.1 (from PATH).
+
+Run 2026-10-19T01:15:25+10:00 at commit `0c0788ccbae9`, template `x86_64/windows-10@19045.2006.8`. **PASS: 12 of 12 Done checks pass** (run stage: ok). Evidence: `docs/evidence/acceptance/windows-10/`; `results.txt` is the script's own table.
 
 | Done item | Check | Result | Evidence | Note |
 | --- | --- | --- | --- | --- |
@@ -175,26 +204,27 @@ Run 2026-10-17T21:54:27+10:00 at commit `61058896dca4`, template `x86_64/windows
 | 2 (extra) | display device on our driver, problem code 0 | **pass** | `installed-gpu-state.json` | Hardsoft VirtIO GPU 3D controller |
 | 2 | vulkaninfo --summary (x64) lists the Venus device | **pass** | `vulkaninfo/vulkaninfo-x64.txt` | Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) |
 | 2 (extra) | vulkaninfo --summary (x86) lists the Venus device | **pass** | `vulkaninfo/vulkaninfo-x86.txt` | Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) |
+| 2 (extra) | vulkaninfo --summary (x64) lists exactly one Venus device | **pass** | `vulkaninfo/vulkaninfo-x64.txt` | 1 Venus: Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) |
 | 2 (extra) | LunarG vulkaninfo 1.4.363 (x64, pinned) lists Venus through the installed loader | **pass** | `vulkaninfo/lunarg-vulkaninfo-x64.txt` | Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) |
 | 2 (extra) | LunarG vulkaninfo 1.4.363 (x86, pinned) lists Venus through the installed loader | **pass** | `vulkaninfo/lunarg-vulkaninfo-x86.txt` | Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) |
-| 2 | Direct3D 9 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d9_probe.run.json`, `probes/x64-d3d9_probe.modules.txt`, `console-x64-d3d9_probe.png` | Hardsoft VirtIO GPU 3D controller, 27.45 fps, readback ok, 4 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 9 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d9_probe.run.json`, `probes/x86-d3d9_probe.modules.txt`, `console-x86-d3d9_probe.png` | Hardsoft VirtIO GPU 3D controller, 28.03 fps, readback ok, 4 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 11 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d11_probe.run.json`, `probes/x64-d3d11_probe.modules.txt`, `console-x64-d3d11_probe.png` | Hardsoft VirtIO GPU 3D controller, 59.86 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 11 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d11_probe.run.json`, `probes/x86-d3d11_probe.modules.txt`, `console-x86-d3d11_probe.png` | Hardsoft VirtIO GPU 3D controller, 59.83 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 12 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d12_probe.run.json`, `probes/x64-d3d12_probe.modules.txt`, `console-x64-d3d12_probe.png` | Hardsoft VirtIO GPU 3D controller, 58.5 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 12 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d12_probe.run.json`, `probes/x86-d3d12_probe.modules.txt`, `console-x86-d3d12_probe.png` | Hardsoft VirtIO GPU 3D controller, 59.28 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | OpenGL (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-opengl_probe.run.json`, `probes/x64-opengl_probe.modules.txt`, `console-x64-opengl_probe.png` | zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 67.38 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | OpenGL (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-opengl_probe.run.json`, `probes/x86-opengl_probe.modules.txt`, `console-x86-opengl_probe.png` | zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 67.66 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 (extra) | Vulkan (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-vulkan_probe.run.json`, `probes/x64-vulkan_probe.modules.txt`, `console-x64-vulkan_probe.png` | Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 59.65 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 (extra) | Vulkan (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-vulkan_probe.run.json`, `probes/x86-vulkan_probe.modules.txt`, `console-x86-vulkan_probe.png` | Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 59.83 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 9 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d9_probe.run.json`, `probes/x64-d3d9_probe.modules.txt`, `console-x64-d3d9_probe.png` | Hardsoft VirtIO GPU 3D controller, 59.23 fps, readback ok, 4 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 9 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d9_probe.run.json`, `probes/x86-d3d9_probe.modules.txt`, `console-x86-d3d9_probe.png` | Hardsoft VirtIO GPU 3D controller, 59.29 fps, readback ok, 4 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 11 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d11_probe.run.json`, `probes/x64-d3d11_probe.modules.txt`, `console-x64-d3d11_probe.png` | Hardsoft VirtIO GPU 3D controller, 59.82 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 11 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d11_probe.run.json`, `probes/x86-d3d11_probe.modules.txt`, `console-x86-d3d11_probe.png` | Hardsoft VirtIO GPU 3D controller, 59.79 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 12 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d12_probe.run.json`, `probes/x64-d3d12_probe.modules.txt`, `console-x64-d3d12_probe.png` | Hardsoft VirtIO GPU 3D controller, 57.14 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 12 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d12_probe.run.json`, `probes/x86-d3d12_probe.modules.txt`, `console-x86-d3d12_probe.png` | Hardsoft VirtIO GPU 3D controller, 57.74 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | OpenGL (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-opengl_probe.run.json`, `probes/x64-opengl_probe.modules.txt`, `console-x64-opengl_probe.png` | zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 67.01 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | OpenGL (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-opengl_probe.run.json`, `probes/x86-opengl_probe.modules.txt`, `console-x86-opengl_probe.png` | zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 67.36 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 (extra) | Vulkan (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-vulkan_probe.run.json`, `probes/x64-vulkan_probe.modules.txt`, `console-x64-vulkan_probe.png` | Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 59.74 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 (extra) | Vulkan (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-vulkan_probe.run.json`, `probes/x86-vulkan_probe.modules.txt`, `console-x86-vulkan_probe.png` | Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 59.79 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating |
 | 2 | dxdiag reports hardware acceleration on our driver | **pass** | `dxdiag/dxdiag.json` | hardware_acceleration=True, card 'Hardsoft VirtIO GPU 3D controller', D3D Enabled, DDraw Enabled, WDDM 2.0 |
 | 2 (extra) | dxdiag: Direct3D acceleration on our full WDDM device | **pass** | `dxdiag/dxdiag.json` | D3D Status Enabled, Full Device (POST), WDDM 2.0 |
 
 ### windows-10-nvidia1
 
-Host GPU: Nvidia1, /dev/dri/renderD128 0000:01:00.0 VGA compatible controller: NVIDIA Corporation GB202 [GeForce RTX 5090] (rev a1). QEMU: /home/wil/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64, QEMU emulator version 11.1.1 (the Nvidia1 qemu_binary).
+Host GPU: Nvidia1, /dev/dri/renderD128 0000:01:00.0 VGA compatible controller: NVIDIA Corporation GB202 [GeForce RTX 5090] (rev a1). QEMU: /home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64, QEMU emulator version 11.1.50 (vmlab d8a6048aae11) (the Nvidia1 qemu_binary).
 
-Run 2026-10-18T11:45:50+10:00 at commit `a58acd326451`, template `x86_64/windows-10@19045.2006.8`. **PASS: 12 of 12 Done checks pass** (run stage: ok). Evidence: `docs/evidence/acceptance/windows-10-nvidia1/`; `results.txt` is the script's own table.
+Run 2026-10-19T01:15:55+10:00 at commit `0c0788ccbae9`, template `x86_64/windows-10@19045.2006.8`. **PASS: 12 of 12 Done checks pass** (run stage: ok). Evidence: `docs/evidence/acceptance/windows-10-nvidia1/`; `results.txt` is the script's own table.
 
 | Done item | Check | Result | Evidence | Note |
 | --- | --- | --- | --- | --- |
@@ -206,24 +236,24 @@ Run 2026-10-18T11:45:50+10:00 at commit `a58acd326451`, template `x86_64/windows
 | 2 (extra) | vulkaninfo --summary (x64) lists exactly one Venus device | **pass** | `vulkaninfo/vulkaninfo-x64.txt` | 1 Venus: Virtio-GPU Venus (NVIDIA GeForce RTX 5090) |
 | 2 (extra) | LunarG vulkaninfo 1.4.363 (x64, pinned) lists Venus through the installed loader | **pass** | `vulkaninfo/lunarg-vulkaninfo-x64.txt` | Virtio-GPU Venus (NVIDIA GeForce RTX 5090) |
 | 2 (extra) | LunarG vulkaninfo 1.4.363 (x86, pinned) lists Venus through the installed loader | **pass** | `vulkaninfo/lunarg-vulkaninfo-x86.txt` | Virtio-GPU Venus (NVIDIA GeForce RTX 5090) |
-| 2 | Direct3D 9 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d9_probe.run.json`, `probes/x64-d3d9_probe.modules.txt`, `console-x64-d3d9_probe.png` | Hardsoft VirtIO GPU 3D controller, 18.98 fps, readback ok, 4 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 9 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d9_probe.run.json`, `probes/x86-d3d9_probe.modules.txt`, `console-x86-d3d9_probe.png` | Hardsoft VirtIO GPU 3D controller, 22.94 fps, readback ok, 4 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 11 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d11_probe.run.json`, `probes/x64-d3d11_probe.modules.txt`, `console-x64-d3d11_probe.png` | Hardsoft VirtIO GPU 3D controller, 58.52 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 11 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d11_probe.run.json`, `probes/x86-d3d11_probe.modules.txt`, `console-x86-d3d11_probe.png` | Hardsoft VirtIO GPU 3D controller, 58.38 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 12 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d12_probe.run.json`, `probes/x64-d3d12_probe.modules.txt`, `console-x64-d3d12_probe.png` | Hardsoft VirtIO GPU 3D controller, 54.23 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 12 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d12_probe.run.json`, `probes/x86-d3d12_probe.modules.txt`, `console-x86-d3d12_probe.png` | Hardsoft VirtIO GPU 3D controller, 54.79 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | OpenGL (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-opengl_probe.run.json`, `probes/x64-opengl_probe.modules.txt`, `console-x64-opengl_probe.png` | zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY)), 65.44 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 9 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d9_probe.run.json`, `probes/x64-d3d9_probe.modules.txt`, `console-x64-d3d9_probe.png` | Hardsoft VirtIO GPU 3D controller, 26.92 fps, readback ok, 4 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 9 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d9_probe.run.json`, `probes/x86-d3d9_probe.modules.txt`, `console-x86-d3d9_probe.png` | Hardsoft VirtIO GPU 3D controller, 45.66 fps, readback ok, 4 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 11 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d11_probe.run.json`, `probes/x64-d3d11_probe.modules.txt`, `console-x64-d3d11_probe.png` | Hardsoft VirtIO GPU 3D controller, 57.43 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 11 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d11_probe.run.json`, `probes/x86-d3d11_probe.modules.txt`, `console-x86-d3d11_probe.png` | Hardsoft VirtIO GPU 3D controller, 57.78 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 12 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d12_probe.run.json`, `probes/x64-d3d12_probe.modules.txt`, `console-x64-d3d12_probe.png` | Hardsoft VirtIO GPU 3D controller, 51.34 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 12 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d12_probe.run.json`, `probes/x86-d3d12_probe.modules.txt`, `console-x86-d3d12_probe.png` | Hardsoft VirtIO GPU 3D controller, 54.56 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | OpenGL (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-opengl_probe.run.json`, `probes/x64-opengl_probe.modules.txt`, `console-x64-opengl_probe.png` | zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY)), 56.59 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating |
 | 2 | OpenGL (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-opengl_probe.run.json`, `probes/x86-opengl_probe.modules.txt`, `console-x86-opengl_probe.png` | zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY)), 65.49 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 (extra) | Vulkan (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-vulkan_probe.run.json`, `probes/x64-vulkan_probe.modules.txt`, `console-x64-vulkan_probe.png` | Virtio-GPU Venus (NVIDIA GeForce RTX 5090), 57.3 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 (extra) | Vulkan (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-vulkan_probe.run.json`, `probes/x86-vulkan_probe.modules.txt`, `console-x86-vulkan_probe.png` | Virtio-GPU Venus (NVIDIA GeForce RTX 5090), 56.69 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 (extra) | Vulkan (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-vulkan_probe.run.json`, `probes/x64-vulkan_probe.modules.txt`, `console-x64-vulkan_probe.png` | Virtio-GPU Venus (NVIDIA GeForce RTX 5090), 57.59 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 (extra) | Vulkan (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-vulkan_probe.run.json`, `probes/x86-vulkan_probe.modules.txt`, `console-x86-vulkan_probe.png` | Virtio-GPU Venus (NVIDIA GeForce RTX 5090), 57.14 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating |
 | 2 | dxdiag reports hardware acceleration on our driver | **pass** | `dxdiag/dxdiag.json` | hardware_acceleration=True, card 'Hardsoft VirtIO GPU 3D controller', D3D Enabled, DDraw Enabled, WDDM 2.0 |
 | 2 (extra) | dxdiag: Direct3D acceleration on our full WDDM device | **pass** | `dxdiag/dxdiag.json` | D3D Status Enabled, Full Device (POST), WDDM 2.0 |
 
 ### windows-11-nvidia1
 
-Host GPU: Nvidia1, /dev/dri/renderD128 0000:01:00.0 VGA compatible controller: NVIDIA Corporation GB202 [GeForce RTX 5090] (rev a1). QEMU: /home/wil/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64, QEMU emulator version 11.1.1 (the Nvidia1 qemu_binary).
+Host GPU: Nvidia1, /dev/dri/renderD128 0000:01:00.0 VGA compatible controller: NVIDIA Corporation GB202 [GeForce RTX 5090] (rev a1). QEMU: /home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64, QEMU emulator version 11.1.50 (vmlab d8a6048aae11) (the Nvidia1 qemu_binary).
 
-Run 2026-10-18T11:02:15+10:00 at commit `045fda111e0a`, template `x86_64/windows-11@26100.1742.5`. **PASS: 12 of 12 Done checks pass** (run stage: ok). Evidence: `docs/evidence/acceptance/windows-11-nvidia1/`; `results.txt` is the script's own table.
+Run 2026-10-18T23:34:56+10:00 at commit `0ee5ba149e10`, template `x86_64/windows-11@26100.1742.5`. **PASS: 12 of 12 Done checks pass** (run stage: ok). Evidence: `docs/evidence/acceptance/windows-11-nvidia1/`; `results.txt` is the script's own table.
 
 | Done item | Check | Result | Evidence | Note |
 | --- | --- | --- | --- | --- |
@@ -235,24 +265,24 @@ Run 2026-10-18T11:02:15+10:00 at commit `045fda111e0a`, template `x86_64/windows
 | 2 (extra) | vulkaninfo --summary (x64) lists exactly one Venus device | **pass** | `vulkaninfo/vulkaninfo-x64.txt` | 1 Venus: Virtio-GPU Venus (NVIDIA GeForce RTX 5090) |
 | 2 (extra) | LunarG vulkaninfo 1.4.363 (x64, pinned) lists Venus through the installed loader | **pass** | `vulkaninfo/lunarg-vulkaninfo-x64.txt` | Virtio-GPU Venus (NVIDIA GeForce RTX 5090) |
 | 2 (extra) | LunarG vulkaninfo 1.4.363 (x86, pinned) lists Venus through the installed loader | **pass** | `vulkaninfo/lunarg-vulkaninfo-x86.txt` | Virtio-GPU Venus (NVIDIA GeForce RTX 5090) |
-| 2 | Direct3D 9 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d9_probe.run.json`, `probes/x64-d3d9_probe.modules.txt`, `console-x64-d3d9_probe.png` | Hardsoft VirtIO GPU 3D controller, 22.32 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 9 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d9_probe.run.json`, `probes/x86-d3d9_probe.modules.txt`, `console-x86-d3d9_probe.png` | Hardsoft VirtIO GPU 3D controller, 21.79 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 11 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d11_probe.run.json`, `probes/x64-d3d11_probe.modules.txt`, `console-x64-d3d11_probe.png` | Hardsoft VirtIO GPU 3D controller, 58.68 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 11 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d11_probe.run.json`, `probes/x86-d3d11_probe.modules.txt`, `console-x86-d3d11_probe.png` | Hardsoft VirtIO GPU 3D controller, 58.6 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 12 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d12_probe.run.json`, `probes/x64-d3d12_probe.modules.txt`, `console-x64-d3d12_probe.png` | Hardsoft VirtIO GPU 3D controller, 53.99 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 12 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d12_probe.run.json`, `probes/x86-d3d12_probe.modules.txt`, `console-x86-d3d12_probe.png` | Hardsoft VirtIO GPU 3D controller, 54.26 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | OpenGL (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-opengl_probe.run.json`, `probes/x64-opengl_probe.modules.txt`, `console-x64-opengl_probe.png` | zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY)), 61.46 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | OpenGL (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-opengl_probe.run.json`, `probes/x86-opengl_probe.modules.txt`, `console-x86-opengl_probe.png` | zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY)), 64.48 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 (extra) | Vulkan (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-vulkan_probe.run.json`, `probes/x64-vulkan_probe.modules.txt`, `console-x64-vulkan_probe.png` | Virtio-GPU Venus (NVIDIA GeForce RTX 5090), 58.14 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 (extra) | Vulkan (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-vulkan_probe.run.json`, `probes/x86-vulkan_probe.modules.txt`, `console-x86-vulkan_probe.png` | Virtio-GPU Venus (NVIDIA GeForce RTX 5090), 58.16 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 9 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d9_probe.run.json`, `probes/x64-d3d9_probe.modules.txt`, `console-x64-d3d9_probe.png` | Hardsoft VirtIO GPU 3D controller, 52.32 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 9 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d9_probe.run.json`, `probes/x86-d3d9_probe.modules.txt`, `console-x86-d3d9_probe.png` | Hardsoft VirtIO GPU 3D controller, 50.78 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 11 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d11_probe.run.json`, `probes/x64-d3d11_probe.modules.txt`, `console-x64-d3d11_probe.png` | Hardsoft VirtIO GPU 3D controller, 58.63 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 11 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d11_probe.run.json`, `probes/x86-d3d11_probe.modules.txt`, `console-x86-d3d11_probe.png` | Hardsoft VirtIO GPU 3D controller, 58.37 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 12 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d12_probe.run.json`, `probes/x64-d3d12_probe.modules.txt`, `console-x64-d3d12_probe.png` | Hardsoft VirtIO GPU 3D controller, 53.61 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 12 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d12_probe.run.json`, `probes/x86-d3d12_probe.modules.txt`, `console-x86-d3d12_probe.png` | Hardsoft VirtIO GPU 3D controller, 53.52 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | OpenGL (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-opengl_probe.run.json`, `probes/x64-opengl_probe.modules.txt`, `console-x64-opengl_probe.png` | zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY)), 64.47 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | OpenGL (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-opengl_probe.run.json`, `probes/x86-opengl_probe.modules.txt`, `console-x86-opengl_probe.png` | zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY)), 62.35 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 (extra) | Vulkan (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-vulkan_probe.run.json`, `probes/x64-vulkan_probe.modules.txt`, `console-x64-vulkan_probe.png` | Virtio-GPU Venus (NVIDIA GeForce RTX 5090), 57.73 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 (extra) | Vulkan (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-vulkan_probe.run.json`, `probes/x86-vulkan_probe.modules.txt`, `console-x86-vulkan_probe.png` | Virtio-GPU Venus (NVIDIA GeForce RTX 5090), 57.74 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating |
 | 2 | dxdiag reports hardware acceleration on our driver | **pass** | `dxdiag/dxdiag.json` | hardware_acceleration=True, card 'Hardsoft VirtIO GPU 3D controller', D3D Enabled, DDraw Enabled, WDDM 2.0 |
 | 2 (extra) | dxdiag: Direct3D acceleration on our full WDDM device | **pass** | `dxdiag/dxdiag.json` | D3D Status Enabled, Full Device (POST), WDDM 2.0 |
 
 ### windows-11-nvidia2
 
-Host GPU: Nvidia2, /dev/dri/renderD130 0000:05:00.0 VGA compatible controller: NVIDIA Corporation GB202 [GeForce RTX 5090] (rev a1). QEMU: /home/wil/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64, QEMU emulator version 11.1.1 (the Nvidia2 qemu_binary).
+Host GPU: Nvidia2, /dev/dri/renderD130 0000:05:00.0 VGA compatible controller: NVIDIA Corporation GB202 [GeForce RTX 5090] (rev a1). QEMU: /home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64, QEMU emulator version 11.1.50 (vmlab d8a6048aae11) (the Nvidia2 qemu_binary).
 
-Run 2026-10-18T15:51:38+10:00 at commit `99ad0c1faee6`, template `x86_64/windows-11@26100.1742.5`. **PASS: 12 of 12 Done checks pass** (run stage: ok). Evidence: `docs/evidence/acceptance/windows-11-nvidia2/`; `results.txt` is the script's own table.
+Run 2026-10-19T00:34:14+10:00 at commit `0c0788ccbae9`, template `x86_64/windows-11@26100.1742.5`. **PASS: 12 of 12 Done checks pass** (run stage: ok). Evidence: `docs/evidence/acceptance/windows-11-nvidia2/`; `results.txt` is the script's own table.
 
 | Done item | Check | Result | Evidence | Note |
 | --- | --- | --- | --- | --- |
@@ -264,16 +294,16 @@ Run 2026-10-18T15:51:38+10:00 at commit `99ad0c1faee6`, template `x86_64/windows
 | 2 (extra) | vulkaninfo --summary (x64) lists exactly one Venus device | **pass** | `vulkaninfo/vulkaninfo-x64.txt` | 1 Venus: Virtio-GPU Venus (NVIDIA GeForce RTX 5090) |
 | 2 (extra) | LunarG vulkaninfo 1.4.363 (x64, pinned) lists Venus through the installed loader | **pass** | `vulkaninfo/lunarg-vulkaninfo-x64.txt` | Virtio-GPU Venus (NVIDIA GeForce RTX 5090) |
 | 2 (extra) | LunarG vulkaninfo 1.4.363 (x86, pinned) lists Venus through the installed loader | **pass** | `vulkaninfo/lunarg-vulkaninfo-x86.txt` | Virtio-GPU Venus (NVIDIA GeForce RTX 5090) |
-| 2 | Direct3D 9 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d9_probe.run.json`, `probes/x64-d3d9_probe.modules.txt`, `console-x64-d3d9_probe.png` | Hardsoft VirtIO GPU 3D controller, 21.0 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 9 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d9_probe.run.json`, `probes/x86-d3d9_probe.modules.txt`, `console-x86-d3d9_probe.png` | Hardsoft VirtIO GPU 3D controller, 19.94 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 11 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d11_probe.run.json`, `probes/x64-d3d11_probe.modules.txt`, `console-x64-d3d11_probe.png` | Hardsoft VirtIO GPU 3D controller, 58.12 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 11 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d11_probe.run.json`, `probes/x86-d3d11_probe.modules.txt`, `console-x86-d3d11_probe.png` | Hardsoft VirtIO GPU 3D controller, 58.03 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 12 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d12_probe.run.json`, `probes/x64-d3d12_probe.modules.txt`, `console-x64-d3d12_probe.png` | Hardsoft VirtIO GPU 3D controller, 51.39 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | Direct3D 12 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d12_probe.run.json`, `probes/x86-d3d12_probe.modules.txt`, `console-x86-d3d12_probe.png` | Hardsoft VirtIO GPU 3D controller, 53.24 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | OpenGL (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-opengl_probe.run.json`, `probes/x64-opengl_probe.modules.txt`, `console-x64-opengl_probe.png` | zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY)), 60.63 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 | OpenGL (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-opengl_probe.run.json`, `probes/x86-opengl_probe.modules.txt`, `console-x86-opengl_probe.png` | zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY)), 59.88 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 (extra) | Vulkan (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-vulkan_probe.run.json`, `probes/x64-vulkan_probe.modules.txt`, `console-x64-vulkan_probe.png` | Virtio-GPU Venus (NVIDIA GeForce RTX 5090), 57.72 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating |
-| 2 (extra) | Vulkan (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-vulkan_probe.run.json`, `probes/x86-vulkan_probe.modules.txt`, `console-x86-vulkan_probe.png` | Virtio-GPU Venus (NVIDIA GeForce RTX 5090), 57.76 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 9 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d9_probe.run.json`, `probes/x64-d3d9_probe.modules.txt`, `console-x64-d3d9_probe.png` | Hardsoft VirtIO GPU 3D controller, 40.11 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 9 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d9_probe.run.json`, `probes/x86-d3d9_probe.modules.txt`, `console-x86-d3d9_probe.png` | Hardsoft VirtIO GPU 3D controller, 41.69 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 11 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d11_probe.run.json`, `probes/x64-d3d11_probe.modules.txt`, `console-x64-d3d11_probe.png` | Hardsoft VirtIO GPU 3D controller, 57.52 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 11 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d11_probe.run.json`, `probes/x86-d3d11_probe.modules.txt`, `console-x86-d3d11_probe.png` | Hardsoft VirtIO GPU 3D controller, 57.86 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 12 (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-d3d12_probe.run.json`, `probes/x64-d3d12_probe.modules.txt`, `console-x64-d3d12_probe.png` | Hardsoft VirtIO GPU 3D controller, 50.45 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | Direct3D 12 (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-d3d12_probe.run.json`, `probes/x86-d3d12_probe.modules.txt`, `console-x86-d3d12_probe.png` | Hardsoft VirtIO GPU 3D controller, 49.36 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | OpenGL (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-opengl_probe.run.json`, `probes/x64-opengl_probe.modules.txt`, `console-x64-opengl_probe.png` | zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY)), 45.92 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 | OpenGL (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-opengl_probe.run.json`, `probes/x86-opengl_probe.modules.txt`, `console-x86-opengl_probe.png` | zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY)), 48.23 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 (extra) | Vulkan (x64) renders on the GPU and shows on the console | **pass** | `probes/x64-vulkan_probe.run.json`, `probes/x64-vulkan_probe.modules.txt`, `console-x64-vulkan_probe.png` | Virtio-GPU Venus (NVIDIA GeForce RTX 5090), 56.45 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating |
+| 2 (extra) | Vulkan (x86) renders on the GPU and shows on the console | **pass** | `probes/x86-vulkan_probe.run.json`, `probes/x86-vulkan_probe.modules.txt`, `console-x86-vulkan_probe.png` | Virtio-GPU Venus (NVIDIA GeForce RTX 5090), 55.86 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating |
 | 2 | dxdiag reports hardware acceleration on our driver | **pass** | `dxdiag/dxdiag.json` | hardware_acceleration=True, card 'Hardsoft VirtIO GPU 3D controller', D3D Enabled, DDraw Enabled, WDDM 2.0 |
 | 2 (extra) | dxdiag: Direct3D acceleration on our full WDDM device | **pass** | `dxdiag/dxdiag.json` | D3D Status Enabled, Full Device (POST), WDDM 2.0 |
 <!-- /e2e:results -->
@@ -293,14 +323,23 @@ it: the DirectX End-User Runtime from the SDK's own `Redist\DXSETUP.exe
 /silent` (D3DX 9/10/11 and D3DCompiler_43), and the Visual C++ 2010 SP1
 runtime (`MSVCR100.dll`) that the SDK samples import (`apps/dxsetup.txt`).
 
-| Application (pinned in `tests/e2e/PINS`) | API | windows-11 | windows-10 | Modules |
+The 0.1.1-alpha-rc1 runs, on five labs. Each cell names the capture in
+`docs/evidence/acceptance/<run>/apps/`.
+
+| Application (pinned in `tests/e2e/PINS`) | API | windows-11: AMD1, Nvidia1, Nvidia2 | windows-10: AMD1, Nvidia1 | Modules |
 | --- | --- | --- | --- | --- |
-| DirectX SDK June 2010 `BasicHLSL.exe`, x64 | D3D9 | **renders**: the animated, lit "tiny" model with DXUT's UI; the overlay reads `HAL (hw vp): Hardsoft VirtIO GPU 3D controller` (`console-d3d9-x64-BasicHLSL.png`) | **renders**, same (`console-d3d9-x64-BasicHLSL.png`) | `d3d9.dll`, `viogpu_d3d10.dll`, D3DX 9 from System32; 0 app-local |
-| Same, x86 | D3D9 | **renders**, same, through SysWOW64 (`console-d3d9-x86-BasicHLSL.png`) | **renders**, same | as above, SysWOW64 |
-| DirectX SDK `ParallaxOcclusionMapping.exe`, x64 | D3D9 | **renders**: the parallax-occlusion-mapped stone disc, HAL on our device (`console-d3d9-x64-ParallaxOcclusionMapping.png`) | **renders**, same | as above |
-| DirectX SDK `BasicHLSL11.exe`, x64 | D3D11 | **renders**: the lit "tiny" model in an 800×600 window on the screen; the overlay reads `HARDWARE: Hardsoft VirtIO GPU 3D controller` (`console-d3d11-x64-BasicHLSL11.png`) | **renders**, same | `d3d11.dll`, `dxgi.dll`, `viogpu_d3d10.dll`, D3DX 11 from System32; 0 app-local |
-| DirectX SDK `SubD11.exe`, x64 | D3D11 | **renders**: the tessellated, textured character with the green wire overlay, on `HARDWARE: Hardsoft VirtIO GPU 3D controller` (`console-d3d11-x64-SubD11.png`) | **renders**, same | as above |
-| Blender 4.2.3 LTS, `blender.exe --factory-startup` | OpenGL 4.3 | **renders**: the complete Blender UI, 3D viewport, grid and gizmos, with the splash in front (the Esc meant to close it did not reach the window) (`console-opengl-x64-Blender.png`) | **renders, but the window is translucent**: the desktop wallpaper shows through the viewport and panels (`console-opengl-x64-Blender.png`). See "Findings" | `opengl32.dll`, `viogpu_wgl.dll`, `vulkan-1.dll`, `libvulkan_virtio.dll` from System32. The 4 app-local modules are Blender's own `python311.dll`, `python3.dll`, `blender_cpu_check.dll` and `cycles_kernel_oneapi_aot.dll`, none of them a graphics driver |
+| DirectX SDK June 2010 `BasicHLSL.exe`, x64 | D3D9 | **renders** on all three: the animated, lit, textured "tiny" model with DXUT's UI; the overlay reads `HAL (hw vp): Hardsoft VirtIO GPU 3D controller` (`console-d3d9-x64-BasicHLSL.png`) | **renders** on both, same | `d3d9.dll`, `viogpu_d3d10.dll`, D3DX 9 from System32; 0 app-local |
+| Same, x86 | D3D9 | **renders** on all three, same, through SysWOW64 (`console-d3d9-x86-BasicHLSL.png`) | **renders** on both | as above, SysWOW64 |
+| DirectX SDK `ParallaxOcclusionMapping.exe`, x64 | D3D9 | **renders** on all three: the textured, parallax-occlusion-mapped stone disc, HAL on our device (`console-d3d9-x64-ParallaxOcclusionMapping.png`) | **renders** on both | as above |
+| DirectX SDK `BasicHLSL11.exe`, x64 | D3D11 | **renders** on all three: the lit, textured "tiny" model in an 800×600 window; the overlay reads `HARDWARE: Hardsoft VirtIO GPU 3D controller` (`console-d3d11-x64-BasicHLSL11.png`) | **renders** on both | `d3d11.dll`, `dxgi.dll`, `viogpu_d3d10.dll`, D3DX 11 from System32; 0 app-local |
+| DirectX SDK `SubD11.exe`, x64 | D3D11 | **renders** on all three: the tessellated character with the green wire overlay, on `HARDWARE: Hardsoft VirtIO GPU 3D controller` (`console-d3d11-x64-SubD11.png`) | **renders** on both | as above |
+| Blender 4.2.3 LTS, `blender.exe --factory-startup` | OpenGL 4.3 | **renders**, opaque, on all three: the complete UI, 3D viewport, grid and gizmos (`console-opengl-x64-Blender.png`) | **renders, opaque**, on both, with the splash still in front; the wallpaper no longer shows through (`patches/mesa/0027`) | `opengl32.dll`, `viogpu_wgl.dll` with `libvulkan_virtio.dll`; app-local only Blender's own non-graphics DLLs (`python311.dll`, `python3.dll`, `blender_cpu_check.dll`, `cycles_kernel_oneapi_aot.dll`) |
+
+On NVIDIA every application ran to its time limit. The host kernel logged
+no Xid during any rc run on Nvidia1 or Nvidia2
+(`docs/evidence/rc/host-kernel-nvrm.txt`). Before 0.1.1, `BasicHLSL` hung
+the guest with Xid 69 on both cards ([`xid69.md`](xid69.md)), so the NVIDIA
+runs had no application results.
 
 Every application ran as the logged-on user in session 1 and was still
 running when it was closed (`timed_out: true` in `<app>.run.json`). The
@@ -366,21 +405,23 @@ Open:
   Windows' user OOBE, which deletes those values when it exits and can still
   be running when the clone is reported ready (handoff `20261018-092229`;
   [known limits](known-limits.md#autologon-values-can-vanish-on-a-fresh-clone)).
-  `Set-TestDesktop.ps1` now waits for OOBE first. In the four NVIDIA runs
-  the wait took 0 to 5 s (`test-desktop.txt`), the values survived
+  `Set-TestDesktop.ps1` now waits for OOBE first. In the five rc1 runs
+  the wait took 0 to 25 s (`test-desktop.txt`), the values survived
   (`autologon-*.txt`), and the fallback did not fire.
-- **D3D9 runs at about 30 fps** on this host (27 to 34 in the final runs),
-  against about 60 for the other APIs (the tables above). On Zeus's Intel GPU it reached about 59 fps
-  (`docs/zeus.md`). Not investigated ([known limits](known-limits.md)).
-- **Blender's window is translucent on Windows 10.** On windows-10 the
-  wallpaper shows through Blender's viewport and panels
-  (`windows-10/apps/console-opengl-x64-Blender.png`). On windows-11 the same
-  build is opaque. The earlier windows-10 run at `cb4d53c` shows the same
-  translucency, although this page recorded it then as "renders, same", so
-  it is not a regression. The OpenGL probe, which clears with alpha 1, is
-  opaque on both templates (`console-x64-opengl_probe.png`). The likely
-  cause is that Windows 10's compositor honours the alpha that Blender
-  leaves in its framebuffer and Windows 11's does not. That is unconfirmed and not investigated ([known limits](known-limits.md#windows-10)).
+- **D3D9 ran at about 30 fps** on AMD1 (27 to 34) and about 20 on NVIDIA
+  in the 0.1.0 runs, against about 60 for the other APIs. In the rc1 runs
+  the D3D9 probe reached 57 to 60 fps on AMD1, 51 to 52 on Nvidia1 (windows-11)
+  and 40 to 42 on Nvidia2, after `patches/kmd/0002` and `patches/mesa/0026`
+  ([`present.md`](present.md)). On windows-10 Nvidia1 the x64 D3D9 probe
+  measured 27 fps and the x86 one 46. Below the refresh rate on NVIDIA:
+  [known limits](known-limits.md).
+- **Blender's window was translucent on Windows 10** in the 0.1.0 runs:
+  the wallpaper showed through its viewport and panels, because Windows
+  10's compositor honours the alpha Blender leaves in its framebuffer. With
+  `patches/mesa/0027` (WGL presents windows opaque), the rc1 windows-10
+  runs on AMD1 and Nvidia1 show Blender opaque
+  (`windows-10/apps/console-opengl-x64-Blender.png`,
+  `windows-10-nvidia1/apps/console-opengl-x64-Blender.png`).
 
 Fixed after the earlier runs; the final runs exercise part of the fix:
 
@@ -406,74 +447,32 @@ has the matrix.
 
 ### NVIDIA RTX 5090
 
-Two `windows-11` runs and one `windows-10` run on vmlab 0.27.0-alpha,
-through the user's normal supervisor, with the package built at `08ff884`
-(the same `build/`, `installer/`, `probes/`, `patches/` and
-`scripts/build.sh` as `4e65d25`):
+Helios has two RTX 5090s, `Nvidia1` (`0000:01:00.0`) and `Nvidia2`
+(`0000:05:00.0`). Both need the patched QEMU as their `qemu_binary`, or the
+console stays black ([`nvidia.md`](nvidia.md), fault 2). The rc1 runs:
 
 ```sh
-tests/e2e/run.sh --template windows-11 --host-gpu Nvidia1 --lab win3d-nvidia-e2e-w11-nv1 --apps
-tests/e2e/run.sh --template windows-11 --host-gpu Nvidia2 --lab win3d-nvidia-e2e-w11-nv2 --apps
-tests/e2e/run.sh --template windows-10 --host-gpu Nvidia1 --lab win3d-nvidia-e2e-w10-nv1
+tests/e2e/run.sh --template windows-11 --host-gpu Nvidia1 --lab win3d-rc-w11-nv1 --apps --keep
+tests/e2e/run.sh --template windows-11 --host-gpu Nvidia2 --lab win3d-rc-w11-nv2 --apps --keep
+tests/e2e/run.sh --template windows-10 --host-gpu Nvidia1 --lab win3d-rc-w10-nv1 --apps
 ```
 
-The `Nvidia2` run was repeated on vmlab 0.28.0-alpha once helios's host
-config gave `Nvidia2` the same `qemu_binary`, without `--apps` (below):
+Their tables are above (`windows-11-nvidia1`, `windows-11-nvidia2`,
+`windows-10-nvidia1`): **12 of 12 each**, one Venus device, the PCI filter
+on the run's own card, and every application rendering, with textured
+meshes. Before 0.1.1 the NVIDIA runs differed from AMD1 in three ways, all
+fixed in this package:
 
-```sh
-tests/e2e/run.sh --template windows-11 --host-gpu Nvidia2 --lab win3d-nv2-w11
-```
+- The D3D9 `BasicHLSL` sample hung the guest with host Xid 69, so the
+  NVIDIA runs had no application results. Fixed by `patches/mesa/0022`
+  ([`xid69.md`](xid69.md)).
+- After that fix the D3D9 samples' meshes rendered black. Fixed by
+  `patches/mesa/0023` to `0025` ([`nvtex.md`](nvtex.md)).
+- The D3D9 probe ran at about 20 fps ([`present.md`](present.md)).
 
-Their result tables are above (`windows-10-nvidia1`, `windows-11-nvidia1`,
-`windows-11-nvidia2`). **windows-10 on Nvidia1 also passes 12 of 12**, with
-the same QEMU, environment and filter line as windows-11 on Nvidia1, one
-Venus device, and every render server on `0000:01:00.0`. It ran without
-`--apps`, because the stretch applications hang the guest on NVIDIA (below).
-The windows-11 table below compares the two cards; the `Nvidia2` column
-is the first, stock-QEMU run (`045fda1`, evidence in git history at
-`a58acd3`); the paragraph after it has the rerun.
-
-| What | Nvidia1 (`0000:01:00.0`) | Nvidia2 (`0000:05:00.0`) | Evidence |
-| --- | --- | --- | --- |
-| Host config | `qemu_binary` = the patched QEMU 11.1.1 | no `qemu_binary` | `host.txt` |
-| QEMU vmlab ran | `/home/wil/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64 ... -L /usr/share/qemu`; `status -v`: `host_gpu=Nvidia1 qemu=<path>` | `qemu-system-x86_64` from `PATH` (the stock 11.1.1), no `-L`; `status -v`: `host_gpu=Nvidia2` | `qemu-argv-env.txt`, `status-v.txt` |
-| QEMU environment | `VK_LOADER_DRIVERS_SELECT=*nvidia*`, `VK_ADD_IMPLICIT_LAYER_PATH=...`, `VMLAB_VK_PCI_ADDRESS=0000:01:00.0` | the same with `0000:05:00.0` | `qemu-argv-env.txt` |
-| PCI filter | `vmlab-pci-filter: 0000:01:00.0: kept NVIDIA GeForce RTX 5090, hid 1` | `vmlab-pci-filter: 0000:05:00.0: kept NVIDIA GeForce RTX 5090, hid 1` | `qemu-argv-env.txt` |
-| Guest vulkaninfo | exactly one device, `Virtio-GPU Venus (NVIDIA GeForce RTX 5090)` | the same | `vulkaninfo/vulkaninfo-x64.txt` |
-| Card that rendered | every `virgl_render_server` on `0000:01:00.0` | every `virgl_render_server` on `0000:05:00.0` | `nvidia-smi-during-probes.txt` |
-| Probes | all ten pass, 22 fps (D3D9) to 64 fps | all ten render and read back | `probes/` |
-| Console | desktop and every probe visible | **black** in every capture | `console-*.png`, `shots.json` |
-| Done checks | **12 of 12** | **4 of 12**: the eight D3D and OpenGL checks fail only on "probe window not found in any console capture" | `results.txt` |
-
-**With `qemu_binary`, Nvidia2 passes 12 of 12.** The first run's console
-was black for the reason `docs/nvidia.md` gives as fault 2: stock QEMU's
-egl-headless cannot show NVIDIA's LINEAR scanout. The rerun at `99ad0c1`
-(2026-10-18, vmlab 0.28.0-alpha, the bundle built at `99ad0c1`) used the
-patched QEMU: `qemu-argv-env.txt` has `vmlab: argv:` starting with
-`/home/wil/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64 ... -L
-/usr/share/qemu`, `VMLAB_VK_PCI_ADDRESS=0000:05:00.0` and
-`vmlab-pci-filter: 0000:05:00.0: kept NVIDIA GeForce RTX 5090, hid 1`;
-`status-v.txt` has `host_gpu=Nvidia2 qemu=<path>`; the guest lists one
-Venus device, and all ten probes pass on the console at 20 fps (D3D9) to
-61 fps. It has no `nvidia-smi` capture, and no `apps/`.
-
-**An earlier Nvidia1 attempt lost its results to a stretch application.**
-The first run at `08ff884` passed every probe, then the DirectX SDK's D3D9
-`BasicHLSL` x64 hung the guest (host Xid 69, [known
-limits](known-limits.md#host-gpu-support)), and the collect step that ran
-after the applications found no agent. `run.sh` now collects first
-(`045fda1`). The second run hit the same hang at the same point
-(`apps/kernel-nvrm.txt`, `apps/console-d3d9-x64-BasicHLSL.png`, which shows
-the frozen desktop), after its Done evidence was safe. The first Nvidia2 run
-hung the same way, with the Xid on `0000:05:00.0` (its `apps/` is in git
-history at `a58acd3`). In both runs the other
-five applications then failed at once against the hung guest, so on NVIDIA
-`apps/apps.json` is empty and their screenshots show the same frozen (on Nvidia2, black)
-frame.
-
-The earlier stock-QEMU Nvidia1 boot on vmlab 0.25 (install and all ten
-probes pass, black console) is replaced by these runs; its evidence is in
-git history at `c90674b`.
+The 0.1.0-alpha NVIDIA evidence (vmlab 0.27 and 0.28, package built at
+`08ff884` and `99ad0c1`, the stock-QEMU Nvidia2 run with its black
+console) is in git history at `82d8e51`.
 
 ## Evidence index
 
@@ -484,11 +483,12 @@ changed since.
 
 | Directory | What it proves | vmlab | Package or commit | Status |
 | --- | --- | --- | --- | --- |
-| [`acceptance/windows-11/`](evidence/acceptance/windows-11/) | Done items 1 and 2 on a fresh `windows-11` lab: build, install, vulkaninfo, the D3D9, D3D11, D3D12, OpenGL and Vulkan probes on the console, dxdiag; the stretch apps in `apps/` | 0.25.0-alpha, `host_gpu = "AMD1"` | `6105889`, built by the run | Current |
-| [`acceptance/windows-10/`](evidence/acceptance/windows-10/) | The same on a fresh `windows-10` lab | 0.25.0-alpha, `host_gpu = "AMD1"` | `6105889`, reusing the same bundle | Current |
-| [`acceptance/windows-11-nvidia1/`](evidence/acceptance/windows-11-nvidia1/) | Done items 1 and 2 on a fresh `windows-11` lab on the first RTX 5090 with the patched QEMU as its `qemu_binary`: 12 of 12, one Venus device; the D3D9 `BasicHLSL` hang in `apps/` | 0.27.0-alpha, `host_gpu = "Nvidia1"` | `045fda1`, reusing the bundle built at `08ff884` | Current |
-| [`acceptance/windows-10-nvidia1/`](evidence/acceptance/windows-10-nvidia1/) | Done items 1 and 2 on a fresh `windows-10` lab on the first RTX 5090 with the patched QEMU: 12 of 12, one Venus device | 0.27.0-alpha, `host_gpu = "Nvidia1"` | `a58acd3`, same bundle | Current |
-| [`acceptance/windows-11-nvidia2/`](evidence/acceptance/windows-11-nvidia2/) | Done items 1 and 2 on a fresh `windows-11` lab on the second RTX 5090 with the patched QEMU as its `qemu_binary`: 12 of 12, one Venus device, the PCI filter on `0000:05:00.0`. The earlier stock-QEMU run (black console, 4 of 12, the `BasicHLSL` hang in `apps/`) is in git history at `a58acd3` | 0.28.0-alpha, `host_gpu = "Nvidia2"` | `99ad0c1`, reusing the bundle built at `99ad0c1` | Current |
+| [`acceptance/windows-11/`](evidence/acceptance/windows-11/) | Done items 1 and 2 on a fresh `windows-11` lab on AMD1: install, vulkaninfo, the D3D9, D3D11, D3D12, OpenGL and Vulkan probes on the console, dxdiag, 12 of 12; the stretch apps in `apps/` | 0.28.0-alpha, `host_gpu = "AMD1"` | 0.1.1-alpha-rc1, the bundle `scripts/release.sh` built at `0ee5ba1` | Current |
+| [`acceptance/windows-10/`](evidence/acceptance/windows-10/) | The same on a fresh `windows-10` lab on AMD1: 12 of 12; apps, Blender opaque | 0.28.0-alpha, `host_gpu = "AMD1"` | 0.1.1-alpha-rc1 (`0ee5ba1`), run at `0c0788c` | Current |
+| [`acceptance/windows-11-nvidia1/`](evidence/acceptance/windows-11-nvidia1/) | The same on the first RTX 5090 with the patched QEMU as its `qemu_binary`: 12 of 12, one Venus device; every app renders, no Xid | 0.28.0-alpha, `host_gpu = "Nvidia1"` | 0.1.1-alpha-rc1 (`0ee5ba1`) | Current |
+| [`acceptance/windows-10-nvidia1/`](evidence/acceptance/windows-10-nvidia1/) | The same on a fresh `windows-10` lab on the first RTX 5090: 12 of 12, one Venus device; every app renders, Blender opaque | 0.28.0-alpha, `host_gpu = "Nvidia1"` | 0.1.1-alpha-rc1 (`0ee5ba1`), run at `0c0788c` | Current |
+| [`acceptance/windows-11-nvidia2/`](evidence/acceptance/windows-11-nvidia2/) | The same on the second RTX 5090 with the patched QEMU: 12 of 12, one Venus device, the PCI filter on `0000:05:00.0`; every app renders, no Xid | 0.28.0-alpha, `host_gpu = "Nvidia2"` | 0.1.1-alpha-rc1 (`0ee5ba1`), run at `0c0788c` | Current |
+| [`rc/`](evidence/rc/README.md) | Release candidate 0.1.1-alpha-rc1: the release record (asset hashes, notes, QEMU `BUILDINFO`), DirectDraw fullscreen rates and the D3D9 fixed-function coverage with that package on AMD1 and Nvidia1, and the host kernel's NVRM lines during the runs | 0.28.0-alpha | `0ee5ba1` | Current |
 | [`vulkaninfo/`](evidence/vulkaninfo/README.md) | The package's patched `vulkaninfo.exe` (`patches/vulkan-tools/0001`) lists Venus and exits 0, x64 and x86 | 0.24.0-alpha | `78fc688` (`work/fix-vulkaninfo`) | Current |
 | [`dxdiag/`](evidence/dxdiag/) | dxdiag's DDraw and AGP status before and after `patches/mesa/0012` to `0014`, with `ddcaps` DirectDraw checks ([`dxdiag.md`](dxdiag.md)) | 0.24.0-alpha | before: `main` at `be2ef9b`; after: `deb2585` | Current |
 | [`d3d11-apps/`](evidence/d3d11-apps/) | SubD11 and BasicHLSL11: the causes, `patches/mesa/0015` to `0017`, the DXUT window bug and the `D3D11Ref.dll` workaround ([`d3d11-apps.md`](d3d11-apps.md)) | 0.24.0-alpha | `5fd206d` | Current |
