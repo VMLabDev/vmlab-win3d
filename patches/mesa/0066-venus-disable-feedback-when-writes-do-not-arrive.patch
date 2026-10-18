@@ -1,0 +1,207 @@
+Subject: [PATCH] venus: disable feedback for a device whose feedback writes do not arrive
+
+A host whose GPU writes to the feedback buffer do not become visible in the
+guest hangs every fence and timeline semaphore wait: the guest polls a slot
+that never changes. 0065 avoids the case seen on an RTX 4060 Laptop host by
+choosing host-cached memory, but nothing guarantees that every host makes
+feedback writes visible.
+
+At device creation, submit one fence feedback command on a queue that can
+feed back, wait for it through the renderer (vkQueueWaitIdle), and check
+the slot, allowing the write 20 ms to land. When it does not land, log it
+and disable fence, semaphore, event and query feedback for that device:
+they then take the same paths as the VN_PERF no_*_feedback options, which
+cost a renderer round trip per status check but stay correct. On a good
+host the check is one submission and one synchronous round trip.
+
+Evidence: docs/nvfb.md, docs/evidence/nvfb/.
+Origin: vmlab-win3d nvfb worker.
+---
+diff --git a/src/virtio/vulkan/vn_command_buffer.c b/src/virtio/vulkan/vn_command_buffer.c
+index e7be2ff..519e07d 100644
+--- a/src/virtio/vulkan/vn_command_buffer.c
++++ b/src/virtio/vulkan/vn_command_buffer.c
+@@ -1761,7 +1761,7 @@ vn_cmd_record_query(VkCommandBuffer cmd_handle,
+    struct vn_device *dev = vn_device_from_vk(cmd->base.vk.pool->base.device);
+    struct vn_query_pool *query_pool = vn_query_pool_from_handle(pool_handle);
+ 
+-   if (unlikely(VN_PERF(NO_QUERY_FEEDBACK)))
++   if (unlikely(VN_PERF(NO_QUERY_FEEDBACK) || dev->feedback_disabled))
+       return;
+ 
+    if (unlikely(!query_pool->fb_buf)) {
+diff --git a/src/virtio/vulkan/vn_device.c b/src/virtio/vulkan/vn_device.c
+index 48189d8..4e03ae1 100644
+--- a/src/virtio/vulkan/vn_device.c
++++ b/src/virtio/vulkan/vn_device.c
+@@ -547,6 +547,8 @@ vn_device_init(struct vn_device *dev,
+    if (result != VK_SUCCESS)
+       goto out_feedback_cmd_pools_fini;
+ 
++   vn_feedback_self_test(dev);
++
+    vn_buffer_reqs_cache_init(dev);
+    vn_image_reqs_cache_init(dev);
+ 
+diff --git a/src/virtio/vulkan/vn_device.h b/src/virtio/vulkan/vn_device.h
+index e871564..765702f 100644
+--- a/src/virtio/vulkan/vn_device.h
++++ b/src/virtio/vulkan/vn_device.h
+@@ -47,6 +47,12 @@ struct vn_device {
+ 
+    bool has_sync2;
+ 
++   /* Set at device creation when a feedback write by the host GPU did not
++    * reach the guest (vn_feedback_self_test). Fences, semaphores, events and
++    * queries then take the VN_PERF no_*_feedback paths for this device.
++    */
++   bool feedback_disabled;
++
+    simple_mtx_t mutex;
+    struct list_head chains;
+ };
+diff --git a/src/virtio/vulkan/vn_feedback.c b/src/virtio/vulkan/vn_feedback.c
+index f347291..41d7905 100644
+--- a/src/virtio/vulkan/vn_feedback.c
++++ b/src/virtio/vulkan/vn_feedback.c
+@@ -5,6 +5,8 @@
+ 
+ #include "vn_feedback.h"
+ 
++#include "venus-protocol/vn_protocol_driver_queue.h"
++
+ #include "vn_command_buffer.h"
+ #include "vn_device.h"
+ #include "vn_physical_device.h"
+@@ -901,3 +903,86 @@ vn_feedback_cmd_pools_fini(struct vn_device *dev)
+ 
+    vk_free(alloc, dev->fb_cmd_pools);
+ }
++
++/* Checks once per device that a feedback write by the host GPU reaches the
++ * guest: one fence feedback command, submitted and waited for through the
++ * renderer, must leave its slot signalled. A host whose GPU writes do not
++ * become visible in the guest's mapping of the feedback buffer would
++ * otherwise hang every fence and timeline semaphore wait (the guest keeps
++ * reading the status it wrote itself; docs/nvfb.md). On failure feedback is
++ * disabled for the device, which costs a renderer round trip per status
++ * check but stays correct. On a good host this is one submission and one
++ * synchronous vkQueueWaitIdle at device creation.
++ */
++void
++vn_feedback_self_test(struct vn_device *dev)
++{
++   VkDevice dev_handle = vn_device_to_handle(dev);
++
++   if (VN_PERF(NO_FENCE_FEEDBACK) || !dev->fb_cmd_pools)
++      return;
++
++   struct vn_queue *queue = NULL;
++   uint32_t pool_index = 0;
++   for (uint32_t i = 0; i < dev->queue_count && !queue; i++) {
++      if (!dev->queues[i].can_feedback || dev->queues[i].emulated)
++         continue;
++      for (uint32_t j = 0; j < dev->queue_family_count; j++) {
++         if (dev->queue_families[j] ==
++                dev->queues[i].base.vk.queue_family_index &&
++             dev->fb_cmd_pools[j].pool_handle != VK_NULL_HANDLE) {
++            queue = &dev->queues[i];
++            pool_index = j;
++            break;
++         }
++      }
++   }
++   if (!queue)
++      return;
++
++   struct vn_feedback_slot *slot =
++      vn_feedback_pool_alloc(&dev->feedback_pool, VN_FEEDBACK_TYPE_FENCE);
++   if (!slot)
++      return;
++   vn_feedback_set_status(slot, VK_NOT_READY);
++
++   VkCommandBuffer cmd_handle;
++   VkResult result = vn_feedback_cmd_alloc(
++      dev_handle, &dev->fb_cmd_pools[pool_index], slot, NULL, &cmd_handle);
++   if (result != VK_SUCCESS) {
++      vn_feedback_pool_free(&dev->feedback_pool, slot);
++      return;
++   }
++
++   VkQueue queue_handle = vn_queue_to_handle(queue);
++   const VkSubmitInfo submit = {
++      .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
++      .commandBufferCount = 1,
++      .pCommandBuffers = &cmd_handle,
++   };
++   result = vn_call_vkQueueSubmit(dev->primary_ring, queue_handle, 1, &submit,
++                                  VK_NULL_HANDLE);
++   if (result == VK_SUCCESS)
++      result = vn_call_vkQueueWaitIdle(dev->primary_ring, queue_handle);
++
++   if (result == VK_SUCCESS) {
++      /* The renderer saw the command complete. Allow the write a little
++       * time to land before giving up on it.
++       */
++      const int64_t end = os_time_get_nano() + 20 * 1000 * 1000;
++      while (vn_feedback_get_status(slot) != VK_SUCCESS &&
++             os_time_get_nano() < end)
++         os_time_sleep(100);
++
++      if (vn_feedback_get_status(slot) != VK_SUCCESS) {
++         vn_log(dev->instance,
++                "feedback writes by the host GPU do not reach the guest; "
++                "disabling fence, semaphore, event and query feedback");
++         dev->feedback_disabled = true;
++      }
++   }
++
++   vn_feedback_cmd_free(dev_handle, &dev->fb_cmd_pools[pool_index],
++                        cmd_handle);
++   vn_feedback_pool_free(&dev->feedback_pool, slot);
++}
+diff --git a/src/virtio/vulkan/vn_feedback.h b/src/virtio/vulkan/vn_feedback.h
+index 2b9b1b5..9a3986e 100644
+--- a/src/virtio/vulkan/vn_feedback.h
++++ b/src/virtio/vulkan/vn_feedback.h
+@@ -183,6 +183,9 @@ vn_feedback_cmd_free(VkDevice dev_handle,
+ VkResult
+ vn_feedback_cmd_pools_init(struct vn_device *dev);
+ 
++void
++vn_feedback_self_test(struct vn_device *dev);
++
+ void
+ vn_feedback_cmd_pools_fini(struct vn_device *dev);
+ 
+diff --git a/src/virtio/vulkan/vn_queue.c b/src/virtio/vulkan/vn_queue.c
+index eacac3d..91c6ea5 100644
+--- a/src/virtio/vulkan/vn_queue.c
++++ b/src/virtio/vulkan/vn_queue.c
+@@ -1582,7 +1582,7 @@ vn_fence_feedback_init(struct vn_device *dev,
+    if (fence->is_external)
+       return VK_SUCCESS;
+ 
+-   if (VN_PERF(NO_FENCE_FEEDBACK))
++   if (VN_PERF(NO_FENCE_FEEDBACK) || dev->feedback_disabled)
+       return VK_SUCCESS;
+ 
+    slot = vn_feedback_pool_alloc(&dev->feedback_pool, VN_FEEDBACK_TYPE_FENCE);
+@@ -2109,7 +2109,7 @@ vn_semaphore_feedback_init(struct vn_device *dev,
+    if (sem->is_external)
+       return VK_SUCCESS;
+ 
+-   if (VN_PERF(NO_SEMAPHORE_FEEDBACK))
++   if (VN_PERF(NO_SEMAPHORE_FEEDBACK) || dev->feedback_disabled)
+       return VK_SUCCESS;
+ 
+    slot =
+@@ -2578,7 +2578,7 @@ vn_event_feedback_init(struct vn_device *dev, struct vn_event *ev)
+ {
+    struct vn_feedback_slot *slot;
+ 
+-   if (VN_PERF(NO_EVENT_FEEDBACK))
++   if (VN_PERF(NO_EVENT_FEEDBACK) || dev->feedback_disabled)
+       return VK_SUCCESS;
+ 
+    slot = vn_feedback_pool_alloc(&dev->feedback_pool, VN_FEEDBACK_TYPE_EVENT);

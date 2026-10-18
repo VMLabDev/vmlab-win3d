@@ -1,0 +1,52 @@
+Subject: [PATCH] venus: feedback buffers in host-cached memory
+
+Venus keeps the status of fences, timeline semaphores, events and queries
+in feedback buffers: a command appended to a submission writes the status
+on the host GPU, and the guest CPU reads it through its mapping of the
+virtio-gpu hostmem BAR. The buffer went into the first HOST_COHERENT memory
+type, which on NVIDIA is uncached system memory.
+
+On an RTX 4060 Laptop host (Intel i7-13700H, NVIDIA 615.71.09) the host
+GPU's writes to that type never became visible to the guest: the guest kept
+reading the status it had written itself, from a CPU cache line the GPU
+write did not invalidate (a clflush before the read showed the GPU's value
+every time). Every fence and timeline semaphore wait hung, and
+vn_get_fence_status reported "ffb must be signaled now". The cached
+HOST_COHERENT type saw every write, as did device-local host-visible memory.
+
+Prefer a HOST_COHERENT | HOST_CACHED type for feedback buffers, and fall
+back to any HOST_COHERENT type. Polling cached memory is also cheaper.
+
+Evidence: docs/nvfb.md, docs/evidence/nvfb/ (src/guest-fbtest/fbguest.c).
+Origin: vmlab-win3d nvfb worker.
+---
+diff --git a/src/virtio/vulkan/vn_feedback.c b/src/virtio/vulkan/vn_feedback.c
+index 0f9ab82..f347291 100644
+--- a/src/virtio/vulkan/vn_feedback.c
++++ b/src/virtio/vulkan/vn_feedback.c
+@@ -71,9 +71,22 @@ vn_feedback_buffer_create(struct vn_device *dev,
+    struct vn_buffer *buf = vn_buffer_from_handle(fb_buf->buf_handle);
+    const VkMemoryRequirements *mem_req =
+       &buf->requirements.memory.memoryRequirements;
+-   const uint32_t mem_type_index =
+-      vn_get_memory_type_index(mem_props, mem_req->memoryTypeBits,
+-                               VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
++   /* Prefer a host-cached type. The guest CPU polls the feedback slots
++    * that the host GPU writes, and a host GPU may write uncached system
++    * memory without snooping the CPU caches: on an RTX 4060 Laptop host
++    * (Intel CPU) the guest kept reading a stale cache line of the uncached
++    * HOST_COHERENT type, so fences never signalled, while the cached type
++    * saw every write (docs/nvfb.md). Cached memory is also cheaper to poll.
++    */
++   uint32_t mem_type_index = vn_get_memory_type_index(
++      mem_props, mem_req->memoryTypeBits,
++      VK_MEMORY_PROPERTY_HOST_COHERENT_BIT |
++         VK_MEMORY_PROPERTY_HOST_CACHED_BIT);
++   if (mem_type_index >= mem_props->memoryTypeCount) {
++      mem_type_index =
++         vn_get_memory_type_index(mem_props, mem_req->memoryTypeBits,
++                                  VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
++   }
+    if (mem_type_index >= mem_props->memoryTypeCount) {
+       result = VK_ERROR_INITIALIZATION_FAILED;
+       goto out_destroy_buffer;
