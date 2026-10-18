@@ -1,0 +1,30 @@
+$ bar1probe 05 30,30,30,20 400 dmabuf 5
+nvidia-smi BAR1 before: 36 MiB
+device NVIDIA GeForce RTX 5090 bus 05
+type 4 heap 2 size 246 MiB
+chunk 0 total 30 MiB: ok (vk 0); heap usage 97 MiB budget 148 MiB
+chunk 1 total 60 MiB: ok (vk 0); heap usage 157 MiB budget 88 MiB
+chunk 2 total 90 MiB: ok (vk 0); heap usage 217 MiB budget 28 MiB
+  mmap errno 12 Cannot allocate memory
+chunk 3 total 110 MiB: mmap failed (vk 0); heap usage 237 MiB budget 8 MiB
+holding 5 s
+nvidia-smi BAR1 while held: 237 MiB
+new 'can't alloc VA space' kernel lines: 15
+Oct 19 04:11:31.985792 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+Oct 19 04:11:31.985956 helios kernel: NVRM: nvAssertOkFailedNoLog: Assertion failed: Out of memory [NV_ERR_NO_MEMORY] (0x00000051) returned from pReuseMappingDb->pMapCb(pReuseMappingDb->pGlobalCtx, pAllocCtx, range, cachingFlags, &token, _reusemappingdbAddMappingCallback) @ mapping_reuse.c:274
+Oct 19 04:11:31.985978 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+Oct 19 04:11:31.985995 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+Oct 19 04:11:31.986004 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+Oct 19 04:11:31.986013 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+Oct 19 04:11:31.986020 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+Oct 19 04:11:31.986024 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+Oct 19 04:11:31.986029 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+Oct 19 04:11:31.986034 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+Oct 19 04:11:31.986043 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+Oct 19 04:11:31.986049 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+Oct 19 04:11:31.986056 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+Oct 19 04:11:31.986064 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+Oct 19 04:11:31.986077 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+Oct 19 04:11:31.986083 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+Oct 19 04:11:31.986089 helios kernel: NVRM: nvAssertOkFailedNoLog: Assertion failed: Out of memory [NV_ERR_NO_MEMORY] (0x00000051) returned from pReuseMappingDb->pMapCb(pReuseMappingDb->pGlobalCtx, pAllocCtx, range, cachingFlags, &token, _reusemappingdbAddMappingCallback) @ mapping_reuse.c:274
+Oct 19 04:11:31.986780 helios kernel: NVRM: nvAssertOkFailedNoLog: Assertion failed: Out of memory [NV_ERR_NO_MEMORY] (0x00000051) returned from reusemappingdbMap(&pBar1VaInfo->reuseDb, pMappingType, mapRange, pMemArea, cachingFlags) @ kern_bus_gm107.c:3153

@@ -1,0 +1,27 @@
+---- nvva s3
+2026-10-18 14:22:37.076 [warning pid=1192 process=dwm.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 14:22:37.211 [warning pid=1192 process=dwm.exe] yttrium: forced-sample draw dwm.exe fs=65 requested=16 hw=16 expand=0 coverage=native rt_format=0 512x512
+2026-10-18 14:22:37.228 [warning pid=1192 process=dwm.exe] yttrium: forced-sample draw dwm.exe fs=65 requested=16 hw=16 expand=0 coverage=native rt_format=0 512x512
+2026-10-18 14:22:38.344 [warning pid=6540 process=d3d11_probe.exe] yttrium: Venus renderer refuses feedback-loop usage for format=37 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 14:22:38.426 [warning pid=1192 process=dwm.exe] yttrium: Venus renderer refuses feedback-loop usage for format=37 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 14:23:10.527 [warning pid=3432 process=d3d9_probe.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 14:23:10.562 [warning pid=3432 process=d3d9_probe.exe] d3d9ddi: unsupported D3D9 tessellation state owner=d3d9-state reason=patch-tessellation-not-implemented fallback=ignore-unadvertised-state state=164 value=0x00000000
+2026-10-18 14:23:10.563 [warning pid=3432 process=d3d9_probe.exe] d3d9ddi: D3D9 runtime reserved render state owner=d3d9-state reason=unassigned-ddi-slot fallback=ignore-runtime-metadata state=196 value=0xffffffff
+2026-10-18 14:23:23.961 [warning pid=3432 process=d3d9_probe.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-18 14:23:38.476 [warning pid=1960 process=d3d12_probe.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 14:23:38.482 [warning pid=1960 process=d3d12_probe.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-18 14:23:39.272 [warning pid=1960 process=d3d12_probe.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 14:23:39.285 [warning pid=1960 process=d3d12_probe.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-18 14:24:05.199 [warning pid=680 process=opengl_probe.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 14:24:05.209 [warning pid=680 process=opengl_probe.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-18 14:24:23.038 [warning pid=6952 process=vulkan_probe.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 14:24:23.050 [warning pid=6952 process=vulkan_probe.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-18 14:26:46.109 [warning pid=8276 process=d3d11_probe.exe] yttrium: Venus renderer refuses feedback-loop usage for format=37 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 14:27:12.042 [warning pid=6136 process=d3d9_probe.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 14:27:12.072 [warning pid=6136 process=d3d9_probe.exe] d3d9ddi: unsupported D3D9 tessellation state owner=d3d9-state reason=patch-tessellation-not-implemented fallback=ignore-unadvertised-state state=164 value=0x00000000
+2026-10-18 14:27:12.074 [warning pid=6136 process=d3d9_probe.exe] d3d9ddi: D3D9 runtime reserved render state owner=d3d9-state reason=unassigned-ddi-slot fallback=ignore-runtime-metadata state=196 value=0xffffffff
+2026-10-18 14:27:25.026 [warning pid=6136 process=d3d9_probe.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-18 14:27:37.416 [warning pid=1208 process=d3d12_probe.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 14:27:37.433 [warning pid=1208 process=d3d12_probe.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-18 14:27:38.365 [warning pid=1208 process=d3d12_probe.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 14:27:38.375 [warning pid=1208 process=d3d12_probe.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it

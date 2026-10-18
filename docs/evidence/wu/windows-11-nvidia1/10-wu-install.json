@@ -1,0 +1,115 @@
+{
+    "criteria":  "IsInstalled=0 and IsHidden=0",
+    "server_selection":  "ssWindowsUpdate",
+    "result_code":  2,
+    "seconds":  12,
+    "warnings":  [
+
+                 ],
+    "updates":  [
+                    {
+                        "title":  "Windows Malicious Software Removal Tool x64 - v5.146 (KB890830)",
+                        "update_id":  "3d6484a2-3e2f-4d89-8290-33b9e39f0aaf",
+                        "revision":  200,
+                        "type":  1,
+                        "categories":  [
+                                           "EU Browser Choice Update-For Europe Only",
+                                           "Update Rollups",
+                                           "Windows 10",
+                                           "Windows 10 LTSB",
+                                           "Windows 10, version 1903 and later",
+                                           "Windows 11"
+                                       ],
+                        "driver_class":  null,
+                        "driver_hardware_id":  null,
+                        "driver_manufacturer":  null,
+                        "driver_model":  null,
+                        "driver_provider":  null,
+                        "driver_ver_date":  null,
+                        "size":  87720408,
+                        "for_this_device":  false
+                    },
+                    {
+                        "title":  "Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.91.0) - Current Channel (Broad)",
+                        "update_id":  "6568d9af-9ee1-43a5-b5a7-26e8ac1178f6",
+                        "revision":  200,
+                        "type":  1,
+                        "categories":  [
+                                           "Definition Updates",
+                                           "Microsoft Defender Antivirus"
+                                       ],
+                        "driver_class":  null,
+                        "driver_hardware_id":  null,
+                        "driver_manufacturer":  null,
+                        "driver_model":  null,
+                        "driver_provider":  null,
+                        "driver_ver_date":  null,
+                        "size":  23700600,
+                        "for_this_device":  false
+                    },
+                    {
+                        "title":  "2026-10 Security Update (KB5127648) (26100.9711)",
+                        "update_id":  "6766136f-6199-4413-bdc0-b78e221ac742",
+                        "revision":  1,
+                        "type":  1,
+                        "categories":  [
+                                           "Security Updates"
+                                       ],
+                        "driver_class":  null,
+                        "driver_hardware_id":  null,
+                        "driver_manufacturer":  null,
+                        "driver_model":  null,
+                        "driver_provider":  null,
+                        "driver_ver_date":  null,
+                        "size":  97137393813,
+                        "for_this_device":  false
+                    },
+                    {
+                        "title":  "2026-10 .NET Framework Security Update (KB5127690)",
+                        "update_id":  "dff30d11-a680-465e-b730-aa2d6c722f56",
+                        "revision":  1,
+                        "type":  1,
+                        "categories":  [
+                                           "Security Updates"
+                                       ],
+                        "driver_class":  null,
+                        "driver_hardware_id":  null,
+                        "driver_manufacturer":  null,
+                        "driver_model":  null,
+                        "driver_provider":  null,
+                        "driver_ver_date":  null,
+                        "size":  193534729,
+                        "for_this_device":  false
+                    }
+                ],
+    "label":  "wu-install",
+    "bound_before":  {
+                         "inf":  "oem7.inf",
+                         "original":  "viogpu3d.inf",
+                         "provider":  "Hardsoft Swed.",
+                         "date":  "2026-09-27",
+                         "version":  "100.6.101.58100",
+                         "rank":  "00E00000",
+                         "matching_id":  "pci\\ven_1af4\u0026dev_1050\u0026subsys_11001af4\u0026rev_01",
+                         "problem_code":  0
+                     },
+    "driver_updates":  0,
+    "download":  null,
+    "install":  null,
+    "bound_after":  {
+                        "inf":  "oem7.inf",
+                        "original":  "viogpu3d.inf",
+                        "provider":  "Hardsoft Swed.",
+                        "date":  "2026-09-27",
+                        "version":  "100.6.101.58100",
+                        "rank":  "00E00000",
+                        "matching_id":  "pci\\ven_1af4\u0026dev_1050\u0026subsys_11001af4\u0026rev_01",
+                        "problem_code":  0
+                    },
+    "policy":  {
+                   "restrictions":  {
+                                        "DenyInstanceIDs":  1
+                                    },
+                   "deny_instance_ids":  "1=PCI\\VEN_1AF4\u0026DEV_1050\u0026SUBSYS_11001AF4\u0026REV_01\\3\u002611583659\u00260\u002620"
+               }
+}

@@ -103,6 +103,10 @@ the captures.
 
 ## ExecuteIndirect draws nothing
 
+> **Fixed later** by `patches/vkd3d-proton/0006`, which emulates
+> state-changing command signatures without device-generated commands
+> ([ei.md](ei.md)). The rest of this section is the original finding.
+
 `D3D12ExecuteIndirect` builds a command signature with two arguments: a root
 constant-buffer view (`D3D12_INDIRECT_ARGUMENT_TYPE_CONSTANT_BUFFER_VIEW`)
 followed by a draw. Each of its 1024 triangles takes its offset, velocity,

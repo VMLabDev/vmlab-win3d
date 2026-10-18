@@ -52,6 +52,9 @@ DOC_DEFAULT = {
 }
 DOC_OVERRIDE = {
     "mesa/0021-yttrium-d3d11-typed-uav-loads-without-formatless-read.patch": "docs/zeus.md",
+    # unigl's patch, carried unchanged by nvva; its header names docs/unigl.md,
+    # which lands with the unigl branch. Drop this entry then.
+    "mesa/0086-zink-keep-buffers-mappable-without-visible-vram.patch": "docs/unigl.md",
 }
 
 
@@ -247,7 +250,7 @@ def explaining_doc(path):
     key = path.relative_to(REPO / "patches").as_posix()
     header = path.read_text(errors="replace").split("\ndiff --git", 1)[0]
     m = re.search(r"\bdocs/[\w./-]+\.md\b", header)
-    doc = m.group(0) if m else DOC_OVERRIDE.get(key) or DOC_DEFAULT.get(path.parent.relative_to(REPO / "patches").as_posix())
+    doc = DOC_OVERRIDE.get(key) or (m.group(0) if m else None) or DOC_DEFAULT.get(path.parent.relative_to(REPO / "patches").as_posix())
     if not doc:
         sys.exit(f"patches/{key}: no docs/*.md in its header and no DOC_DEFAULT for its directory")
     if not (REPO / doc).is_file():

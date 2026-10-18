@@ -1,0 +1,4 @@
+# BAR1 cost of one VkDevice with one queue and no host-visible memory (one 1 MiB DEVICE_LOCAL-only allocation), Nvidia2, 3 guest VMs idle
+1 processes: BAR1 before 69 MiB, held 69 MiB, after 69 MiB
+4 processes: BAR1 before 69 MiB, held 73 MiB, after 69 MiB
+8 processes: BAR1 before 69 MiB, held 76 MiB, after 69 MiB
