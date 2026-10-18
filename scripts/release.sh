@@ -31,7 +31,7 @@ HERE=$REPO/scripts/release
 usage() { sed -n '3,25p' "$0" | sed 's/^# \{0,1\}//'; }
 [ $# -eq 1 ] && [ "$1" != -h ] && [ "$1" != --help ] || { usage >&2; exit 2; }
 VERSION=$1
-[[ $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]] || { echo "error: version '$VERSION' is not like 0.1.0-alpha" >&2; exit 2; }
+[[ $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]] || { echo "error: version '$VERSION' is not like 0.1.0-alpha" >&2; exit 2; }
 PKG_VERSION=$(cat installer/VERSION)
 [ "${VERSION%%-*}" = "$PKG_VERSION" ] || { echo "error: version $VERSION does not match installer/VERSION ($PKG_VERSION)" >&2; exit 2; }
 
