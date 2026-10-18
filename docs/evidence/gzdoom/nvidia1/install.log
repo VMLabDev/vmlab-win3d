@@ -1,0 +1,29 @@
+[09:12:05] waiting for the guest agent
+[09:12:31] copying vmlab-win3d-0.1.1 to C:\vmlab-win3d
+pushed 29 file(s), 102414957 bytes to win:C:/vmlab-win3d
+[09:13:07] running C:\vmlab-win3d\Install.cmd
+2026-10-18T16:13:09.693-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
+2026-10-18T16:13:53.271-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T16:14:11.866-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
+2026-10-18T16:14:12.851-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T16:14:12.881-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-18T16:14:12.893-07:00 [Install]   Signature matches Public Key
+2026-10-18T16:14:12.899-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T16:14:12.914-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T16:14:13.072-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T16:14:13.088-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-18T16:14:13.108-07:00 [Install]   Signature matches Public Key
+2026-10-18T16:14:13.128-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T16:14:13.141-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T16:14:13.432-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-18T16:14:13.451-07:00 [Install]   The operation completed successfully.
+2026-10-18T16:14:15.400-07:00 [Install] test signing is set but not active in this boot
+2026-10-18T16:14:17.454-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T16:14:17.590-07:00 [Install] rebooting; step Driver resumes after the restart
+[09:14:18] Install.cmd exited 0
+[09:14:21] state: RebootPending|Driver|
+[09:16:18] state: Installing|Driver|
+[09:18:05] state: Installing|Runtime|
+[09:18:25] state: RebootPending|Verify|
+[09:21:12] state: Installed||
+[09:21:12] done: Installed

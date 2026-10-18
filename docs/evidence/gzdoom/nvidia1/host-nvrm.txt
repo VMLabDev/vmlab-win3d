@@ -1,0 +1,12 @@
+2026-10-19T09:29:35+10:00 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+2026-10-19T09:29:35+10:00 helios kernel: NVRM: nvAssertOkFailedNoLog: Assertion failed: Out of memory [NV_ERR_NO_MEMORY] (0x00000051) returned from pReuseMappingDb->pMapCb(pReuseMappingDb->pGlobalCtx, pAllocCtx, range, cachingFlags, &token, _reusemappingdbAddMappingCallback) @ mapping_reuse.c:274
+2026-10-19T09:29:35+10:00 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+2026-10-19T09:30:25+10:00 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+2026-10-19T09:30:25+10:00 helios kernel: NVRM: nvAssertOkFailedNoLog: Assertion failed: Out of memory [NV_ERR_NO_MEMORY] (0x00000051) returned from pReuseMappingDb->pMapCb(pReuseMappingDb->pGlobalCtx, pAllocCtx, range, cachingFlags, &token, _reusemappingdbAddMappingCallback) @ mapping_reuse.c:274
+2026-10-19T09:30:25+10:00 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+2026-10-19T09:30:25+10:00 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+2026-10-19T09:30:25+10:00 helios kernel: NVRM: nvAssertOkFailedNoLog: Assertion failed: Out of memory [NV_ERR_NO_MEMORY] (0x00000051) returned from pReuseMappingDb->pMapCb(pReuseMappingDb->pGlobalCtx, pAllocCtx, range, cachingFlags, &token, _reusemappingdbAddMappingCallback) @ mapping_reuse.c:274
+2026-10-19T09:30:25+10:00 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+2026-10-19T09:30:35+10:00 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+2026-10-19T09:30:35+10:00 helios kernel: NVRM: nvAssertOkFailedNoLog: Assertion failed: Out of memory [NV_ERR_NO_MEMORY] (0x00000051) returned from pReuseMappingDb->pMapCb(pReuseMappingDb->pGlobalCtx, pAllocCtx, range, cachingFlags, &token, _reusemappingdbAddMappingCallback) @ mapping_reuse.c:274
+2026-10-19T09:30:35+10:00 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
