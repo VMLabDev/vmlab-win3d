@@ -185,6 +185,10 @@ render-server lines are virglrenderer's, from QEMU's log.
 
 ### F2: GZDoom Vulkan on Nvidia2
 
+- **Status (2026-10-19, [gzdoom.md](gzdoom.md#f2-gzdoom-vulkan-on-nvidia)):**
+  the render-server lines are the BAR1 "allocation refused" failure in
+  worker `nvva`'s nvva.md, fixed by its Mesa patches 0070 and 0071. A GZDoom
+  run on NVIDIA with those patches is still to be made.
 - **Repro:** `gzdoom.exe -iwad freedoom2.wad -config compat-1.ini`, with
   `vid_preferbackend=1`.
 - **What happens:** GZDoom finds "Vulkan device: Virtio-GPU Venus (NVIDIA
@@ -203,6 +207,11 @@ render-server lines are virglrenderer's, from QEMU's log.
 
 This happens on both GPUs.
 
+- **Status (2026-10-19): fixed** by `patches/mesa/0080`
+  ([gzdoom.md](gzdoom.md)). GZDoom started its OpenGL renderer through GDI
+  before it loaded `opengl32.dll`; GDI's temporary load of `opengl32.dll`
+  lost the pixel format, and `wglCreateContext` failed. With 0080, GZDoom
+  OpenGL runs clean on AMD1 at 35 fps.
 - **Repro:** `vid_preferbackend=0`.
 - **What happens:** GZDoom loads `viogpu_wgl.dll`, then stops with a fatal
   error dialog:
@@ -216,9 +225,7 @@ This happens on both GPUs.
 - **Other OpenGL programs:** Heaven and Valley on AMD1, Godot's GL 3.3
   Compatibility renderer and Blender 4.2 (GL 4.3, acceptance) all create
   contexts.
-- **Next step:** trace GZDoom's WGL calls (pixel format attributes and
-  `wglCreateContextAttribsARB` attributes) against what `viogpu_wgl.dll`
-  accepts. The cause is not diagnosed here.
+- **Cause:** see the status line above.
 
 ### F4: Unigine OpenGL on Nvidia2
 
@@ -343,7 +350,7 @@ is still loading. The later frames render, so this is start-up, not a fault.
 
 - F1 (Xid 69, ErrorCode `0x13d`), F2 and F4 on NVIDIA: render-server CS
   errors from native Vulkan and from Zink.
-- F3: GZDoom's OpenGL context.
+- F3: GZDoom's OpenGL context: fixed by `patches/mesa/0080` ([gzdoom.md](gzdoom.md)).
 - F5: the D3D9 depth-bias fallback for NVIDIA.
 - F6: the Valley D3D9 device loss on AMD.
 - F7: the intermittent Heaven D3D11 heap corruption.
