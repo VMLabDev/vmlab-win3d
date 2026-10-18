@@ -12,6 +12,10 @@
  *   dmabuf  vkAllocateMemory with dma-buf export + vkGetMemoryFdKHR + mmap
  *           of the fd, then a write to every page (what virglrenderer and
  *           QEMU do for a Venus guest's host-visible blob)
+ *   import  as export, then vkGetMemoryFdPropertiesKHR on the fd and an
+ *           import of it as memory type BAR1PROBE_IMPORT_TYPE (default: the
+ *           first device-local type the fd allows), like a Venus guest that
+ *           opens a shared resource another process created
  *   export  as dmabuf, without the mmap (an exported blob the guest never
  *           maps, such as a shared device-local image)
  *
@@ -50,7 +54,8 @@ int main(int argc, char **argv)
    VkDeviceSize max = strtoull(argv[3], NULL, 0) << 20;
    const char *mode = argv[4];
    int hold = argc > 5 ? atoi(argv[5]) : 0;
-   int export_only = !strcmp(mode, "export");
+   int import = !strcmp(mode, "import");
+   int export_only = !strcmp(mode, "export") || import;
    int dmabuf = !strcmp(mode, "dmabuf") || export_only;
    int map = !strcmp(mode, "map");
 
@@ -94,6 +99,7 @@ int main(int argc, char **argv)
    VkResult r = vkCreateDevice(pd, &dci, NULL, &dev);
    if (r) { fprintf(stderr, "vkCreateDevice %d\n", r); return 1; }
    PFN_vkGetMemoryFdKHR getfd = (PFN_vkGetMemoryFdKHR)vkGetDeviceProcAddr(dev, "vkGetMemoryFdKHR");
+   PFN_vkGetMemoryFdPropertiesKHR getfdprops = (PFN_vkGetMemoryFdPropertiesKHR)vkGetDeviceProcAddr(dev, "vkGetMemoryFdPropertiesKHR");
 
    signal(SIGBUS, on_sigbus);
    size_t cap = max / (1 << 20) + 1, got = 0;
@@ -122,7 +128,24 @@ int main(int argc, char **argv)
          int fd = -1;
          r = getfd(dev, &gi, &fd);
          if (r) what = "vkGetMemoryFdKHR failed";
-         else if (!export_only) {
+         else if (import) {
+            VkMemoryFdPropertiesKHR fp = { .sType = VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR };
+            r = getfdprops(dev, VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT, fd, &fp);
+            uint32_t it = UINT32_MAX;
+            if (getenv("BAR1PROBE_IMPORT_TYPE"))
+               it = strtoul(getenv("BAR1PROBE_IMPORT_TYPE"), NULL, 0);
+            else
+               for (uint32_t i = 0; i < mp.memoryTypeCount; i++)
+                  if ((fp.memoryTypeBits & (1u << i)) && (mp.memoryTypes[i].propertyFlags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)) { it = i; break; }
+            printf("  fd memoryTypeBits 0x%x (vk %d), importing as type %u\n", fp.memoryTypeBits, r, it);
+            VkImportMemoryFdInfoKHR imp = { .sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR,
+                                            .handleType = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT, .fd = dup(fd) };
+            VkMemoryAllocateInfo iai = { .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO, .pNext = &imp,
+                                         .allocationSize = chunk, .memoryTypeIndex = it };
+            VkDeviceMemory im;
+            r = vkAllocateMemory(dev, &iai, NULL, &im);
+            if (r) what = "import vkAllocateMemory failed";
+         } else if (!export_only) {
             void *p = mmap(NULL, chunk, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
             if (p == MAP_FAILED) { what = "mmap failed"; printf("  mmap errno %d %s\n", errno, strerror(errno)); }
             else if (sigsetjmp(jb, 1)) what = "SIGBUS on first touch";
