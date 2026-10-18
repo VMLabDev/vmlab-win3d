@@ -1,0 +1,11 @@
+date: 2026-10-19T01:04:23+10:00
+host: Zeus 7.2.4-3-cachyos, 20 threads, 93 GiB
+staging: repo 82d8e51-dirty
+tests/e2e from main 82d8e51
+package 82d8e510c18cf4eaad92bef85ec1ccf14fdd0e75
+template: x86_64/windows-11@26100.1742.5
+qemu: /usr/bin/qemu-system-x86_64 QEMU emulator version 11.1.1
+qemu_binary (Intel1): /home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64 
+packages: qemu-full 11.1.1-2 qemu-base 11.1.1-2 virglrenderer 1.3.0-2.1 mesa 3:26.2.2-2 vulkan-intel 3:26.2.2-2 nvidia-utils 615.71.09-1 
+vmlab: vmlab 0.28.0-alpha
+venus gpu: /dev/dri/renderD129 0000:00:02.0 VGA compatible controller: Intel Corporation Raptor Lake-P [Iris Xe Graphics] (rev 04)

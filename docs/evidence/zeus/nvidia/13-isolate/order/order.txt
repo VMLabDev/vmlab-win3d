@@ -1,0 +1,8 @@
+[02:24:06] restart VM
+[02:25:48] desktop: True 92
+[02:26:00] 1 x64-vulkan: Run-Probe exit 1; api_failure fps 1.13 readback False | vkWaitForFences failed: VK_ERROR_UNKNOWN (-13)
+[02:26:14] 2 x64-d3d11: Run-Probe exit 0; pass fps 57.93 readback True | 
+[02:26:29] 3 x64-d3d12: Run-Probe exit 1; api_failure fps 1.52 readback False | GPU fence 1 not reached within 10 s (device removed reason 0x00000000)
+[02:26:39] 4 x64-vulkan: Run-Probe exit 1; api_failure fps 1.8 readback False | vkWaitForFences failed: VK_ERROR_UNKNOWN (-13)
+[02:26:53] 5 x64-d3d11: Run-Probe exit 0; pass fps 57.8 readback True | 
+[02:26:53] done

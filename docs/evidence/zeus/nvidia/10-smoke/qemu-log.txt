@@ -1,0 +1,1 @@
+     51 vmlab-pci-filter: 0000:01:00.0: kept NVIDIA GeForce RTX 4060 Laptop GPU, hid 0

@@ -1,0 +1,27 @@
+$ ./install.sh --check
+ldd: every shared library the binary needs is present and new enough
+$ ./install.sh
+ldd: every shared library the binary needs is present and new enough
+installed: /home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64
+QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+
+Add this line to each NVIDIA GPU block in the vmlab host config,
+~/.config/vmlab/config.wcl (vmlab 0.26.0-alpha or later):
+
+  qemu_binary = "/home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64"
+
+For example:
+
+  gpu "Nvidia1" {
+    address     = "0000:01:00.0"
+    qemu_binary = "/home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64"
+  }
+
+Then check it with: vmlab validate
+$ readelf ISA
+      Properties: x86 ISA needed: x86-64-baseline, x86-64-v2, x86-64-v3
+2191d7b82d208aa731f1258b6e03d680507f74ccca527f3c20cbc6ad011361a9  /home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64
+qemu:           QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+source:         https://github.com/VMLabDev/qemu branch vmlab/egl-headless-external-dmabuf
+commit:         d8a6048aae11c5e26168e173a7c1b1a4335d6a23
+base:           a19f59a72d (upstream)
