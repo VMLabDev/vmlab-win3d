@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "probe": "d3d11",
+  "api": "Direct3D 11",
+  "arch": "x86",
+  "result": "pass",
+  "exit_code": 0,
+  "exe": "C:\\win3d\\probes\\x86\\d3d11_probe.exe",
+  "pid": 6652,
+  "session_id": 1,
+  "os_version": "10.0.26100",
+  "finished_utc": "2026-10-18T15:13:24Z",
+  "args": {"seconds": 20, "warp": false, "width": 1024, "height": 640},
+  "adapter": {
+    "name": "Hardsoft VirtIO GPU 3D controller",
+    "vendor": "Red Hat (virtio)",
+    "vendor_id": "0x1af4",
+    "device_id": "0x1050",
+    "subsys_id": "0x11001af4",
+    "dedicated_video_memory_mb": 0,
+    "shared_system_memory_mb": 4076,
+    "dxgi_flag_software": false,
+    "driver_version": "0.0.0.0",
+    "software": false
+  },
+  "device": {
+    "driver_type": "HARDWARE",
+    "feature_level": "11_0",
+    "swap_effect": "FLIP_DISCARD"
+  },
+  "frames_presented": 1200,
+  "elapsed_seconds": 20.025,
+  "avg_fps": 59.93,
+  "window_closed_early": false,
+  "readback": {
+    "ok": true,
+    "tolerance": 2,
+    "pixels": [
+      {"name": "red_top_left", "x": 48, "y": 48, "expected": [255, 0, 0], "actual": [255, 0, 0], "match": true},
+      {"name": "blue_top_right", "x": 976, "y": 48, "expected": [0, 0, 255], "actual": [0, 0, 255], "match": true},
+      {"name": "green_bottom_left", "x": 48, "y": 592, "expected": [0, 255, 0], "actual": [0, 255, 0], "match": true}
+    ]
+  },
+  "errors": []
+}

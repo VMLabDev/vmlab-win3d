@@ -1,0 +1,26 @@
+import <vmlab.wcl>
+
+// Windows 11 with Venus on Zeus's NVIDIA RTX 4060 Max-Q (AD107M,
+// host GPU Nvidia1, 0000:01:00.0, driver 615.71.09). vmlab >= 0.25.0-alpha
+// resolves gpu.host_gpu through Zeus's ~/.config/vmlab/config.wcl, which must
+// declare gpu "Nvidia1" { address = "0000:01:00.0" default = true }, to its
+// render node for egl-headless and sets VK_LOADER_DRIVERS_SELECT=*nvidia* in
+// QEMU's environment. The evidence in docs/evidence/zeus/nvidia/ was taken on
+// vmlab 0.24 with gpu.address. Bring it up through labs/zeus/vmlab-iso.sh,
+// which puts the patched QEMU (patches/host/build-qemu.sh) first on PATH. See
+// labs/zeus/README.md and docs/zeus.md.
+lab "win3d-zeus-nvidia" {
+  vm "win" {
+    template = "x86_64/windows-11@26100.1742.5"
+    // The package is test-signed (decision 0001); Secure Boot must be off.
+    secure_boot = false
+    // Keep the template's agent (as labs/acceptance/vmlab.wcl on work/e2e).
+    agent_update = false
+    // A NAT network for the guest.
+    nic { nat = true }
+    gpu {
+      mode     = "vulkan"
+      host_gpu = "Nvidia1"
+    }
+  }
+}

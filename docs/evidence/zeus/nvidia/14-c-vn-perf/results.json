@@ -1,0 +1,166 @@
+{
+  "evidence_dir": "/home/wil/win3d-zeus/repo/docs/evidence/zeus/nvidia/14-c-vn-perf",
+  "passed": false,
+  "rows": [
+    {
+      "item": "1",
+      "check": "scripts/build.sh builds the package",
+      "result": "pass",
+      "evidence": "build.txt",
+      "note": "staged; exit 0",
+      "counts": true
+    },
+    {
+      "item": "2",
+      "check": "documented install command (scripts/install-into-vm.sh)",
+      "result": "pass",
+      "evidence": "install.log",
+      "note": "exit 0; Installed",
+      "counts": true
+    },
+    {
+      "item": "2",
+      "check": "display device on our driver, problem code 0",
+      "result": "pass",
+      "evidence": "installed-gpu-state.json",
+      "note": "Hardsoft VirtIO GPU 3D controller",
+      "counts": false
+    },
+    {
+      "item": "2",
+      "check": "vulkaninfo --summary (x64) lists the Venus device",
+      "result": "pass",
+      "evidence": "vulkaninfo/vulkaninfo-x64.txt",
+      "note": "Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU)",
+      "counts": true
+    },
+    {
+      "item": "2",
+      "check": "vulkaninfo --summary (x86) lists the Venus device",
+      "result": "pass",
+      "evidence": "vulkaninfo/vulkaninfo-x86.txt",
+      "note": "Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU)",
+      "counts": false
+    },
+    {
+      "item": "2",
+      "check": "vulkaninfo --summary (x64) lists exactly one Venus device",
+      "result": "pass",
+      "evidence": "vulkaninfo/vulkaninfo-x64.txt",
+      "note": "1 Venus: Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU)",
+      "counts": false
+    },
+    {
+      "item": "2",
+      "check": "LunarG vulkaninfo 1.4.363 (x64, pinned) lists Venus through the installed loader",
+      "result": "pass",
+      "evidence": "vulkaninfo/lunarg-vulkaninfo-x64.txt",
+      "note": "Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU)",
+      "counts": false
+    },
+    {
+      "item": "2",
+      "check": "LunarG vulkaninfo 1.4.363 (x86, pinned) lists Venus through the installed loader",
+      "result": "pass",
+      "evidence": "vulkaninfo/lunarg-vulkaninfo-x86.txt",
+      "note": "Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU)",
+      "counts": false
+    },
+    {
+      "item": "2",
+      "check": "Direct3D 9 (x64) renders on the GPU and shows on the console",
+      "result": "pass",
+      "evidence": "probes/x64-d3d9_probe.run.json, probes/x64-d3d9_probe.modules.txt, console-x64-d3d9_probe.png",
+      "note": "Hardsoft VirtIO GPU 3D controller, 46.99 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating",
+      "counts": true
+    },
+    {
+      "item": "2",
+      "check": "Direct3D 9 (x86) renders on the GPU and shows on the console",
+      "result": "pass",
+      "evidence": "probes/x86-d3d9_probe.run.json, probes/x86-d3d9_probe.modules.txt, console-x86-d3d9_probe.png",
+      "note": "Hardsoft VirtIO GPU 3D controller, 44.61 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating",
+      "counts": true
+    },
+    {
+      "item": "2",
+      "check": "Direct3D 11 (x64) renders on the GPU and shows on the console",
+      "result": "pass",
+      "evidence": "probes/x64-d3d11_probe.run.json, probes/x64-d3d11_probe.modules.txt, console-x64-d3d11_probe.png",
+      "note": "Hardsoft VirtIO GPU 3D controller, 58.96 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating",
+      "counts": true
+    },
+    {
+      "item": "2",
+      "check": "Direct3D 11 (x86) renders on the GPU and shows on the console",
+      "result": "pass",
+      "evidence": "probes/x86-d3d11_probe.run.json, probes/x86-d3d11_probe.modules.txt, console-x86-d3d11_probe.png",
+      "note": "Hardsoft VirtIO GPU 3D controller, 58.87 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating",
+      "counts": true
+    },
+    {
+      "item": "2",
+      "check": "Direct3D 12 (x64) renders on the GPU and shows on the console",
+      "result": "pass",
+      "evidence": "probes/x64-d3d12_probe.run.json, probes/x64-d3d12_probe.modules.txt, console-x64-d3d12_probe.png",
+      "note": "Hardsoft VirtIO GPU 3D controller, 51.92 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating",
+      "counts": true
+    },
+    {
+      "item": "2",
+      "check": "Direct3D 12 (x86) renders on the GPU and shows on the console",
+      "result": "pass",
+      "evidence": "probes/x86-d3d12_probe.run.json, probes/x86-d3d12_probe.modules.txt, console-x86-d3d12_probe.png",
+      "note": "Hardsoft VirtIO GPU 3D controller, 51.25 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating",
+      "counts": true
+    },
+    {
+      "item": "2",
+      "check": "OpenGL (x64) renders on the GPU and shows on the console",
+      "result": "pass",
+      "evidence": "probes/x64-opengl_probe.run.json, probes/x64-opengl_probe.modules.txt, console-x64-opengl_probe.png",
+      "note": "zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU) (NVIDIA_PROPRIETARY)), 53.41 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating",
+      "counts": true
+    },
+    {
+      "item": "2",
+      "check": "OpenGL (x86) renders on the GPU and shows on the console",
+      "result": "FAIL",
+      "evidence": "probes/x86-opengl_probe.run.json, probes/x86-opengl_probe.modules.txt, console-x86-opengl_probe.png",
+      "note": "exit 2, readback_mismatch: ; readback mismatch",
+      "counts": true
+    },
+    {
+      "item": "2",
+      "check": "Vulkan (x64) renders on the GPU and shows on the console",
+      "result": "pass",
+      "evidence": "probes/x64-vulkan_probe.run.json, probes/x64-vulkan_probe.modules.txt, console-x64-vulkan_probe.png",
+      "note": "Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU), 58.48 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating",
+      "counts": false
+    },
+    {
+      "item": "2",
+      "check": "Vulkan (x86) renders on the GPU and shows on the console",
+      "result": "pass",
+      "evidence": "probes/x86-vulkan_probe.run.json, probes/x86-vulkan_probe.modules.txt, console-x86-vulkan_probe.png",
+      "note": "Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU), 58.57 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating",
+      "counts": false
+    },
+    {
+      "item": "2",
+      "check": "dxdiag reports hardware acceleration on our driver",
+      "result": "pass",
+      "evidence": "dxdiag/dxdiag.json",
+      "note": "hardware_acceleration=True, card 'Hardsoft VirtIO GPU 3D controller', D3D Enabled, DDraw Enabled, WDDM 2.0",
+      "counts": true
+    },
+    {
+      "item": "2",
+      "check": "dxdiag: Direct3D acceleration on our full WDDM device",
+      "result": "pass",
+      "evidence": "dxdiag/dxdiag.json",
+      "note": "D3D Status Enabled, Full Device (POST), WDDM 2.0",
+      "counts": false
+    }
+  ]
+}

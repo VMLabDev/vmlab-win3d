@@ -19,7 +19,8 @@
 # D3D12, OpenGL and Vulkan probes (x64 and x86) with `vmlab vm screenshot`
 # console captures of each, and dxdiag. The evidence goes to
 # docs/evidence/zeus/<gpu>/ in the staging tree; tests/e2e/check.py judges it.
-# The lab is destroyed unless --keep. WIN3D_SMOKE=1 runs only vulkaninfo and
+# The lab is destroyed unless --keep. WIN3D_GUEST_ENV="NAME=VALUE ..." sets
+# machine-wide environment variables in the guest before the install. WIN3D_SMOKE=1 runs only vulkaninfo and
 # the x64 D3D11 probe after the install (a short first test of a new GPU).
 #
 # Both GPUs use the user's supervisor. On vmlab >= 0.26 the host config's
@@ -120,6 +121,7 @@ host_stack() {
             nvidia-smi --query-gpu=name,driver_version --format=csv,noheader
             echo "runtime pm: control $(cat /sys/bus/pci/devices/$PCI/power/control), status $(cat /sys/bus/pci/devices/$PCI/power/runtime_status); $(grep -h 'Runtime D3 status' /proc/driver/nvidia/gpus/$PCI/power | tr -s ' '); $(grep -h DynamicPowerManagement: /proc/driver/nvidia/params)"
             echo "keepawake: ${WIN3D_KEEPAWAKE:-0}"
+            echo "guest env: ${WIN3D_GUEST_ENV:-none}"
         fi
     } | tee "$EV/host.txt"
 }
@@ -183,6 +185,12 @@ prepare_guest() {
     gfile 300 'C:\win3d\guest\Set-TestDesktop.ps1' -Reboot >"$EV/test-desktop.txt" 2>&1 || true
     sleep 60; wait_agent || return 1
     autologon before-install
+    # WIN3D_GUEST_ENV="NAME=VALUE ...": machine-wide guest environment variables,
+    # set before the install, whose reboots make every process see them.
+    local kv
+    for kv in ${WIN3D_GUEST_ENV:-}; do
+        gps "[Environment]::SetEnvironmentVariable('${kv%%=*}', '${kv#*=}', 'Machine'); '${kv%%=*}=' + [Environment]::GetEnvironmentVariable('${kv%%=*}', 'Machine')" 60 | tee -a "$EV/guest-env.txt"
+    done
 }
 
 autologon() { # autologon NAME: record the Winlogon autologon values (not the password)
@@ -235,7 +243,7 @@ fetch_pin() { # fetch_pin NAME: download a tests/e2e/PINS entry into the cache, 
     read -r _ sha url < <(grep "^$name " "$HERE/PINS") || return 1
     f=$REPO/.scratch/e2e/cache/$(basename "$url")
     mkdir -p "$(dirname "$f")"
-    [ -f "$f" ] || curl -sSfLo "$f.part" "$url" && { [ -f "$f" ] || mv "$f.part" "$f"; } || return 1
+    [ -f "$f" ] || { curl -sSfLo "$f.part.$$" "$url" && mv "$f.part.$$" "$f"; } || return 1
     echo "$sha  $f" | sha256sum -c --quiet - >&2 || { note "sha256 mismatch for $name"; return 1; }
     echo "$f"
 }

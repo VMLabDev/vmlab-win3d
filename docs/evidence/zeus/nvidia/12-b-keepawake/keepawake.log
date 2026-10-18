@@ -1,0 +1,29 @@
+keepawake: pid 262363, 0000:01:00.0 (/dev/dri/renderD128), renderer "NVIDIA GeForce RTX 4060 Laptop GPU/PCIe/SSE2", clearing every interval, runtime_status active
+keepawake: interval 100 ms
+keepawake: 1792339027 runtime_status active, 587 clears
+keepawake: 1792339087 runtime_status active, 1182 clears
+keepawake: 1792339147 runtime_status active, 1777 clears
+keepawake: 1792339207 runtime_status active, 2372 clears
+keepawake: 1792339267 runtime_status active, 2968 clears
+keepawake: 1792339327 runtime_status active, 3564 clears
+keepawake: 1792339387 runtime_status active, 4159 clears
+keepawake: 1792339447 runtime_status active, 4754 clears
+keepawake: 1792339507 runtime_status active, 5350 clears
+keepawake: 1792339567 runtime_status active, 5945 clears
+keepawake: 1792339627 runtime_status active, 6542 clears
+keepawake: 1792339687 runtime_status active, 7137 clears
+keepawake: 1792339747 runtime_status active, 7732 clears
+keepawake: 1792339807 runtime_status active, 8326 clears
+keepawake: 1792339867 runtime_status active, 8921 clears
+keepawake: 1792339927 runtime_status active, 9516 clears
+keepawake: 1792339987 runtime_status active, 10111 clears
+keepawake: 1792340047 runtime_status active, 10706 clears
+keepawake: 1792340107 runtime_status active, 11301 clears
+keepawake: 1792340167 runtime_status active, 11896 clears
+keepawake: 1792340227 runtime_status active, 12491 clears
+keepawake: 1792340287 runtime_status active, 13087 clears
+keepawake: 1792340347 runtime_status active, 13682 clears
+keepawake: 1792340407 runtime_status active, 14277 clears
+keepawake: 1792340467 runtime_status active, 14873 clears
+keepawake: 1792340527 runtime_status active, 15468 clears
+keepawake: stopped after 15853 clears

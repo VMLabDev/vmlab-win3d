@@ -1,0 +1,24 @@
+import <vmlab.wcl>
+
+// Windows 11 with Venus on Zeus's Intel Iris Xe (Raptor Lake-P,
+// host GPU Intel1, 0000:00:02.0, ANV). vmlab >= 0.25.0-alpha resolves
+// gpu.host_gpu through Zeus's ~/.config/vmlab/config.wcl, which must declare
+// gpu "Intel1" { address = "0000:00:02.0" }, to its render node for
+// egl-headless and sets VK_LOADER_DRIVERS_SELECT=*intel* in QEMU's
+// environment. The evidence in docs/evidence/zeus/intel/ was taken on vmlab
+// 0.24 with gpu.address. See labs/zeus/README.md and docs/zeus.md.
+lab "win3d-zeus-intel" {
+  vm "win" {
+    template = "x86_64/windows-11@26100.1742.5"
+    // The package is test-signed (decision 0001); Secure Boot must be off.
+    secure_boot = false
+    // Keep the template's agent (as labs/acceptance/vmlab.wcl on work/e2e).
+    agent_update = false
+    // A NAT network for the guest.
+    nic { nat = true }
+    gpu {
+      mode     = "vulkan"
+      host_gpu = "Intel1"
+    }
+  }
+}

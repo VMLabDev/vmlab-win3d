@@ -1,0 +1,176 @@
+    PID    PPID STAT     ELAPSED CMD
+ 262559  262460 SN         10:26 /usr/lib/virgl_render_server --socket-fd 150
+== 262460 qemu-system-x86
+262467 CPU 0/KVM 0/KVM) kvm_vcpu_block
+262468 CPU 1/KVM 1/KVM) kvm_vcpu_block
+262469 CPU 2/KVM 2/KVM) kvm_vcpu_block
+262470 CPU 3/KVM 3/KVM) kvm_vcpu_block
+262466 IO mon_iothread mon_iothread) __x64_sys_ppoll.cold
+262461 call_rcu S futex_wait
+262474 kvm-nx-lpage-re S vhost_task_fn
+262556 qemu-sy:disk$0 S futex_wait
+262557 qemu-syste:sh0 S futex_wait
+266229 qemu-system-x86 S __x64_sys_poll.cold
+266242 qemu-system-x86 S __x64_sys_poll.cold
+266315 qemu-system-x86 S __x64_sys_poll.cold
+266338 qemu-system-x86 S __x64_sys_poll.cold
+266402 qemu-system-x86 S __x64_sys_poll.cold
+266404 qemu-system-x86 S __x64_sys_poll.cold
+266448 qemu-system-x86 S __x64_sys_poll.cold
+266461 qemu-system-x86 S __x64_sys_poll.cold
+266502 qemu-system-x86 S __x64_sys_poll.cold
+266636 qemu-system-x86 S __x64_sys_poll.cold
+271895 qemu-system-x86 S __x64_sys_poll.cold
+271936 qemu-system-x86 S __x64_sys_poll.cold
+262460 qemu-system-x86 S __x64_sys_ppoll.cold
+262473 threaded-ml S __x64_sys_poll.cold
+262472 vnc_worker S futex_wait
+266208 vrend-sync S futex_wait
+262463 worker S futex_wait
+262480 worker S futex_wait
+262514 worker S futex_wait
+262515 worker S futex_wait
+262516 worker S futex_wait
+262529 worker S futex_wait
+262533 worker S futex_wait
+262534 worker S futex_wait
+262535 worker S futex_wait
+262537 worker S futex_wait
+262538 worker S futex_wait
+262539 worker S futex_wait
+262541 worker S futex_wait
+263539 worker S futex_wait
+263540 worker S futex_wait
+263543 worker S futex_wait
+267738 worker S futex_wait
+267740 worker S futex_wait
+== 262559 virgl_render_se
+262559 virgl_render_se S __x64_sys_poll.cold
+== 266228 virgl-5-gpu_ren       05:12 /usr/lib/virgl_render_server --socket-fd 150 
+  266234 [vkcf] Analysis Analysis) futex_wait
+  266237 [vkps] Update Update) futex_wait
+  266236 [vkrt] Analysis Analysis) futex_wait
+  266228 virgl-5-gpu_ren S __skb_wait_for_more_packets
+  266240 vkr-queue-5 S futex_wait
+  266230 vkr-ring-5 S futex_wait
+  266233 vkr-ring-5 S futex_wait
+  266239 vkr-ring-5 S futex_wait
+== 266241 virgl-6-gpu_ren       05:11 /usr/lib/virgl_render_server --socket-fd 150 
+  266251 [vkcf] Analysis Analysis) futex_wait
+  266254 [vkps] Update Update) futex_wait
+  266253 [vkrt] Analysis Analysis) futex_wait
+  266241 virgl-6-gpu_ren S __skb_wait_for_more_packets
+  266257 vkr-queue-6 S futex_wait
+  266243 vkr-ring-6 S futex_wait
+  266250 vkr-ring-6 S futex_wait
+  266256 vkr-ring-6 S futex_wait
+== 266314 virgl-12-gpu_re       05:08 /usr/lib/virgl_render_server --socket-fd 150 
+  266330 [vkcf] Analysis Analysis) futex_wait
+  266333 [vkps] Update Update) futex_wait
+  266332 [vkrt] Analysis Analysis) futex_wait
+  266314 virgl-12-gpu_re S __skb_wait_for_more_packets
+  266336 vkr-queue-12 S futex_wait
+  266316 vkr-ring-12 S futex_wait
+  266329 vkr-ring-12 S futex_wait
+  266335 vkr-ring-12 S futex_wait
+== 266337 virgl-13-gpu_re       05:08 /usr/lib/virgl_render_server --socket-fd 150 
+  266368 [vkcf] Analysis Analysis) futex_wait
+  266371 [vkps] Update Update) futex_wait
+  266370 [vkrt] Analysis Analysis) futex_wait
+  266337 virgl-13-gpu_re S __skb_wait_for_more_packets
+  266374 vkr-queue-13 S futex_wait
+  266339 vkr-ring-13 S futex_wait
+  266367 vkr-ring-13 S futex_wait
+  266373 vkr-ring-13 S futex_wait
+== 266401 virgl-16-gpu_re       05:08 /usr/lib/virgl_render_server --socket-fd 150 
+  266415 [vkcf] Analysis Analysis) futex_wait
+  266426 [vkps] Update Update) futex_wait
+  266425 [vkrt] Analysis Analysis) futex_wait
+  266401 virgl-16-gpu_re S __skb_wait_for_more_packets
+  266433 vkr-queue-16 S futex_wait
+  266405 vkr-ring-16 S futex_wait
+  266414 vkr-ring-16 S futex_wait
+  266432 vkr-ring-16 S futex_wait
+== 266403 virgl-17-gpu_re       05:08 /usr/lib/virgl_render_server --socket-fd 150 
+  266424 [vkcf] Analysis Analysis) futex_wait
+  266430 [vkps] Update Update) futex_wait
+  266429 [vkrt] Analysis Analysis) futex_wait
+  266403 virgl-17-gpu_re S __skb_wait_for_more_packets
+  266435 vkr-queue-17 S futex_wait
+  266406 vkr-ring-17 S futex_wait
+  266423 vkr-ring-17 S futex_wait
+  266434 vkr-ring-17 S futex_wait
+== 266447 virgl-19-gpu_re       05:07 /usr/lib/virgl_render_server --socket-fd 150 
+  266453 [vkcf] Analysis Analysis) futex_wait
+  266456 [vkps] Update Update) futex_wait
+  266455 [vkrt] Analysis Analysis) futex_wait
+  266447 virgl-19-gpu_re S __skb_wait_for_more_packets
+  266459 vkr-queue-19 S futex_wait
+  266449 vkr-ring-19 S futex_wait
+  266452 vkr-ring-19 S futex_wait
+  266458 vkr-ring-19 S futex_wait
+== 266460 virgl-20-gpu_re       05:07 /usr/lib/virgl_render_server --socket-fd 150 
+  266466 [vkcf] Analysis Analysis) futex_wait
+  266469 [vkps] Update Update) futex_wait
+  266468 [vkrt] Analysis Analysis) futex_wait
+  266460 virgl-20-gpu_re S __skb_wait_for_more_packets
+  266472 vkr-queue-20 S futex_wait
+  266462 vkr-ring-20 S futex_wait
+  266465 vkr-ring-20 S futex_wait
+  266471 vkr-ring-20 S futex_wait
+== 266501 virgl-22-gpu_re       05:06 /usr/lib/virgl_render_server --socket-fd 150 
+  266520 [vkcf] Analysis Analysis) futex_wait
+  266525 [vkps] Update Update) futex_wait
+  266524 [vkrt] Analysis Analysis) futex_wait
+  266501 virgl-22-gpu_re S __skb_wait_for_more_packets
+  266535 vkr-queue-22 S futex_wait
+  266503 vkr-ring-22 S futex_wait
+  266519 vkr-ring-22 S futex_wait
+  266534 vkr-ring-22 S futex_wait
+== 266635 virgl-24-gpu_re       05:01 /usr/lib/virgl_render_server --socket-fd 150 
+  266641 [vkcf] Analysis Analysis) futex_wait
+  266644 [vkps] Update Update) futex_wait
+  266643 [vkrt] Analysis Analysis) futex_wait
+  266635 virgl-24-gpu_re S __skb_wait_for_more_packets
+  266647 vkr-queue-24 S futex_wait
+  266637 vkr-ring-24 S futex_wait
+  266640 vkr-ring-24 S futex_wait
+  266646 vkr-ring-24 S futex_wait
+== 271894 virgl-58-gpu_re       00:36 /usr/lib/virgl_render_server --socket-fd 150 
+  271908 [vkcf] Analysis Analysis) futex_wait
+  271911 [vkps] Update Update) futex_wait
+  271910 [vkrt] Analysis Analysis) futex_wait
+  271894 virgl-58-gpu_re S __skb_wait_for_more_packets
+  271919 vkr-queue-58 S futex_wait
+  271920 vkr-queue-58 S futex_wait
+  271897 vkr-ring-58 S futex_wait
+  271907 vkr-ring-58 S futex_wait
+  271918 vkr-ring-58 S futex_wait
+  271896 vkr-ringmon-58 S futex_wait
+== 271935 virgl-60-gpu_re       00:36 /usr/lib/virgl_render_server --socket-fd 150 
+  271941 [vkcf] Analysis Analysis) futex_wait
+  271944 [vkps] Update Update) futex_wait
+  271943 [vkrt] Analysis Analysis) futex_wait
+  271935 virgl-60-gpu_re S __skb_wait_for_more_packets
+  271947 vkr-queue-60 S futex_wait
+  271937 vkr-ring-60 S futex_wait
+  271940 vkr-ring-60 S futex_wait
+  271946 vkr-ring-60 S futex_wait
+== 272875 virgl-62-gpu_re       00:06 /usr/lib/virgl_render_server --socket-fd 150 
+  272881 [vkcf] Analysis Analysis) futex_wait
+  272884 [vkps] Update Update) futex_wait
+  272883 [vkrt] Analysis Analysis) futex_wait
+  272875 virgl-62-gpu_re S __skb_wait_for_more_packets
+  272887 vkr-queue-62 S futex_wait
+  272877 vkr-ring-62 S futex_wait
+  272880 vkr-ring-62 S futex_wait
+  272886 vkr-ring-62 S futex_wait
+== 273101 virgl-64-gpu_re       00:01 /usr/lib/virgl_render_server --socket-fd 150 
+  273107 [vkcf] Analysis Analysis) futex_wait
+  273110 [vkps] Update Update) futex_wait
+  273109 [vkrt] Analysis Analysis) futex_wait
+  273101 virgl-64-gpu_re S __skb_wait_for_more_packets
+  273113 vkr-queue-64 S futex_wait
+  273103 vkr-ring-64 S futex_wait
+  273106 vkr-ring-64 S futex_wait
+  273112 vkr-ring-64 S futex_wait
