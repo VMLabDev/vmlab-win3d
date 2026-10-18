@@ -120,7 +120,14 @@ function Invoke-Search {
     $q.ServerSelection = 2   # ssWindowsUpdate
     $q.Online = $true
     $t0 = Get-Date
-    $r = $q.Search("IsInstalled=0 and IsHidden=0")
+    # A slow or flaky link can end a search with a transport error such as
+    # 0x80240438 (endpoint unreachable); try again, as Windows Update would.
+    $errors = @()
+    for ($i = 1; $i -le 4; $i++) {
+        try { $r = $q.Search("IsInstalled=0 and IsHidden=0"); break }
+        catch { $errors += '{0:o} attempt {1}: 0x{2:X8} {3}' -f (Get-Date), $i, $_.Exception.HResult, $_.Exception.Message.Trim(); $r = $null; Start-Sleep -Seconds 60 }
+    }
+    if (-not $r) { throw ($errors -join '; ') }
     [pscustomobject]@{
         session = $s
         result = $r
@@ -128,6 +135,7 @@ function Invoke-Search {
             criteria = 'IsInstalled=0 and IsHidden=0'
             server_selection = 'ssWindowsUpdate'
             result_code = $r.ResultCode
+            failed_attempts = $errors
             seconds = [int]((Get-Date) - $t0).TotalSeconds
             warnings = @($r.Warnings | ForEach-Object { '0x{0:X8} {1}' -f $_.HResult, $_.Message })
             updates = @($r.Updates | ForEach-Object { ConvertTo-Update $_ })
