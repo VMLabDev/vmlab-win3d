@@ -89,6 +89,7 @@ To build from source instead, see [Quick start](#quick-start).
 | [docs/index.md](docs/index.md) | Map of every document |
 | [docs/install.md](docs/install.md) | Build, lab setup, install, what the installer changes |
 | [docs/uninstall.md](docs/uninstall.md) | Removal back to the baseline |
+| [docs/release.md](docs/release.md) | Cutting a release, and installing the release assets |
 | [docs/stack.md](docs/stack.md) | Components, guest files, registration, pins, patches, licences |
 | [docs/known-limits.md](docs/known-limits.md) | What does not work or is untested, and which host GPUs work |
 | [docs/decisions/0001-signing.md](docs/decisions/0001-signing.md) | Why test signing with Secure Boot off |

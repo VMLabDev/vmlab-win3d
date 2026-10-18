@@ -38,6 +38,7 @@ or Intel GPU as declared in the host config, `~/.config/vmlab/config.wcl`
 | --- | --- |
 | [install.md](install.md) | Build the package, set up the lab, install it in a guest, and see every change the installer makes |
 | [uninstall.md](uninstall.md) | Remove the package and return the guest to its state before the first install |
+| [release.md](release.md) | Cut a release with `scripts/release.sh`, or install the release assets: the driver zip in a guest and the patched QEMU on an NVIDIA host |
 | [known-limits.md](known-limits.md) | Find out what does not work, has not been tested, or needs a workaround, including which host GPUs work |
 | [`installer/README.txt`](../installer/README.txt) | The short guide that ships inside the bundle |
 
