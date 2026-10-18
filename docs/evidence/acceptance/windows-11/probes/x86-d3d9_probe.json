@@ -6,10 +6,10 @@
   "result": "pass",
   "exit_code": 0,
   "exe": "C:\\win3d\\probes\\x86\\d3d9_probe.exe",
-  "pid": 1812,
+  "pid": 8320,
   "session_id": 1,
   "os_version": "10.0.26100",
-  "finished_utc": "2026-10-17T18:44:51Z",
+  "finished_utc": "2026-10-18T20:55:50Z",
   "args": {"seconds": 20, "warp": false, "width": 1024, "height": 640},
   "adapter": {
     "name": "Hardsoft VirtIO GPU 3D controller",
@@ -29,9 +29,9 @@
     "vertex_processing": "hardware",
     "device_type": "HAL"
   },
-  "frames_presented": 686,
-  "elapsed_seconds": 20.059,
-  "avg_fps": 34.20,
+  "frames_presented": 1170,
+  "elapsed_seconds": 20.020,
+  "avg_fps": 58.44,
   "window_closed_early": false,
   "readback": {
     "ok": true,

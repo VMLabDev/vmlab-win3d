@@ -2,13 +2,13 @@
     "name":  "d3d11-x64-SubD11",
     "exe":  "C:\\apps\\DXSDK\\Samples\\C++\\Direct3D11\\Bin\\x64\\SubD11.exe",
     "arguments":  "-windowed",
-    "user":  "VMLABVM-241P7ES\\win3d",
+    "user":  "VMLABVM-AIUBH5O\\win3d",
     "session_id":  1,
-    "pid":  7468,
+    "pid":  5528,
     "wow64":  false,
-    "started":  "2026-10-17T12:13:58.9697913-07:00",
-    "ended":  "2026-10-17T12:14:40.1357942-07:00",
-    "duration_s":  41.2,
+    "started":  "2026-10-18T15:44:29.1658513-07:00",
+    "ended":  "2026-10-18T15:45:10.7808186-07:00",
+    "duration_s":  41.6,
     "timed_out":  true,
     "exit_code":  null,
     "exit_code_hex":  null,
@@ -20,15 +20,15 @@
     "readback_ok":  null,
     "module_count":  52,
     "graphics_modules":  [
-                             "C:\\Windows\\SYSTEM32\\d3dx11_43.dll [system32] 9.29.952.3111",
-                             "C:\\Windows\\SYSTEM32\\D3DCOMPILER_43.dll [system32] 9.29.952.3111",
                              "C:\\Windows\\SYSTEM32\\d3dx9_43.dll [system32] 9.29.952.3111",
+                             "C:\\Windows\\SYSTEM32\\D3DCOMPILER_43.dll [system32] 9.29.952.3111",
+                             "C:\\Windows\\SYSTEM32\\d3dx11_43.dll [system32] 9.29.952.3111",
                              "C:\\Windows\\SYSTEM32\\d3d11.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
                              "C:\\Windows\\SYSTEM32\\dxgi.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
                              "C:\\Windows\\SYSTEM32\\d3d9.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
                              "C:\\Windows\\SYSTEM32\\dwmapi.dll [system32] 10.0.19041.1 (WinBuild.160101.0800)",
-                             "C:\\Windows\\SYSTEM32\\dxcore.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
-                             "C:\\Windows\\system32\\viogpu_d3d10.dll [system32] "
+                             "C:\\Windows\\system32\\viogpu_d3d10.dll [system32] ",
+                             "C:\\Windows\\SYSTEM32\\dxcore.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)"
                          ],
     "app_local_modules":  [
 

@@ -2,13 +2,13 @@
     "name":  "x86-d3d12_probe",
     "exe":  "C:\\win3d\\probes\\x86\\d3d12_probe.exe",
     "arguments":  "--seconds 20 --out C:\\win3d\\results\\probes\\x86-d3d12_probe.json",
-    "user":  "VMLABVM-6THV4OS\\win3d",
+    "user":  "VMLABVM-TN0BP2N\\win3d",
     "session_id":  1,
-    "pid":  7912,
+    "pid":  8444,
     "wow64":  true,
-    "started":  "2026-10-18T01:11:34.1947125-07:00",
-    "ended":  "2026-10-18T01:11:56.9453263-07:00",
-    "duration_s":  22.8,
+    "started":  "2026-10-18T13:46:29.1063597-07:00",
+    "ended":  "2026-10-18T13:46:51.5543938-07:00",
+    "duration_s":  22.4,
     "timed_out":  false,
     "exit_code":  0,
     "exit_code_hex":  "0x00000000",
@@ -28,9 +28,9 @@
                              "C:\\WINDOWS\\SysWOW64\\libvulkan_virtio.dll [syswow64] ",
                              "C:\\WINDOWS\\SysWOW64\\vmlab-win3d\\dxgi-vulkan.dll [system_subdir] 10.0.17763.1 (WinBuild.160101.0800)",
                              "C:\\WINDOWS\\SysWOW64\\d3dcompiler_47.dll [syswow64] 10.0.26100.9168 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
                              "C:\\WINDOWS\\SysWOW64\\d3d11.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
-                             "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll [syswow64] ",
-                             "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)"
+                             "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll [syswow64] "
                          ],
     "app_local_modules":  [
 

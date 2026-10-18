@@ -25,15 +25,15 @@
     "timed_out": true,
     "app_local_modules": [],
     "graphics_modules": [
-      "C:\\Windows\\SYSTEM32\\d3dx11_43.dll [system32] 9.29.952.3111",
-      "C:\\Windows\\SYSTEM32\\D3DCOMPILER_43.dll [system32] 9.29.952.3111",
       "C:\\Windows\\SYSTEM32\\d3dx9_43.dll [system32] 9.29.952.3111",
+      "C:\\Windows\\SYSTEM32\\D3DCOMPILER_43.dll [system32] 9.29.952.3111",
+      "C:\\Windows\\SYSTEM32\\d3dx11_43.dll [system32] 9.29.952.3111",
       "C:\\Windows\\SYSTEM32\\d3d11.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
       "C:\\Windows\\SYSTEM32\\dxgi.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
       "C:\\Windows\\SYSTEM32\\d3d9.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
       "C:\\Windows\\SYSTEM32\\dwmapi.dll [system32] 10.0.19041.1 (WinBuild.160101.0800)",
-      "C:\\Windows\\SYSTEM32\\dxcore.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
-      "C:\\Windows\\system32\\viogpu_d3d10.dll [system32] "
+      "C:\\Windows\\system32\\viogpu_d3d10.dll [system32] ",
+      "C:\\Windows\\SYSTEM32\\dxcore.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)"
     ],
     "console_png": "console-d3d11-x64-SubD11.png"
   },

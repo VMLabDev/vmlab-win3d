@@ -1,7 +1,7 @@
 {
   "x64-d3d9_probe": {
-    "frames": 13,
-    "frames_with_window": 10,
+    "frames": 12,
+    "frames_with_window": 9,
     "visible": true,
     "animating": true,
     "png": "console-x64-d3d9_probe.png",
@@ -13,7 +13,7 @@
         "blue",
         "green"
       ],
-      "crc": "11bca12e"
+      "crc": "29cc989f"
     }
   },
   "x86-d3d9_probe": {
@@ -30,7 +30,7 @@
         "blue",
         "green"
       ],
-      "crc": "c7894a41"
+      "crc": "220d981b"
     }
   },
   "x64-d3d11_probe": {
@@ -47,7 +47,7 @@
         "blue",
         "green"
       ],
-      "crc": "22f49326"
+      "crc": "60bdd1bb"
     }
   },
   "x86-d3d11_probe": {
@@ -64,12 +64,12 @@
         "blue",
         "green"
       ],
-      "crc": "abc89df3"
+      "crc": "eb0ed815"
     }
   },
   "x64-d3d12_probe": {
-    "frames": 13,
-    "frames_with_window": 8,
+    "frames": 12,
+    "frames_with_window": 9,
     "visible": true,
     "animating": true,
     "png": "console-x64-d3d12_probe.png",
@@ -81,11 +81,11 @@
         "blue",
         "green"
       ],
-      "crc": "81926edb"
+      "crc": "add98c7b"
     }
   },
   "x86-d3d12_probe": {
-    "frames": 13,
+    "frames": 12,
     "frames_with_window": 8,
     "visible": true,
     "animating": true,
@@ -98,7 +98,7 @@
         "blue",
         "green"
       ],
-      "crc": "ce9e9e7c"
+      "crc": "b23724ba"
     }
   },
   "x64-opengl_probe": {
@@ -115,7 +115,7 @@
         "blue",
         "green"
       ],
-      "crc": "5dfd4bd6"
+      "crc": "3382542c"
     }
   },
   "x86-opengl_probe": {
@@ -132,7 +132,7 @@
         "blue",
         "green"
       ],
-      "crc": "7a5841c6"
+      "crc": "8587ff30"
     }
   },
   "x64-vulkan_probe": {
@@ -149,7 +149,7 @@
         "blue",
         "green"
       ],
-      "crc": "c0bcee4e"
+      "crc": "8051baa1"
     }
   },
   "x86-vulkan_probe": {
@@ -166,7 +166,7 @@
         "blue",
         "green"
       ],
-      "crc": "d6cc7643"
+      "crc": "bbfb539c"
     }
   }
 }

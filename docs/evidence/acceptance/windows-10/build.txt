@@ -1,25 +1,16 @@
-mode: reused (out/package built at 61058896dca41d5a2f6378eb66131de2a0c266c5; no change to build installer probes patches scripts/build.sh since)
+mode: reused (out/package built at 0ee5ba149e10b7671aef8ab3db71f187c53d895c; no change to build installer probes patches scripts/build.sh since)
 exit: 0
 command: scripts/build.sh
-## stages
-==== toolchain (2026-10-17T21:09:53+10:00)
-==== mesa (2026-10-17T21:09:53+10:00)
-==== vulkan-sdk (2026-10-17T21:10:35+10:00)
-==== d3d12 (2026-10-17T21:10:54+10:00)
-==== kmd (2026-10-17T21:10:55+10:00)
-==== probes (2026-10-17T21:11:08+10:00)
-==== signing-cert (2026-10-17T21:11:08+10:00)
-==== package (2026-10-17T21:11:08+10:00)
 ## manifest.json
 {
   "schema": 1,
   "name": "vmlab-win3d",
-  "version": "0.1.0",
-  "commit": "61058896dca41d5a2f6378eb66131de2a0c266c5",
+  "version": "0.1.1",
+  "commit": "0ee5ba149e10b7671aef8ab3db71f187c53d895c",
   "driver_date": "09/27/2026",
   "driver_version": "100.6.101.58100",
   "hardware_id": "PCI\\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01",
-  "certificate_thumbprint": "0BA56C49B1E9255CAFBF64BCD11035ADAFAC7EE0",
+  "certificate_thumbprint": "BEC7EE0705AFDB5E0BF72809F4E00F4D611F356A",
   "files": [
     {
       "path": "Install.cmd",
@@ -38,42 +29,42 @@ command: scripts/build.sh
     },
     {
       "path": "driver/vgpusrv.exe",
-      "sha256": "b41defb5114295fff7c41dddd618939f85f379df54898669279c720d79652d2a",
+      "sha256": "e14233941ec9b12d1e00bb443fc9725a0254a59099286f9614b1671e8fe7bea2",
       "size": 379400
     },
     {
       "path": "driver/viogpu3d.cat",
-      "sha256": "b3428c898f4925e2823ccc1c1a832eb3646b138715521d46e739d8aeb030e2e2",
-      "size": 7310
+      "sha256": "fbf041d0aa614b466b545f41448c07f9ea0dada9caadbffd1c7b637dcb5fa22c",
+      "size": 7302
     },
     {
       "path": "driver/viogpu3d.inf",
-      "sha256": "21663f174a674056804b138f6b1cc7d3f6f31c30921f7c466793bd80eeefa627",
+      "sha256": "afd84610e82c78ddee1e492079c485ca2a3acbc9df522f1fa93108c7a88fc162",
       "size": 5177
     },
     {
       "path": "driver/viogpu3d.sys",
-      "sha256": "fedb6fa627c158417b03655c929e20e04052659434ee890c1c6adacbe7e9d4e7",
+      "sha256": "5ec787d4f94832af50cc15342542d44b69ce4ebda5b3e9955e02b1c36c219e60",
       "size": 174088
     },
     {
       "path": "driver/viogpuap.exe",
-      "sha256": "44e5a5e6a4f0486808d0bb940bdd5ab1c445be17ec158b9edaeb5f5f5dd226dd",
+      "sha256": "e55bbdbb958eaad933cf58d9a470244b14afac50750eebd52042b13fbac4af21",
       "size": 361480
     },
     {
       "path": "driver/x64/libvulkan_virtio_x64.dll",
-      "sha256": "cde15ef0c2fa1da4fb8a445cd036035ee88092d9515bbb3ee7b3f13488b0151d",
+      "sha256": "95f271a321056795c8697c069c22b58b0be194f364f50151692be4019b83219e",
       "size": 2281992
     },
     {
       "path": "driver/x64/viogpu_d3d10_x64.dll",
-      "sha256": "a06a7280cc65290def8a8499e1ab4c8b786f40f895902d172d05e7b0a7f9170b",
-      "size": 12870664
+      "sha256": "479a886adcc7f467fef913df82ccb361a4e966a4cead821a4c840c8b16e5c35c",
+      "size": 12896264
     },
     {
       "path": "driver/x64/viogpu_wgl_x64.dll",
-      "sha256": "37215b14ea92cf1ba6178e857451f9d7a455c82f4067d25b99c955513b740372",
+      "sha256": "e1ac4b4cba2e2b3bbedc17be404ac4e754e73dfc1c0f80a120a8e1ccecb5c1f7",
       "size": 20843528
     },
     {
@@ -83,17 +74,17 @@ command: scripts/build.sh
     },
     {
       "path": "driver/x86/libvulkan_virtio_x86.dll",
-      "sha256": "d0de1eaac3207bd17846e8e603fe003b5d3a547e2258bc2646f502365373464b",
+      "sha256": "045b8aa2b4f190860ef8e417617dd93ba19af284cb0e79a5bb8776b02e6d6099",
       "size": 2215432
     },
     {
       "path": "driver/x86/viogpu_d3d10_x86.dll",
-      "sha256": "1f88972b136d89682e3348bbda23e18698b085ab10f9bb06d07d2104683515d8",
-      "size": 12587528
+      "sha256": "c49ca4ce602d2031549010d1b43cd3c7785941143ab0f152ad5521ef32d3308b",
+      "size": 12612616
     },
     {
       "path": "driver/x86/viogpu_wgl_x86.dll",
-      "sha256": "bfae5dff57e4456a7c9fed2302348779e2ca26d908ba7f84ee7028a4cca20bf4",
+      "sha256": "69f2839741ec9a3cf97a8219e5e907e4f8ea5f4f757d5fe16afc827ffd05e62c",
       "size": 20101640
     },
     {
@@ -153,16 +144,16 @@ command: scripts/build.sh
     },
     {
       "path": "vmlab-win3d-test.cer",
-      "sha256": "fbd55adde7735c8e87e2130f878e44b17b36e84674573d66ebba7d9ee6804c98",
+      "sha256": "1646ae3f9c1c8c156f55a25504f258838b4413d3d97b0beb3c3d17f54fdca07f",
       "size": 1180
     },
     {
       "path": "vmlab-win3d.ps1",
-      "sha256": "00d36edea360db670a6cb1e4c6beda777cc2d31ed0c17b985e921e8b5c2cffdc",
-      "size": 47501
+      "sha256": "e7dd7e39617c4f1a7ababc064c07fefcb30a3cadd2448c96352b5d77c4b5d7d5",
+      "size": 57475
     }
   ]
 }
 ## SHA256SUMS
-cdf39482b8b9a6fb9a08025651a5499c90e9e914da3eda50b2e6c630c04caffc  vmlab-win3d-0.1.0.zip
-39c243021699ada5ba69f49bbe31ec48a3cf1bac03989c1b5c609a3e80be6909  vmlab-win3d-0.1.0/manifest.json
+414117aaca4e4621768475b1416710dcd8009192a59bb7cccf0708a6679bab48  vmlab-win3d-0.1.1.zip
+b9523c1b4c1127300288530ef684434fa56d947057b780b01ac2ce2d6c097339  vmlab-win3d-0.1.1/manifest.json
