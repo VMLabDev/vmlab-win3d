@@ -1,0 +1,27 @@
+### linear none
+vmlab-pci-filter: 0000:01:00.0: kept NVIDIA GeForce RTX 5090, hid 1
+device NVIDIA GeForce RTX 5090 driver 0x988e4100; colour linear, depth none, vkCmdDrawIndexed 168
+B8G8R8A8_UNORM linearTilingFeatures 0x1dd03 (COLOR_ATTACHMENT no)
+colour image format properties: 0 (maxExtent 32768x32768)
+vkWaitForFences: 0
+pixel in quad 0: 0xffff7f00, background: 0xff191933
+OK
+### linear d16 draw
+vmlab-pci-filter: 0000:01:00.0: kept NVIDIA GeForce RTX 5090, hid 1
+device NVIDIA GeForce RTX 5090 driver 0x988e4100; colour linear, depth d16, vkCmdDraw 168
+B8G8R8A8_UNORM linearTilingFeatures 0x1dd03 (COLOR_ATTACHMENT no)
+depth format 124 optimalTilingFeatures 0x1de03
+colour image format properties: 0 (maxExtent 32768x32768)
+vkWaitForFences: -4 (DEVICE_LOST)
+FAILED
+Oct 18 16:32:18 helios kernel: NVRM: Xid (PCI:0000:01:00): 69, pid=1062208, name=lindepth, Class Error: channel 0x00000055, Class 0000ce97, Offset 00000274, Data 000000a8, ErrorCode 0000009c
+### linear d16
+vmlab-pci-filter: 0000:01:00.0: kept NVIDIA GeForce RTX 5090, hid 1
+device NVIDIA GeForce RTX 5090 driver 0x988e4100; colour linear, depth d16, vkCmdDrawIndexed 168
+B8G8R8A8_UNORM linearTilingFeatures 0x1dd03 (COLOR_ATTACHMENT no)
+depth format 124 optimalTilingFeatures 0x1de03
+colour image format properties: 0 (maxExtent 32768x32768)
+vkWaitForFences: -4 (DEVICE_LOST)
+FAILED
+Oct 18 16:32:18 helios kernel: NVRM: Xid (PCI:0000:01:00): 69, pid=1062208, name=lindepth, Class Error: channel 0x00000055, Class 0000ce97, Offset 00000274, Data 000000a8, ErrorCode 0000009c
+Oct 18 16:32:22 helios kernel: NVRM: Xid (PCI:0000:01:00): 69, pid=1062660, name=lindepth, Class Error: channel 0x00000056, Class 0000ce97, Offset 0000026c, Data 000000a8, ErrorCode 0000009c
