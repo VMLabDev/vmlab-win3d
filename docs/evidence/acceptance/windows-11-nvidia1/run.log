@@ -1,11 +1,23 @@
-date: 2026-10-17T22:16:32+10:00
-commit: 7d5317d6a5f8f863b1ec546b19c303b5ba1be6d9
+
+[11:02:15] == vmlab-win3d e2e: windows-11, commit 045fda1
+date: 2026-10-18T11:02:15+10:00
+commit: 045fda111e0af30147a6be572be2b01b2a9abcde
+worktree changes: 0
 template: x86_64/windows-11@26100.1742.5
-vmlab: vmlab 0.25.0-alpha
-qemu: QEMU emulator version 11.1.1
-packages: qemu-full 11.1.1-1 virglrenderer 1.3.0-2.1 mesa 3:26.2.2-2 nvidia-utils 610.57.04-1 
-nvidia: 00000000:01:00.0, NVIDIA GeForce RTX 5090, 610.57.04;00000000:05:00.0, NVIDIA GeForce RTX 5090, 610.57.04;
-ok: lab "win3d-e2e-final-nv1" — 1 vm(s), 0 container(s), 0 segment(s)
+kernel: 7.2.3-1-cachyos
+qemu (PATH): QEMU emulator version 11.1.1
+qemu (Nvidia1 qemu_binary): /home/wil/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64, QEMU emulator version 11.1.1
+packages: qemu-full 11.1.1-1 virglrenderer 1.3.0-2.1 mesa 3:26.2.2-2 vulkan-radeon 3:26.2.2-2 nvidia-utils 610.57.04-1 
+vmlab: vmlab 0.27.0-alpha
+venus gpu: host_gpu Nvidia1, /dev/dri/renderD128 0000:01:00.0 VGA compatible controller: NVIDIA Corporation GB202 [GeForce RTX 5090] (rev a1)
+
+[11:02:15] == 1 build
+[11:02:15] reused (out/package built at 08ff8848dea6defa961a994cbfc7fed8a6d70656; no change to build installer probes patches scripts/build.sh since)
+
+[11:02:15] == 2 fresh lab win3d-nvidia-e2e-w11-nv1 from x86_64/windows-11@26100.1742.5
+[11:02:15] destroying the previous win3d-nvidia-e2e-w11-nv1
+lab "win3d-nvidia-e2e-w11-nv1" destroyed
+ok: lab "win3d-nvidia-e2e-w11-nv1" — 1 vm(s), 0 container(s), 0 segment(s)
 first-boot: provisioning win...
 first-boot: agent busy (win: no vmlab-agent answered on the agent channel — the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
 first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
@@ -23,78 +35,202 @@ removed NcsiUwpApp_1000.25128.1000.0_neutral_neutral_8wekyb3d8bbwe
 removed MdOdrMcpFilterPackage_1.0.0.0_neutral__cw5n1h2txyewy
 first-boot: rebooting once to settle shell reconciliation
 first-boot: win ready
-lab "win3d-e2e-final-nv1" is up
-lab "win3d-e2e-final-nv1"
+lab "win3d-nvidia-e2e-w11-nv1" is up
 
-  NAME KIND      STATUS  IP TEMPLATE/IMAGE
-  win  vm        running -  x86_64/windows-11@26100.1742.5
-      state=running ready=yes cached=yes arch=x86_64 cpus=4 memory=8GiB agent=f1e4515 host_gpu=Nvidia1
-[22:18:34] screenshot before-install: rc 0 /home/wil/dev/vmlab-win3d-wt/e2e-final/.scratch/nv1/before-install.png
-pushed 7 file(s), 40790 bytes to win:C:/win3d/guest
+[11:04:22] == 3 guest scripts, probes and the baseline
+pushed 7 file(s), 42217 bytes to win:C:/win3d/guest
 pushed 1 file(s), 2321 bytes to win:C:/win3d/e2e
 pushed 5 file(s), 174592 bytes to win:C:/win3d/probes/x64
 pushed 5 file(s), 153088 bytes to win:C:/win3d/probes/x86
-[22:19:41] install: scripts/install-into-vm.sh /home/wil/dev/vmlab-win3d-wt/e2e-final/.scratch/nv1/lab win
-[22:19:41] waiting for the guest agent
-[22:19:42] copying vmlab-win3d-0.1.0 to C:\vmlab-win3d
+pushed 2800056 bytes to win:C:/win3d/lunarg/x64/vulkaninfo.exe
+pushed 2403256 bytes to win:C:/win3d/lunarg/x86/vulkaninfo.exe
+[11:04:32] baseline: Red Hat VirtIO GPU DOD controller (problem 0)
+
+[11:04:32] == 3b test desktop (autologon user win3d)
+[11:04:40] oobe: done after 5 s
+[11:05:43] autologon before-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-6THV4OS AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-6THV4OS\win3d 
+
+[11:05:43] == 4 install: scripts/install-into-vm.sh /home/wil/dev/vmlab-win3d-wt/nvidia-e2e/.scratch/e2e/windows-11-nvidia1/lab win
+[11:05:43] waiting for the guest agent
+[11:05:44] copying vmlab-win3d-0.1.0 to C:\vmlab-win3d
 pushed 29 file(s), 102346103 bytes to win:C:/vmlab-win3d
-[22:19:45] running C:\vmlab-win3d\Install.cmd
-2026-10-17T12:19:44.409-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
-2026-10-17T12:19:47.232-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
-2026-10-17T12:19:49.578-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
-2026-10-17T12:19:49.831-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
-2026-10-17T12:19:49.842-07:00 [Install]   Root "Trusted Root Certification Authorities"
-2026-10-17T12:19:49.846-07:00 [Install]   Signature matches Public Key
-2026-10-17T12:19:49.848-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
-2026-10-17T12:19:49.853-07:00 [Install]   CertUtil: -addstore command completed successfully.
-2026-10-17T12:19:49.895-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
-2026-10-17T12:19:49.910-07:00 [Install]   TrustedPublisher "Trusted Publishers"
-2026-10-17T12:19:49.912-07:00 [Install]   Signature matches Public Key
-2026-10-17T12:19:49.917-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
-2026-10-17T12:19:49.918-07:00 [Install]   CertUtil: -addstore command completed successfully.
-2026-10-17T12:19:49.991-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
-2026-10-17T12:19:49.995-07:00 [Install]   The operation completed successfully.
-2026-10-17T12:19:50.313-07:00 [Install] test signing is set but not active in this boot
-2026-10-17T12:19:50.903-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
-2026-10-17T12:19:50.965-07:00 [Install] rebooting; step Driver resumes after the restart
-[22:19:53] Install.cmd exited 0
-[22:19:54] state: RebootPending|Driver|
-[22:20:44] state: RebootPending|Verify|
-[22:21:36] state: Installed||
-[22:21:36] done: Installed
-exit: 0
-[22:21:41] autologon gone after install; Set-TestDesktop.ps1 -Reboot again
-[22:22:44] desktop: True dwm=True 51
-[22:23:01] desktop: True dwm=True 68
-[22:23:17] desktop: True dwm=True 84
-[22:23:33] desktop: True dwm=True 101
-[22:23:49] desktop: True dwm=True 117
-[22:24:06] desktop: True dwm=True 133
-[22:24:08] screenshot desktop: rc 0 /home/wil/dev/vmlab-win3d-wt/e2e-final/.scratch/nv1/desktop.png
-	deviceName         = Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
-	driverName         = venus
+[11:05:47] running C:\vmlab-win3d\Install.cmd
+2026-10-18T01:05:47.530-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
+2026-10-18T01:05:50.369-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T01:05:53.031-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
+2026-10-18T01:05:53.296-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T01:05:53.309-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-18T01:05:53.313-07:00 [Install]   Signature matches Public Key
+2026-10-18T01:05:53.317-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T01:05:53.320-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T01:05:53.366-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T01:05:53.368-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-18T01:05:53.373-07:00 [Install]   Signature matches Public Key
+2026-10-18T01:05:53.375-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T01:05:53.380-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T01:05:53.468-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-18T01:05:53.470-07:00 [Install]   The operation completed successfully.
+2026-10-18T01:05:53.847-07:00 [Install] test signing is set but not active in this boot
+2026-10-18T01:05:54.348-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T01:05:54.429-07:00 [Install] rebooting; step Driver resumes after the restart
+[11:05:55] Install.cmd exited 0
+[11:05:57] state: RebootPending|Driver|
+[11:06:48] state: RebootPending|Verify|
+[11:07:43] state: Installed||
+[11:07:43] done: Installed
+[11:07:50] autologon after-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-6THV4OS AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-6THV4OS\win3d 
+
+[11:07:50] == 5 interactive-session tests
+[11:07:52] desktop: True 54
+[11:08:09] desktop: True 71
+[11:08:25] desktop: True 87
+[11:08:41] desktop: True 103
+[11:08:57] desktop: True 119
+[11:09:14] desktop: True 136
+
+[11:09:16] == 5a vulkaninfo --summary
+    "exit_code":  0,
+    "exit_code_hex":  "0x00000000",
+	deviceType         = PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
 	deviceName         = Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
 	driverName         = venus
 exit 0 
-[22:24:19] Run-AllProbes
-[22:24:59] screenshot during-probes: rc 0 /home/wil/dev/vmlab-win3d-wt/e2e-final/.scratch/nv1/during-probes.png
+	deviceType         = PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
+	deviceName         = Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+	driverName         = venus
+exit 0 
+	deviceType         = PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
+	deviceName         = Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+	driverName         = venus
+	deviceType         = PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
+	deviceName         = Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+	driverName         = venus
 
-name             exit_code result adapter                                                                          software readback_ok avg_fps first_error
-----             --------- ------ -------                                                                          -------- ----------- ------- -----------
-x64-d3d11_probe          0 pass   Hardsoft VirtIO GPU 3D controller                                                   False        True   58.23            
-x64-d3d12_probe          0 pass   Hardsoft VirtIO GPU 3D controller                                                   False        True   52.81            
-x64-d3d9_probe           0 pass   Hardsoft VirtIO GPU 3D controller                                                   False        True   22.26            
-x64-opengl_probe         0 pass   zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY))    False        True   63.01            
-x64-vulkan_probe         0 pass   Virtio-GPU Venus (NVIDIA GeForce RTX 5090)                                          False        True   57.56            
-x86-d3d11_probe          0 pass   Hardsoft VirtIO GPU 3D controller                                                   False        True   54.37            
-x86-d3d12_probe          0 pass   Hardsoft VirtIO GPU 3D controller                                                   False        True   51.58            
-x86-d3d9_probe           0 pass   Hardsoft VirtIO GPU 3D controller                                                   False        True   21.32            
-x86-opengl_probe         0 pass   zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY))    False        True   63.04            
-x86-vulkan_probe         0 pass   Virtio-GPU Venus (NVIDIA GeForce RTX 5090)                                          False        True   57.54            
+[11:09:25] == 5b probes
+[11:09:25] probe x64-d3d9_probe
+[11:09:52]   Run-Probe exit 0
+  console: 10/13 frames show the probe window; animating=True
+[11:09:52] probe x86-d3d9_probe
+[11:10:17]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+[11:10:17] probe x64-d3d11_probe
+[11:10:42]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+[11:10:42] probe x86-d3d11_probe
+[11:11:07]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+[11:11:07] probe x64-d3d12_probe
+[11:11:34]   Run-Probe exit 0
+  console: 8/13 frames show the probe window; animating=True
+[11:11:34] probe x86-d3d12_probe
+[11:12:02]   Run-Probe exit 0
+  console: 8/13 frames show the probe window; animating=True
+[11:12:02] probe x64-opengl_probe
+[11:12:27]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+[11:12:27] probe x86-opengl_probe
+[11:12:52]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+[11:12:52] probe x64-vulkan_probe
+[11:13:17]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+[11:13:17] probe x86-vulkan_probe
+[11:13:42]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
 
+[11:13:42] == 5c dxdiag
+                        "D3D Status":  "Enabled",
+                        "AGP Status":  "Enabled"
+                    }
+                ]
+}
 
+[11:14:12] == 6 collect evidence
+pulled 52120 bytes to /home/wil/dev/vmlab-win3d-wt/nvidia-e2e/.scratch/e2e/windows-11-nvidia1/results.zip
 
-exit: 0
-[22:27:22] screenshot after-probes: rc 0 /home/wil/dev/vmlab-win3d-wt/e2e-final/.scratch/nv1/after-probes.png
-lab "win3d-e2e-final-nv1" destroyed
-[22:27:23] done
+[11:14:16] == 6b stretch: third-party applications
+[11:14:17] copying the DirectX SDK and Blender into the guest
+pushed 800475102 bytes to win:C:/apps/dxsdk.zip
+pushed 383613057 bytes to win:C:/apps/blender.zip
+pushed 10277328 bytes to win:C:/apps/vcredist_x64.exe
+pushed 8993744 bytes to win:C:/apps/vcredist_x86.exe
+blender-4.2.3-windows-x64
+DXSDK
+vcredist_x64.exe
+vcredist_x86.exe
+[11:14:36] installing the DirectX End-User Runtime from the SDK (DXSETUP /silent) and the VC++ 2010 runtime
+DXSETUP exit 0
+vcredist_x64 exit 0
+vcredist_x86 exit 0
+System32\msvcr100.dll True
+SysWOW64\msvcr100.dll True
+System32\d3dx10_43.dll True
+System32\d3dx9_43.dll True
+System32\d3dx11_43.dll True
+System32\D3DCompiler_43.dll True
+SysWOW64\d3dx9_43.dll True
+SysWOW64\D3DCompiler_43.dll True
+[11:15:09] installing the SDK developer runtime (D3D11Ref.dll)
+System32\D3D11Ref.dll 8a93549fa4fdcb453409128d493b1f8e262d85a2e562ce78eb1b14ce715ac7ee
+SysWOW64\D3D11Ref.dll 6335bd1f8a137c6a6696878c67652d1c75551c858e589559dfafa15a5e54c8c3
+[11:15:11] app d3d9-x64-BasicHLSL: C:\apps\DXSDK\Samples\C++\Direct3D\Bin\x64\BasicHLSL.exe -windowed
+[11:22:21]   Run-Probe exit 1 (124 = still running at 30 s, then closed)
+[11:22:28] app d3d9-x86-BasicHLSL: C:\apps\DXSDK\Samples\C++\Direct3D\Bin\x86\BasicHLSL.exe -windowed
+[11:22:32]   Run-Probe exit 1 (124 = still running at 30 s, then closed)
+[11:22:32] app d3d9-x64-ParallaxOcclusionMapping: C:\apps\DXSDK\Samples\C++\Direct3D\Bin\x64\ParallaxOcclusionMapping.exe -windowed
+[11:22:36]   Run-Probe exit 1 (124 = still running at 30 s, then closed)
+[11:22:36] app d3d11-x64-BasicHLSL11: C:\apps\DXSDK\Samples\C++\Direct3D11\Bin\x64\BasicHLSL11.exe -windowed
+[11:22:40]   Run-Probe exit 1 (124 = still running at 30 s, then closed)
+[11:22:40] app d3d11-x64-SubD11: C:\apps\DXSDK\Samples\C++\Direct3D11\Bin\x64\SubD11.exe -windowed
+[11:22:44]   Run-Probe exit 1 (124 = still running at 40 s, then closed)
+[11:22:44] app opengl-x64-Blender: C:\apps\blender-4.2.3-windows-x64\blender.exe --factory-startup
+[11:22:48]   Run-Probe exit 1 (124 = still running at 90 s, then closed)
+
+[11:22:48] == 7 teardown
+lab "win3d-nvidia-e2e-w11-nv1" destroyed
+
+[11:22:50] == result (ok)
+Item  Result Check
+------------------------------------------------------------------------------
+1     pass   scripts/build.sh builds the package
+             reused; exit 0
+2     pass   documented install command (scripts/install-into-vm.sh)
+             exit 0; Installed
+2+    pass   display device on our driver, problem code 0
+             Hardsoft VirtIO GPU 3D controller
+2     pass   vulkaninfo --summary (x64) lists the Venus device
+             Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+2+    pass   vulkaninfo --summary (x86) lists the Venus device
+             Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+2+    pass   vulkaninfo --summary (x64) lists exactly one Venus device
+             1 Venus: Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+2+    pass   LunarG vulkaninfo 1.4.363 (x64, pinned) lists Venus through the installed loader
+             Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+2+    pass   LunarG vulkaninfo 1.4.363 (x86, pinned) lists Venus through the installed loader
+             Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+2     pass   Direct3D 9 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 22.32 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 9 (x86) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 21.79 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 11 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 58.68 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 11 (x86) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 58.6 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 12 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 53.99 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 12 (x86) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 54.26 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   OpenGL (x64) renders on the GPU and shows on the console
+             zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY)), 61.46 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   OpenGL (x86) renders on the GPU and shows on the console
+             zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY)), 64.48 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating
+2+    pass   Vulkan (x64) renders on the GPU and shows on the console
+             Virtio-GPU Venus (NVIDIA GeForce RTX 5090), 58.14 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating
+2+    pass   Vulkan (x86) renders on the GPU and shows on the console
+             Virtio-GPU Venus (NVIDIA GeForce RTX 5090), 58.16 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   dxdiag reports hardware acceleration on our driver
+             hardware_acceleration=True, card 'Hardsoft VirtIO GPU 3D controller', D3D Enabled, DDraw Enabled, WDDM 2.0
+2+    pass   dxdiag: Direct3D acceleration on our full WDDM device
+             D3D Status Enabled, Full Device (POST), WDDM 2.0
+------------------------------------------------------------------------------
+PASS: 12 of 12 Done checks pass ('+' rows are extra and do not count)

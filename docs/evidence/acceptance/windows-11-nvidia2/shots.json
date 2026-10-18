@@ -1,0 +1,72 @@
+{
+  "x64-d3d9_probe": {
+    "frames": 12,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x86-d3d9_probe": {
+    "frames": 12,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x64-d3d11_probe": {
+    "frames": 12,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x86-d3d11_probe": {
+    "frames": 12,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x64-d3d12_probe": {
+    "frames": 12,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x86-d3d12_probe": {
+    "frames": 12,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x64-opengl_probe": {
+    "frames": 12,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x86-opengl_probe": {
+    "frames": 12,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x64-vulkan_probe": {
+    "frames": 12,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x86-vulkan_probe": {
+    "frames": 12,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  }
+}

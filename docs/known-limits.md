@@ -15,8 +15,8 @@ result depends on the host GPU. Four were tried:
 | Host GPU, driver | Host | Result | Needs | Evidence |
 | --- | --- | --- | --- | --- |
 | AMD Radeon iGPU (Granite Ridge), RADV, Mesa 26.2.2 | helios | **Full pass**: every Done check in `docs/brief.md` item 2, on `windows-11` and `windows-10` | A plain vmlab lab that names the AMD GPU (`host_gpu = "AMD1"`; the final runs used vmlab 0.25.0-alpha at commit `6105889`) | [`acceptance.md`](acceptance.md) |
+| NVIDIA RTX 5090, 610.57.04 | helios | **Full pass** on `windows-11`, 12 of 12 Done checks, through `tests/e2e/run.sh --host-gpu Nvidia1` on vmlab 0.27.0-alpha; the guest lists exactly one Venus device. One stretch application, the DirectX SDK's D3D9 `BasicHLSL` x64, hangs the guest (below) | `patches/mesa/0020` (in the package) **and** the patched QEMU (`patches/host/qemu/0001`) as the GPU's `qemu_binary` in the host config. On `Nvidia2`, which has no `qemu_binary` on helios, the probes render but the console is black | [`acceptance.md`](acceptance.md#nvidia-rtx-5090), [`nvidia.md`](nvidia.md) |
 | Intel Iris Xe (Raptor Lake-P), ANV, Mesa 26.2.2 | Zeus | **Full pass** on `windows-11`, 12 of 12 Done checks. Without `patches/mesa/0021`, dwm crash-loops and the console is black | `patches/mesa/0021` (in the package) | [`zeus.md`](zeus.md) |
-| NVIDIA RTX 5090, 610.57.04 | helios | **Partial**: all ten probes pass, vulkaninfo lists Venus, and the console shows the desktop and every probe. Not run through `tests/e2e/run.sh` | `patches/mesa/0020` (in the package) **and** the patched QEMU `patches/host/qemu/0001`, run through an isolated supervisor, until vmlab can name a QEMU binary (handoff `20261018-003653`, pending). The identical-GPU gap below applies | [`nvidia.md`](nvidia.md); with the stock QEMU (`Nvidia1`, vmlab 0.25) all ten probes pass but the console is black after the driver loads ([`acceptance.md`](acceptance.md), `docs/evidence/acceptance/windows-11-nvidia1/`) |
 | NVIDIA RTX 4060 Max-Q (laptop), 615.71.09 | Zeus | **Unmet**: install, desktop and console worked; then the GPU fell off the bus (Xid 79) during vulkaninfo and QEMU aborted. Cause unknown | Not known | [`zeus.md`](zeus.md) |
 
 All four hosts ran QEMU 11.1.1 and virglrenderer 1.3.0. No other GPU or driver
@@ -25,17 +25,33 @@ version was tried.
 **Without the patched QEMU, NVIDIA gives a black console.** NVIDIA's EGL
 imports a LINEAR dma-buf only as an external texture, and QEMU 11.1.1's
 egl-headless binds the guest's scanout as `GL_TEXTURE_2D`. The guest renders,
-but the console and `vmlab vm screenshot` stay black. Without
-`patches/mesa/0020` (bundles built before it), dwm crashes before logon.
-`docs/nvidia.md` explains both faults.
+but the console and `vmlab vm screenshot` stay black. Each NVIDIA GPU a lab
+may use therefore needs `qemu_binary` on its host config block
+(`docs/nvidia.md`, "Host setup"). Without `patches/mesa/0020` (bundles built
+before it), dwm crashes before logon. `docs/nvidia.md` explains both faults.
 
-**Two identical GPUs cannot be told apart.** On helios, vmlab's
-`VK_LOADER_DRIVERS_SELECT=*nvidia*` matches both RTX 5090s, so the guest sees
-two Venus devices with the same UUID. Applications picked GPU0, the one the
-lab names (`gpu.address` on vmlab 0.24, when this was measured;
-`host_gpu = "Nvidia1"` on 0.25). One that picks GPU1 would render on the other card while
-egl-headless reads from the first. Handoff `20261018-003653` asks vmlab for a
-way to pick one; it is pending.
+**On NVIDIA, the DirectX SDK's D3D9 `BasicHLSL` hangs the guest.** In all
+three `windows-11` runs that reached it, two on `Nvidia1` and one on
+`Nvidia2`, the x64 sample hung the guest about three to four seconds after
+it started: the console froze, and the guest agent stopped answering until
+the lab was destroyed. Each time the host kernel logged an Xid 69 on the
+card the guest used:
+
+```
+NVRM: Xid (PCI:0000:01:00): 69, pid=<render server>, name=vkr-ring-117, Class Error: channel 0x00000052, Class 0000ce97, Offset 0000026c, Data 000000a8, ErrorCode 0000009c
+NVRM: Xid (PCI:0000:05:00): 69, pid=<render server>, name=vkr-ring-115, Class Error: channel 0x00000032, Class 0000ce97, Offset 0000026c, Data 000000a8, ErrorCode 0000009c
+```
+
+Xid 69 is a graphics engine class error: the GPU rejected a method in the
+command stream, here on the Blackwell 3D class (`0xce97`). The same sample
+renders on AMD and the D3D9 probe passes on NVIDIA, so something in the
+sample's command stream reaches the RTX 5090 in a form it refuses. Not
+investigated. The GPU itself recovered, and later VMs on it ran normally.
+The other stretch applications did not run, because the guest was already
+hung (`docs/evidence/acceptance/windows-11-nvidia1/apps/`,
+`windows-11-nvidia2/apps/`). `run.sh` now
+collects the Done evidence before the stretch applications, so a hang there
+costs only the application results.
 
 > **Warning: the RTX 4060 failure needed a host reboot.** On Zeus, the NVIDIA
 > GSP failed to boot during a Venus run (`Failed to boot GSP`, then Xid 119,
@@ -50,15 +66,15 @@ On a host with an AMD or Intel GPU and an NVIDIA GPU, declare both in the host
 config and name the AMD or Intel GPU in the lab with `host_gpu`. vmlab then
 puts egl-headless on its render node and filters QEMU's Vulkan loader to its
 driver. A lab that leaves out `host_gpu` gets the host's default GPU. On
-helios the default is `Nvidia1`, an RTX 5090, so the labs here name `AMD1`
-until NVIDIA works with the stock QEMU.
+helios the default is `Nvidia1`, an RTX 5090 with the patched QEMU as its
+`qemu_binary`; the labs here name their GPU explicitly.
 
 The `docs/host.md` probe, on vmlab 0.23 with workarounds, first found the
 NVIDIA failure (`vkGetImageMemoryRequirements resulted in CS error` and a
 black console; `docs/evidence/host/good-none/`, `min-none/`). It is
 historical: `docs/nvidia.md` names the cause.
 
-### Requires vmlab 0.25.0-alpha or later
+### Requires vmlab 0.27.0-alpha or later
 
 vmlab 0.23 did not give a working Venus guest from `gpu { mode = "vulkan" }`.
 QEMU refused Venus without blob resources, and q35's extra VGA hid the Venus
@@ -77,6 +93,13 @@ needs only `secure_boot = false` and
 `gpu "AMD1" { address = "0000:72:00.0" }` on helios. On vmlab 0.23, QEMU
 refuses to start that VM (`docs/evidence/host/up-plain.txt`).
 
+vmlab 0.26.0-alpha added `qemu_binary` and `qemu_env` to a host GPU block,
+which NVIDIA needs for its console, and 0.27.0-alpha added the PCI-filter
+Vulkan layer that leaves the guest only the named GPU (`docs/host.md`,
+"Update: vmlab 0.26 and 0.27"). An AMD or Intel lab still works on 0.25,
+but a guest on a host with two GPUs of the same driver sees both before
+0.27. The NVIDIA acceptance runs used 0.27.0-alpha.
+
 The evidence in `docs/evidence/host/` and `docs/evidence/package/` was taken
 on vmlab 0.23 with the workarounds (`docs/evidence/package/lab-vmlab.wcl`).
 The acceptance, NVIDIA and Zeus evidence was taken on vmlab 0.24, with the
@@ -92,17 +115,27 @@ Two vmlab limits remain, with no fix:
 
 ### Autologon values can vanish on a fresh clone
 
-In one of the four `windows-11` acceptance runs, `AutoAdminLogon` and
-`DefaultUserName` were gone from the Winlogon key after
+On fresh `windows-11` clones, `AutoAdminLogon` and `DefaultUserName` were
+sometimes gone from the Winlogon key after
 `tests/guest/Set-TestDesktop.ps1 -Reboot`, before the package was installed.
 `DefaultPassword` survived. Without those values nobody is logged on after a
-reboot, and the session tests cannot start. The installer does not touch
-Winlogon, and vmlab's repository has no code that does. The template agent's first-logon hooks are the likely
-cause, but this is unconfirmed, and no vmlab handoff has been filed for it.
-This affects only the tests, not the package: `tests/e2e/run.sh` records the
-values before and after the install (`autologon-*.txt`) and sets them again
-when they are missing. Evidence: `docs/acceptance.md`, "Findings from these
-runs".
+reboot, and the session tests cannot start.
+
+vmlab found the cause (handoff `20261018-092229`): each clone of a
+sysprep-generalized template replays Windows' user OOBE, and when OOBE exits,
+`CloudExperienceHostBroker.exe` deletes those values, whoever wrote them.
+The published templates' first-boot script can report the clone ready
+before that happens. vmlab-templates fixed the script at `fb0c538`, but the
+local templates predate it, and this project does not rebuild templates.
+
+`Set-TestDesktop.ps1` now waits for OOBE to finish, with vmlab's check,
+before it writes the values, and prints an `oobe:` line saying how long it
+waited (`test-desktop.txt`). `tests/e2e/run.sh` still records the values
+before and after the install (`autologon-*.txt`) and sets them again when
+they are missing, logging `autologon fallback fired` and writing
+`autologon-fallback.txt`. In the three runs since, on `Nvidia1` and
+`Nvidia2`, the wait ended at once or within 5 s, and the fallback did not
+fire. This affects only the tests, not the package.
 
 ### QEMU crashes on shutdown
 

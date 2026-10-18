@@ -9,6 +9,33 @@ The NVIDIA failures this probe recorded have since been explained and fixed
 in `docs/nvidia.md` (`patches/mesa/0020` and `patches/host/qemu/0001`). Read
 the NVIDIA results below as the state before those fixes.
 
+## Update: vmlab 0.26 and 0.27 (2026-10-18)
+
+Two more host-config features remove the last NVIDIA workarounds
+(`docs/nvidia.md`, "Host setup"):
+
+| Before | vmlab 0.26.0-alpha / 0.27.0-alpha |
+| --- | --- |
+| An isolated supervisor with the patched QEMU first on `PATH` (`labs/nvidia/vmlab-nv.sh`, now deleted) | 0.26: `qemu_binary = "<abs path>"` on the host GPU block; vmlab runs it for every VM on that GPU and adds `-L /usr/share/qemu` (vmlab handoff `20261018-014452`) |
+| Debug variables and `RENDER_SERVER_EXEC_PATH` set in that supervisor's environment | 0.26: `qemu_env = { NAME: "value" }` on the host GPU block |
+| Both RTX 5090s visible to the guest, since `*nvidia*` matches both | 0.27: the implicit layer `VK_LAYER_VMLAB_pci_filter` keeps only the host GPU's device; no setting (vmlab handoff `20261018-092228`) |
+
+Helios's host config now gives `Nvidia1` a `qemu_binary`:
+
+```wcl
+gpu "Nvidia1" {
+  address     = "0000:01:00.0"
+  default     = true
+  qemu_binary = "/home/wil/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64"
+}
+```
+
+`vmlab status -v` then shows `host_gpu=Nvidia1 qemu=<path>`, and
+`qemu.log` starts with that binary in its `vmlab: argv:` line. The AMD1
+labs are unchanged: no `qemu_binary`, so they run `qemu-system-x86_64` from `PATH` (`/usr/bin`)
+with no `-L`. The NVIDIA acceptance runs on 0.27 are in
+`docs/acceptance.md`, "NVIDIA RTX 5090".
+
 ## Update: vmlab 0.25 (2026-10-17)
 
 vmlab 0.25.0-alpha moves every host-specific GPU detail out of the lab file

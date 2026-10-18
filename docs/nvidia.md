@@ -2,15 +2,47 @@
 
 This page explains why the package failed on this host's RTX 5090s and what
 fixes it. It also records how the failure was reproduced, what was tried, and
-who owns each fix. Every claim cites a file under `docs/evidence/nvidia/`.
-Date: 2026-10-17.
+who owns each fix. The diagnosis cites files under `docs/evidence/nvidia/`;
+the acceptance runs are under `docs/evidence/acceptance/windows-11-nvidia1/`
+and `windows-11-nvidia2/`. Diagnosis: 2026-10-17. Acceptance on vmlab
+0.27.0-alpha: 2026-10-18.
 
 ## Result
 
-It works. With the fixes below, a Windows 11 guest on the first RTX 5090
-(`0000:01:00.0`, `renderD128`) passes all ten probes: Vulkan, D3D9, D3D11,
-D3D12 and OpenGL, each as x64 and x86. `vulkaninfo` lists the Venus device,
-and the vmlab console shows the desktop and every probe.
+It works, with plain vmlab 0.27.0-alpha and the user's normal supervisor.
+`tests/e2e/run.sh --template windows-11 --host-gpu Nvidia1` passes 12 of
+12 Done checks on the first RTX 5090 (`0000:01:00.0`, `renderD128`), whose
+host config block names the patched QEMU as `qemu_binary`:
+
+- the install, `vulkaninfo` (exactly one device, `Virtio-GPU Venus (NVIDIA
+  GeForce RTX 5090)`), dxdiag hardware acceleration, and all ten probes
+  (Vulkan, D3D9, D3D11, D3D12 and OpenGL, x64 and x86), each found in the
+  console captures;
+- `qemu-argv-env.txt`: `vmlab: argv:` starts with the `qemu_binary` and
+  `-L /usr/share/qemu`, `vmlab: env:` has `VMLAB_VK_PCI_ADDRESS=0000:01:00.0`,
+  and the render server logged
+  `vmlab-pci-filter: 0000:01:00.0: kept NVIDIA GeForce RTX 5090, hid 1`;
+- `status-v.txt`: `host_gpu=Nvidia1 qemu=<path>`;
+- `nvidia-smi-during-probes.txt`: every `virgl_render_server` on
+  `0000:01:00.0`.
+
+The DirectX SDK's D3D9 `BasicHLSL` sample, a stretch application, hangs the
+guest on NVIDIA with a host Xid 69 ([known limits](known-limits.md#host-gpu-support)).
+
+The same run on the second RTX 5090, `--host-gpu Nvidia2`
+(`0000:05:00.0`), shows that the PCI filter puts the guest on that card:
+one Venus device, every render server on `0000:05:00.0`, and the filter
+line `kept NVIDIA GeForce RTX 5090, hid 1`. Its console is black, though,
+because helios's host config gives `Nvidia2` no `qemu_binary`, so vmlab ran
+the stock `qemu-system-x86_64` from `PATH` (fault 2 below). The fix is one
+line in `~/.config/vmlab/config.wcl`:
+
+```wcl
+gpu "Nvidia2" {
+  address     = "0000:05:00.0"
+  qemu_binary = "/home/wil/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64"
+}
+```
 
 Two separate faults stopped it. Neither is a bug in the NVIDIA driver.
 
@@ -19,35 +51,34 @@ Two separate faults stopped it. Neither is a bug in the NVIDIA driver.
 | 1 | dwm crashes before logon (`0x889800c0`); Vulkan and OpenGL presents fail | `vkCreateImage` and `vkGetPhysicalDeviceImageFormatProperties2` return `VK_ERROR_FORMAT_NOT_SUPPORTED` for LINEAR images with `VK_IMAGE_USAGE_ATTACHMENT_FEEDBACK_LOOP_BIT_EXT` | `patches/mesa/0020-yttrium-gate-feedback-loop-usage-on-format-support.patch` (guest, in the package) | Mesa: the Yttrium venus2 winsys (`arehnman/virtio-win-mesa`) |
 | 2 | Black vmlab console, although the guest renders | QEMU egl-headless: `glEGLImageTargetTexture2DOES(GL_TEXTURE_2D)` gives `GL_INVALID_OPERATION` for the LINEAR scanout dma-buf | `patches/host/qemu/0001-ui-egl-headless-external-only-dmabuf-scanouts.patch` (a lab-local QEMU 11.1.1) | QEMU upstream (`ui/egl-helpers.c`, `ui/egl-headless.c`); vmlab must be able to run that QEMU |
 
-Fix 1 is in the package. Fix 2 is a host component. It runs only for labs
-started through `labs/nvidia/vmlab-nv.sh`, and nothing is installed on the
-host (decision D3).
+Fix 1 is in the package. Fix 2 is a host component: a QEMU binary that
+vmlab (0.26.0-alpha or later) runs for every VM on that host GPU, because
+the host config names it as the GPU's `qemu_binary` ("Host setup" below).
+Nothing is installed system-wide (decision D3).
 
 ## Reproduction
 
 The host stack is frozen: QEMU 11.1.1, virglrenderer 1.3.0, Mesa 26.2.2, and
-NVIDIA 610.57.04. The runs recorded here used vmlab 0.24.0-alpha, with the
-lab naming the GPU as `gpu { mode = "vulkan" address = "0000:01:00.0" }`
-(`04-guest-fix/qemu-argv-env.txt` records what vmlab gave QEMU). vmlab
-0.25.0-alpha moved the address into the host config; the steps below are
-for 0.25.
+NVIDIA 610.57.04. The diagnosis runs recorded here used vmlab 0.24.0-alpha,
+with the lab naming the GPU as
+`gpu { mode = "vulkan" address = "0000:01:00.0" }` and an isolated vmlab
+supervisor that put the patched QEMU first on `PATH`
+(`04-guest-fix/qemu-argv-env.txt` records what vmlab gave QEMU). The steps
+below are for vmlab 0.27, where none of that is needed.
 
 1. Build the package with `scripts/build.sh`. A bundle built before
    `patches/mesa/0020` reproduces fault 1.
-2. Use the lab `labs/nvidia/vmlab.wcl`. It is the plain vmlab 0.25 form, with
-   `gpu { mode = "vulkan" host_gpu = "Nvidia1" }` and
-   `secure_boot = false`. The host config, `~/.config/vmlab/config.wcl`,
-   declares `gpu "Nvidia1" { address = "0000:01:00.0" default = true }`
-   (`docs/host.md`, "Update: vmlab 0.25"). vmlab then passes
+2. Use the lab `labs/nvidia/vmlab.wcl`: `secure_boot = false` and
+   `gpu { mode = "vulkan" host_gpu = "Nvidia1" }`. The host config,
+   `~/.config/vmlab/config.wcl`, declares
+   `gpu "Nvidia1" { address = "0000:01:00.0" }`. vmlab then passes
    `-display egl-headless,rendernode=/dev/dri/renderD128` and puts
-   `VK_LOADER_DRIVERS_SELECT=*nvidia*` in QEMU's environment.
-3. `labs/nvidia/vmlab-nv.sh up` brings the lab up under an isolated
-   supervisor in `.scratch/labs/nvidia-a`. With no variables set, it runs the
-   host's own QEMU and render server.
-4. Install the bundle with
-   `VMLAB=labs/nvidia/vmlab-nv.sh scripts/install-into-vm.sh .scratch/labs/nvidia-a win11`.
-   Then set up the test desktop as `scripts/test-package-in-lab.sh` step 00
-   does.
+   `VK_LOADER_DRIVERS_SELECT=*nvidia*` in QEMU's environment. Leave out
+   the GPU's `qemu_binary` to reproduce fault 2.
+3. Copy it into a lab directory and run `vmlab up` there.
+4. Install the bundle with `scripts/install-into-vm.sh <lab-dir> win11`.
+   Then set up the test desktop with `tests/guest/Set-TestDesktop.ps1 -Reboot`.
+   `tests/e2e/run.sh --host-gpu Nvidia1` does steps 1 to 4 and the checks.
 
 Without the fixes, the install itself succeeds, because it runs as SYSTEM.
 After its reboot, the following happens:
@@ -226,35 +257,111 @@ The patch changes QEMU 11.1.1 in two places:
 `patches/host/build-qemu.sh` builds it, natively rather than in Docker. QEMU
 links glib, epoxy, gbm and virglrenderer, and a current Arch container is
 already newer than the frozen host (glib 2.90 against 2.88). The build only
-reads the host's libraries and installs nothing. vmlab finds QEMU on `PATH`,
-so `labs/nvidia/vmlab-nv.sh` puts `out/host/qemu/bin` first on the isolated
-supervisor's `PATH` (`WIN3D_QEMU_DIR`).
+reads the host's libraries and installs nothing.
 
-## How to run it
+## Host setup (vmlab 0.27.0-alpha or later)
 
-```sh
-build/mesa/build.sh && scripts/build.sh --package-only  # package with patches/mesa/0020
-patches/host/build-qemu.sh                              # out/host/qemu/bin/qemu-system-x86_64
-WIN3D_QEMU_DIR=$PWD/out/host/qemu/bin labs/nvidia/vmlab-nv.sh up
-VMLAB=$PWD/labs/nvidia/vmlab-nv.sh scripts/install-into-vm.sh .scratch/labs/nvidia-a win11
-labs/nvidia/vmlab-nv.sh vm screenshot win11 shot.png      # vmlab >= 0.24 captures GL consoles over VNC
-labs/nvidia/vmlab-nv.sh down && labs/nvidia/vmlab-nv.sh --stop-supervisor
+### The patched QEMU on the GPU's profile
+
+vmlab 0.26.0-alpha added two optional attributes to a host GPU block in
+`~/.config/vmlab/config.wcl` (vmlab handoff `20261018-014452`):
+
+- `qemu_binary`: an absolute path. Every VM whose `gpu {}` resolves to that
+  host GPU runs it instead of `qemu-system-x86_64` from `PATH`. vmlab adds
+  `-L /usr/share/qemu` (the stock QEMU's data directory), so a build without
+  its own firmware and ROMs still starts. `vmlab validate` refuses a path
+  that is relative, missing or not executable.
+- `qemu_env`: a record of extra variables for QEMU's environment, applied
+  after the ones vmlab derives, which it overrides. Keys are identifiers
+  joined by `:`, not `=`: `qemu_env = { VKR_DEBUG: "validate" }`.
+
+Give every NVIDIA GPU that a Venus lab may use a `qemu_binary`. For
+helios that is the following; as of 2026-10-18 the real config gives only
+`Nvidia1` one:
+
+```wcl
+import <vmlab-host.wcl>
+
+gpu "AMD1"    { address = "0000:72:00.0" }                  // AMD iGPU (RADV, renderD129)
+gpu "Nvidia1" {                                             // RTX 5090 (renderD128)
+  address     = "0000:01:00.0"
+  default     = true
+  qemu_binary = "/home/wil/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64"
+}
+gpu "Nvidia2" {                                             // RTX 5090 (renderD130)
+  address     = "0000:05:00.0"
+  qemu_binary = "/home/wil/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64"
+}
 ```
 
-`vmlab-nv.sh` copies `labs/nvidia/vmlab.wcl` into the lab directory once.
-It refuses a copy made before vmlab 0.25, which still carries
-`gpu.address`; copy the current file over it.
+The lab file stays plain: `gpu { mode = "vulkan" host_gpu = "Nvidia1" }`,
+as in `labs/nvidia/vmlab.wcl` and `labs/acceptance/vmlab.wcl` with
+`tests/e2e/run.sh --host-gpu Nvidia1`. To check what a running VM got:
 
-`vmlab-nv.sh` also accepts:
+- `vmlab status -v` shows `host_gpu=Nvidia1 qemu=<path>`.
+- `qemu.log` in the VM's state directory starts with
+  `vmlab: argv: <qemu_binary> ... -L /usr/share/qemu ...` and a
+  `vmlab: env:` line.
 
-- `WIN3D_RENDER_SERVER`: a render server path, passed to QEMU as
-  `RENDER_SERVER_EXEC_PATH`.
-- `WIN3D_QEMU_ENV`: debug variables for QEMU's environment, such as
-  `VKR_DEBUG=validate`, `VKR_LOG_IMAGES=1` or `VK_ADD_LAYER_PATH`.
+### Building or pointing at the patched QEMU
 
-Both take effect only when the isolated supervisor starts. The validation
-layer used here came from Arch's `vulkan-validation-layers 1.4.363.0-1`
-package, unpacked under `.scratch/` (sha256
+Either of these gives a suitable binary. Both are QEMU 11.1.1 with the same
+egl-headless change:
+
+- `patches/host/build-qemu.sh` applies `patches/host/qemu/0001` to the
+  pinned 11.1.1 tarball (`patches/host/PINS`) and writes
+  `out/host/qemu/bin/qemu-system-x86_64`. Point `qemu_binary` at its
+  absolute path, or copy the `out/host/qemu/` tree somewhere stable first.
+- Build the fork branch
+  [`vmlab/egl-headless-external-dmabuf`](https://github.com/VMLabDev/qemu/tree/vmlab/egl-headless-external-dmabuf)
+  (`f5832b34dd`). vmlab's own copy of that build is the one helios uses,
+  `/home/wil/.local/opt/qemu-11.1.1-vmlab-egl/`. Its
+  `bin/qemu-system-x86_64 --version` reports 11.1.1.
+
+Either way, the binary links the host's own glib, epoxy, gbm and
+virglrenderer, so rebuild it when those packages change.
+
+### One GPU per guest: the PCI-filter layer
+
+`VK_LOADER_DRIVERS_SELECT=*nvidia*` matches both RTX 5090s on helios, and
+before vmlab 0.27 the guest saw two Venus devices with the same UUID.
+vmlab 0.27.0-alpha ships an implicit Vulkan layer,
+`VK_LAYER_VMLAB_pci_filter` (vmlab handoff `20261018-092228`). It is built
+into the `vmlab` binary and needs no install or setting. Every `vulkan` VM
+whose host GPU resolves gets it, through these variables in QEMU's
+environment:
+
+```
+VK_LOADER_DRIVERS_SELECT=*nvidia*
+VK_ADD_IMPLICIT_LAYER_PATH=/home/wil/.local/share/vmlab/vk-layer/<digest>
+VMLAB_VK_PCI_ADDRESS=0000:01:00.0
+```
+
+The layer answers `vkEnumeratePhysicalDevices` with only the device whose
+`VK_EXT_pci_bus_info` address matches. The render server logs what it kept
+in `qemu.log`, once per Venus context:
+
+```
+vmlab-pci-filter: 0000:01:00.0: kept NVIDIA GeForce RTX 5090, hid 1
+```
+
+`VMLAB_VK_PCI_FILTER_DISABLE=1` in the GPU's `qemu_env` turns it off.
+
+### Debug variables
+
+`qemu_env` replaces the environment variables the old isolated-supervisor
+wrapper took:
+
+| Purpose | `qemu_env` entry |
+| --- | --- |
+| A diagnostic render server (`patches/host/build-virglrenderer.sh`) | `RENDER_SERVER_EXEC_PATH: "/abs/path/virgl_render_server"` |
+| The Vulkan validation layer on the render server | `VKR_DEBUG: "validate"`, plus `VK_ADD_LAYER_PATH` for a layer outside the system path |
+| Log every image the render server creates | `VKR_LOG_IMAGES: "1"` (diagnostic render server only) |
+
+vmlab reads the host config when a VM starts, so stop the VM after changing
+it. The validation layer used in the diagnosis came from Arch's
+`vulkan-validation-layers 1.4.363.0-1` package, unpacked under `.scratch/`
+(sha256
 `904f4eba2e708c9c96579900688a284309cd56dc09b5af3f78c563ffda13df9e`).
 
 ## What was tried
@@ -272,18 +379,19 @@ package, unpacked under `.scratch/` (sha256
 
 ## Limits and open items
 
-- **Both RTX 5090s are visible to the guest.** `VK_LOADER_DRIVERS_SELECT=*nvidia*`
-  matches both, and the loader's vendor and device filters cannot tell two
-  identical cards apart. vulkaninfo lists two Venus devices with the same
-  UUID (`04-guest-fix/vulkaninfo-summary.txt`). Applications pick GPU0, and
-  `nvidia-smi` showed every render worker on `0000:01:00.0`, the GPU that
-  the lab named (`gpu.address` on vmlab 0.24; `host_gpu = "Nvidia1"` on
-  0.25). A guest that picks GPU1 would render on
-  `0000:05:00.0` while egl-headless reads from `0000:01:00.0`. This is a
-  vmlab item (below).
-- **vmlab cannot use the patched QEMU itself.** The lab needs its own
-  supervisor whose `PATH` puts the patched QEMU first. The draft request is in
-  `.scratch/workers/nvidia/vmlab-handoff.md` in the main checkout.
+- **Resolved in vmlab 0.27: both RTX 5090s were visible to the guest.**
+  On vmlab 0.24 and 0.25, vulkaninfo listed two Venus devices with the same
+  UUID (`04-guest-fix/vulkaninfo-summary.txt`). The PCI-filter layer above
+  leaves one.
+- **Resolved in vmlab 0.26: vmlab could not run the patched QEMU itself.**
+  The diagnosis needed an isolated supervisor whose `PATH` put it first.
+  The host GPU's `qemu_binary` replaces that.
+- **NVIDIA's driver may still open a small context on the other card.**
+  vmlab reports about 6 MiB on the hidden RTX 5090 inside
+  `virgl_render_server` at instance creation; the layer cannot stop driver
+  initialisation. `nvidia-smi` sampled during the acceptance probes listed
+  every render server only on the kept card
+  (`nvidia-smi-during-probes.txt` in each acceptance evidence directory).
 - **The patched QEMU covers egl-headless only.** Other GL displays (gtk,
   dbus, spice) still bind external-only dma-bufs as `GL_TEXTURE_2D`. A cursor
   dma-buf that is external-only would not show either. The Yttrium cursor did

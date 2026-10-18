@@ -1,1 +1,0 @@
-screen: {X=0,Y=0,Width=1024,Height=768}
