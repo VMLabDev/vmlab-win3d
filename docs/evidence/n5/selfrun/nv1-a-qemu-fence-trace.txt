@@ -1,0 +1,9 @@
+type 0x101 n=1 p10=0.00 p50=0.37 p90=0.00 max=0.37 under2ms=1
+type 0x104 n=2676 p10=0.08 p50=0.15 p90=0.37 max=134.09 under2ms=2633
+type 0x106 n=467 p10=0.03 p50=0.05 p90=0.12 max=31.23 under2ms=464
+type 0x107 n=288 p10=0.02 p50=0.05 p90=0.15 max=45.39 under2ms=285
+type 0x10c n=517 p10=0.03 p50=0.06 p90=0.18 max=23.56 under2ms=508
+type 0x202 n=39 p10=0.03 p50=0.04 p90=0.19 max=3.89 under2ms=38
+type 0x204 n=4 p10=0.03 p50=0.04 p90=0.06 max=0.06 under2ms=4
+type 0x207 n=18134 p10=0.03 p50=0.08 p90=10.25 max=507.20 under2ms=13244
+type 0x209 n=294 p10=0.02 p50=0.06 p90=0.21 max=112.17 under2ms=286

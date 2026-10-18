@@ -1,0 +1,56 @@
+== pid=8732 exe=pace.exe t=657819 window_ms=2000
+d3d9_present       n=104 mean=17.368 max=54.126 over8=104 total=1806.2
+d3d9_present_gap   n=103 mean=18.677 max=54.977 over8=103 total=1923.8
+flush_frontbuffer  n=104 mean=17.328 max=54.097 over8=104 total=1802.2
+issuance_wait      n=104 mean=0.912 max=32.145 over8=2 total=94.8
+present_cb         n=104 mean=16.312 max=26.779 over8=104 total=1696.5
+ring_sleep1        n=658 mean=1.952 max=15.147 over8=14 total=1284.6
+worker_render      n=104 mean=0.233 max=8.803 over8=1 total=24.2
+render_cb          n=104 mean=0.217 max=8.776 over8=1 total=22.6
+d3d9_flush         n=105 mean=0.037 max=0.173 over8=0 total=3.9
+== pid=8732 exe=pace.exe t=659833 window_ms=2014
+d3d9_present       n=105 mean=18.030 max=31.284 over8=105 total=1893.2
+d3d9_present_gap   n=105 mean=19.099 max=32.033 over8=105 total=2005.4
+flush_frontbuffer  n=105 mean=17.994 max=31.233 over8=105 total=1889.4
+issuance_wait      n=105 mean=0.495 max=4.040 over8=0 total=52.0
+present_cb         n=105 mean=17.326 max=30.898 over8=105 total=1819.2
+worker_render      n=105 mean=0.113 max=3.284 over8=0 total=11.9
+render_cb          n=105 mean=0.096 max=3.271 over8=0 total=10.0
+d3d9_flush         n=105 mean=0.037 max=0.173 over8=0 total=3.9
+== pid=8732 exe=pace.exe t=661835 window_ms=2002
+d3d9_present       n=109 mean=17.409 max=29.768 over8=108 total=1897.6
+d3d9_present_gap   n=109 mean=18.554 max=32.948 over8=108 total=2022.4
+flush_frontbuffer  n=109 mean=17.373 max=29.734 over8=108 total=1893.7
+issuance_wait      n=109 mean=0.551 max=5.933 over8=0 total=60.1
+present_cb         n=109 mean=16.594 max=22.373 over8=108 total=1808.7
+worker_render      n=109 mean=0.200 max=5.695 over8=0 total=21.8
+render_cb          n=109 mean=0.186 max=5.682 over8=0 total=20.3
+d3d9_flush         n=109 mean=0.032 max=0.145 over8=0 total=3.5
+== pid=8732 exe=pace.exe t=663847 window_ms=2012
+d3d9_present       n=108 mean=17.634 max=26.983 over8=108 total=1904.4
+d3d9_present_gap   n=108 mean=18.538 max=38.675 over8=108 total=2002.1
+flush_frontbuffer  n=108 mean=17.597 max=26.956 over8=108 total=1900.4
+issuance_wait      n=108 mean=0.534 max=3.961 over8=0 total=57.7
+present_cb         n=108 mean=16.953 max=23.594 over8=108 total=1830.9
+ring_sleep1        n=1 mean=7.789 max=7.789 over8=0 total=7.8
+worker_render      n=108 mean=0.225 max=3.657 over8=0 total=24.3
+render_cb          n=108 mean=0.205 max=3.641 over8=0 total=22.1
+d3d9_flush         n=108 mean=0.031 max=0.061 over8=0 total=3.4
+== pid=8732 exe=pace.exe t=665856 window_ms=2009
+d3d9_present       n=106 mean=17.667 max=30.849 over8=106 total=1872.7
+d3d9_present_gap   n=106 mean=18.950 max=31.671 over8=106 total=2008.7
+flush_frontbuffer  n=106 mean=17.625 max=30.813 over8=106 total=1868.2
+issuance_wait      n=106 mean=0.616 max=5.866 over8=0 total=65.3
+present_cb         n=106 mean=16.847 max=27.695 over8=106 total=1785.8
+worker_render      n=106 mean=0.172 max=3.083 over8=0 total=18.2
+render_cb          n=106 mean=0.156 max=3.068 over8=0 total=16.5
+d3d9_flush         n=106 mean=0.048 max=1.070 over8=0 total=5.1
+== pid=8732 exe=pace.exe t=667858 window_ms=2002
+d3d9_present       n=96 mean=19.163 max=32.487 over8=96 total=1839.6
+d3d9_present_gap   n=96 mean=20.950 max=38.903 over8=96 total=2011.2
+flush_frontbuffer  n=96 mean=19.116 max=32.436 over8=96 total=1835.1
+issuance_wait      n=96 mean=0.705 max=9.636 over8=1 total=67.7
+present_cb         n=96 mean=18.226 max=24.599 over8=95 total=1749.7
+worker_render      n=96 mean=0.173 max=4.202 over8=0 total=16.6
+render_cb          n=96 mean=0.148 max=4.187 over8=0 total=14.2
+d3d9_flush         n=96 mean=0.083 max=1.895 over8=0 total=7.9

@@ -1,0 +1,44 @@
+== pid=8320 exe=pace.exe t=677608 window_ms=2018
+d3d9_present       n=77 mean=10.492 max=25.741 over8=70 total=807.9
+d3d9_present_gap   n=76 mean=25.838 max=48.004 over8=75 total=1963.7
+flush_frontbuffer  n=77 mean=10.431 max=25.712 over8=70 total=803.2
+issuance_wait      n=77 mean=0.606 max=20.365 over8=1 total=46.7
+present_cb         n=77 mean=9.790 max=18.052 over8=69 total=753.8
+ring_sleep1        n=712 mean=1.797 max=15.824 over8=6 total=1279.1
+d3d9_flush         n=79 mean=0.042 max=0.119 over8=0 total=3.3
+== pid=8320 exe=pace.exe t=679611 window_ms=2003
+d3d9_present       n=75 mean=10.530 max=17.381 over8=71 total=789.7
+d3d9_present_gap   n=75 mean=26.639 max=46.594 over8=73 total=1997.9
+flush_frontbuffer  n=75 mean=10.493 max=17.346 over8=71 total=786.9
+issuance_wait      n=75 mean=0.366 max=2.820 over8=0 total=27.4
+present_cb         n=75 mean=10.088 max=16.981 over8=70 total=756.6
+d3d9_flush         n=75 mean=0.056 max=0.812 over8=0 total=4.2
+== pid=8320 exe=pace.exe t=681615 window_ms=2004
+d3d9_present       n=73 mean=10.104 max=16.489 over8=66 total=737.6
+d3d9_present_gap   n=73 mean=27.566 max=43.044 over8=70 total=2012.3
+flush_frontbuffer  n=73 mean=10.062 max=16.463 over8=66 total=734.5
+issuance_wait      n=73 mean=0.371 max=1.081 over8=0 total=27.0
+present_cb         n=73 mean=9.657 max=16.222 over8=66 total=705.0
+ring_sleep1        n=1 mean=19.855 max=19.855 over8=1 total=19.9
+d3d9_flush         n=73 mean=0.071 max=1.232 over8=0 total=5.2
+== pid=8320 exe=pace.exe t=683634 window_ms=2019
+d3d9_present       n=71 mean=10.815 max=17.310 over8=70 total=767.9
+d3d9_present_gap   n=71 mean=28.232 max=42.811 over8=71 total=2004.5
+flush_frontbuffer  n=71 mean=10.780 max=17.273 over8=70 total=765.4
+issuance_wait      n=71 mean=0.337 max=0.638 over8=0 total=23.9
+present_cb         n=71 mean=10.401 max=16.920 over8=70 total=738.5
+d3d9_flush         n=71 mean=0.045 max=0.192 over8=0 total=3.2
+== pid=8320 exe=pace.exe t=685635 window_ms=2001
+d3d9_present       n=110 mean=8.430 max=18.297 over8=79 total=927.3
+d3d9_present_gap   n=110 mean=18.486 max=42.654 over8=110 total=2033.4
+flush_frontbuffer  n=110 mean=8.396 max=18.263 over8=79 total=923.6
+issuance_wait      n=110 mean=0.312 max=0.749 over8=0 total=34.3
+present_cb         n=110 mean=8.050 max=17.894 over8=79 total=885.5
+d3d9_flush         n=109 mean=0.043 max=0.196 over8=0 total=4.7
+== pid=8320 exe=pace.exe t=687640 window_ms=2005
+d3d9_present       n=110 mean=8.226 max=16.637 over8=78 total=904.8
+d3d9_present_gap   n=110 mean=18.221 max=34.547 over8=110 total=2004.3
+flush_frontbuffer  n=110 mean=8.190 max=16.606 over8=78 total=900.9
+issuance_wait      n=110 mean=0.323 max=0.671 over8=0 total=35.6
+present_cb         n=110 mean=7.828 max=16.190 over8=78 total=861.1
+d3d9_flush         n=110 mean=0.043 max=0.188 over8=0 total=4.7

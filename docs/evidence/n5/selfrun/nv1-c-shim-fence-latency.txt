@@ -1,0 +1,4 @@
+virgl_renderer_init flags=0x342 version=4
+context fence, ring=0: n=41 p10=0.02 p50=0.04 p90=0.19 ms, 0 at 9 ms or more
+context fence, ring=1: n=4550 p10=10.14 p50=10.21 p90=10.39 ms, 4392 at 9 ms or more
+plain (context 0): n=16848 p10=0.02 p50=0.04 p90=0.16 ms, 9 at 9 ms or more

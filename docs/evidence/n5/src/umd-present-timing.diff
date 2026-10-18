@@ -1,0 +1,484 @@
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Resource.cpp b/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
+index 7149bb1..d8c57e3 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
+@@ -4,6 +4,7 @@
+  * Copyright 2026 Ake Rehnman
+  */
+ #include "D3D9Private.h"
++#include "gallium/winsys/yttrium/gdi/yttrium_ptime.h"
+ 
+ #include "gallium/winsys/yttrium/gdi/yttrium_gdi_public.h"
+ 
+@@ -3134,8 +3135,19 @@ D3D9OpenResource(HANDLE hDevice, D3DDDIARG_OPENRESOURCE *data)
+    return S_OK;
+ }
+ 
++HRESULT APIENTRY
++D3D9Lock_ptimed(HANDLE hDevice, D3DDDIARG_LOCK *data);
+ HRESULT APIENTRY
+ D3D9Lock(HANDLE hDevice, D3DDDIARG_LOCK *data)
++{
++   uint64_t ypt = yttrium_ptime_now();
++   HRESULT ypt_hr = D3D9Lock_ptimed(hDevice, data);
++   yttrium_ptime_add(YPT_D3D9_LOCK, ypt);
++   yttrium_ptime_tick();
++   return ypt_hr;
++}
++HRESULT APIENTRY
++D3D9Lock_ptimed(HANDLE hDevice, D3DDDIARG_LOCK *data)
+ {
+    D3D9Device *device = (D3D9Device *)hDevice;
+    D3D9Tracef("Lock resource=%p sub=%u flags=0x%08x\n",
+@@ -4074,8 +4086,19 @@ D3D9KeyBlitPipe(D3D9Device *device, const D3DDDIARG_BLT *data)
+    return ok;
+ }
+ 
++HRESULT APIENTRY
++D3D9Blt_ptimed(HANDLE hDevice, const D3DDDIARG_BLT *data);
+ HRESULT APIENTRY
+ D3D9Blt(HANDLE hDevice, const D3DDDIARG_BLT *data)
++{
++   uint64_t ypt = yttrium_ptime_now();
++   HRESULT ypt_hr = D3D9Blt_ptimed(hDevice, data);
++   yttrium_ptime_add(YPT_D3D9_BLT, ypt);
++   yttrium_ptime_tick();
++   return ypt_hr;
++}
++HRESULT APIENTRY
++D3D9Blt_ptimed(HANDLE hDevice, const D3DDDIARG_BLT *data)
+ {
+    D3D9Device *device = (D3D9Device *)hDevice;
+    D3D9Tracef("Blt data=%p dst=%p/%u src=%p/%u\n", data,
+@@ -4156,8 +4179,22 @@ D3D9DepthFill(HANDLE hDevice, const D3DDDIARG_DEPTHFILL *data)
+    return hr;
+ }
+ 
++HRESULT APIENTRY
++D3D9Present_ptimed(HANDLE hDevice, const D3DDDIARG_PRESENT *data);
+ HRESULT APIENTRY
+ D3D9Present(HANDLE hDevice, const D3DDDIARG_PRESENT *data)
++{
++   uint64_t ypt = yttrium_ptime_now();
++   static uint64_t ypt_last;
++   if (ypt_last) yttrium_ptime_add(YPT_D3D9_PRESENT_GAP, ypt_last);
++   ypt_last = ypt;
++   HRESULT ypt_hr = D3D9Present_ptimed(hDevice, data);
++   yttrium_ptime_add(YPT_D3D9_PRESENT, ypt);
++   yttrium_ptime_tick();
++   return ypt_hr;
++}
++HRESULT APIENTRY
++D3D9Present_ptimed(HANDLE hDevice, const D3DDDIARG_PRESENT *data)
+ {
+    D3D9Device *device = (D3D9Device *)hDevice;
+    D3D9Tracef("Present data=%p src=%p/%u dst=%p/%u flags=0x%08x\n", data,
+diff --git a/src/gallium/frontends/d3d10umd/D3D9State.cpp b/src/gallium/frontends/d3d10umd/D3D9State.cpp
+index b644268..52ee318 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9State.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9State.cpp
+@@ -4,6 +4,7 @@
+  * Copyright 2026 Ake Rehnman
+  */
+ #include "D3D9Private.h"
++#include "gallium/winsys/yttrium/gdi/yttrium_ptime.h"
+ #include "D3D9ShaderTranslate.h"
+ 
+ #include "gallium/winsys/yttrium/gdi/yttrium_gdi_public.h"
+@@ -1370,8 +1371,19 @@ D3D9DeleteShader(HANDLE hDevice, HANDLE shader)
+    return S_OK;
+ }
+ 
++static HRESULT APIENTRY
++D3D9Flush_ptimed(HANDLE hDevice);
+ static HRESULT APIENTRY
+ D3D9Flush(HANDLE hDevice)
++{
++   uint64_t ypt = yttrium_ptime_now();
++   HRESULT ypt_hr = D3D9Flush_ptimed(hDevice);
++   yttrium_ptime_add(YPT_D3D9_FLUSH, ypt);
++   yttrium_ptime_tick();
++   return ypt_hr;
++}
++static HRESULT APIENTRY
++D3D9Flush_ptimed(HANDLE hDevice)
+ {
+    D3D9Device *device = (D3D9Device *)hDevice;
+    D3D9Tracef("Flush hDevice=%p pipe=%p\n", hDevice,
+diff --git a/src/gallium/frontends/d3d10umd/gdikmt_d3dddi.cpp b/src/gallium/frontends/d3d10umd/gdikmt_d3dddi.cpp
+index a84512b..dcf0716 100644
+--- a/src/gallium/frontends/d3d10umd/gdikmt_d3dddi.cpp
++++ b/src/gallium/frontends/d3d10umd/gdikmt_d3dddi.cpp
+@@ -11,6 +11,7 @@
+ #include <d3dukmdt.h>
+ #include <d3dkmthk.h>
+ #include "winddk_compat.h"
++#include "gallium/winsys/yttrium/gdi/yttrium_ptime.h"
+ 
+ struct gdikmt_d3dddi_residency {
+    SRWLOCK lock;
+@@ -374,10 +375,12 @@ gdikmt_d3dddi_render(struct gdikmt_context *_ctx, struct gdikmt_render *options)
+                             render.NewAllocationListSize,
+                             render.NewPatchLocationListSize,
+                             options->CompletionEvent);
++   uint64_t ypt = yttrium_ptime_now();
+    NTSTATUS Status = gdikmt_d3dddi_record_status(
+       &dev->base,
+       dev->KTCallbacks.pfnRenderCb(dev->hRTDevice, &render),
+       "pfnRenderCb");
++   yttrium_ptime_add(YPT_RENDER_CB, ypt);
+    yttrium_gdi_trace_debugf("yttrium: pfnRenderCb after status=0x%lx hContext=%p new_cmd=%p new_alloc=%p new_patch=%p new_sizes=%u/%u/%u\n",
+                             (unsigned long)Status,
+                             render.hContext,
+@@ -966,7 +969,9 @@ gdikmt_d3dddi_present(struct gdikmt_context *_ctx, D3DKMT_HANDLE hSrcAllocation,
+       }
+ 
+       yttrium_gdi_trace_debugf("yttrium: d3d9 pfnPresentCb actual callback issue\n");
++      uint64_t ypt = yttrium_ptime_now();
+       res = device->KTCallbacks.pfnPresentCb(device->hRTDevice, &kmPresent);
++      yttrium_ptime_add(YPT_PRESENT_CB, ypt);
+       res = gdikmt_d3dddi_record_status(_ctx->device, res,
+                                         "pfnPresentCb");
+       yttrium_gdi_trace_debugf("yttrium: d3d9 pfnPresentCb after status=0x%lx hSrcAllocation=0x%lx hDstAllocation=0x%lx hContext=%p optimize=%u private_size=%u private=%p\n",
+@@ -1052,7 +1057,10 @@ gdikmt_d3dddi_present(struct gdikmt_context *_ctx, D3DKMT_HANDLE hSrcAllocation,
+    }
+ 
+    yttrium_gdi_trace_debugf("yttrium: pfnPresentCb actual callback issue\n");
++   uint64_t ypt = yttrium_ptime_now();
+    res = device->pDXGIBaseCallbacks->pfnPresentCb(device->hRTDevice, &kmPresent);
++   yttrium_ptime_add(YPT_DXGI_PRESENT_CB, ypt);
++   yttrium_ptime_tick();
+    res = gdikmt_d3dddi_record_status(_ctx->device, res,
+                                      "DXGI pfnPresentCb");
+    yttrium_gdi_trace_present_callback(
+diff --git a/src/gallium/winsys/yttrium/gdi/meson.build b/src/gallium/winsys/yttrium/gdi/meson.build
+index 6d9089f..0fb46c1 100644
+--- a/src/gallium/winsys/yttrium/gdi/meson.build
++++ b/src/gallium/winsys/yttrium/gdi/meson.build
+@@ -16,6 +16,7 @@ libyttriumgdi = static_library(
+     'yttrium_options.c',
+     'yttrium_pipeline.c',
+     'yttrium_present.c',
++    'yttrium_ptime.c',
+     'yttrium_resource.c',
+     'yttrium_screen.c',
+     'yttrium_shader.c',
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_context.c b/src/gallium/winsys/yttrium/gdi/yttrium_context.c
+index a43095e..cb55944 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_context.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_context.c
+@@ -26,6 +26,7 @@
+ #include "yttrium_shader.h"
+ #include "yttrium_state.h"
+ #include "yttrium_trace.h"
++#include "yttrium_ptime.h"
+ #include "yttrium_venus.h"
+ 
+ void noop_init_state_functions(struct pipe_context *ctx);
+@@ -474,9 +475,21 @@ yttrium_gdi_flush_async_issuance(struct pipe_context *ctx,
+    return issuance;
+ }
+ 
++static bool
++yttrium_gdi_wait_flush_issuance_ptimed(struct yttrium_gdi_flush_issuance *issuance,
++                                uint32_t timeout_ms);
+ bool
+ yttrium_gdi_wait_flush_issuance(struct yttrium_gdi_flush_issuance *issuance,
+                                 uint32_t timeout_ms)
++{
++   uint64_t ypt = yttrium_ptime_now();
++   bool r = yttrium_gdi_wait_flush_issuance_ptimed(issuance, timeout_ms);
++   yttrium_ptime_add(YPT_ISSUANCE_WAIT, ypt);
++   return r;
++}
++static bool
++yttrium_gdi_wait_flush_issuance_ptimed(struct yttrium_gdi_flush_issuance *issuance,
++                                uint32_t timeout_ms)
+ {
+    if (!issuance)
+       return false;
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_present.c b/src/gallium/winsys/yttrium/gdi/yttrium_present.c
+index 2430a6b..889466b 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_present.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_present.c
+@@ -24,6 +24,7 @@
+ #include "yttrium_resource.h"
+ #include "yttrium_trace.h"
+ #include "yttrium_venus.h"
++#include "yttrium_ptime.h"
+ 
+ bool
+ yttrium_ensure_display_mapped(struct pipe_context *ctx,
+@@ -61,8 +62,8 @@ yttrium_prepare_present_publication(void *data)
+    return publication->issuance ? S_OK : E_FAIL;
+ }
+ 
+-void
+-yttrium_flush_frontbuffer(struct pipe_screen *pscreen,
++static void
++yttrium_flush_frontbuffer_ptimed(struct pipe_screen *pscreen,
+                           struct pipe_context *ctx,
+                           struct pipe_resource *resource,
+                           unsigned level, unsigned layer,
+@@ -220,6 +221,20 @@ yttrium_flush_frontbuffer(struct pipe_screen *pscreen,
+    }
+ }
+ 
++void
++yttrium_flush_frontbuffer(struct pipe_screen *pscreen,
++                          struct pipe_context *ctx,
++                          struct pipe_resource *resource,
++                          unsigned level, unsigned layer,
++                          void *context_private,
++                          unsigned nboxes, struct pipe_box *boxes)
++{
++   uint64_t ypt = yttrium_ptime_now();
++   yttrium_flush_frontbuffer_ptimed(pscreen, ctx, resource, level, layer,
++                                    context_private, nboxes, boxes);
++   yttrium_ptime_add(YPT_FLUSH_FRONTBUFFER, ypt);
++}
++
+ void
+ yttrium_format_indexed_path(char *dst, size_t dst_size,
+                             const char *path, unsigned index)
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_batch.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_batch.c
+index 104c1e8..2b76a36 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_batch.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_batch.c
+@@ -15,6 +15,7 @@
+ #include "yttrium_venus2_ring.h"
+ #include "yttrium_venus2_private.h"
+ #include "yttrium_trace.h"
++#include "yttrium_ptime.h"
+ #include "virtio/wddm/viogpu_wddm_driver.h"
+ 
+ #include "venus-protocol/vn_protocol_driver_buffer.h"
+@@ -2735,15 +2736,34 @@ yttrium_venus_batch_feedback_backoff(uint32_t *iterations)
+       YieldProcessor();
+    else if (iteration < YTTRIUM_VENUS_BATCH_FEEDBACK_SLEEP0_ITERS)
+       Sleep(0);
+-   else
++   else {
++      uint64_t ypt = yttrium_ptime_now();
+       Sleep(1);
++      yttrium_ptime_add(YPT_FEEDBACK_SLEEP1, ypt);
++   }
+ }
+ 
++static VkResult
++yttrium_venus_wait_batch_feedback_ptimed(struct yttrium_venus *venus,
++                                  uint32_t index,
++                                  VkFence fence,
++                                  const char *label);
+ static VkResult
+ yttrium_venus_wait_batch_feedback(struct yttrium_venus *venus,
+                                   uint32_t index,
+                                   VkFence fence,
+                                   const char *label)
++{
++   uint64_t ypt = yttrium_ptime_now();
++   VkResult r = yttrium_venus_wait_batch_feedback_ptimed(venus, index, fence, label);
++   yttrium_ptime_add(YPT_FEEDBACK_WAIT, ypt);
++   return r;
++}
++static VkResult
++yttrium_venus_wait_batch_feedback_ptimed(struct yttrium_venus *venus,
++                                  uint32_t index,
++                                  VkFence fence,
++                                  const char *label)
+ {
+    volatile LONG *slot = yttrium_venus_batch_feedback_slot(venus, index);
+    if (!slot) {
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_ring.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_ring.c
+index ac2fcea..f2ab96d 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_ring.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_ring.c
+@@ -8,6 +8,7 @@
+ 
+ #include "util/os_time.h"
+ #include "yttrium_trace.h"
++#include "yttrium_ptime.h"
+ #include "yttrium_venus2_private.h"
+ #include "yttrium_venus2_ring.h"
+ 
+@@ -69,8 +70,11 @@ yttrium_venus_ring_wait_backoff(uint32_t *iters)
+       YieldProcessor();
+    else if (iter < YTTRIUM_VENUS_RING_SLEEP0_BACKOFF_ITERS)
+       Sleep(0);
+-   else
++   else {
++      uint64_t ypt = yttrium_ptime_now();
+       Sleep(1);
++      yttrium_ptime_add(YPT_RING_SLEEP1, ypt);
++   }
+ }
+ 
+ static uint32_t
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_transport.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_transport.c
+index b1a4ccf..8092f8d 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_transport.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_transport.c
+@@ -16,6 +16,7 @@
+ #include "virtio/wddm/viogpu_wddm_driver.h"
+ 
+ #include "yttrium_trace.h"
++#include "yttrium_ptime.h"
+ #include "yttrium_venus2_private.h"
+ #include "yttrium_venus2_ring.h"
+ 
+@@ -101,7 +102,9 @@ yttrium_venus_submit_gpu(struct yttrium_venus *venus, const void *data, size_t s
+       Sleep(delay);
+       YTTRIUM_LOG("yttrium: scheduled GPU submit delay end ms=%u\n", delay);
+    }
++   uint64_t ypt = yttrium_ptime_now();
+    NTSTATUS status = ctx->render(ctx, &render);
++   yttrium_ptime_add(YPT_WORKER_RENDER, ypt);
+    YTTRIUM_LOG("yttrium: scheduled GPU submit context=0x%x bytes=%llu timeline=1 hr=%lx\n",
+                ctx->kmt_handle(ctx), (unsigned long long)size, (unsigned long)status);
+    if (!NT_SUCCESS(status)) {
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_ptime.c b/src/gallium/winsys/yttrium/gdi/yttrium_ptime.c
+new file mode 100644
+index 0000000..51be90b
+--- /dev/null
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_ptime.c
+@@ -0,0 +1,103 @@
++/* Diagnostic present-path timing (n5). D3D10UMD_YTTRIUM_PTIME=<file>:
++ * every two seconds each process appends one line per probe with the call
++ * count, mean, max and the count above 8 ms, in milliseconds. */
++#include "yttrium_ptime.h"
++#include <stdbool.h>
++#include <stdio.h>
++#include <string.h>
++#include <windows.h>
++
++static const char *const names[YPT_COUNT] = {
++   "d3d9_present", "d3d9_present_gap", "d3d9_blt", "flush_frontbuffer",
++   "issuance_wait", "present_cb", "dxgi_present_cb", "feedback_wait",
++   "feedback_sleep1", "ring_sleep1", "worker_render", "render_cb",
++   "d3d9_lock", "d3d9_flush",
++};
++
++static volatile LONG state; /* 0 unknown, 1 on, 2 off */
++static char path[MAX_PATH];
++static CRITICAL_SECTION lock;
++static double freq_ms;
++static uint64_t last_dump;
++static struct { uint64_t n; double sum, max; uint64_t over8; } s[YPT_COUNT];
++
++static bool
++enabled(void)
++{
++   LONG st = state;
++   if (st)
++      return st == 1;
++   static INIT_ONCE once = INIT_ONCE_STATIC_INIT;
++   BOOL pending;
++   InitOnceBeginInitialize(&once, 0, &pending, NULL);
++   if (pending) {
++      DWORD n = GetEnvironmentVariableA("D3D10UMD_YTTRIUM_PTIME", path, sizeof(path));
++      LARGE_INTEGER f;
++      QueryPerformanceFrequency(&f);
++      freq_ms = (double)f.QuadPart / 1000.0;
++      InitializeCriticalSection(&lock);
++      InterlockedExchange(&state, (n && n < sizeof(path)) ? 1 : 2);
++      InitOnceComplete(&once, 0, NULL);
++   }
++   return state == 1;
++}
++
++uint64_t
++yttrium_ptime_now(void)
++{
++   if (!enabled())
++      return 0;
++   LARGE_INTEGER t;
++   QueryPerformanceCounter(&t);
++   return (uint64_t)t.QuadPart;
++}
++
++void
++yttrium_ptime_add(enum yttrium_ptime_id id, uint64_t start)
++{
++   if (!start || !enabled())
++      return;
++   uint64_t now = yttrium_ptime_now();
++   double ms = (double)(now - start) / freq_ms;
++   EnterCriticalSection(&lock);
++   s[id].n++;
++   s[id].sum += ms;
++   if (ms > s[id].max)
++      s[id].max = ms;
++   if (ms > 8.0)
++      s[id].over8++;
++   LeaveCriticalSection(&lock);
++}
++
++void
++yttrium_ptime_tick(void)
++{
++   if (!enabled())
++      return;
++   uint64_t now = yttrium_ptime_now();
++   EnterCriticalSection(&lock);
++   if (!last_dump)
++      last_dump = now;
++   if ((double)(now - last_dump) / freq_ms >= 2000.0) {
++      FILE *f = fopen(path, "a");
++      if (f) {
++         char exe[MAX_PATH] = "";
++         GetModuleFileNameA(NULL, exe, sizeof(exe));
++         const char *base = strrchr(exe, '\\');
++         fprintf(f, "== pid=%lu exe=%s t=%.0f window_ms=%.0f\n", GetCurrentProcessId(),
++                 base ? base + 1 : exe, (double)now / freq_ms,
++                 (double)(now - last_dump) / freq_ms);
++         for (int i = 0; i < YPT_COUNT; i++) {
++            if (!s[i].n)
++               continue;
++            fprintf(f, "%-18s n=%llu mean=%.3f max=%.3f over8=%llu total=%.1f\n", names[i],
++                    (unsigned long long)s[i].n, s[i].sum / s[i].n, s[i].max,
++                    (unsigned long long)s[i].over8, s[i].sum);
++         }
++         fclose(f);
++      }
++      memset(s, 0, sizeof(s));
++      last_dump = now;
++   }
++   LeaveCriticalSection(&lock);
++}
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_ptime.h b/src/gallium/winsys/yttrium/gdi/yttrium_ptime.h
+new file mode 100644
+index 0000000..e5a28f7
+--- /dev/null
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_ptime.h
+@@ -0,0 +1,31 @@
++/* Diagnostic present-path timing (n5). D3D10UMD_YTTRIUM_PTIME=<file>. */
++#ifndef YTTRIUM_PTIME_H
++#define YTTRIUM_PTIME_H
++#include <stdint.h>
++#ifdef __cplusplus
++extern "C" {
++#endif
++enum yttrium_ptime_id {
++   YPT_D3D9_PRESENT,
++   YPT_D3D9_PRESENT_GAP,
++   YPT_D3D9_BLT,
++   YPT_FLUSH_FRONTBUFFER,
++   YPT_ISSUANCE_WAIT,
++   YPT_PRESENT_CB,
++   YPT_DXGI_PRESENT_CB,
++   YPT_FEEDBACK_WAIT,
++   YPT_FEEDBACK_SLEEP1,
++   YPT_RING_SLEEP1,
++   YPT_WORKER_RENDER,
++   YPT_RENDER_CB,
++   YPT_D3D9_LOCK,
++   YPT_D3D9_FLUSH,
++   YPT_COUNT
++};
++uint64_t yttrium_ptime_now(void);
++void yttrium_ptime_add(enum yttrium_ptime_id id, uint64_t start);
++void yttrium_ptime_tick(void);
++#ifdef __cplusplus
++}
++#endif
++#endif

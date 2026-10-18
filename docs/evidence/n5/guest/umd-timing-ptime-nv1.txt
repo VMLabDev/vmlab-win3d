@@ -1,0 +1,64 @@
+== pid=5676 exe=pace.exe t=597269 window_ms=2006
+d3d9_present       n=63 mean=14.271 max=74.887 over8=63 total=899.1
+d3d9_present_gap   n=62 mean=31.284 max=84.728 over8=62 total=1939.6
+flush_frontbuffer  n=63 mean=14.236 max=74.860 over8=63 total=896.9
+issuance_wait      n=63 mean=1.309 max=55.401 over8=1 total=82.4
+present_cb         n=63 mean=12.822 max=30.779 over8=63 total=807.8
+ring_sleep1        n=1040 mean=1.435 max=3.089 over8=0 total=1492.3
+worker_render      n=63 mean=0.069 max=0.234 over8=0 total=4.4
+render_cb          n=63 mean=0.054 max=0.220 over8=0 total=3.4
+d3d9_flush         n=65 mean=0.050 max=0.274 over8=0 total=3.2
+== pid=5676 exe=pace.exe t=599274 window_ms=2005
+d3d9_present       n=71 mean=13.583 max=30.467 over8=71 total=964.4
+d3d9_present_gap   n=71 mean=28.225 max=49.206 over8=71 total=2004.0
+flush_frontbuffer  n=71 mean=13.519 max=30.434 over8=71 total=959.9
+issuance_wait      n=71 mean=0.404 max=1.067 over8=0 total=28.7
+present_cb         n=71 mean=13.056 max=29.885 over8=71 total=926.9
+worker_render      n=71 mean=0.083 max=1.678 over8=0 total=5.9
+render_cb          n=71 mean=0.047 max=0.158 over8=0 total=3.4
+d3d9_flush         n=71 mean=0.050 max=0.487 over8=0 total=3.6
+== pid=5676 exe=pace.exe t=601297 window_ms=2023
+d3d9_present       n=72 mean=14.868 max=31.324 over8=72 total=1070.5
+d3d9_present_gap   n=72 mean=28.068 max=51.732 over8=72 total=2020.9
+flush_frontbuffer  n=72 mean=14.820 max=31.287 over8=72 total=1067.0
+issuance_wait      n=72 mean=0.564 max=1.633 over8=0 total=40.6
+present_cb         n=72 mean=14.141 max=30.812 over8=72 total=1018.1
+worker_render      n=72 mean=0.097 max=1.118 over8=0 total=7.0
+render_cb          n=72 mean=0.067 max=0.287 over8=0 total=4.8
+d3d9_flush         n=72 mean=0.056 max=0.241 over8=0 total=4.1
+== pid=5676 exe=pace.exe t=603314 window_ms=2017
+d3d9_present       n=71 mean=16.305 max=30.279 over8=71 total=1157.6
+d3d9_present_gap   n=71 mean=28.698 max=47.568 over8=71 total=2037.5
+flush_frontbuffer  n=71 mean=16.254 max=30.199 over8=71 total=1154.0
+issuance_wait      n=71 mean=0.817 max=7.084 over8=0 total=58.0
+present_cb         n=71 mean=15.340 max=29.255 over8=71 total=1089.1
+worker_render      n=71 mean=0.137 max=2.927 over8=0 total=9.7
+render_cb          n=71 mean=0.122 max=2.912 over8=0 total=8.7
+d3d9_flush         n=70 mean=0.071 max=0.439 over8=0 total=5.0
+== pid=5676 exe=pace.exe t=605327 window_ms=2013
+d3d9_present       n=51 mean=26.842 max=400.662 over8=51 total=1368.9
+d3d9_present_gap   n=51 mean=39.565 max=435.633 over8=51 total=2017.8
+flush_frontbuffer  n=51 mean=26.684 max=395.919 over8=51 total=1360.9
+issuance_wait      n=51 mean=1.757 max=22.958 over8=2 total=89.6
+present_cb         n=51 mean=24.480 max=380.151 over8=49 total=1248.5
+worker_render      n=51 mean=0.738 max=22.438 over8=1 total=37.6
+render_cb          n=51 mean=0.682 max=22.418 over8=1 total=34.8
+d3d9_flush         n=51 mean=0.249 max=3.289 over8=0 total=12.7
+== pid=5676 exe=pace.exe t=607331 window_ms=2004
+d3d9_present       n=82 mean=15.691 max=33.551 over8=82 total=1286.6
+d3d9_present_gap   n=82 mean=24.438 max=50.570 over8=82 total=2003.9
+flush_frontbuffer  n=82 mean=15.639 max=33.504 over8=82 total=1282.4
+issuance_wait      n=82 mean=0.673 max=2.180 over8=0 total=55.2
+present_cb         n=82 mean=14.809 max=32.872 over8=82 total=1214.3
+worker_render      n=82 mean=0.093 max=0.246 over8=0 total=7.6
+render_cb          n=82 mean=0.078 max=0.231 over8=0 total=6.4
+d3d9_flush         n=82 mean=0.077 max=1.307 over8=0 total=6.3
+== pid=5676 exe=pace.exe t=609332 window_ms=2001
+d3d9_present       n=85 mean=14.404 max=24.806 over8=85 total=1224.3
+d3d9_present_gap   n=85 mean=23.566 max=43.603 over8=85 total=2003.1
+flush_frontbuffer  n=85 mean=14.250 max=24.759 over8=85 total=1211.2
+issuance_wait      n=85 mean=0.572 max=1.198 over8=0 total=48.6
+present_cb         n=85 mean=13.570 max=24.014 over8=85 total=1153.4
+worker_render      n=85 mean=0.085 max=0.230 over8=0 total=7.2
+render_cb          n=85 mean=0.068 max=0.212 over8=0 total=5.8
+d3d9_flush         n=85 mean=0.054 max=0.226 over8=0 total=4.6

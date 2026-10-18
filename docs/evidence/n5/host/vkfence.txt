@@ -1,0 +1,6 @@
+device: NVIDIA GeForce RTX 5090 fence: plain submit -> vkWaitForFences wake ms: mean=0.281 max=10.699 over5ms=1/200 
+device: NVIDIA GeForce RTX 5090 fence: plain submit -> vkWaitForFences wake ms: mean=0.335 max=2.809 over5ms=0/200 
+device: AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO) fence: plain submit -> vkWaitForFences wake ms: mean=1.242 max=9.187 over5ms=9/200 
+device: NVIDIA GeForce RTX 5090 fence: exportable SYNC_FD (as virglrenderer vkr) submit -> vkWaitForFences wake ms: mean=7.423 max=10.803 over5ms=144/200 
+device: NVIDIA GeForce RTX 5090 fence: exportable SYNC_FD (as virglrenderer vkr) submit -> vkWaitForFences wake ms: mean=2.683 max=11.233 over5ms=50/200 
+device: AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO) fence: exportable SYNC_FD (as virglrenderer vkr) submit -> vkWaitForFences wake ms: mean=1.179 max=7.283 over5ms=9/200 
