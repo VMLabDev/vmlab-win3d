@@ -1,0 +1,42 @@
+# coredumpctl on helios, recorded 2026-10-18T21:18:28+10:00: SIGSEGVs of the stock /usr/bin/qemu-system-x86_64 (QEMU 11.1.1)
+# All three are vmlab labs whose egl-headless ran on the AMD render node (no -L, no qemu_binary).
+Sat 2026-10-17 22:01:28 AEST   87030 1000 1000 SIGSEGV present      /usr/bin/qemu-system-x86_64                                                                                                8.5K
+Sun 2026-10-18 08:32:01 AEST 1533800 1000 1000 SIGSEGV present      /usr/bin/qemu-system-x86_64                                                                                                8.6K
+Sun 2026-10-18 16:42:04 AEST  358316 1000 1000 SIGSEGV present      /usr/bin/qemu-system-x86_64                                                                                                3.6G
+
+## pid 87030
+Signal: 11 (SEGV) si_code: SEGV_MAPERR
+Command Line: qemu-system-x86_64 -name vmlab:win3d-e2e-windows-10/win -machine q35 -accel kvm -cpu host,vmx=off,svm=off -smp 4 -m 8192M -display none -vnc unix:
+
+## pid 1533800
+Signal: 11 (SEGV) si_code: SEGV_MAPERR
+Command Line: qemu-system-x86_64 -name vmlab:a1-autologon/w11 -machine q35 -accel kvm -cpu host,vmx=off,svm=off -smp 4 -m 8192M -display none -vnc unix:/tmp/a1r
+
+## pid 358316
+Signal: 11 (SEGV) si_code: SEGV_MAPERR
+Command Line: qemu-system-x86_64 -name vmlab:win3d-xid69-amd1/win -machine q35 -accel kvm -cpu host,vmx=off,svm=off -smp 4 -m 8192M -display none -vnc unix:/tmp
+Stack trace of thread 358316:
+#0  0x00007fc4387c7eaa n/a (libgallium-26.2.2-arch3.2.so + 0x7c7eaa)
+#1  0x00007fc43968502f n/a (libgallium-26.2.2-arch3.2.so + 0x168502f)
+#2  0x00007fc438fe5577 n/a (libgallium-26.2.2-arch3.2.so + 0xfe5577)
+#3  0x00007fc438b956f1 n/a (libgallium-26.2.2-arch3.2.so + 0xb956f1)
+#4  0x00007fc438b96c7c n/a (libgallium-26.2.2-arch3.2.so + 0xb96c7c)
+#5  0x00007fc438b978c8 n/a (libgallium-26.2.2-arch3.2.so + 0xb978c8)
+#6  0x00007fc4381cc446 n/a (libgallium-26.2.2-arch3.2.so + 0x1cc446)
+#7  0x00007fc43839b482 n/a (libgallium-26.2.2-arch3.2.so + 0x39b482)
+#8  0x00007fc43839bb4b n/a (libgallium-26.2.2-arch3.2.so + 0x39bb4b)
+#9  0x00007fc4381d78a4 n/a (libgallium-26.2.2-arch3.2.so + 0x1d78a4)
+#10 0x00007fc4380c8a69 n/a (libgallium-26.2.2-arch3.2.so + 0xc8a69)
+#11 0x00007fc44003ffda n/a (libEGL_mesa.so.0 + 0x1bfda)
+#12 0x00007fc44003b972 n/a (libEGL_mesa.so.0 + 0x17972)
+#13 0x00007fc44004280e n/a (libEGL_mesa.so.0 + 0x1e80e)
+#14 0x00007fc44002ba3e n/a (libEGL_mesa.so.0 + 0x7a3e)
+#15 0x00007fc44419056f egl_cleanup (ui-opengl.so + 0x656f)
+#16 0x00005564054044d3 qemu_display_cleanup (qemu-system-x86_64 + 0x70e4d3)
+#17 0x00005564052ea3e5 qemu_cleanup (qemu-system-x86_64 + 0x5f43e5)
+#18 0x0000556405518e0e n/a (qemu-system-x86_64 + 0x822e0e)
+#19 0x0000556404ed6668 main (qemu-system-x86_64 + 0x1e0668)
+#20 0x00007fc444c27c8e n/a (libc.so.6 + 0x27c8e)
+#21 0x00007fc444c27dcb __libc_start_main (libc.so.6 + 0x27dcb)
+#22 0x0000556404ed9b15 _start (qemu-system-x86_64 + 0x1e3b15)
+

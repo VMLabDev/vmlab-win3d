@@ -7,7 +7,8 @@
 # Resolves the tip of the branch on the "qemu" line of patches/host/PINS
 # with git ls-remote (or takes the given full commit), rewrites that line's
 # commit, and prints the old and new commits with the commits between them
-# (both sides when the branch was rewritten). It changes nothing else:
+# (each side's series, down to its upstream merge, when the branch was
+# rewritten). It changes nothing else:
 # rebuild with patches/host/build-qemu.sh, test, and commit PINS (and
 # docs/stack.md, scripts/pins-table.py --write) yourself.
 set -euo pipefail
@@ -30,7 +31,7 @@ echo "old:    $OLD"
 echo "new:    $NEW"
 if [ "$OLD" = "$NEW" ]; then echo "PINS is already at the branch tip"; exit 0; fi
 
-# Commit metadata only (no blobs), enough history for the series on v11.1.1.
+# Commit metadata only (no blobs), enough history for the series and its base.
 [ -d "$CACHE" ] || git init -q --bare "$CACHE"
 git -C "$CACHE" fetch -q --filter=blob:none --depth 300 "$URL" "$NEW" "$OLD" 2>/dev/null \
     || git -C "$CACHE" fetch -q --filter=blob:none --depth 300 "$URL" "$NEW"
@@ -39,8 +40,11 @@ if git -C "$CACHE" cat-file -e "$OLD^{commit}" 2>/dev/null; then
         echo; echo "commits added (old..new):"
         git -C "$CACHE" log --oneline "$OLD..$NEW"
     else
-        echo; echo "the branch was rewritten; < only in old, > only in new:"
-        git -C "$CACHE" log --oneline --left-right "$OLD...$NEW"
+        # A rebase onto a newer upstream puts thousands of upstream commits
+        # between the two, so print each side's own series instead.
+        series() { git -C "$CACHE" log --first-parent --format='%h %p%x09%s' "$1" | awk -F'\t' '!done { if (split($1, f, " ") > 2) { print "  on " f[1]; done = 1 } else if (++n > 20) { print "  ..."; done = 1 } else print "  " f[1], $2 }'; }
+        echo; echo "the branch was rewritten. old series:"; series "$OLD"
+        echo "new series:"; series "$NEW"
     fi
 else
     echo; echo "old commit is no longer on the remote; the new branch's latest commits:"
