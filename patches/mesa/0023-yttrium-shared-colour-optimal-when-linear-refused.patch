@@ -21,8 +21,8 @@ The creator (yttrium_venus2_create_texture_image_for_bind) and the importer
 (yttrium_venus_import_texture_image_for_bind) both decide through it, from
 the same inputs, so they still agree on the layout. Nothing reads these
 images as linear memory (their row pitch is not recorded), so OPTIMAL needs
-no other change. Single-level 2D images, and every image on RADV and ANV,
-keep LINEAR.
+no other change. Single-level 2D images keep LINEAR wherever the renderer
+accepts them, and on RADV (full LINEAR mip chains) every image does.
 
 Evidence: docs/nvtex.md, docs/evidence/nvtex/ (src/d3d9_tex.cpp is the guest
 repro with a pixel readback; host-tests/linearmips.c shows the limit with no

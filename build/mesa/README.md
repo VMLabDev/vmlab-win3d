@@ -145,15 +145,13 @@ Which patches have run in a guest, and where:
 | Acceptance, Windows 11 and Windows 10, AMD | 0001 to 0014, 0020 | `docs/acceptance.md` |
 | D3D11 samples, Windows 11, AMD | 0001 to 0017, 0020 | `docs/d3d11-apps.md` |
 | Zeus Intel and the helios AMD regression, Windows 11 | 0001 to 0014, 0020, 0021 | `docs/zeus.md` |
+| nvtex proof, Windows 11, `Nvidia1` and `AMD1` (e2e, probes, SDK samples) | 0001 to 0017, 0020 to 0025 | `docs/nvtex.md` |
 
-No recorded run has the full current series, 0015 to 0017 together with
-0021. The two sets touch different code (shader translation and fill mode
-against device creation and typed UAV loads). The full series applies to the
-pinned tarball and builds (`build/mesa/build.sh` on 2026-10-17, hashes under
-[Reproducibility](#reproducibility)), but that build has not run in a guest. The runs
-cover the code paths that the probes, dxdiag and the samples reach, not every
-fix in 0001 to 0011; for the rest, the evidence is the codex session's own
-finding, cited in the patch header.
+The nvtex proof run (2026-10-18) has the full series, 0001 to 0025, built by
+`scripts/build.sh` at commit `e428846`. Before it, no recorded run had 0015
+to 0017 together with 0021. The runs cover the code paths that the probes,
+dxdiag and the samples reach, not every fix in 0001 to 0011; for the rest,
+the evidence is the codex session's own finding, cited in the patch header.
 
 ## Reproducibility
 

@@ -1,0 +1,7 @@
+nv-POM-x64 None timed_out True duration_s 27.3
+   C:\WINDOWS\SYSTEM32\d3dx9_43.dll [system32] 9.29.952.3111
+   C:\WINDOWS\SYSTEM32\d3dx10_43.dll [system32] 9.29.952.3111
+   C:\WINDOWS\SYSTEM32\d3d9.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)
+   C:\WINDOWS\SYSTEM32\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)
+   C:\WINDOWS\SYSTEM32\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)
+   C:\WINDOWS\system32\viogpu_d3d10.dll [system32] 

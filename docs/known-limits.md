@@ -15,7 +15,7 @@ result depends on the host GPU. Four were tried:
 | Host GPU, driver | Host | Result | Needs | Evidence |
 | --- | --- | --- | --- | --- |
 | AMD Radeon iGPU (Granite Ridge), RADV, Mesa 26.2.2 | helios | **Full pass**: every Done check in `docs/brief.md` item 2, on `windows-11` and `windows-10` | A plain vmlab lab that names the AMD GPU (`host_gpu = "AMD1"`; the final runs used vmlab 0.25.0-alpha at commit `6105889`) | [`acceptance.md`](acceptance.md) |
-| NVIDIA RTX 5090, 610.57.04 | helios | **Full pass**, 12 of 12 Done checks, through `tests/e2e/run.sh`: `windows-11` and `windows-10` on `Nvidia1` (vmlab 0.27.0-alpha) and `windows-11` on `Nvidia2` (vmlab 0.28.0-alpha); the guest lists exactly one Venus device. Depth draws into the back buffer need `patches/mesa/0022`; textured meshes in the D3D9 SDK samples render black (below) | `patches/mesa/0020` and `0022` (in the package) **and** the patched QEMU (the VMLabDev/qemu commit in `patches/host/PINS`) as the GPU's `qemu_binary` in the host config. Helios's host config gives both `Nvidia1` and `Nvidia2` one; without it the probes render but the console is black | [`acceptance.md`](acceptance.md#nvidia-rtx-5090), [`nvidia.md`](nvidia.md) |
+| NVIDIA RTX 5090, 610.57.04 | helios | **Full pass**, 12 of 12 Done checks, through `tests/e2e/run.sh`: `windows-11` and `windows-10` on `Nvidia1` (vmlab 0.27.0-alpha) and `windows-11` on `Nvidia2` (vmlab 0.28.0-alpha); the guest lists exactly one Venus device. Depth draws into the back buffer need `patches/mesa/0022`, and mipmapped D3D9 textures need `0023` (below) | `patches/mesa/0020`, `0022` and `0023` (in the package) **and** the patched QEMU (the VMLabDev/qemu commit in `patches/host/PINS`) as the GPU's `qemu_binary` in the host config. Helios's host config gives both `Nvidia1` and `Nvidia2` one; without it the probes render but the console is black | [`acceptance.md`](acceptance.md#nvidia-rtx-5090), [`nvidia.md`](nvidia.md) |
 | Intel Iris Xe (Raptor Lake-P), ANV, Mesa 26.2.2 | Zeus | **Full pass** on `windows-11`, 12 of 12 Done checks. Without `patches/mesa/0021`, dwm crash-loops and the console is black | `patches/mesa/0021` (in the package) | [`zeus.md`](zeus.md) |
 | NVIDIA RTX 4060 Max-Q (laptop), 615.71.09 | Zeus | **Unmet**: install, desktop and console worked; then the GPU fell off the bus (Xid 79) during vulkaninfo and QEMU aborted. Cause unknown | Not known | [`zeus.md`](zeus.md) |
 
@@ -31,9 +31,9 @@ may use therefore needs `qemu_binary` on its host config block
 before it), dwm crashes before logon. `docs/nvidia.md` explains both faults.
 
 **On NVIDIA, depth draws into the back buffer hung the guest until
-`patches/mesa/0022`; textured meshes still render black.** Before 0022, the
-DirectX SDK's D3D9 `BasicHLSL` hung on both RTX 5090s, and the host logged
-an Xid 69 each time:
+`patches/mesa/0022`, and mipmapped textures were black until `0023`.**
+Before 0022, the DirectX SDK's D3D9 `BasicHLSL` hung on both RTX 5090s, and
+the host logged an Xid 69 each time:
 
 ```
 NVRM: Xid (PCI:0000:01:00): 69, pid=<render server>, name=vkr-ring-117, Class Error: channel 0x00000052, Class 0000ce97, Offset 0000026c, Data 000000a8, ErrorCode 0000009c
@@ -48,10 +48,13 @@ those passes through an OPTIMAL shadow image. With it, BasicHLSL and
 ParallaxOcclusionMapping run on `Nvidia1` with no Xid, and the probes still
 pass 10 of 10 on `Nvidia1` and `AMD1` ([`xid69.md`](xid69.md)).
 
-Still open on NVIDIA: meshes that sample mipmapped textures render black
-(BasicHLSL's model, ParallaxOcclusionMapping's disc). Text, UI and
-untextured geometry are correct. Not investigated
-([`xid69.md`](xid69.md#open-items)). The other stretch applications have not
+Meshes that sample mipmapped textures (BasicHLSL's model,
+ParallaxOcclusionMapping's disc) rendered black on NVIDIA with 0022 alone.
+Every mipmapped D3D9 colour texture outside the system-memory pools was a
+LINEAR image, and NVIDIA allows LINEAR images with one mip level only. 0023
+makes such textures OPTIMAL when the host refuses LINEAR. Both samples now
+render textured on `Nvidia1` and `AMD1`, and the probes pass 10 of 10 on both
+([`nvtex.md`](nvtex.md)). The other stretch applications have not
 run on NVIDIA. The acceptance evidence that shows the hang is
 `docs/evidence/acceptance/windows-11-nvidia1/apps/`; the `Nvidia2` run's
 `windows-11-nvidia2/apps/` is in git history at `a58acd3`. `run.sh` collects
@@ -293,10 +296,20 @@ OpenGL and Vulkan, x64 and x86), two diagnostic probes (`probes/dxut-enum`,
 (`docs/acceptance.md`, "Stretch"; `docs/d3d11-apps.md`):
 
 - DirectX SDK (June 2010) samples: `BasicHLSL` and
-  `ParallaxOcclusionMapping` (D3D9) render; `SubD11` and `BasicHLSL11`
+  `ParallaxOcclusionMapping` (D3D9) render, textured on NVIDIA since
+  `patches/mesa/0023`; `SubD11` and `BasicHLSL11`
   (D3D11) render after `patches/mesa/0015` to `0017`, with the window
   caveat below;
 - Blender 4.2.3 (OpenGL 4.3) renders its UI and viewport.
+
+D3D9 fixed function goes through the shaders that the Windows runtime
+generates. With `patches/mesa/0024`, pre-transformed (`XYZRHW`) vertices with
+any colour and texture-coordinate layout draw; before it, only two layouts
+did. `docs/evidence/nvtex/src/d3d9_tex.cpp` tests one texture stage,
+pre-transformed and transformed vertices, and one directional light.
+Multi-stage blending, texture transforms, texture-coordinate generation, fog
+and point sprites under fixed function have not been tested
+([`nvtex.md`](nvtex.md#what-fixed-function-still-lacks)).
 
 D3D10 has no probe here, and no D3D12 application other than the probe has
 run (see below). The prior art ran real applications on its own builds of the

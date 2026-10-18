@@ -1,0 +1,24 @@
+== d3d9_tex 64-bit, adapter Hardsoft VirtIO GPU 3D controller
+FAIL path=hlsl fmt=x8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=000000 corner=000000 matches_level=8 want_level=2
+FAIL path=hlsl fmt=x8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=256 depth=none levels_created=9 centre=000000 corner=000000 matches_level=8 want_level=0
+PASS path=hlsl fmt=x8 pool=managed levels=1 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=1 centre=ff0000 corner=ff0000 matches_level=0 want_level=0
+FAIL path=hlsl fmt=a8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=000000 corner=000000 matches_level=8 want_level=2
+PASS path=hlsl fmt=dxt1 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=0000ff corner=0000ff matches_level=2 want_level=2
+FAIL path=hlsl fmt=r5g6b5 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=000000 corner=000000 matches_level=8 want_level=2
+FAIL path=hlsl fmt=x8 pool=default levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=0 centre=000000 corner=000000 matches_level=8 want_level=0 errors: CreateTexture=0x8007000e
+FAIL path=hlsl fmt=x8 pool=dynamic levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=0 centre=000000 corner=000000 matches_level=8 want_level=0 errors: CreateTexture=0x8007000e
+FAIL path=hlsl fmt=x8 pool=managed levels=0 mip=point maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=000000 corner=000000 matches_level=8 want_level=2
+FAIL path=hlsl fmt=x8 pool=managed levels=0 mip=none maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=000000 corner=000000 matches_level=8 want_level=0
+FAIL path=hlsl fmt=x8 pool=managed levels=0 mip=point maxmip=3 bias=0 size=64 depth=none levels_created=9 centre=000000 corner=000000 matches_level=8 want_level=3
+FAIL path=hlsl fmt=x8 pool=managed levels=0 mip=point maxmip=0 bias=1 size=64 depth=none levels_created=9 centre=000000 corner=000000 matches_level=8 want_level=3
+FAIL path=hlsl3 fmt=x8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=000000 corner=000000 matches_level=8 want_level=2
+FAIL path=hlsl fmt=x8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=d24x8 levels_created=9 centre=000000 corner=000000 matches_level=8 want_level=2
+PASS path=hlsl fmt=x8 pool=managed levels=1 mip=linear maxmip=0 bias=0 size=64 depth=d24x8 levels_created=1 centre=ff0000 corner=ff0000 matches_level=0 want_level=0
+FAIL path=hlsl fmt=a8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=d24x8 levels_created=9 centre=000000 corner=000000 matches_level=8 want_level=2
+FAIL path=ff-rhw fmt=x8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=141428 corner=141428 matches_level=8 want_level=2 errors: Draw=0x80004005
+PASS path=ff-rhw fmt=x8 pool=managed levels=1 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=1 centre=ff0000 corner=ff0000 matches_level=0 want_level=0
+FAIL path=ff-rhw-diffuse fmt=x8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=141428 corner=141428 matches_level=8 want_level=2 errors: Draw=0x80004005
+FAIL path=ff-xyz fmt=x8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=000000 corner=000000 matches_level=8 want_level=2
+FAIL path=ff-xyz-lit fmt=x8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=none levels_created=9 centre=000000 corner=000000 matches_level=8 want_level=2
+FAIL path=ff-xyz fmt=x8 pool=managed levels=0 mip=linear maxmip=0 bias=0 size=64 depth=d24x8 levels_created=9 centre=000000 corner=000000 matches_level=8 want_level=2
+== done 4 of 22 passed
