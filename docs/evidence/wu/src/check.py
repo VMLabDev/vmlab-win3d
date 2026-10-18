@@ -81,6 +81,11 @@ check("3 Windows Update on: wuauserv and UsoSvc running, WU policies gone",
 ok, d = searched("search-template")
 check("4 Windows Update search succeeded on the template's driver", ok, d)
 
+b = bound("basic-display")
+check("4b viogpudo removed: Microsoft Basic Display drives the device", b.get("inf") == "display.inf", desc(b))
+ok, d = searched("search-basic-display")
+check("4b Windows Update search succeeded with no driver on the device", ok, d)
+
 for label in ("installed", "after-wu-install", "after-uso", "after-reboot"):
     b = bound(label)
     check(f"{label}: this package drives the device and it is pinned", ours(b) and pinned(label), desc(b))
@@ -91,11 +96,12 @@ check("6 Windows Update search succeeded with the package installed", w.get("res
 check("6 the package survives the driver download and install", ours(bound("wu-install", "bound_after")),
       desc(bound("wu-install", "bound_after")))
 u = reports.get("uso") or {}
-check("7 UsoClient ran", all(r.get("exit") == 0 for r in as_list(u.get("runs"))),
+runs = {r.get("command"): r.get("exit") for r in as_list(u.get("runs"))}
+check("7 UsoClient scans ran", runs.get("UsoClient StartScan") == "0x00000000" and runs.get("UsoClient StartInteractiveScan") == "0x00000000",
       ", ".join(f"{r.get('command')} -> {r.get('exit')}" for r in as_list(u.get("runs"))))
 
 print()
-for label in ("search-template", "wu-install"):
+for label in ("search-template", "search-basic-display", "wu-install"):
     r = reports.get(label) or {}
     ups = as_list(r.get("updates"))
     print(f"{label}: {len(ups)} updates offered, {sum(x.get('type') == 2 for x in ups)} drivers, "

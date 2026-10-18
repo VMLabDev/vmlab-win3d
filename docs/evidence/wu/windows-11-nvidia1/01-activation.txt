@@ -1,0 +1,51 @@
+## booted 2026-10-19T01:52:00+10:00
+   IPv4 Address. . . . . . . . . . . : 10.213.0.2
+   Default Gateway . . . . . . . . . : 10.213.0.1
+## slmgr /dlv
+Software licensing service version: 10.0.26100.9457
+
+Name: Windows(R), EnterpriseEval edition
+Description: Windows(R) Operating System, TIMEBASED_EVAL channel
+Activation ID: 3f4c0546-36c6-46a8-a37f-be13cdd0cf25
+Application ID: 55c92734-d682-4d71-983e-d6ec3f16059f
+Extended PID: 03612-03292-000-000001-00-1033-26100.0000-2912026
+Product Key Channel: Retail:TB:Eval
+Installation ID: 433552416609943156564389232488460343463784084231155555702092001
+Use License URL: https://activation-v2.sls.microsoft.com/SLActivateProduct/SLActivateProduct.asmx?configextension=Retail
+Validation URL: https://validation-v2.sls.microsoft.com/SLWGA/slwga.asmx
+Partial Product Key: YG9R6
+License Status: Notification
+Notification Reason: 0xC004F009 (grace time expired).
+Remaining Windows rearm count: 1
+Remaining SKU rearm count: 1
+Trusted time: 10/18/2026 8:52:00 AM
+
+
+## slmgr /ato
+Activating Windows(R), EnterpriseEval edition (3f4c0546-36c6-46a8-a37f-be13cdd0cf25) ...
+Product activated successfully.
+
+## slmgr /dlv
+Software licensing service version: 10.0.26100.9457
+
+Name: Windows(R), EnterpriseEval edition
+Description: Windows(R) Operating System, TIMEBASED_EVAL channel
+Activation ID: 3f4c0546-36c6-46a8-a37f-be13cdd0cf25
+Application ID: 55c92734-d682-4d71-983e-d6ec3f16059f
+Extended PID: 03612-03292-000-000001-00-1033-26100.0000-2912026
+Product Key Channel: Retail:TB:Eval
+Installation ID: 433552416609943156564389232488460343463784084231155555702092001
+Use License URL: https://activation-v2.sls.microsoft.com/SLActivateProduct/SLActivateProduct.asmx?configextension=Retail
+Validation URL: https://validation-v2.sls.microsoft.com/SLWGA/slwga.asmx
+Partial Product Key: YG9R6
+License Status: Licensed
+Timebased activation expiration: 129600 minute(s) (90 day(s))
+Remaining Windows rearm count: 1
+Remaining SKU rearm count: 1
+Trusted time: 10/18/2026 8:55:55 AM
+
+
+## slmgr /xpr
+Windows(R), EnterpriseEval edition:
+    Timebased activation will expire 1/16/2027 8:55:55 AM
+

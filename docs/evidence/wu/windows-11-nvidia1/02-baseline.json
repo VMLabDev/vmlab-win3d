@@ -1,0 +1,67 @@
+{
+    "label":  "baseline",
+    "time":  "2026-10-18T08:55:58.8283748-07:00",
+    "instance_id":  "PCI\\VEN_1AF4\u0026DEV_1050\u0026SUBSYS_11001AF4\u0026REV_01\\3\u002611583659\u00260\u002620",
+    "status":  "OK",
+    "bound":  {
+                  "inf":  "oem7.inf",
+                  "original":  "viogpudo.inf",
+                  "provider":  "Red Hat, Inc.",
+                  "date":  "2025-07-09",
+                  "version":  "100.101.104.28500",
+                  "rank":  "00F90000",
+                  "matching_id":  "PCI\\VEN_1AF4\u0026DEV_1050\u0026SUBSYS_11001AF4\u0026REV_01",
+                  "problem_code":  0
+              },
+    "policy":  {
+                   "restrictions":  null,
+                   "deny_instance_ids":  null
+               },
+    "installer_state":  null,
+    "windows_update":  {
+                           "services":  [
+                                            {
+                                                "name":  "BITS",
+                                                "status":  "Stopped",
+                                                "start":  "Manual"
+                                            },
+                                            {
+                                                "name":  "CryptSvc",
+                                                "status":  "Running",
+                                                "start":  "Automatic"
+                                            },
+                                            {
+                                                "name":  "TrustedInstaller",
+                                                "status":  "Stopped",
+                                                "start":  "Manual"
+                                            },
+                                            {
+                                                "name":  "UsoSvc",
+                                                "status":  "Stopped",
+                                                "start":  "Disabled"
+                                            },
+                                            {
+                                                "name":  "WaaSMedicSvc",
+                                                "status":  "Stopped",
+                                                "start":  "Manual"
+                                            },
+                                            {
+                                                "name":  "wuauserv",
+                                                "status":  "Running",
+                                                "start":  "Manual"
+                                            }
+                                        ],
+                           "policy":  {
+                                          "DoNotConnectToWindowsUpdateInternetLocations":  1
+                                      },
+                           "policy_au":  {
+                                             "NoAutoUpdate":  1,
+                                             "AUOptions":  1
+                                         },
+                           "driver_searching":  {
+                                                    "SearchOrderConfig":  1
+                                                },
+                           "driver_searching_policy":  null
+                       },
+    "ranked":  "Microsoft PnP Utility\r\n\r\nInstance ID:                PCI\\VEN_1AF4\u0026DEV_1050\u0026SUBSYS_11001AF4\u0026REV_01\\3\u002611583659\u00260\u002620\r\nDevice Description:         Red Hat VirtIO GPU DOD controller\r\nClass Name:                 Display\r\nClass GUID:                 {4d36e968-e325-11ce-bfc1-08002be10318}\r\nManufacturer Name:          Red Hat, Inc.\r\nStatus:                     Started\r\nDriver Name:                oem7.inf\r\nMatching Drivers:\r\n    Driver Name:            oem7.inf\r\n    Original Name:          viogpudo.inf\r\n    Provider Name:          Red Hat, Inc.\r\n    Class Name:             Display\r\n    Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}\r\n    Driver Version:         07/09/2025 100.101.104.28500\r\n    Signer Name:            Microsoft Windows Hardware Compatibility Publisher\r\n    Matching Device ID:     PCI\\VEN_1AF4\u0026DEV_1050\u0026SUBSYS_11001AF4\u0026REV_01\r\n    Driver Rank:            00F90000\r\n    Driver Status:          Best Ranked / Installed\r\n                            \r\n    Driver Name:            oem7.inf\r\n    Original Name:          viogpudo.inf\r\n    Provider Name:          Red Hat, Inc.\r\n    Class Name:             Display\r\n    Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}\r\n    Driver Version:         07/09/2025 100.101.104.28500\r\n    Signer Name:            Microsoft Windows Hardware Compatibility Publisher\r\n    Matching Device ID:     PCI\\VEN_1AF4\u0026DEV_1050\r\n    Driver Rank:            00F93001\r\n    Driver Status:          Outranked\r\n                            \r\n    Driver Name:            display.inf\r\n    Provider Name:          Microsoft\r\n    Class Name:             Display\r\n    Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}\r\n    Driver Version:         06/21/2006 10.0.26100.1\r\n    Signer Name:            Microsoft Windows\r\n    Matching Device ID:     PCI\\CC_0300\r\n    Driver Rank:            00FB2006\r\n    Driver Status:          Outranked"
+}

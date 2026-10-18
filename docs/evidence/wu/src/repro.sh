@@ -14,9 +14,12 @@
 #      Enable: the template's WU policies off, UsoSvc and wuauserv started)
 #    4 Windows Update search (Microsoft.Update.Session, ssWindowsUpdate,
 #      drivers included) on the template's driver: what it offers the device
+#   4b removes the template's viogpudo (pnputil /delete-driver /uninstall):
+#      the device falls back to Microsoft Basic Display; searches again
 #    5 installs the bundle
 #    6 search, download and install of every driver update offered
-#    7 UsoClient StartScan, StartDownload, StartInstall, five minutes
+#    7 UsoClient StartScan and StartInteractiveScan, five minutes (build
+#      26100 has no StartDownload or StartInstall; recorded anyway)
 #    8 reboot
 # Reports go to docs/evidence/wu/windows-11-<gpu>/, with checks.txt judging
 # them (check.py). Exit 0 when every check passes.
@@ -106,13 +109,22 @@ say "3 Windows Update on"
 next enable; wu 300 -Action Enable -Label enable >"$F.json"
 say "4 search on the template's driver"
 next search-template; wu 3600 -Action Search -Label search-template >"$F.json"; bound "$F.json"
+say "4b the same search with no driver on the device"
+# Take the template's viogpudo off the device and out of the store, so the
+# device falls back to Microsoft Basic Display: any driver Windows Update
+# has for PCI\VEN_1AF4&DEV_1050 is then an improvement and is offered.
+INF=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8-sig"))["bound"]["inf"])' "$EV/02-baseline.json")
+next remove-viogpudo; in_lab vmlab exec --timeout 300 "$VM" -- pnputil.exe /delete-driver "$INF" /uninstall /force 2>&1 | tr -d '\r' >"$F.txt"
+echo "  pnputil /delete-driver $INF /uninstall /force: $(grep -iE 'deleted|failed' "$F.txt" | head -1)"
+report basic-display
+next search-basic-display; wu 3600 -Action Search -Label search-basic-display >"$F.json"; bound "$F.json"
 say "5 install the bundle"
 next install; "$REPO/scripts/install-into-vm.sh" "$WORK/lab" "$VM" >"$F.log" 2>&1; echo "  install-into-vm.sh -> $?"
 report installed
 say "6 search, download and install every driver update"
 next wu-install; wu 3600 -Action Install -Label wu-install >"$F.json"; bound "$F.json"
 report after-wu-install
-say "7 UsoClient scan, download, install"
+say "7 UsoClient scans"
 next uso; wu 1200 -Action Uso -Label uso -Seconds 300 >"$F.json"; bound "$F.json"
 report after-uso
 say "8 reboot"

@@ -1,0 +1,93 @@
+{
+    "label":  "enable",
+    "time":  "2026-10-18T08:56:03.6247795-07:00",
+    "before":  {
+                   "services":  [
+                                    {
+                                        "name":  "BITS",
+                                        "status":  "Stopped",
+                                        "start":  "Manual"
+                                    },
+                                    {
+                                        "name":  "CryptSvc",
+                                        "status":  "Running",
+                                        "start":  "Automatic"
+                                    },
+                                    {
+                                        "name":  "TrustedInstaller",
+                                        "status":  "Stopped",
+                                        "start":  "Manual"
+                                    },
+                                    {
+                                        "name":  "UsoSvc",
+                                        "status":  "Stopped",
+                                        "start":  "Disabled"
+                                    },
+                                    {
+                                        "name":  "WaaSMedicSvc",
+                                        "status":  "Stopped",
+                                        "start":  "Manual"
+                                    },
+                                    {
+                                        "name":  "wuauserv",
+                                        "status":  "Running",
+                                        "start":  "Manual"
+                                    }
+                                ],
+                   "policy":  {
+                                  "DoNotConnectToWindowsUpdateInternetLocations":  1
+                              },
+                   "policy_au":  {
+                                     "NoAutoUpdate":  1,
+                                     "AUOptions":  1
+                                 },
+                   "driver_searching":  {
+                                            "SearchOrderConfig":  1
+                                        },
+                   "driver_searching_policy":  null
+               },
+    "after":  {
+                  "services":  [
+                                   {
+                                       "name":  "BITS",
+                                       "status":  "Stopped",
+                                       "start":  "Manual"
+                                   },
+                                   {
+                                       "name":  "CryptSvc",
+                                       "status":  "Running",
+                                       "start":  "Automatic"
+                                   },
+                                   {
+                                       "name":  "TrustedInstaller",
+                                       "status":  "Stopped",
+                                       "start":  "Manual"
+                                   },
+                                   {
+                                       "name":  "UsoSvc",
+                                       "status":  "Running",
+                                       "start":  "Manual"
+                                   },
+                                   {
+                                       "name":  "WaaSMedicSvc",
+                                       "status":  "Running",
+                                       "start":  "Manual"
+                                   },
+                                   {
+                                       "name":  "wuauserv",
+                                       "status":  "Running",
+                                       "start":  "Manual"
+                                   }
+                               ],
+                  "policy":  {
+
+                             },
+                  "policy_au":  {
+
+                                },
+                  "driver_searching":  {
+                                           "SearchOrderConfig":  1
+                                       },
+                  "driver_searching_policy":  null
+              }
+}

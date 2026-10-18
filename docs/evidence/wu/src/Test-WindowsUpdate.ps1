@@ -21,9 +21,11 @@ Every action prints one JSON object.
   -Action Install           Search, then download and install every driver
                             update offered, as Windows Update does. Prints the
                             result code and HRESULT of each.
-  -Action Uso               UsoClient StartScan, StartDownload, StartInstall
-                            (the orchestrator's own scan), waits -Seconds,
-                            then prints the WindowsUpdateClient events since.
+  -Action Uso               UsoClient StartScan and StartInteractiveScan (the
+                            orchestrator's own scans), StartDownload,
+                            StartInstall and a made-up verb as a control;
+                            waits -Seconds, then prints the
+                            WindowsUpdateClient events since.
 #>
 param(
     [ValidateSet('Report', 'Enable', 'Search', 'Install', 'Uso')]
@@ -210,11 +212,12 @@ switch ($Action) {
     }
     'Uso' {
         $t0 = Get-Date
-        $runs = foreach ($c in 'StartScan', 'StartDownload', 'StartInstall') {
-            $ErrorActionPreference = 'Continue'
-            $out = & UsoClient.exe $c 2>&1 | Out-String
-            [ordered]@{ command = "UsoClient $c"; exit = $LASTEXITCODE; output = $out.Trim() }
-            Start-Sleep -Seconds ([int]($Seconds / 3))
+        # Build 26100 accepts StartScan and StartInteractiveScan; StartDownload
+        # and StartInstall exit 0x80070057, as the made-up verb does.
+        $runs = foreach ($c in 'StartScan', 'StartInteractiveScan', 'StartDownload', 'StartInstall', 'NoSuchVerb') {
+            $p = Start-Process -FilePath "$env:SystemRoot\System32\UsoClient.exe" -ArgumentList $c -Wait -PassThru
+            [ordered]@{ command = "UsoClient $c"; exit = '0x{0:X8}' -f $p.ExitCode }
+            if ($p.ExitCode -eq 0) { Start-Sleep -Seconds ([int]($Seconds / 2)) }
         }
         $ErrorActionPreference = 'Continue'
         $ev = @(Get-WinEvent -FilterHashtable @{ LogName = 'Microsoft-Windows-WindowsUpdateClient/Operational'; StartTime = $t0 } -ErrorAction SilentlyContinue |
