@@ -74,7 +74,7 @@ The series has two parts, and the patches apply in name order:
   mixed-case header symlinks that `prepare-build.py` creates, so they are
   build output, not source. The diff was then split by topic. Each patch has
   a header that says what it fixes and which prior-art finding it comes from.
-- **0012 to 0017 and 0020 to 0025** are this repository's own fixes, found by
+- **0012 to 0017, 0020 to 0025 and 0030** are this repository's own fixes, found by
   the acceptance and host runs. Each header names the document with the
   evidence. The series skips 0018 and 0019.
 

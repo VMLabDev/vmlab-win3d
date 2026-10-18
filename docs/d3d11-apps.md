@@ -212,7 +212,8 @@ from the pinned SDK (commit `3bf8e4c`). It has not been re-run since.
 - The samples ran only as x64, as in the e2e run. The probes ran as x64 and
   x86.
 - Dynamic indexing of patch constants in a domain shader
-  (`dcl_indexrange vpc6.xyz 4`) is still rejected. SubD11 does not use it.
+  (`dcl_indexrange vpc6.xyz 4`) was rejected here; `patches/mesa/0030` added it
+  later ([ds.md](ds.md)). SubD11 does not use it.
   The first version of `tess_probe` did, and it failed with
   `dcl_input_index_range` unsupported.
 

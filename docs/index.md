@@ -65,6 +65,7 @@ or Intel GPU as declared in the host config, `~/.config/vmlab/config.wcl`
 | [zeus.md](zeus.md) | See the package on an Intel Iris Xe (passes with `patches/mesa/0021`) and a laptop RTX 4060 (failed) |
 | [xid69.md](xid69.md) | See why D3D9 depth draws into the back buffer hung the RTX 5090 (Xid 69) and how `patches/mesa/0022` fixed it |
 | [nvtex.md](nvtex.md) | See why mipmapped textures were black on NVIDIA, and the fixed-function and 16-bit format fixes `patches/mesa/0023` to `0025` |
+| [ds.md](ds.md) | See why D3D11 domain shaders that index patch constants removed the device, and the fix `patches/mesa/0030` |
 
 ## Building
 
