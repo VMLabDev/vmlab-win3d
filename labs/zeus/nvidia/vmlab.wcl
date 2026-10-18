@@ -7,7 +7,7 @@ import <vmlab.wcl>
 // render node for egl-headless and sets VK_LOADER_DRIVERS_SELECT=*nvidia* in
 // QEMU's environment. The evidence in docs/evidence/zeus/nvidia/ was taken on
 // vmlab 0.24 with gpu.address. Bring it up through labs/zeus/vmlab-iso.sh,
-// which puts the patched QEMU (patches/host/qemu/0001) first on PATH. See
+// which puts the patched QEMU (patches/host/build-qemu.sh) first on PATH. See
 // labs/zeus/README.md and docs/zeus.md.
 lab "win3d-zeus-nvidia" {
   vm "win" {

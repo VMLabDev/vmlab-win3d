@@ -11,7 +11,7 @@
 # Environment read when the supervisor starts (stop it to change them):
 #   WIN3D_QEMU_DIR       directory holding the qemu-system-x86_64 to put first
 #                        on PATH (default: <staging>/out/host/qemu/bin, the
-#                        patches/host/qemu build); "host" for the host's QEMU
+#                        patches/host/build-qemu.sh build); "host" for the host's QEMU
 #   WIN3D_RENDER_SERVER  a virgl_render_server for RENDER_SERVER_EXEC_PATH
 #                        (patches/host/build-virglrenderer.sh builds one)
 #   WIN3D_QEMU_ENV       extra NAME=VALUE words for QEMU's environment

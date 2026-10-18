@@ -67,6 +67,21 @@ steps, including installing from inside the guest with `Install.cmd`.
 `tests/e2e/run.sh --template windows-11` checks every Done item on a fresh
 lab and destroys it afterwards.
 
+## Install
+
+A release has two assets, built by `scripts/release.sh`
+([docs/release.md](docs/release.md)):
+
+- `vmlab-win3d-<version>-windows-x64.zip`, the signed guest package. Unzip
+  it in a Windows 10 or 11 guest with Secure Boot off and a Venus GPU, and
+  run `Install.cmd` as Administrator. Its `README.txt` has the steps.
+- `qemu-11.1.1-vmlab-egl-<version>-x86_64-linux.tar.zst`, the patched QEMU
+  that NVIDIA hosts need. Extract it, run `install.sh`, and paste the
+  `qemu_binary` line it prints into the host config's GPU block.
+
+[docs/release.md](docs/release.md) covers both, and how to cut a release.
+To build from source instead, see [Quick start](#quick-start).
+
 ## Documentation
 
 | Page | Contents |
@@ -115,14 +130,21 @@ to it are in `patches/` (see [docs/stack.md](docs/stack.md)).
 
 | Project | Use |
 | --- | --- |
-| [QEMU](https://www.qemu.org/) and [virglrenderer](https://gitlab.freedesktop.org/virgl/virglrenderer) | The virtio-gpu device and the host side of Venus. Our egl-headless fix for NVIDIA is on [VMLabDev/qemu](https://github.com/VMLabDev/qemu/tree/vmlab/egl-headless-external-dmabuf). |
+| [QEMU](https://www.qemu.org/) and [virglrenderer](https://gitlab.freedesktop.org/virgl/virglrenderer) | The virtio-gpu device and the host side of Venus. Our egl-headless fix for NVIDIA is the branch [`vmlab/egl-headless-external-dmabuf`](https://github.com/VMLabDev/qemu/tree/vmlab/egl-headless-external-dmabuf) on VMLabDev/qemu, built at the commit `patches/host/PINS` pins (`78bc99a513`) and shipped as a release asset. |
 | [vmlab](https://github.com/VMLabDev/vmlab) | The labs every test runs in |
 | Microsoft DirectX SDK (June 2010) samples, [Blender](https://www.blender.org/), the LunarG Vulkan Runtime and the Visual C++ 2010 runtime | Unmodified third-party applications for the acceptance tests. They are downloaded at test time from their official sources and are not redistributed. |
 
 ## Licence
 
-This repository's own scripts and documents have no licence statement yet.
-The components it builds keep their upstream licences: BSD-3-Clause and
-MPL-2.0 (the KMD), MIT and MPL-2.0 (Mesa), LGPL-2.1-or-later (vkd3d-proton),
-MIT (dxil-spirv), zlib (DXVK) and Apache-2.0 (the Vulkan loader). See
-[docs/stack.md](docs/stack.md).
+This repository's own scripts, build files, installer and documents are
+under the MIT licence ([LICENSE](LICENSE)), copyright 2026 VMLabDev and
+contributors.
+
+That licence does not cover other people's code. Everything under
+`patches/` modifies an upstream project and is under that project's
+licence. Every component the scripts build or download, and so every file
+in the guest package and the QEMU release asset, keeps its upstream
+licence: BSD-3-Clause and MPL-2.0 (the KMD), MIT and MPL-2.0 (Mesa),
+LGPL-2.1-or-later (vkd3d-proton), MIT (dxil-spirv), zlib (DXVK),
+Apache-2.0 (the Vulkan loader) and GPL-2.0 (QEMU). See
+[Credits](#credits) and [docs/stack.md](docs/stack.md).

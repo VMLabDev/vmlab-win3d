@@ -32,8 +32,6 @@ SUBJECT_FALLBACK = {
     "mesa/0021-yttrium-d3d11-typed-uav-loads-without-formatless-read.patch":
         "d3d10umd, yttrium: create WDDM 2.0 D3D11 devices without formatless storage-image reads; "
         "R32 typed UAV loads only, and TypedUAVLoadAdditionalFormats from the host (Intel ANV)",
-    "host/qemu/0001-ui-egl-headless-external-only-dmabuf-scanouts.patch":
-        "ui/egl-headless: show LINEAR scanout dma-bufs that the host EGL imports as external only (NVIDIA)",
     "host/virglrenderer/0001-vkr-log-image-creation.patch":
         "vkr: log failed image creation and memory allocation, with the create-info (diagnostic render server)",
     "host/virglrenderer/workaround/0002-vkr-drop-unsupported-feedback-loop-usage.patch":
@@ -49,7 +47,6 @@ DOC_DEFAULT = {
     "mesa": "build/mesa/README.md",
     "vkd3d-proton": "build/d3d12/README.md",
     "vulkan-tools": "build/vulkan-sdk/README.md",
-    "host/qemu": "docs/nvidia.md",
     "host/virglrenderer": "docs/nvidia.md",
     "host/virglrenderer/workaround": "docs/nvidia.md",
 }
@@ -142,12 +139,15 @@ def parse_plain(component, lines):
 
 
 def parse_host(component, lines):
-    """name url (tag|version) value sha256 hash  |  name url digest sha256:...  (patches/host)."""
+    """name url (tag|version) value sha256 hash  |  name url branch name commit hash  |
+    name url digest sha256:...  (patches/host)."""
     out = []
     for f, _ in lines:
         name, url, kind = f[0], f[1], f[2]
         if kind in ("tag", "version") and len(f) == 6 and f[4] == "sha256":
             out.append(row(component, name, f[3], "", f[5], url))
+        elif kind == "branch" and len(f) == 6 and f[4] == "commit":
+            out.append(row(component, name, f"branch {f[3]}", f[5], "", url))
         elif kind == "digest" and len(f) == 4:
             out.append(row(component, name, "", f[3], "", url))
         else:

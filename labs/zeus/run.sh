@@ -22,7 +22,7 @@
 # The lab is destroyed unless --keep.
 #
 # --gpu nvidia runs vmlab through labs/zeus/vmlab-iso.sh: an isolated
-# supervisor whose PATH puts the patched QEMU (patches/host/qemu/0001, built
+# supervisor whose PATH puts the patched QEMU (patches/host/build-qemu.sh, built
 # on Zeus in the staging tree) first. --gpu intel uses the user's supervisor
 # and the host QEMU, unless WIN3D_ISO=1 (then vmlab-iso.sh's WIN3D_* apply).
 #
