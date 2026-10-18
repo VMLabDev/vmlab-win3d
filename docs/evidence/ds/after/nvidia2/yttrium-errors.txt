@@ -1,0 +1,13 @@
+---- d3d11_index run-repro.sh start
+2026-10-18 10:09:46.113 [warning pid=1596 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=9 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:09:46.502 [warning pid=1596 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:09:46.861 [warning pid=1596 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:09:58.776 [warning pid=8100 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=9 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:09:58.897 [warning pid=8100 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:09:59.122 [warning pid=8100 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:10:05.785 [warning pid=6748 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=9 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:10:05.887 [warning pid=6748 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:10:06.234 [warning pid=6748 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:10:18.035 [warning pid=5636 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=9 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:10:18.162 [warning pid=5636 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 10:10:18.420 [warning pid=5636 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it

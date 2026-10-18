@@ -115,6 +115,7 @@ and 0011 is in the Venus ICD.
 | 0023 yttrium-shared-colour-optimal-when-linear-refused | Shared colour images (every D3D9 colour texture outside the system-memory pools) use OPTIMAL tiling when the host refuses LINEAR for the exact create-info (NVIDIA allows LINEAR with one mip level only; mipmapped textures sampled black, DEFAULT-pool ones failed to create) | [`docs/nvtex.md`](../../docs/nvtex.md) |
 | 0024 d3d9-positiont-vs-for-runtime-fixed-function-ps | Pre-transformed fixed-function draws get a generated vertex shader for any declaration (XYZRHW with diffuse, specular or several texture sets failed with E_FAIL on every GPU) | [`docs/nvtex.md`](../../docs/nvtex.md) |
 | 0025 yttrium-packed-16-bit-formats-match-vulkan | D3D R5G6B5 and A1R5G5B5 map to `R5G6B5_UNORM_PACK16` and `A1R5G5B5_UNORM_PACK16` (red and blue were swapped on RADV; R5G6B5 was unsupported, so black, on NVIDIA) | [`docs/nvtex.md`](../../docs/nvtex.md) |
+| 0030 d3d10umd-domain-shader-indexed-patch-constants | Domain shaders read patch constants with a register index (`dcl_indexrange vpc`; the device was removed at the first draw) | [`docs/ds.md`](../../docs/ds.md) |
 
 0021 has no mail header. `scripts/pins-table.py` carries its one-line
 description.
