@@ -407,19 +407,21 @@ samples still render on the hardware device either way. `D3D11Ref.dll` is not
 redistributable, so the package cannot ship it. Evidence:
 `docs/d3d11-apps.md`, "BasicHLSL11: a DXUT bug on Windows 8 and later".
 
-### Indexed outputs outside hull shaders are not translated
+### Indexed shader inputs and outputs: what is covered
 
-Shaders may index their inputs with a register: `patches/mesa/0015` covers
-hull shaders and `0030` covers patch constants in domain shaders
-(`dcl_indexrange vpc6.xyz 4`, which removed the device before). Domain,
-geometry and pixel shader input ranges match WARP
-([`ds.md`](ds.md)). A `dcl_indexrange` over outputs still fails the
-translation everywhere except a hull shader's fork and join phases.
-d3dcompiler_47 never emits one: indexing an output with a register in a
-vertex, domain or geometry shader is a compile error (X3500). Only bytecode
-written by hand or by another compiler would hit it. Vertex shader input
-ranges and domain shader ranges over tessellation factors were not tested
-([`ds.md`](ds.md#what-remains)).
+Shaders may index their inputs and outputs with a register
+(`dcl_indexrange`). `patches/mesa/0015` covers hull shader patch phases,
+`0030` patch constants in domain shaders ([`ds.md`](ds.md)), `0031` output
+ranges in every other stage and in a hull shader's control-point phase, and
+`0032` hull shader join phases that read their fork phases' outputs
+([`shaders2.md`](shaders2.md)). Before `0032`, any such join phase removed
+the device, even with immediate indices; d3dcompiler_47 emits one whenever a
+patch-constant function computes one output from another. Vertex, domain,
+geometry and pixel shader input ranges, tessellation-factor ranges, and
+output ranges in every stage match WARP on AMD1 and Nvidia1. What remains is
+in [`shaders2.md`](shaders2.md#what-remains): a range over a geometry
+shader's packed scalar system values is still rejected, and indexed reads of
+ordinary patch constants in a join phase were not run.
 
 ### D3D12: ExecuteIndirect that changes state draws wrongly, and an NVIDIA first-boot dwm crash
 

@@ -74,14 +74,16 @@ The series has two parts, and the patches apply in name order:
   mixed-case header symlinks that `prepare-build.py` creates, so they are
   build output, not source. The diff was then split by topic. Each patch has
   a header that says what it fixes and which prior-art finding it comes from.
-- **0012 to 0017, 0020 to 0027, 0030, 0035 and 0040 to 0042** are this repository's own fixes, found by
+- **0012 to 0017, 0020 to 0027, 0030 to 0032, 0035 and 0040 to 0042** are this repository's own fixes, found by
   the acceptance and host runs. Each header names the document with the
-  evidence. The series skips 0018, 0019, 0026 to 0029 and 0031 to 0039.
+  evidence. The series skips 0018, 0019, 0028, 0029, 0033, 0034 and 0036 to 0039.
 
-0005 to 0010 and every patch from 0012 to 0026 change `viogpu_d3d10.dll`, the
-D3D9/D3D10/D3D11 UMD (the `d3d10umd` frontend and the Yttrium winsys). 0001
-to 0003 are build and utility fixes that every DLL shares, 0004 and 0027 are in WGL,
-and 0011 is in the Venus ICD.
+0005 to 0010, every patch from 0012 to 0026 and 0030 to 0032 change
+`viogpu_d3d10.dll`, the D3D9/D3D10/D3D11 UMD (the `d3d10umd` frontend and the
+Yttrium winsys). 0032 also changes Gallium's `tgsi_to_nir`, in a branch that
+only a TGSI tessellation control shader reaches, which only the UMD makes.
+0001 to 0003 are build and utility fixes that every DLL shares, 0004 and 0027
+are in WGL, and 0011 is in the Venus ICD.
 
 ### From the prior art
 
@@ -118,6 +120,8 @@ and 0011 is in the Venus ICD.
 | 0026 d3d9-ddraw-present-sources-in-host-cached-memory | DirectDraw off-screen surfaces that are Blt sources to the primary use host-cached memory, so the KMD's CPU present copy does not read them uncached (13 to 34 windowed Blts per second on AMD CPUs) | [`docs/present.md`](../../docs/present.md) |
 | 0027 wgl-present-windows-opaque | WGL windows present opaque: Kopper's swapchain no longer asks for premultiplied alpha, so the compositor ignores the alpha an application leaves in its back buffer (Blender's window was translucent on Windows 10) | [`docs/present.md`](../../docs/present.md) |
 | 0030 d3d10umd-domain-shader-indexed-patch-constants | Domain shaders read patch constants with a register index (`dcl_indexrange vpc`; the device was removed at the first draw) | [`docs/ds.md`](../../docs/ds.md) |
+| 0031 d3d10umd-output-index-ranges-in-every-stage | Vertex, domain, geometry and pixel shaders and a hull shader's control-point phase may write outputs with a register index (`dcl_indexrange o1.xyzw 4`, `mov o[r0.x + 1]`; the translation failed and the device was removed) | [`docs/shaders2.md`](../../docs/shaders2.md) |
+| 0032 d3d10umd-hull-shader-join-phases-read-fork-phase-outputs | Hull shader join phases read the patch constants and tessellation factors their fork phases wrote, with an immediate or a register index (any join phase that read `vpcN` had no NIR, so the device was removed; `vpc1.x` read factor 0) | [`docs/shaders2.md`](../../docs/shaders2.md) |
 | 0035 d3d9-hardware-colour-key-and-mirror-blits | DirectDraw source colour-key and mirror blits are drawn on the GPU, matching the emulation layer pixel for pixel, and the HAL reports `DDCKEYCAPS_SRCBLT` and the mirror FX caps (DirectDraw emulated them on the CPU through Lock) | [`docs/ddraw.md`](../../docs/ddraw.md) |
 | 0040 d3d9-swvp-processed-vertices-keep-declaration-vs | Fixed-function draws with software vertex processing keep their colours and texture coordinates (every one rendered black) | [`docs/ffp.md`](../../docs/ffp.md) |
 | 0041 d3d9-fixed-function-fog | Table fog under a perspective projection uses W (from `UpdateWInfo`), vertex fog is clamped per pixel, and pre-transformed vertices get their fog factor from FOG or the specular alpha | [`docs/ffp.md`](../../docs/ffp.md) |
