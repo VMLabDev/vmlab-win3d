@@ -3,7 +3,7 @@
 # Install the patched QEMU from this release tarball, without root.
 #
 #   ./install.sh [prefix]    install into prefix
-#                            (default ~/.local/opt/qemu-11.1.1-vmlab-egl)
+#                            (default ~/.local/opt/qemu-vmlab-egl)
 #   ./install.sh --check     only check that this host can run the binary
 #
 # Checks the host's shared libraries with ldd first, and stops with the
@@ -25,7 +25,7 @@ case ${1:-} in
     --check) CHECK_ONLY=1; shift ;;
 esac
 [ $# -le 1 ] || { usage >&2; exit 2; }
-PREFIX=${1:-$HOME/.local/opt/qemu-11.1.1-vmlab-egl}
+PREFIX=${1:-$HOME/.local/opt/qemu-vmlab-egl}
 
 [ -x "$BIN" ] || { echo "error: $BIN is missing; run install.sh from the extracted tarball" >&2; exit 1; }
 [ "$(uname -m)" = x86_64 ] || { echo "error: this QEMU is built for x86_64 Linux, not $(uname -m)" >&2; exit 1; }

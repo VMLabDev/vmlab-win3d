@@ -49,7 +49,7 @@ Two separate faults stopped it. Neither is a bug in the NVIDIA driver.
 | # | Symptom | Failing call | Fix | Owner |
 | --- | --- | --- | --- | --- |
 | 1 | dwm crashes before logon (`0x889800c0`); Vulkan and OpenGL presents fail | `vkCreateImage` and `vkGetPhysicalDeviceImageFormatProperties2` return `VK_ERROR_FORMAT_NOT_SUPPORTED` for LINEAR images with `VK_IMAGE_USAGE_ATTACHMENT_FEEDBACK_LOOP_BIT_EXT` | `patches/mesa/0020-yttrium-gate-feedback-loop-usage-on-format-support.patch` (guest, in the package) | Mesa: the Yttrium venus2 winsys (`arehnman/virtio-win-mesa`) |
-| 2 | Black vmlab console, although the guest renders | QEMU egl-headless: `glEGLImageTargetTexture2DOES(GL_TEXTURE_2D)` gives `GL_INVALID_OPERATION` for the LINEAR scanout dma-buf The vmlab QEMU: QEMU 11.1.1 plus the series on [VMLabDev/qemu](https://github.com/VMLabDev/qemu/tree/vmlab/egl-headless-external-dmabuf) `vmlab/egl-headless-external-dmabuf`, pinned in `patches/host/PINS` (a host build) | QEMU upstream (`ui/egl-helpers.c`, `ui/egl-headless.c`); vmlab must be able to run that QEMU |
+| 2 | Black vmlab console, although the guest renders | QEMU egl-headless: `glEGLImageTargetTexture2DOES(GL_TEXTURE_2D)` gives `GL_INVALID_OPERATION` for the LINEAR scanout dma-buf | The vmlab QEMU: upstream QEMU master plus the series on [VMLabDev/qemu](https://github.com/VMLabDev/qemu/tree/vmlab/egl-headless-external-dmabuf) `vmlab/egl-headless-external-dmabuf`, pinned in `patches/host/PINS` (a host build) | QEMU upstream (`ui/egl-helpers.c`, `ui/egl-headless.c`); vmlab must be able to run that QEMU |
 
 Fix 1 is in the package. Fix 2 is a host component: a QEMU binary that
 vmlab (0.26.0-alpha or later) runs for every VM on that host GPU, because
@@ -233,18 +233,27 @@ been black either way.
 
 The fix lives on the fork
 [VMLabDev/qemu](https://github.com/VMLabDev/qemu/tree/vmlab/egl-headless-external-dmabuf),
-branch `vmlab/egl-headless-external-dmabuf`, as a six-commit series on tag
-`v11.1.1`, prepared for upstream review. `patches/host/PINS` pins the commit
-this repository builds, `78bc99a513` as of 2026-10-18:
+branch `vmlab/egl-headless-external-dmabuf`, as a six-commit series on
+upstream QEMU master `a19f59a72d` (`v11.1.0-2513-ga19f59a72d`, version
+11.1.50), prepared for upstream review. `patches/host/PINS` pins the commit
+this repository builds, `d8a6048aae` as of 2026-10-18:
 
 ```
-78bc99a513 ui/sdl2: show external-only dma-buf scanouts
-00e7eb5301 ui/gtk: show external-only dma-buf scanouts
-409c14342e ui/egl-headless: show external-only dma-buf scanouts
-3e7cf40f9b ui/egl-helpers: let an egl_fb wrap an external texture
-7ffc6a5db7 ui/shader: add a texture blit program for external textures
-b136165e6b ui/egl-helpers: import external-only dma-bufs as external textures
+d8a6048aae ui/sdl2: show external-only dma-buf scanouts
+f95d311446 ui/gtk: show external-only dma-buf scanouts
+40d3c41a0a ui/egl-headless: show external-only dma-buf scanouts
+dd46c88676 ui/egl-helpers: let an egl_fb wrap an external texture
+674931d277 ui/shader: add a texture blit program for external textures
+acb3659eea ui/egl-helpers: import external-only dma-bufs as external textures
 ```
+
+Master already has `baca25172d` ("ui/egl: fix render node cleanup order"),
+so this build also fixes the shutdown crash in
+[known limits](known-limits.md#qemu-crashes-on-shutdown). Each of the six
+commits builds on its own, with the egl-headless, GTK and SDL displays
+enabled. Before master, the series sat on tag `v11.1.1` (`78bc99a513`, the
+source of 0.1.0-alpha, kept as tag `vmlab-win3d-0.1.0-alpha` on the fork),
+then briefly on v11.1.2 with a backport of `baca2517` (`672843fce5`).
 
 Until 2026-10-18 the fix was one patch, `patches/host/qemu/0001` (fork
 commit `f5832b34dd`), which only changed egl-headless; the series replaced
@@ -306,11 +315,11 @@ gpu "AMD1"    { address = "0000:72:00.0" }                  // AMD iGPU (RADV, r
 gpu "Nvidia1" {                                             // RTX 5090 (renderD128)
   address     = "0000:01:00.0"
   default     = true
-  qemu_binary = "/home/wil/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64"
+  qemu_binary = "/home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64"
 }
 gpu "Nvidia2" {                                             // RTX 5090 (renderD130)
   address     = "0000:05:00.0"
-  qemu_binary = "/home/wil/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64"
+  qemu_binary = "/home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64"
 }
 ```
 
@@ -325,12 +334,12 @@ as in `labs/nvidia/vmlab.wcl` and `labs/acceptance/vmlab.wcl` with
 
 ### Getting the patched QEMU
 
-Either of these gives the same binary, QEMU 11.1.1 at the commit
-`patches/host/PINS` pins:
+Either of these gives the same binary, the fork commit `patches/host/PINS`
+pins (`--version` prints `QEMU emulator version 11.1.50 (vmlab <commit>)`):
 
-- The release asset `qemu-11.1.1-vmlab-egl-<version>-x86_64-linux.tar.zst`
+- The release asset `qemu-vmlab-egl-<version>-x86_64-linux.tar.zst`
   ([`release.md`](release.md)). Its `install.sh` checks the host's libraries
-  with `ldd`, installs into `~/.local/opt/qemu-11.1.1-vmlab-egl` (or a given
+  with `ldd`, installs into `~/.local/opt/qemu-vmlab-egl` (or a given
   prefix) and prints the `qemu_binary` line. It suits hosts with the same
   libraries as the build host (Arch or CachyOS).
 - `patches/host/build-qemu.sh` builds the pinned fork commit against this
@@ -338,7 +347,9 @@ Either of these gives the same binary, QEMU 11.1.1 at the commit
   `qemu_binary` at its absolute path, or copy the `out/host/qemu/` tree
   somewhere stable first.
 
-helios uses `/home/wil/.local/opt/qemu-11.1.1-vmlab-egl/`. Either way, the
+helios used `/home/wil/.local/opt/qemu-11.1.1-vmlab-egl/` for the 11.1.1
+builds, the name 0.1.0-alpha's `install.sh` chose; later builds default to
+`/home/wil/.local/opt/qemu-vmlab-egl/`. Either way, the
 binary links the host's own glib, epoxy, gbm and virglrenderer, so rebuild it
 when those packages change.
 

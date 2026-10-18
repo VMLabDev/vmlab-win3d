@@ -9,7 +9,7 @@
 # patches/host/PINS), then writes
 # out/release/<version>/:
 #   vmlab-win3d-<version>-windows-x64.zip              guest package + README.txt
-#   qemu-11.1.1-vmlab-egl-<version>-x86_64-linux.tar.zst  vmlab QEMU + install.sh
+#   qemu-vmlab-egl-<version>-x86_64-linux.tar.zst      vmlab QEMU + install.sh
 #   RELEASE-NOTES.md
 #   SHA256SUMS
 #
@@ -97,7 +97,7 @@ python3 "$HERE/assemble.py" fill "$HERE/windows-README.txt" "$STAGE/zip/README.t
 python3 "$HERE/assemble.py" zip "$STAGE/zip" "$ZIP" "$EPOCH"
 
 stage "QEMU tarball"
-QNAME=qemu-11.1.1-vmlab-egl-$VERSION
+QNAME=qemu-vmlab-egl-$VERSION
 Q=$STAGE/$QNAME
 TARBALL=$OUT/$QNAME-x86_64-linux.tar.zst
 mkdir -p "$Q/bin"
@@ -111,6 +111,7 @@ binfo() { sed -n "s/^$1: *//p" out/host/qemu/BUILDINFO; }
 python3 "$HERE/assemble.py" fill "$HERE/qemu-README.txt" "$Q/README.txt" \
     VERSION="$VERSION" COMMIT="$COMMIT" \
     QEMU_URL="$QEMU_URL" QEMU_BRANCH="$QEMU_BRANCH" QEMU_COMMIT="$QEMU_COMMIT" \
+    QEMU_VERSION="$(binfo qemu | awk '{ print $4 }')" QEMU_BASE="$(binfo base | awk '{ print $1 }')" \
     QEMU_SERIES="$(binfo series | sed 's/^/  /')" \
     BUILD_HOST="$(binfo 'build host')" \
     BUILDINFO="$(grep -E '^(compiler|glibc|needs GLIBC|lib )' out/host/qemu/BUILDINFO | sed 's/^/  /')"

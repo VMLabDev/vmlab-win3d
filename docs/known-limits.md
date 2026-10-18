@@ -19,14 +19,18 @@ result depends on the host GPU. Four were tried:
 | Intel Iris Xe (Raptor Lake-P), ANV, Mesa 26.2.2 | Zeus | **Full pass** on `windows-11`, 12 of 12 Done checks. Without `patches/mesa/0021`, dwm crash-loops and the console is black | `patches/mesa/0021` (in the package) | [`zeus.md`](zeus.md) |
 | NVIDIA RTX 4060 Max-Q (laptop), 615.71.09 | Zeus | **Unmet**: install, desktop and console worked; then the GPU fell off the bus (Xid 79) during vulkaninfo and QEMU aborted. Cause unknown | Not known | [`zeus.md`](zeus.md) |
 
-All four hosts ran QEMU 11.1.1 and virglrenderer 1.3.0. No other GPU or driver
-version was tried.
+All four hosts ran QEMU 11.1.1 (on NVIDIA, the vmlab QEMU built on it) and
+virglrenderer 1.3.0. No other GPU or driver version was tried. On
+2026-10-18 the vmlab QEMU moved to upstream master (`d8a6048aae`), and
+`windows-11` passed 12 of 12 with it on `Nvidia1`, `Nvidia2` and `AMD1`
+(`docs/evidence/qemu-master/`).
 
 **Without the patched QEMU, NVIDIA gives a black console.** NVIDIA's EGL
-imports a LINEAR dma-buf only as an external texture, and QEMU 11.1.1's
-egl-headless binds the guest's scanout as `GL_TEXTURE_2D`. The guest renders,
-but the console and `vmlab vm screenshot` stay black. Each NVIDIA GPU a lab
-may use therefore needs `qemu_binary` on its host config block
+imports a LINEAR dma-buf only as an external texture, and stock QEMU's
+egl-headless (11.1.1, and master as of 2026-10-18) binds the guest's
+scanout as `GL_TEXTURE_2D`. The guest renders, but the console and
+`vmlab vm screenshot` stay black. Each NVIDIA GPU a lab may use therefore
+needs `qemu_binary` on its host config block
 (`docs/nvidia.md`, "Host setup"). Without `patches/mesa/0020` (bundles built
 before it), dwm crashes before logon. `docs/nvidia.md` explains both faults.
 
@@ -156,9 +160,21 @@ heavy D3D12 work.
 It loses no data: by the time `qemu_display_cleanup()` runs, the guest has
 stopped and QEMU has flushed and closed the disks and the OVMF variables.
 The fix is upstream QEMU commit `baca25172d8c195b9abbe6f8a3ab5915dba09a91`.
-Decision D3 keeps the host on 11.1.1.
+Decision D3 keeps the host's own QEMU on 11.1.1, so labs that run the stock
+QEMU, which by default is every AMD and Intel lab, can still crash this way.
 
-Evidence: `docs/host.md` Q6, `docs/evidence/host/q6-shutdown-crashes.txt`.
+**The vmlab QEMU fixes it.** Since `patches/host/PINS` moved to
+`d8a6048aae` (2026-10-18), the vmlab QEMU is the series on upstream QEMU
+master, which already has `baca25172d`. A host GPU whose host config block
+names it as `qemu_binary` no longer crashes on shutdown. With that build,
+10 stop and start cycles on `AMD1` (where every stock-QEMU core on helios
+came from) and 10 on `Nvidia2` all ended in `exit status: 0`, with no core
+dump, each after the D3D12 and D3D11 probes had run
+(`docs/evidence/qemu-master/`).
+
+Evidence: `docs/host.md` Q6, `docs/evidence/host/q6-shutdown-crashes.txt`,
+`docs/evidence/qemu-master/stock-qemu-shutdown-cores.txt`, and for the fix
+`docs/evidence/qemu-master/cycles-amd1/cycles.log`.
 
 ## Guest
 

@@ -1,0 +1,52 @@
+[20:52:42] cycle 1: qemu pid 4091918, desktop 'True 531'
+[20:53:03]   d3d12 probe:     "probe_result":  "pass",
+[20:53:26]   d3d11 probe:     "probe_result":  "pass",
+[20:53:26]   screenshot 0.491622
+[20:53:38]   stop rc 0; event: {"event":"vm.stopped","lab":"win3d-qemu-master-nv2","data":{"reason":"requested","status":"exit status: 0","vm":"win"},"ts":"2026-10-18T10:53:33.203089589Z"}; qemu cores since stop (any pid) 0, this pid 0
+[20:54:44] cycle 2: qemu pid 157357, desktop 'True 63'
+[20:55:07]   d3d12 probe:     "probe_result":  "pass",
+[20:55:27]   d3d11 probe:     "probe_result":  "pass",
+[20:55:27]   screenshot 0.491892
+[20:55:42]   stop rc 0; event: {"event":"vm.stopped","lab":"win3d-qemu-master-nv2","data":{"reason":"requested","status":"exit status: 0","vm":"win"},"ts":"2026-10-18T10:55:37.829191716Z"}; qemu cores since stop (any pid) 0, this pid 0
+[20:56:50] cycle 3: qemu pid 190925, desktop 'True 64'
+[20:57:12]   d3d12 probe:     "probe_result":  "pass",
+[20:57:42]   d3d11 probe:     "probe_result":  "pass",
+[20:57:43]   screenshot 0.491894
+[20:58:00]   stop rc 0; event: {"event":"vm.stopped","lab":"win3d-qemu-master-nv2","data":{"reason":"requested","status":"exit status: 0","vm":"win"},"ts":"2026-10-18T10:57:55.878237210Z"}; qemu cores since stop (any pid) 0, this pid 0
+[20:59:07] cycle 4: qemu pid 226508, desktop 'True 64'
+[20:59:29]   d3d12 probe:     "probe_result":  "pass",
+[20:59:49]   d3d11 probe:     "probe_result":  "pass",
+[20:59:49]   screenshot 0.491617
+[21:00:05]   stop rc 0; event: {"event":"vm.stopped","lab":"win3d-qemu-master-nv2","data":{"reason":"requested","status":"exit status: 0","vm":"win"},"ts":"2026-10-18T10:59:59.974175996Z"}; qemu cores since stop (any pid) 0, this pid 0
+[21:01:11] cycle 5: qemu pid 235689, desktop 'True 63'
+[21:01:33]   d3d12 probe:     "probe_result":  "pass",
+[21:01:53]   d3d11 probe:     "probe_result":  "pass",
+[21:01:53]   screenshot 0.491896
+[21:02:08]   stop rc 0; event: {"event":"vm.stopped","lab":"win3d-qemu-master-nv2","data":{"reason":"requested","status":"exit status: 0","vm":"win"},"ts":"2026-10-18T11:02:03.916194805Z"}; qemu cores since stop (any pid) 0, this pid 0
+[21:03:15] cycle 6: qemu pid 268619, desktop 'True 63'
+[21:03:39]   d3d12 probe:     "probe_result":  "pass",
+[21:04:00]   d3d11 probe:     "probe_result":  "pass",
+[21:04:01]   screenshot 0.491624
+[21:04:25]   stop rc 0; event: {"event":"vm.stopped","lab":"win3d-qemu-master-nv2","data":{"reason":"requested","status":"exit status: 0","vm":"win"},"ts":"2026-10-18T11:04:20.203509688Z"}; qemu cores since stop (any pid) 0, this pid 0
+[21:05:34] cycle 7: qemu pid 293835, desktop 'True 61'
+[21:06:03]   d3d12 probe:     "probe_result":  "pass",
+[21:06:26]   d3d11 probe:     "probe_result":  "pass",
+[21:06:26]   screenshot 0.491891
+[21:06:47]   stop rc 0; event: {"event":"vm.stopped","lab":"win3d-qemu-master-nv2","data":{"reason":"requested","status":"exit status: 0","vm":"win"},"ts":"2026-10-18T11:06:42.244506937Z"}; qemu cores since stop (any pid) 0, this pid 0
+[21:07:52] cycle 8: qemu pid 309510, desktop 'True 61'
+[21:08:18]   d3d12 probe:     "probe_result":  "pass",
+[21:08:39]   d3d11 probe:     "probe_result":  "pass",
+[21:08:39]   screenshot 0.49189
+[21:09:04]   stop rc 0; event: {"event":"vm.stopped","lab":"win3d-qemu-master-nv2","data":{"reason":"requested","status":"exit status: 0","vm":"win"},"ts":"2026-10-18T11:08:59.675268693Z"}; qemu cores since stop (any pid) 0, this pid 0
+[21:10:19] cycle 9: qemu pid 321474, desktop 'True 71'
+[21:10:43]   d3d12 probe:     "probe_result":  "pass",
+[21:11:04]   d3d11 probe:     "probe_result":  "pass",
+[21:11:04]   screenshot 0.491628
+[21:11:22]   stop rc 0; event: {"event":"vm.stopped","lab":"win3d-qemu-master-nv2","data":{"reason":"requested","status":"exit status: 0","vm":"win"},"ts":"2026-10-18T11:11:17.609402847Z"}; qemu cores since stop (any pid) 0, this pid 0
+[21:12:33] cycle 10: qemu pid 343222, desktop 'True 67'
+[21:12:57]   d3d12 probe:     "probe_result":  "pass",
+[21:13:17]   d3d11 probe:     "probe_result":  "pass",
+[21:13:18]   screenshot 0.491626
+[21:13:34]   stop rc 0; event: {"event":"vm.stopped","lab":"win3d-qemu-master-nv2","data":{"reason":"requested","status":"exit status: 0","vm":"win"},"ts":"2026-10-18T11:13:29.548212094Z"}; qemu cores since stop (any pid) 0, this pid 0
+[21:13:34] done: 10 cycles
+SIGSEGV lines: 0

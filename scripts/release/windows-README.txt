@@ -25,7 +25,7 @@ Prerequisites
   - Secure Boot off. In vmlab: secure_boot = false on the VM.
   - A virtio-gpu GPU with Venus. In vmlab: gpu { mode = "vulkan" }, with
     host_gpu naming an AMD, Intel or NVIDIA GPU from the host config. An
-    NVIDIA host GPU also needs the patched QEMU (the qemu-11.1.1-vmlab-egl
+    NVIDIA host GPU also needs the patched QEMU (the qemu-vmlab-egl
     release asset) as that GPU's qemu_binary, or the console stays black.
   - Administrator rights in the guest.
 

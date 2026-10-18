@@ -1,17 +1,18 @@
-QEMU 11.1.1 with the vmlab egl-headless fix (vmlab-win3d @VERSION@)
-====================================================================
+QEMU @QEMU_VERSION@ with the vmlab egl-headless fix (vmlab-win3d @VERSION@)
+======================================================================
 
 What it fixes
 -------------
 On an NVIDIA host GPU, a Venus guest (vmlab gpu { mode = "vulkan" }) renders,
-but stock QEMU 11.1.1 shows a black console, and vmlab vm screenshot is black.
+but stock QEMU shows a black console, and vmlab vm screenshot is black.
 NVIDIA's EGL imports a LINEAR dma-buf only as an external texture, and
 QEMU's egl-headless display binds the guest's scanout as GL_TEXTURE_2D. This
 build imports such a scanout as GL_TEXTURE_EXTERNAL_OES and blits it into a
 normal texture before each read-back, so the console shows the guest. AMD
 and Intel hosts do not need it.
 
-It is QEMU 11.1.1 plus a series kept on a fork for upstreaming:
+It is upstream QEMU master at @QEMU_BASE@ (version @QEMU_VERSION@) plus a
+series kept on a fork for upstreaming:
 
   @QEMU_URL@
   branch @QEMU_BRANCH@
@@ -43,10 +44,10 @@ Install and use with vmlab
 --------------------------
 You need vmlab 0.26.0-alpha or later, for the host config's qemu_binary.
 
-  tar --zstd -xf qemu-11.1.1-vmlab-egl-@VERSION@-x86_64-linux.tar.zst
-  cd qemu-11.1.1-vmlab-egl-@VERSION@
+  tar --zstd -xf qemu-vmlab-egl-@VERSION@-x86_64-linux.tar.zst
+  cd qemu-vmlab-egl-@VERSION@
   ./install.sh --check          # only the ldd check
-  ./install.sh                  # into ~/.local/opt/qemu-11.1.1-vmlab-egl
+  ./install.sh                  # into ~/.local/opt/qemu-vmlab-egl
   ./install.sh /some/prefix     # or anywhere else; no root needed
 
 install.sh prints the line to add to every NVIDIA GPU block in
@@ -54,7 +55,7 @@ install.sh prints the line to add to every NVIDIA GPU block in
 
   gpu "Nvidia1" {
     address     = "0000:01:00.0"
-    qemu_binary = "/home/<you>/.local/opt/qemu-11.1.1-vmlab-egl/bin/qemu-system-x86_64"
+    qemu_binary = "/home/<you>/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64"
   }
 
 Every VM whose gpu {} resolves to that GPU then runs this QEMU. Restart a

@@ -5,11 +5,13 @@ build-image    docker.io/library/archlinux  digest sha256:3c64b538588416593f69a1
 # the script prints the highest GLIBC symbol version the server needs, which
 # must not exceed the host's (2.44 on 2026-10-17).
 # Upstream pin for patches/host/build-qemu.sh: a commit on the VMLabDev/qemu
-# fork, v11.1.1 (c3d48b7d1e89604920e5b81b91140c2ad39a1943) plus the
-# egl-headless external-only dma-buf series kept there for upstreaming.
+# fork, upstream QEMU master (a19f59a72d96056d9a8f48cf6c77f5787491e414,
+# v11.1.0-2513-ga19f59a72d, version 11.1.50) plus the egl-headless
+# external-only dma-buf series kept there for upstreaming. 0.1.0-alpha
+# shipped the series on v11.1.1 (tag vmlab-win3d-0.1.0-alpha on the fork).
 # build-qemu.sh fetches exactly this commit; patches/host/bump-qemu.sh moves
 # it to the branch tip.
-qemu           https://github.com/VMLabDev/qemu  branch vmlab/egl-headless-external-dmabuf  commit 78bc99a513c04b8c51bc6c211f5da4eaa21e2592
+qemu           https://github.com/VMLabDev/qemu  branch vmlab/egl-headless-external-dmabuf  commit d8a6048aae11c5e26168e173a7c1b1a4335d6a23
 # build-qemu.sh builds natively against the host's own libraries (see the
 # script for why), so its other inputs are the host packages of decision D3:
 # glib2 2.88.3, pixman 0.46.4, libepoxy 1.5.10, mesa 26.2.2 (gbm),
