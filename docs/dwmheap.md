@@ -157,12 +157,62 @@ All under `docs/evidence/dwmheap/`:
 | --- | --- |
 | `src/lab-prep.sh` | Fresh lab from `labs/probe/vmlab.wcl` with a NAT NIC, WER full dumps of `dwm.exe` to `C:\dumps`, optional PageHeap for dwm, and the autologon desktop |
 | `src/first-boot-run.sh` | One proof run: `lab-prep.sh`, the install, then in the first boot the D3D12 probe five times and the five samples; collects crashes, dumps and the render-server log |
+| `fixed-nvidia1-a/`, `fixed-nvidia1-b/`, `fixed-amd1/` | Proof runs with the fix (`src/first-boot-run.sh`): install log, five D3D12 probe results, the five samples (`samples/`, with console captures), Application Error events, `C:\dumps`, dwm's start time against boot time, and the render-server log |
 | `repro-nvidia1/` | The reproduction before the fix: cdb stacks and heap analysis of the dwm dump, the d3d11 `TrimNotificationCallback` disassembly, the Application Error events and the probe's result, and the render-server log |
 
 The dump itself (445 MB, sha256
 `6b75d24b92b9fcef19bfb364c2c84f1c0ac5744d4577425df94d23f37ae0f24b`) is not
 committed.
 
+## Proof runs with the fix
+
+Each run is `src/first-boot-run.sh` on a fresh lab from
+`x86_64/windows-11@26100.1742.5`, with package 0.1.1. The bundle was built
+from `b198918` with `0060` applied before it was committed (its manifest
+names `b198918`); `f7c73b6` committed the same patch unchanged. The x64
+`viogpu_d3d10.dll` in it has sha256 `8f979e3c6d97ea81ab585b7a4e1551b3c04e5395bb70c2e6d16207d1757671f1`. Every program ran in the first boot after the
+install's final reboot. Nothing else ran before it.
+
+| Run | GPU | D3D12 probe, 5 runs | Five samples | dwm | Fatal Venus contexts in `qemu.log` |
+| --- | --- | --- | --- | --- | --- |
+| `fixed-nvidia1-a/` | Nvidia1 | 5 pass | 5 exit 0; `D3D12HelloTriangle` renders on the console | no crash, no dump; dwm is the one started at boot | 9 |
+| `fixed-nvidia1-b/` | Nvidia1 | 5 pass | 5 exit 0 | no crash, no dump; dwm is the one started at boot | 0 |
+| `fixed-amd1/` | AMD1 | 5 pass | 5 exit 0 | no crash, no dump; dwm is the one started at boot | 0 |
+
+`D3D12ExecuteIndirect` still shows only its clear colour, as
+`docs/d3d12app.md` explains. That is a separate limit. No run had any
+Application Error event.
+
+Run a is the one that matters most. Its boot had the same host-side
+context failures as the repro, so it ran under the same conditions, and dwm
+survived. Run b had no context failures, so it does not exercise the trigger.
+The probe passed in all fifteen runs. In the repro, the probe failed because
+its own context was among the dead ones.
+
 ## What remains
 
-PROOF-PLACEHOLDER
+- **Unmet: a third fresh NVIDIA lab.** The brief asks for three. Only two
+  ran: under the BAR1 rule, an NVIDIA card takes at most two of our VMs, and
+  both slots on `Nvidia1` stayed taken by other workers' labs for the rest
+  of the time box. `Nvidia2` is reserved for `nvva`.
+- **Unmet: `tests/e2e/run.sh` 12 of 12** on AMD1 and on an NVIDIA card was
+  not run for this branch, for the same reason and the time box. The patch
+  removes one flush from one DXGI DDI, and the e2e probes went through that
+  UMD in every proof run above. It still needs the full run before it
+  merges.
+- **No deterministic trigger.** The crash needs dwm to lose its device and
+  get a trim notification. Neither can be forced from a test program:
+  `IDXGIDevice3::Trim` does not call `pfnTrimResidencySet` (it trims the
+  runtime's own memory and calls `Flush`), and the trim notification is the
+  kernel's. Publishing the DXCore trim WNF state from a SYSTEM process might
+  force it. That was not tried.
+- **The lost device itself.** Venus contexts dying with
+  `failed to look up object N of type 8` is the host-side BAR1 exhaustion
+  that `nvva` owns. The guest also has a weakness here:
+  `vkAllocateMemory(import-display-image)` and the other image paths in
+  `yttrium_venus2_resource.c` submit the allocation asynchronously and bind
+  without checking that it worked. A failed import therefore kills the whole
+  context instead of failing one resource.
+- **Other DXGI DDIs on foreign threads.** Only `TrimResidencySet` was seen
+  on a thread that does not own the device. The other `DXGI_DDI` entry points
+  were not audited for the same problem.

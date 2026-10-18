@@ -1,0 +1,28 @@
+virtio_gpu_virgl_process_cmd: ctrl 0x102, error 0x1203
+virgl_render_server[542833]: vkr: failed to look up object 12 of type 8
+virgl_render_server[542833]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[542833]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[542464]: vkr: failed to look up object 112 of type 8
+virgl_render_server[542464]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[542464]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[551255]: vkr: failed to look up object 24 of type 8
+virgl_render_server[551255]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[551255]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[552698]: vkr: failed to look up object 24 of type 8
+virgl_render_server[552698]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[552698]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[554140]: vkr: failed to look up object 24 of type 8
+virgl_render_server[554140]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[554140]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[555463]: vkr: failed to look up object 24 of type 8
+virgl_render_server[555463]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[555463]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[569793]: vkr: failed to look up object 10 of type 8
+virgl_render_server[569793]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[569793]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[571469]: vkr: failed to look up object 10 of type 8
+virgl_render_server[571469]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[571469]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[572912]: vkr: failed to look up object 10 of type 8
+virgl_render_server[572912]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[572912]: vkr: ring_submit_cmd: vn_dispatch_command failed

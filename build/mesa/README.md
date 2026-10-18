@@ -74,9 +74,9 @@ The series has two parts, and the patches apply in name order:
   mixed-case header symlinks that `prepare-build.py` creates, so they are
   build output, not source. The diff was then split by topic. Each patch has
   a header that says what it fixes and which prior-art finding it comes from.
-- **0012 to 0017, 0020 to 0027, 0030, 0035 and 0040 to 0042** are this repository's own fixes, found by
+- **0012 to 0017, 0020 to 0027, 0030, 0035, 0040 to 0042 and 0060** are this repository's own fixes, found by
   the acceptance and host runs. Each header names the document with the
-  evidence. The series skips 0018, 0019, 0026 to 0029 and 0031 to 0039.
+  evidence. The series skips 0018, 0019, 0026 to 0029, 0031 to 0039 and 0043 to 0059.
 
 0005 to 0010 and every patch from 0012 to 0026 change `viogpu_d3d10.dll`, the
 D3D9/D3D10/D3D11 UMD (the `d3d10umd` frontend and the Yttrium winsys). 0001
@@ -122,6 +122,7 @@ and 0011 is in the Venus ICD.
 | 0040 d3d9-swvp-processed-vertices-keep-declaration-vs | Fixed-function draws with software vertex processing keep their colours and texture coordinates (every one rendered black) | [`docs/ffp.md`](../../docs/ffp.md) |
 | 0041 d3d9-fixed-function-fog | Table fog under a perspective projection uses W (from `UpdateWInfo`), vertex fog is clamped per pixel, and pre-transformed vertices get their fog factor from FOG or the specular alpha | [`docs/ffp.md`](../../docs/ffp.md) |
 | 0042 d3d9-fixed-function-points | Points wider than one pixel keep their colours and texture coordinates, get sprite coordinates only with `POINTSPRITEENABLE`, keep their size under perspective, and honour `PSIZE` in `XYZRHW` vertices | [`docs/ffp.md`](../../docs/ffp.md) |
+| 0060 d3d10umd-trim-residency-set-leaves-the-context-alone | `TrimResidencySet` no longer flushes the threaded context. The runtime calls it on DXCore's trim-notification thread, and the flush ran a batch outside the context's owner thread; dwm died with a double free (`0xc0000374`) while it recovered a lost device on NVIDIA | [`docs/dwmheap.md`](../../docs/dwmheap.md) |
 
 0021 has no mail header. `scripts/pins-table.py` carries its one-line
 description.

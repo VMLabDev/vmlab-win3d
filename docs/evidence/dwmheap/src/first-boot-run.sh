@@ -24,7 +24,7 @@ gps() { in_lab vmlab exec --timeout "${2:-300}" "$VM" -- powershell.exe -NoProfi
 
 "$REPO/docs/evidence/dwmheap/src/lab-prep.sh" "$LABDIR" "$NAME" "$GPU" || exit 1
 "$REPO/scripts/install-into-vm.sh" "$LABDIR" "$VM" 2>&1 | tee "$EV/install.log" || exit 1
-for _ in $(seq 1 60); do gps 'query user' 30 2>/dev/null | grep -q Active && break; sleep 10; done
+for _ in $(seq 1 60); do gps '(Get-CimInstance Win32_ComputerSystem).UserName' 30 2>/dev/null | grep -q . && break; sleep 10; done
 gps '(Get-CimInstance Win32_OperatingSystem).LastBootUpTime.ToString("s")' >"$EV/boot.txt"
 in_lab vmlab cp "$REPO/out/probes/x64" "$VM:C:/win3d/probes/x64" >/dev/null
 for n in $(seq 1 "$RUNS"); do

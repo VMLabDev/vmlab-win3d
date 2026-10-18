@@ -1,0 +1,24 @@
+vc_redist.x64 exit 0
+System32\vcruntime140.dll True
+System32\vcruntime140_1.dll True
+System32\msvcp140.dll True
+s\D3D12Bundles\D3D12Bundles.exe
+s\D3D12Bundles\occcity.bin
+s\D3D12Bundles\shader_mesh_alt_pixel.cso
+s\D3D12Bundles\shader_mesh_simple_pixel.cso
+s\D3D12Bundles\shader_mesh_simple_vert.cso
+s\D3D12ExecuteIndirect\compute.cso
+s\D3D12ExecuteIndirect\D3D12ExecuteIndirect.exe
+s\D3D12ExecuteIndirect\shaders_PSMain.cso
+s\D3D12ExecuteIndirect\shaders_VSMain.cso
+s\D3D12HelloTexture\D3D12HelloTexture.exe
+s\D3D12HelloTexture\shaders_PSMain.cso
+s\D3D12HelloTexture\shaders_VSMain.cso
+s\D3D12HelloTriangle\D3D12HelloTriangle.exe
+s\D3D12HelloTriangle\shaders_PSMain.cso
+s\D3D12HelloTriangle\shaders_VSMain.cso
+s\D3D12nBodyGravity\D3D12nBodyGravity.exe
+s\D3D12nBodyGravity\nBodyGravityCS.cso
+s\D3D12nBodyGravity\ParticleDraw_GS.cso
+s\D3D12nBodyGravity\ParticleDraw_PS.cso
+s\D3D12nBodyGravity\ParticleDraw_VS.cso
