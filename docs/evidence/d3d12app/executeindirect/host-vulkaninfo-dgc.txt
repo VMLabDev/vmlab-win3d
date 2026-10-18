@@ -1,0 +1,8 @@
+# host: VK_DRIVER_FILES=/usr/share/vulkan/icd.d/nvidia_icd.json vulkaninfo (2026-10-19)
+	deviceName        = NVIDIA GeForce RTX 5090
+	driverInfo                                           = 610.57.04
+	VK_EXT_device_generated_commands              : extension revision 1
+# host: VK_DRIVER_FILES=/usr/share/vulkan/icd.d/radeon_icd.json vulkaninfo (2026-10-19)
+	deviceName        = AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)
+	driverInfo                                           = Mesa 26.2.2-arch3.2
+	VK_EXT_device_generated_commands              : extension revision 1
