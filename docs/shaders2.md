@@ -8,7 +8,7 @@ the repro found on the way: every hull shader whose join phase reads what its
 fork phases wrote removed the device, even with immediate indices. The fixes
 are `patches/mesa/0031` and `0032`. Investigated on 2026-10-18 and
 2026-10-19 on helios: NVIDIA 610.57.04 on `Nvidia1`, RADV (Mesa 26.2.2) on
-`AMD1`, vmlab 0.28.0-alpha, QEMU 11.1.1 (the egl-headless patched build for
+`AMD1`, vmlab 0.28.0-alpha, QEMU 11.1.1 on AMD1 and the egl-headless patched QEMU 11.1.50 for
 NVIDIA), virglrenderer 1.3.0. Evidence is in `docs/evidence/shaders2/`.
 
 ## Result
@@ -47,13 +47,32 @@ So the three open questions come out as follows:
    hand-written bytecode or another compiler would emit them, so the probe
    assembles them.
 
-Proof (filled in from the runs below):
+Proof, with a package built by `scripts/build.sh` from this branch
+(`patches/mesa` up to `0032`, `0035`, `0040` to `0042`; e2e reused it at
+`c5757d0` on AMD1 and at `0b355a7` on Nvidia1, which differ only in
+documentation):
 
 | Check | AMD1 (RADV) | Nvidia1 (RTX 5090) |
 | --- | --- | --- |
-| `d3d11_index2.exe`, 10 cases × 4 `sel` values × 4 quadrants, x64 and x86, before (`patches/mesa` up to `0030`, `0035`, `0040` to `0042`) | not run | 3 of 10 (`before/nvidia1/`) |
-| The same with `0031` and `0032` | AMD1-RESULT | NV1-RESULT |
-| `tests/e2e/run.sh --template windows-11` | AMD1-E2E | NV1-E2E |
+| `d3d11_index2.exe`, 10 cases × 4 `sel` values × 4 quadrants, x64 and x86, before (package at `82d8e51`: up to `0030`, `0035`, `0040` to `0042`) | not run | 3 of 10 (`before/nvidia1/`) |
+| The same with `0031` and `0032` | 10 of 10, hardware equals WARP (`after/amd1/`) | 10 of 10, hardware equals WARP (`after/nvidia1/`) |
+| `tests/e2e/run.sh --template windows-11` | 12 of 12 (`after/amd1/e2e-results.txt`) | 12 of 12 (`after/nvidia1/e2e-results.txt`), on the second attempt |
+| Host `NVRM` lines during the runs | not applicable | none (`after/nvidia1/kernel-nvrm.txt` is empty) |
+
+The first Nvidia1 attempt (`after/nvidia1-attempt1/`) passed 10 of 12. The
+D3D11 probe failed, x64 and x86, with `CreateSwapChain` returning
+`DXGI_ERROR_DEVICE_REMOVED`. The UMD's log shows why: the host renderer did
+not answer a `vkGetImageSubresourceLayout` for the swap chain's display
+image within 15 seconds (`Venus ring wait-seqno timeout`). This is not the
+shader translation. The same timeout hit `WindowsTerminal.exe` in that lab,
+which runs no index ranges. During the attempt the host kernel logged
+`NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping` (02:57 and
+03:05, after the probe's first failure at 02:51) and an Xid 69 on the other
+RTX 5090, from another lab (`kernel-nvrm.txt`). The cause of the stall was
+not found. In the
+kept lab, the D3D11 probe then passed twice with the new UMD and once with
+the old one. The repro in that lab hung in two of its four runs. A fresh lab
+then passed everything.
 
 ## The repro
 
@@ -218,4 +237,5 @@ All under `docs/evidence/shaders2/`:
 | `before/nvidia1/` | Run with the package built at `82d8e51` (`patches/mesa` up to `0030`, `0035`, `0040` to `0042`): logs per architecture and device, hardware-against-WARP diffs, `yttrium-errors.txt`, `asm/` |
 | `after/{amd1,nvidia1}/` | The same with `0031` and `0032`, run in the e2e labs after the e2e run (kept with `--keep`, then destroyed); `asm/` holds the disassembly of each case's indexed or assembled shader |
 | `after/{amd1,nvidia1}/e2e-*.txt`, `qemu-argv-env.txt` | The e2e run's host stack, build and results, and QEMU's command line (copied from `docs/evidence/acceptance/`, which was restored to its committed state) |
-| `after/nvidia1/kernel-nvrm.txt` | Host kernel `NVRM`/Xid lines for `0000:01:00.0` during the runs |
+| `after/nvidia1/kernel-nvrm.txt` | Host kernel `NVRM`/Xid lines from the start of the e2e run to the end of the repro: none |
+| `after/nvidia1-attempt1/` | The first Nvidia1 attempt: e2e results (10 of 12), the D3D11 probe's UMD log, the host's `NVRM` lines, and the repro run in that lab (two of four runs hung) |
