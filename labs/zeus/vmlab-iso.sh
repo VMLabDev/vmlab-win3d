@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Run vmlab (>= 0.25.0-alpha) on Zeus against an isolated supervisor (state and
 # sockets under ~/win3d-zeus/), so QEMU can get a patched QEMU binary, a
-# diagnostic render server or debug variables, as labs/nvidia/vmlab-nv.sh
-# does on helios. Run it from the lab directory, like vmlab. The user's
+# diagnostic render server or debug variables. On vmlab >= 0.26 prefer
+# qemu_binary/qemu_env on the host GPU profile instead (docs/nvidia.md).
+# Run it from the lab directory, like vmlab. The user's
 # supervisor (/run/user/<uid>/vmlab) is never used. The host config
 # (~/.config/vmlab/config.wcl, which names the lab's host_gpu) is shared.
 #   labs/zeus/vmlab-iso.sh <vmlab args...>
