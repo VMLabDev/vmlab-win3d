@@ -1,0 +1,1 @@
+d3d11 event round trip: n=200 mean=2.419 p50=0.518 p95=8.327 max=30.110 min=0.280 polls=408090

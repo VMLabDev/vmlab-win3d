@@ -1,0 +1,11 @@
+mode: d3d9
+size: 640x480
+seconds: 21.62
+calls: 1149
+rate_per_s: 53.1
+call_ms: n=1149 mean=16.66 p50=16.36 p95=28.32 max=134.54
+frame_ms: n=1148 mean=17.40 p50=16.86 p95=28.82 max=135.01
+vblank_ms: n=929 mean=17.00 p50=17.00 p95=25.90 max=137.00
+dwm: frames_composed_per_s=0.0 refreshes_per_s=0.0 dropped=0 missed=0 period_ms=16.66
+vblank_error: 0x00000102
+result: PASS

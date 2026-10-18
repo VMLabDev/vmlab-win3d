@@ -1,0 +1,6 @@
+start
+instance
+device: Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+device ok
+submit+waitforfences: n=100 mean=0.091 p50=0.027 p95=0.067 max=5.926 min=0.020 polls=0
+submit+spin_getfencestatus: n=100 mean=0.023 p50=0.021 p95=0.032 max=0.132 min=0.017 polls=12114

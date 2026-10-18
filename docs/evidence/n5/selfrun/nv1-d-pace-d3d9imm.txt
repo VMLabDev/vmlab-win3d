@@ -1,0 +1,10 @@
+mode: d3d9-imm
+size: 640x480
+seconds: 17.26
+calls: 2751
+rate_per_s: 159.4
+call_ms: n=2751 mean=4.75 p50=3.54 p95=11.16 max=68.19
+frame_ms: n=2750 mean=5.43 p50=3.98 p95=12.49 max=35.93
+vblank_ms: n=1030 mean=16.74 p50=17.04 p95=26.00 max=45.20
+dwm: frames_composed_per_s=0.1 refreshes_per_s=0.1 dropped=0 missed=0 period_ms=16.69
+result: PASS

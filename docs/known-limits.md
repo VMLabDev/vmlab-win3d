@@ -266,8 +266,14 @@ DirectDraw at several hundred Blts per second.
 
 On `Nvidia1` the D3D9 probe rose from about 22 to 39 fps, still below the
 refresh rate. There each windowed D3D9 Present waits about 16 to 20 ms,
-whatever the window size, with the CPU idle. The cause is not known; it is
-not the copy ([`present.md`](present.md#what-remains)). Presentation only has
+whatever the window size, with the CPU idle. The cause is on the host
+([`n5.md`](n5.md)): virglrenderer creates its Venus queue-sync fences
+exportable, and NVIDIA 610.57.04 wakes `vkWaitForFences` on such fences up to
+about 10 ms late. Every guest DMA buffer therefore completes at least 10 ms
+after submission, and a D3D9 Present waits for two of them. A one-line
+virglrenderer patch removes the delay (ring fences 10.2 ms to 1.2 ms, the
+D3D9 probe 37 to 47 fps on a shared GPU), but it is not deployed: helios
+runs the stock render server (decision D3). Presentation only has
 to make a game watchable on the console (`docs/brief.md`); deeper
 frame-pacing work is out of scope.
 
