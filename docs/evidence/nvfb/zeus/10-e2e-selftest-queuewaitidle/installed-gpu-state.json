@@ -1,0 +1,228 @@
+{
+    "computer":  "VMLABVM-557SO2T",
+    "os":  "Microsoft Windows 11 Enterprise Evaluation 10.0.26100",
+    "collected":  "2026-10-18T19:30:14.2533602-07:00",
+    "display_devices":  [
+                            {
+                                "name":  "Hardsoft VirtIO GPU 3D controller",
+                                "instance_id":  "PCI\\VEN_1AF4\u0026DEV_1050\u0026SUBSYS_11001AF4\u0026REV_01\\3\u002611583659\u00260\u002618",
+                                "status":  "OK",
+                                "present":  true,
+                                "problem_code":  0,
+                                "problem_status":  null,
+                                "hardware_ids":  [
+                                                     "PCI\\VEN_1AF4\u0026DEV_1050\u0026SUBSYS_11001AF4\u0026REV_01",
+                                                     "PCI\\VEN_1AF4\u0026DEV_1050\u0026SUBSYS_11001AF4",
+                                                     "PCI\\VEN_1AF4\u0026DEV_1050\u0026CC_030000",
+                                                     "PCI\\VEN_1AF4\u0026DEV_1050\u0026CC_0300"
+                                                 ],
+                                "driver_inf":  "oem15.inf",
+                                "driver_inf_section":  "VioGpu3D_Inst",
+                                "driver_version":  "100.6.101.58100",
+                                "driver_provider":  "Hardsoft Swed.",
+                                "driver_date":  "09/26/2026 17:00:00",
+                                "driver_desc":  "Hardsoft VirtIO GPU 3D controller",
+                                "driver_key":  "{4d36e968-e325-11ce-bfc1-08002be10318}\\0001",
+                                "service":  "VioGpu3D",
+                                "registry_path":  "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Class\\{4d36e968-e325-11ce-bfc1-08002be10318}\\0001",
+                                "registry":  {
+                                                 "DriverDesc":  "Hardsoft VirtIO GPU 3D controller",
+                                                 "ProviderName":  "Hardsoft Swed.",
+                                                 "DriverVersion":  "100.6.101.58100",
+                                                 "InfPath":  "oem15.inf",
+                                                 "InfSection":  "VioGpu3D_Inst",
+                                                 "FeatureScore":  224,
+                                                 "UserModeDriverName":  [
+                                                                            "C:\\WINDOWS\\system32\\viogpu_d3d10.dll",
+                                                                            "C:\\WINDOWS\\system32\\viogpu_d3d10.dll",
+                                                                            "C:\\WINDOWS\\system32\\viogpu_d3d10.dll"
+                                                                        ],
+                                                 "OpenGLDriverName":  [
+                                                                          "C:\\WINDOWS\\system32\\viogpu_wgl.dll"
+                                                                      ],
+                                                 "UserModeDriverNameWow":  [
+                                                                               "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll",
+                                                                               "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll",
+                                                                               "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll"
+                                                                           ],
+                                                 "OpenGLDriverNameWow":  [
+                                                                             "C:\\WINDOWS\\SysWOW64\\viogpu_wgl.dll"
+                                                                         ],
+                                                 "OpenGLFlags":  3,
+                                                 "OpenGLVersion":  4096,
+                                                 "OpenGLFlagsWow":  3,
+                                                 "OpenGLVersionWow":  4096,
+                                                 "InstalledDisplayDrivers":  [
+                                                                                 "viogpu_d3d10",
+                                                                                 "viogpu_d3d10",
+                                                                                 "viogpu_d3d10"
+                                                                             ]
+                                             }
+                            }
+                        ],
+    "vulkan_registry":  {
+                            "native":  {
+                                           "Drivers":  {
+                                                           "C:\\WINDOWS\\system32\\virtio_icd.x86_64.json":  0
+                                                       },
+                                           "ImplicitLayers":  {
+
+                                                              },
+                                           "ExplicitLayers":  {
+
+                                                              }
+                                       },
+                            "wow6432":  {
+                                            "Drivers":  {
+                                                            "C:\\WINDOWS\\SysWOW64\\virtio_icd.x86.json":  0
+                                                        },
+                                            "ImplicitLayers":  {
+
+                                                               },
+                                            "ExplicitLayers":  {
+
+                                                               }
+                                        }
+                        },
+    "vulkan_adapter_registry":  [
+
+                                ],
+    "system_dlls":  [
+                        {
+                            "path":  "C:\\WINDOWS\\system32\\d3d9.dll",
+                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "87E157E78536C66FC413ED202296E39053CC9E14DC8D8381F8A3D18F444A4C0D"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\system32\\d3d10.dll",
+                            "version":  "10.0.26100.1150 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "61A1020E5BAC18C2DED229329CBE4314CB8FDE3D773E219D4C7F8991C16EE57C"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\system32\\d3d10_1.dll",
+                            "version":  "10.0.26100.1882 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "AC338412D2B50F4B29E80D33A1ACF6F25D80D80DB684625D76BF8DB43B4A6821"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\system32\\d3d11.dll",
+                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "AE2777002F5A0FF543B5B9BEC5124746559FD01D6C7C0C216D3194632F084502"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\system32\\d3d12.dll",
+                            "version":  null,
+                            "company":  null,
+                            "sha256":  "B5D94F44466887CF5373C8550E3263425034A41E76B0AC11FE8C8A5229ACD9DA"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\system32\\D3D12Core.dll",
+                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "70710DE807F188A85A3F5AD3A729A41BFA7A92B7621CEEAF38059F5640399267"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\system32\\dxgi.dll",
+                            "version":  "10.0.26100.9444 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "B12AEBF0F077D6C1394B50E2EECDD5E16072C9A0C871F30887B5D170CBF2EAAE"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\system32\\opengl32.dll",
+                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "659BE03CF2B88B5063A35B2637D9EF38122D7F6F30DAFFF118FA41B273AA5ECE"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\system32\\vulkan-1.dll",
+                            "version":  "1.4.363.0",
+                            "company":  "",
+                            "sha256":  "0871D16D06F2C7C2F60C9B68E5ED3A61A069BF525D8F7CAD2D3C88F3CE71E219"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\system32\\d3dcompiler_47.dll",
+                            "version":  "10.0.26100.9457 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "2E3526354DBCD9CF013F7B741C549DF2170FE6AF607628442216A21E7D584883"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\SysWOW64\\d3d9.dll",
+                            "version":  "10.0.26100.8972 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "F4757445D75D619BC5695294EE5CA6BFA0AD8763C6604A8E884739F605A6DF28"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\SysWOW64\\d3d10.dll",
+                            "version":  "10.0.26100.1 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "81C121D84A791BB65588086035ABA3B74C3AA9E01AB05AB63FE18ABF79094527"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\SysWOW64\\d3d10_1.dll",
+                            "version":  "10.0.26100.1882 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "AA2FECB249118CFCF9D9F35E5E08F964037338A6B73968D8FFC8D7AA10B3682A"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\SysWOW64\\d3d11.dll",
+                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "24D1B3A7C832EA3DC1883371AFECF666650BF8A20E64D8CBD0A77E89039EDF98"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\SysWOW64\\d3d12.dll",
+                            "version":  null,
+                            "company":  null,
+                            "sha256":  "944CC70E1F65C907C13D598396CBCB2AB9478A231DD653A5DC62C70C8E6BAE02"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\SysWOW64\\D3D12Core.dll",
+                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "6463E2309D1A6F1CC8D7739FF7502AD1668217BFB2F2D74FC55D20C1B63421F0"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\SysWOW64\\dxgi.dll",
+                            "version":  "10.0.26100.9444 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "2E4A6E4B43F31EFFAAE8EEC1BC43D9398A4302F0CBFDFACA67EA2CBA3C24A0D6"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\SysWOW64\\opengl32.dll",
+                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "A03F6C001C4CAE7361CF744A1F1E05567AA431D27FAE048281E13E3356487978"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\SysWOW64\\vulkan-1.dll",
+                            "version":  "1.4.363.0",
+                            "company":  "",
+                            "sha256":  "36EDC9F67CBEC1C5FB8C510AB08EFEA18AFFFBD40D77B829D39F1E76236416CD"
+                        },
+                        {
+                            "path":  "C:\\WINDOWS\\SysWOW64\\d3dcompiler_47.dll",
+                            "version":  "10.0.26100.9168 (WinBuild.160101.0800)",
+                            "company":  "Microsoft Corporation",
+                            "sha256":  "570437AC865210F03DA802637310BAA7765AC44C0F451A874CE2FA512CD33DB9"
+                        }
+                    ],
+    "boot":  {
+                 "testsigning":  "Yes",
+                 "nointegritychecks":  null,
+                 "secure_boot":  "unknown: Variable is currently undefined: 0xC0000100",
+                 "hiberboot_enabled":  1
+             },
+    "video_controllers":  [
+                              {
+                                  "name":  "Hardsoft VirtIO GPU 3D controller",
+                                  "driver_version":  "100.6.101.58100",
+                                  "installed_display_drivers":  "C:\\WINDOWS\\system32\\viogpu_d3d10.dll,C:\\WINDOWS\\system32\\viogpu_d3d10.dll,C:\\WINDOWS\\system32\\viogpu_d3d10.dll",
+                                  "status":  "OK",
+                                  "current_mode":  "1280x800x32"
+                              }
+                          ]
+}
+

@@ -7,12 +7,14 @@ choosing host-cached memory, but nothing guarantees that every host makes
 feedback writes visible.
 
 At device creation, submit one fence feedback command on a queue that can
-feed back, wait for it through the renderer (vkQueueWaitIdle), and check
-the slot, allowing the write 20 ms to land. When it does not land, log it
-and disable fence, semaphore, event and query feedback for that device:
-they then take the same paths as the VN_PERF no_*_feedback options, which
-cost a renderer round trip per status check but stay correct. On a good
-host the check is one submission and one synchronous round trip.
+feed back, with a fence that has no feedback of its own, wait for that
+fence through the renderer, and check the slot, allowing the write 20 ms to
+land. (vkQueueWaitIdle cannot be used: the renderer treats it as a fatal
+blocking call.) When the write does not land, log it and disable fence,
+semaphore, event and query feedback for that device: they then take the
+same paths as the VN_PERF no_*_feedback options, which cost a renderer
+round trip per status check but stay correct. On a good
+host the check is one submission and one fence wait.
 
 Evidence: docs/nvfb.md, docs/evidence/nvfb/.
 Origin: vmlab-win3d nvfb worker.
@@ -61,7 +63,7 @@ index e871564..765702f 100644
     struct list_head chains;
  };
 diff --git a/src/virtio/vulkan/vn_feedback.c b/src/virtio/vulkan/vn_feedback.c
-index f347291..41d7905 100644
+index f347291..b9fb710 100644
 --- a/src/virtio/vulkan/vn_feedback.c
 +++ b/src/virtio/vulkan/vn_feedback.c
 @@ -5,6 +5,8 @@
@@ -73,7 +75,7 @@ index f347291..41d7905 100644
  #include "vn_command_buffer.h"
  #include "vn_device.h"
  #include "vn_physical_device.h"
-@@ -901,3 +903,86 @@ vn_feedback_cmd_pools_fini(struct vn_device *dev)
+@@ -901,3 +903,106 @@ vn_feedback_cmd_pools_fini(struct vn_device *dev)
  
     vk_free(alloc, dev->fb_cmd_pools);
  }
@@ -85,8 +87,8 @@ index f347291..41d7905 100644
 + * otherwise hang every fence and timeline semaphore wait (the guest keeps
 + * reading the status it wrote itself; docs/nvfb.md). On failure feedback is
 + * disabled for the device, which costs a renderer round trip per status
-+ * check but stays correct. On a good host this is one submission and one
-+ * synchronous vkQueueWaitIdle at device creation.
++ * check but stays correct. On a good host this is one submission and a
++ * fence wait at device creation.
 + */
 +void
 +vn_feedback_self_test(struct vn_device *dev)
@@ -128,6 +130,23 @@ index f347291..41d7905 100644
 +      return;
 +   }
 +
++   /* A fence without feedback, so that waiting on it asks the renderer.
++    * The renderer refuses vkQueueWaitIdle (no blocking calls).
++    */
++   VkFence fence_handle;
++   const VkFenceCreateInfo fence_info = {
++      .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
++   };
++   dev->feedback_disabled = true;
++   result = vn_CreateFence(dev_handle, &fence_info, NULL, &fence_handle);
++   dev->feedback_disabled = false;
++   if (result != VK_SUCCESS) {
++      vn_feedback_cmd_free(dev_handle, &dev->fb_cmd_pools[pool_index],
++                           cmd_handle);
++      vn_feedback_pool_free(&dev->feedback_pool, slot);
++      return;
++   }
++
 +   VkQueue queue_handle = vn_queue_to_handle(queue);
 +   const VkSubmitInfo submit = {
 +      .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
@@ -135,9 +154,11 @@ index f347291..41d7905 100644
 +      .pCommandBuffers = &cmd_handle,
 +   };
 +   result = vn_call_vkQueueSubmit(dev->primary_ring, queue_handle, 1, &submit,
-+                                  VK_NULL_HANDLE);
-+   if (result == VK_SUCCESS)
-+      result = vn_call_vkQueueWaitIdle(dev->primary_ring, queue_handle);
++                                  fence_handle);
++   if (result == VK_SUCCESS) {
++      result = vn_WaitForFences(dev_handle, 1, &fence_handle, VK_TRUE,
++                                5ull * 1000 * 1000 * 1000);
++   }
 +
 +   if (result == VK_SUCCESS) {
 +      /* The renderer saw the command complete. Allow the write a little
@@ -156,6 +177,7 @@ index f347291..41d7905 100644
 +      }
 +   }
 +
++   vn_DestroyFence(dev_handle, fence_handle, NULL);
 +   vn_feedback_cmd_free(dev_handle, &dev->fb_cmd_pools[pool_index],
 +                        cmd_handle);
 +   vn_feedback_pool_free(&dev->feedback_pool, slot);
