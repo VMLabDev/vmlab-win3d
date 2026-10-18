@@ -55,7 +55,9 @@ Proof, from fresh `x86_64/windows-11@26100.1742.5` labs:
 
 The two e2e runs built their package from commit `1115df0` while
 `build/mesa/README.md` had an uncommitted edit. That is why the manifest
-says `1115df0-dirty`. No code file was changed.
+says `1115df0-dirty`. A later `scripts/build.sh` on a clean tree, at the
+docs commit, gave the same sha256 for all 28 package files
+(`after/clean-rebuild.txt`).
 
 ## The probe
 
@@ -218,6 +220,7 @@ fault was not checked.
 | `before/<gpu>/` | The six runs and four comparisons with the package at `72ba143` (0001 to 0025, 0030), in the e2e labs of that commit. In the `Nvidia2` lab a development UMD had been tried and was put back first; the restored DLLs match the package's sha256 |
 | `after/<gpu>/d3d9_ffp-*.txt`, `compare-*.txt` | The same with 0040 to 0042, from a clean install by `tests/e2e/run.sh` |
 | `after/<gpu>/e2e-results.txt`, `e2e-build.txt`, `e2e-host.txt`, `qemu-argv-env.txt`, `status-v.txt` | The e2e Done checks, the bundle, the host stack and the QEMU binary and command line |
+| `after/clean-rebuild.txt` | A clean-tree rebuild with the same file hashes as the e2e bundles |
 | `after/<gpu>/run-allprobes.txt` | `Run-AllProbes.ps1` in the same lab |
 | `after/<gpu>/console-text3d-{x64,x86}.png`, `run-text3d-*.json` | The SDK's fixed-function `Text3D` sample on the console |
 | `after/<gpu>/yttrium-errors.txt`, `d3dref9-sha256.txt` | The UMD's warnings during the runs, and the reference DLLs used |

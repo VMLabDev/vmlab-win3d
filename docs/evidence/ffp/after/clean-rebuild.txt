@@ -1,0 +1,8 @@
+# scripts/build.sh at 407af68 (clean tree), 2026-10-18T23:01:13+10:00
+## manifest.json commit
+  "commit": "407af68ade860015be04aa11ddaf742716c68519",
+## per-file sha256 (manifest files[]) against the e2e bundles
+nvidia2: bundle commit 1115df07ee46e720dfe2976763c81ace58bc5497-dirty: 28 files, 28 identical, differing: none
+amd1: bundle commit 1115df07ee46e720dfe2976763c81ace58bc5497-dirty: 28 files, 28 identical, differing: none
+17d279b7d13982fc1789e4fd70e44daf98e90d709d63f1572359b76f3770ddcd driver/x64/viogpu_d3d10_x64.dll
+71fd38162cfc51f8d7d54b5bbd46b78a84ec1c1f05a2ea9052180d8bb7d9f667 driver/x86/viogpu_d3d10_x86.dll
