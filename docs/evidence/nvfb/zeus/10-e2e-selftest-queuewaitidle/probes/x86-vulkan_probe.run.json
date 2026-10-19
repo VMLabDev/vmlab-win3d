@@ -1,0 +1,31 @@
+﻿{
+    "name":  "x86-vulkan_probe",
+    "exe":  "C:\\win3d\\probes\\x86\\vulkan_probe.exe",
+    "arguments":  "--seconds 20 --out C:\\win3d\\results\\probes\\x86-vulkan_probe.json",
+    "user":  "VMLABVM-557SO2T\\win3d",
+    "session_id":  1,
+    "pid":  7208,
+    "wow64":  true,
+    "started":  "2026-10-18T19:35:13.3030411-07:00",
+    "ended":  "2026-10-18T19:35:24.0629981-07:00",
+    "duration_s":  10.8,
+    "timed_out":  false,
+    "exit_code":  -1073740791,
+    "exit_code_hex":  "0xC0000409",
+    "task_result":  3221226505,
+    "probe_json":  null,
+    "probe_result":  null,
+    "adapter":  null,
+    "software":  null,
+    "readback_ok":  null,
+    "module_count":  40,
+    "graphics_modules":  [
+                             "C:\\WINDOWS\\SysWOW64\\vulkan-1.dll [syswow64] 1.4.363.0",
+                             "C:\\WINDOWS\\SysWOW64\\dxgi.dll [syswow64] 10.0.26100.9444 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\libvulkan_virtio.dll [syswow64] "
+                         ],
+    "app_local_modules":  [
+
+                          ]
+}

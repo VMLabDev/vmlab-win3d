@@ -1,0 +1,20 @@
+device Intel(R) Iris(R) Xe Graphics (RPL-P), driver 0x6802002
+export dma_buf: features 0x6 exportFrom 0x201 compatible 0x201
+export opaque_fd: features 0x6 exportFrom 0x201 compatible 0x201
+type 1 flags 0x07 heap 0 DEVICE_LOCAL HOST_VISIBLE HOST_COHERENT
+  map     misses 0/200 (late 0)
+  dmabuf  misses 0/200 (late 0)
+  hostwb  misses 0/200 (late 0)
+type 2 flags 0x0f heap 0 DEVICE_LOCAL HOST_VISIBLE HOST_COHERENT HOST_CACHED
+  map     misses 0/200 (late 0)
+  dmabuf  misses 0/200 (late 0)
+  hostwb  misses 0/200 (late 0)
+type 5 flags 0x07 heap 0 DEVICE_LOCAL HOST_VISIBLE HOST_COHERENT
+  map     buffer cannot use this type
+  dmabuf  exportable allocation not possible
+  hostwb  host pointer import not allowed (bits 0x7f)
+type 6 flags 0x0f heap 0 DEVICE_LOCAL HOST_VISIBLE HOST_COHERENT HOST_CACHED
+  map     buffer cannot use this type
+  dmabuf  exportable allocation not possible
+  hostwb  host pointer import not allowed (bits 0x7f)
+7.2.4-3-cachyos

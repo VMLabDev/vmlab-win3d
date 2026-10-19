@@ -1,0 +1,28 @@
+sync-x64-opengl-1 (ZINK_DEBUG=sync VN_NVFB_MEMLOG=C:\win3d\rep\memlog-sync-x64.txt): pass fps 26.31 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+sync-x64-opengl-2 (ZINK_DEBUG=sync VN_NVFB_MEMLOG=C:\win3d\rep\memlog-sync-x64.txt): pass fps 62.57 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+sync-x64-opengl-3 (ZINK_DEBUG=sync VN_NVFB_MEMLOG=C:\win3d\rep\memlog-sync-x64.txt): pass fps 61.99 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+sync-x64-opengl-4 (ZINK_DEBUG=sync VN_NVFB_MEMLOG=C:\win3d\rep\memlog-sync-x64.txt): pass fps 62.6 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+sync-x64-opengl-5 (ZINK_DEBUG=sync VN_NVFB_MEMLOG=C:\win3d\rep\memlog-sync-x64.txt): pass fps 62.29 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+sync-x64-opengl-6 (ZINK_DEBUG=sync VN_NVFB_MEMLOG=C:\win3d\rep\memlog-sync-x64.txt): pass fps 61.81 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+sync x64-opengl: 0 of 6 failed (ZINK_DEBUG=sync VN_NVFB_MEMLOG=C:\win3d\rep\memlog-sync-x64.txt)
+base-x64-opengl-1 (VN_NVFB_MEMLOG=C:\win3d\rep\memlog-base-x64.txt): pass fps 59.56 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+base-x64-opengl-2 (VN_NVFB_MEMLOG=C:\win3d\rep\memlog-base-x64.txt): pass fps 61.45 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+base-x64-opengl-3 (VN_NVFB_MEMLOG=C:\win3d\rep\memlog-base-x64.txt): pass fps 60.63 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+base-x64-opengl-4 (VN_NVFB_MEMLOG=C:\win3d\rep\memlog-base-x64.txt): pass fps 61.95 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+base-x64-opengl-5 (VN_NVFB_MEMLOG=C:\win3d\rep\memlog-base-x64.txt): pass fps 63.15 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+base-x64-opengl-6 (VN_NVFB_MEMLOG=C:\win3d\rep\memlog-base-x64.txt): pass fps 62.24 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+base x64-opengl: 0 of 6 failed (VN_NVFB_MEMLOG=C:\win3d\rep\memlog-base-x64.txt)
+sync-x86-opengl-1 (ZINK_DEBUG=sync VN_NVFB_MEMLOG=C:\win3d\rep\memlog-sync-x86.txt): pass fps 0.12 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+sync-x86-opengl-2 (ZINK_DEBUG=sync VN_NVFB_MEMLOG=C:\win3d\rep\memlog-sync-x86.txt): pass fps 62.6 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+sync-x86-opengl-3 (ZINK_DEBUG=sync VN_NVFB_MEMLOG=C:\win3d\rep\memlog-sync-x86.txt): pass fps 61.76 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+sync-x86-opengl-4 (ZINK_DEBUG=sync VN_NVFB_MEMLOG=C:\win3d\rep\memlog-sync-x86.txt): pass fps 59.16 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+sync-x86-opengl-5 (ZINK_DEBUG=sync VN_NVFB_MEMLOG=C:\win3d\rep\memlog-sync-x86.txt): pass fps 62.58 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+sync-x86-opengl-6 (ZINK_DEBUG=sync VN_NVFB_MEMLOG=C:\win3d\rep\memlog-sync-x86.txt): pass fps 61.87 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+sync x86-opengl: 0 of 6 failed (ZINK_DEBUG=sync VN_NVFB_MEMLOG=C:\win3d\rep\memlog-sync-x86.txt)
+base-x86-opengl-1 (VN_NVFB_MEMLOG=C:\win3d\rep\memlog-base-x86.txt): pass fps 61.89 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+base-x86-opengl-2 (VN_NVFB_MEMLOG=C:\win3d\rep\memlog-base-x86.txt): pass fps 62.59 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+base-x86-opengl-3 (VN_NVFB_MEMLOG=C:\win3d\rep\memlog-base-x86.txt): pass fps 62.56 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+base-x86-opengl-4 (VN_NVFB_MEMLOG=C:\win3d\rep\memlog-base-x86.txt): pass fps 62.36 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+base-x86-opengl-5 (VN_NVFB_MEMLOG=C:\win3d\rep\memlog-base-x86.txt): pass fps 61.65 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+base-x86-opengl-6 (VN_NVFB_MEMLOG=C:\win3d\rep\memlog-base-x86.txt): pass fps 62.27 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+base x86-opengl: 0 of 6 failed (VN_NVFB_MEMLOG=C:\win3d\rep\memlog-base-x86.txt)

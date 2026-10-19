@@ -1,0 +1,151 @@
+
+[06:47:36] == vmlab-win3d e2e: windows-11, commit 6dabb22
+date: 2026-10-19T06:47:36+10:00
+commit: 6dabb22a8ef9d73284e1f37ad6c74c46095f742e
+worktree changes: 8
+template: x86_64/windows-11@26100.1742.5
+kernel: 7.2.3-1-cachyos
+qemu (PATH): QEMU emulator version 11.1.1
+packages: qemu-full 11.1.1-1 virglrenderer 1.3.0-2.1 mesa 3:26.2.2-2 vulkan-radeon 3:26.2.2-2 nvidia-utils 610.57.04-1 
+vmlab: vmlab 0.28.0-alpha
+venus gpu: host_gpu AMD1, /dev/dri/renderD129 0000:72:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI] Granite Ridge [Radeon Graphics] (rev c1)
+
+[06:47:36] == 1 build
+[06:47:36] reused (out/package built at 6dabb22a8ef9d73284e1f37ad6c74c46095f742e; no change to build installer probes patches scripts/build.sh since)
+
+[06:47:36] == 2 fresh lab win3d-nvfb-amd1 from x86_64/windows-11@26100.1742.5
+ok: lab "win3d-nvfb-amd1" — 1 vm(s), 0 container(s), 0 segment(s)
+first-boot: provisioning win...
+first-boot: agent busy (win: no vmlab-agent answered on the agent channel — the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: specialize complete; clearing marker
+first-boot: settling staged AppX (LKG) before first logon
+first-boot: appx: removed MicrosoftWindows.Client.AIX_1000.26100.29.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.AccountsService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.IrisService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.Search_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed NcsiUwpApp_1000.25128.1000.0_neutral_neutral_8wekyb3d8bbwe
+removed MdOdrMcpFilterPackage_1.0.0.0_neutral__cw5n1h2txyewy
+first-boot: rebooting once to settle shell reconciliation
+first-boot: win ready
+lab "win3d-nvfb-amd1" is up
+
+[06:50:30] == 3 guest scripts, probes and the baseline
+pushed 7 file(s), 42217 bytes to win:C:/win3d/guest
+pushed 1 file(s), 2321 bytes to win:C:/win3d/e2e
+pushed 5 file(s), 174592 bytes to win:C:/win3d/probes/x64
+pushed 5 file(s), 153088 bytes to win:C:/win3d/probes/x86
+pushed 2800056 bytes to win:C:/win3d/lunarg/x64/vulkaninfo.exe
+pushed 2403256 bytes to win:C:/win3d/lunarg/x86/vulkaninfo.exe
+[07:08:57] baseline: Red Hat VirtIO GPU DOD controller (problem 0)
+
+[07:08:57] == 3b test desktop (autologon user win3d)
+[07:08:58] oobe: done after 0 s
+[07:10:01] autologon before-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-KEKRA9Q AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-KEKRA9Q\win3d 
+
+[07:10:01] == 4 install: scripts/install-into-vm.sh /home/wil/dev/vmlab-win3d-wt/nvfb/.scratch/e2e/windows-11/lab win
+[07:10:01] waiting for the guest agent
+[07:10:01] copying vmlab-win3d-0.1.1 to C:\vmlab-win3d
+pushed 29 file(s), 102413925 bytes to win:C:/vmlab-win3d
+[07:10:05] running C:\vmlab-win3d\Install.cmd
+2026-10-18T21:10:02.861-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
+2026-10-18T21:10:07.653-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T21:10:11.951-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
+2026-10-18T21:10:12.274-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T21:10:12.290-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-18T21:10:12.294-07:00 [Install]   Signature matches Public Key
+2026-10-18T21:10:12.298-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T21:10:12.303-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T21:10:12.365-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T21:10:12.369-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-18T21:10:12.376-07:00 [Install]   Signature matches Public Key
+2026-10-18T21:10:12.380-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T21:10:12.387-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T21:10:12.482-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-18T21:10:12.486-07:00 [Install]   The operation completed successfully.
+2026-10-18T21:10:13.142-07:00 [Install] test signing is set but not active in this boot
+2026-10-18T21:10:13.751-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T21:10:13.837-07:00 [Install] rebooting; step Driver resumes after the restart
+[07:10:17] Install.cmd exited 0
+[07:10:17] state: RebootPending|Driver|
+[07:11:13] state: Installing|Driver|
+[07:11:29] state: RebootPending|Verify|
+[07:12:37] state: Installed||
+[07:12:37] done: Installed
+[07:12:50] autologon after-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-KEKRA9Q AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-KEKRA9Q\win3d 
+
+[07:12:50] == 5 interactive-session tests
+[07:12:53] desktop: True 71
+[07:13:09] desktop: True 87
+[07:13:25] desktop: True 104
+[07:13:41] desktop: True 119
+[07:13:56] desktop: True 135
+
+[07:13:59] == 5a vulkaninfo --summary
+    "exit_code":  0,
+    "exit_code_hex":  "0x00000000",
+	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
+	deviceName         = Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+	driverName         = venus
+exit 0 
+	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
+	deviceName         = Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+	driverName         = venus
+exit 0 
+	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
+	deviceName         = Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+	driverName         = venus
+	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
+	deviceName         = Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+	driverName         = venus
+
+[07:14:06] == 5b probes
+[07:14:06] probe x64-d3d9_probe
+[07:14:31]   Run-Probe exit 0
+  console: 10/12 frames show the probe window; animating=True
+[07:14:32] probe x86-d3d9_probe
+[07:14:57]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+[07:14:57] probe x64-d3d11_probe
+[07:15:22]   Run-Probe exit 0
+  console: 10/12 frames show the probe window; animating=True
+[07:15:22] probe x86-d3d11_probe
+[07:15:48]   Run-Probe exit 0
+  console: 10/12 frames show the probe window; animating=True
+[07:15:48] probe x64-d3d12_probe
+[07:16:14]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+[07:16:15] probe x86-d3d12_probe
+[07:16:42]   Run-Probe exit 0
+  console: 8/13 frames show the probe window; animating=True
+[07:16:42] probe x64-opengl_probe
+[07:17:08]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+[07:17:08] probe x86-opengl_probe
+[07:17:34]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+[07:17:34] probe x64-vulkan_probe
+[07:17:59]   Run-Probe exit 0
+  console: 10/12 frames show the probe window; animating=True
+[07:17:59] probe x86-vulkan_probe
+[07:18:25]   Run-Probe exit 0
+  console: 10/12 frames show the probe window; animating=True
+
+[07:18:25] == 5c dxdiag
+                        "D3D Status":  "Enabled",
+                        "AGP Status":  "Enabled"
+                    }
+                ]
+}
+
+[07:18:51] == 6 collect evidence
+pulled 52512 bytes to /home/wil/dev/vmlab-win3d-wt/nvfb/.scratch/e2e/windows-11/results.zip
+
+[07:18:55] == 7 teardown
+lab "win3d-nvfb-amd1" destroyed
+
+[07:18:57] == result (ok)

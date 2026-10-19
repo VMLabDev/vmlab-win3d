@@ -1,0 +1,16 @@
+selftest-only-x64-vulkan-1 (): pass fps 55.85 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+selftest-only-x86-vulkan-1 (): no json
+selftest-only-x64-d3d12-1 (): readback_mismatch fps 0.06 readback False [[20, 25, 41], [20, 25, 41], [20, 25, 41]]
+selftest-only-x64-opengl-1 (): readback_mismatch fps 0.06 readback False [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+vnperf-x64-d3d12-1 (VN_PERF=no_fence_feedback,no_semaphore_feedback,no_event_feedback,no_query_feedback): pass fps 51.56 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+vnperf-x64-opengl-1 (VN_PERF=no_fence_feedback,no_semaphore_feedback,no_event_feedback,no_query_feedback): readback_mismatch fps 57.53 readback False [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+vnperf-x64-d3d12-1 (VN_PERF=no_fence_feedback,no_semaphore_feedback,no_event_feedback,no_query_feedback): pass fps 50.95 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+selftest-only-again-x64-d3d12-1 (): pass fps 51.12 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+selftest-only-b-x64-opengl-1 (): readback_mismatch fps 57.66 readback False [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+selftest-only-b-x64-opengl-1 (): readback_mismatch fps 58.66 readback False [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+selftest-only-b-x86-d3d12-1 (): no json
+selftest-only-b-x86-vulkan-1 (): no json
+selftest-only-b-x86-opengl-1 (): no json
+selftest-only-c-x86-d3d12-1 (): pass fps 0.18 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+selftest-only-c-x86-vulkan-1 (): pass fps 55.61 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+selftest-only-c-x86-opengl-1 (): readback_mismatch fps 26.04 readback False [[0, 0, 0], [0, 0, 0], [0, 0, 0]]

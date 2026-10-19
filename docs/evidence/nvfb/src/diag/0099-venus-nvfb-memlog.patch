@@ -1,0 +1,41 @@
+Subject: [PATCH] venus: nvfb diagnostic allocation log (not part of the package)
+
+With VN_NVFB_MEMLOG=<file>, append one line per vkAllocateMemory: size,
+requested and used memory type, flags, import/export and dedicated.
+Applied after the package patches by docs/evidence/nvfb/src/diag/build.sh.
+---
+diff --git a/src/virtio/vulkan/vn_device_memory.c b/src/virtio/vulkan/vn_device_memory.c
+index 5487eb2..873b66b 100644
+--- a/src/virtio/vulkan/vn_device_memory.c
++++ b/src/virtio/vulkan/vn_device_memory.c
+@@ -586,6 +586,30 @@ vn_AllocateMemory(VkDevice device,
+ 
+    vn_device_memory_emit_report(dev, mem, /* is_alloc */ true, result);
+ 
++   /* nvfb diagnostic (docs/nvfb.md): one line per allocation. */
++   {
++      const char *log_path = getenv("VN_NVFB_MEMLOG");
++      FILE *log = log_path ? fopen(log_path, "a") : NULL;
++      if (log) {
++         const VkMemoryDedicatedAllocateInfo *ded = vk_find_struct_const(
++            pAllocateInfo->pNext, MEMORY_DEDICATED_ALLOCATE_INFO);
++         fprintf(log,
++                 "alloc pid=%lu size=%llu type=%u used_type=%u flags=0x%x "
++                 "import=0x%x export=0x%x dedicated=%s result=%d\n",
++                 (unsigned long)GetCurrentProcessId(),
++                 (unsigned long long)pAllocateInfo->allocationSize,
++                 pAllocateInfo->memoryTypeIndex,
++                 mem->base.vk.memory_type_index,
++                 dev->physical_device->memory_properties
++                    .memoryTypes[mem->base.vk.memory_type_index]
++                    .propertyFlags,
++                 mem->base.vk.import_handle_type,
++                 mem->base.vk.export_handle_types,
++                 !ded ? "no" : ded->image ? "image" : "buffer", result);
++         fclose(log);
++      }
++   }
++
+    if (result != VK_SUCCESS) {
+       vk_device_memory_destroy(&dev->base.vk, pAllocator, &mem->base.vk);
+       return vn_error(dev->instance, result);

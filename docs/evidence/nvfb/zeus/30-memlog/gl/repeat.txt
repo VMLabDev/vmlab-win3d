@@ -1,0 +1,3 @@
+memlog-sync-x64-opengl-1 (ZINK_DEBUG=sync VN_NVFB_MEMLOG=C:\win3d\rep\memlog-sync.txt): pass fps 22.8 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+memlog-sync-x64-opengl-2 (ZINK_DEBUG=sync VN_NVFB_MEMLOG=C:\win3d\rep\memlog-sync.txt): readback_mismatch fps 63.11 readback False [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+memlog-sync x64-opengl: 1 of 2 failed (ZINK_DEBUG=sync VN_NVFB_MEMLOG=C:\win3d\rep\memlog-sync.txt)

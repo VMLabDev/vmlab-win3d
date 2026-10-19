@@ -1,0 +1,25 @@
+Activating Windows(R), EnterpriseEval edition (3f4c0546-36c6-46a8-a37f-be13cdd0cf25) ...
+Product activated successfully.
+
+Software licensing service version: 10.0.26100.9457
+
+Name: Windows(R), EnterpriseEval edition
+Description: Windows(R) Operating System, TIMEBASED_EVAL channel
+Activation ID: 3f4c0546-36c6-46a8-a37f-be13cdd0cf25
+Application ID: 55c92734-d682-4d71-983e-d6ec3f16059f
+Extended PID: 03612-03292-000-000001-00-1033-26100.0000-2922026
+Product Key Channel: Retail:TB:Eval
+Installation ID: 075605625034713540436515909681411324923890447611653759268298803
+Use License URL: https://activation-v2.sls.microsoft.com/SLActivateProduct/SLActivateProduct.asmx?configextension=Retail
+Validation URL: https://validation-v2.sls.microsoft.com/SLWGA/slwga.asmx
+Partial Product Key: YG9R6
+License Status: Licensed
+Timebased activation expiration: 129600 minute(s) (90 day(s))
+Remaining Windows rearm count: 1
+Remaining SKU rearm count: 1
+Trusted time: 10/18/2026 5:45:15 PM
+
+
+Windows(R), EnterpriseEval edition:
+    Timebased activation will expire 1/16/2027 5:45:15 PM
+
