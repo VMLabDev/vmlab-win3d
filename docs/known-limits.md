@@ -94,6 +94,14 @@ historical: `docs/nvidia.md` names the cause.
 
 ### Two Windows VMs per RTX 5090 without resizable BAR
 
+> **Helios has Resizable BAR since 2026-10-19.** BAR1 on both RTX 5090s is now
+> 32 GiB (`nvidia-smi -q -d MEMORY`), and NVIDIA's Vulkan driver reports the
+> device-local, host-visible type on the 31.8 GiB VRAM heap itself, so
+> `0070` no longer hides it there. The two-VM limit below applies to NVIDIA
+> hosts without Resizable BAR (laptops, older boards); helios's workers now
+> run up to three VMs per card. The NVIDIA acceptance is rerun with ReBAR on
+> as release candidate 3.
+
 Helios's RTX 5090s run with resizable BAR off, so each card has a 256 MiB
 BAR1 aperture that every process and VM on the card shares. Venus guests
 fill it. Each Windows VM takes about 40 MiB at an idle desktop and 60 MiB
