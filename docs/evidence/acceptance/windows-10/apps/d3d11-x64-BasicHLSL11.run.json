@@ -2,13 +2,13 @@
     "name":  "d3d11-x64-BasicHLSL11",
     "exe":  "C:\\apps\\DXSDK\\Samples\\C++\\Direct3D11\\Bin\\x64\\BasicHLSL11.exe",
     "arguments":  "-windowed",
-    "user":  "VMLABVM-AIUBH5O\\win3d",
+    "user":  "VMLABVM-GKMSTFH\\win3d",
     "session_id":  1,
-    "pid":  2936,
+    "pid":  4244,
     "wow64":  false,
-    "started":  "2026-10-18T15:43:53.6128191-07:00",
-    "ended":  "2026-10-18T15:44:25.3518308-07:00",
-    "duration_s":  31.7,
+    "started":  "2026-10-18T20:22:46.2857723-07:00",
+    "ended":  "2026-10-18T20:23:17.4107606-07:00",
+    "duration_s":  31.1,
     "timed_out":  true,
     "exit_code":  null,
     "exit_code_hex":  null,
@@ -27,8 +27,8 @@
                              "C:\\Windows\\SYSTEM32\\dxgi.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
                              "C:\\Windows\\SYSTEM32\\d3d9.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
                              "C:\\Windows\\SYSTEM32\\dwmapi.dll [system32] 10.0.19041.1 (WinBuild.160101.0800)",
-                             "C:\\Windows\\system32\\viogpu_d3d10.dll [system32] ",
-                             "C:\\Windows\\SYSTEM32\\dxcore.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)"
+                             "C:\\Windows\\SYSTEM32\\dxcore.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
+                             "C:\\Windows\\system32\\viogpu_d3d10.dll [system32] "
                          ],
     "app_local_modules":  [
 

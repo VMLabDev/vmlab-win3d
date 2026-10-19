@@ -1,7 +1,7 @@
 AutoAdminLogon=1
 DefaultUserName=win3d
-DefaultDomainName=VMLABVM-DRET32C
+DefaultDomainName=VMLABVM-15I9IAM
 AutoLogonCount=
 ForceAutoLogon=
 DefaultPassword set=True
-console user=VMLABVM-DRET32C\win3d
+console user=VMLABVM-15I9IAM\win3d
