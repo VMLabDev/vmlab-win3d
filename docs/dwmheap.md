@@ -157,7 +157,9 @@ All under `docs/evidence/dwmheap/`:
 | --- | --- |
 | `src/lab-prep.sh` | Fresh lab from `labs/probe/vmlab.wcl` with a NAT NIC, WER full dumps of `dwm.exe` to `C:\dumps`, optional PageHeap for dwm, and the autologon desktop |
 | `src/first-boot-run.sh` | One proof run: `lab-prep.sh`, the install, then in the first boot the D3D12 probe five times and the five samples; collects crashes, dumps and the render-server log |
-| `fixed-nvidia1-a/`, `fixed-nvidia1-b/`, `fixed-amd1/` | Proof runs with the fix (`src/first-boot-run.sh`): install log, five D3D12 probe results, the five samples (`samples/`, with console captures), Application Error events, `C:\dumps`, dwm's start time against boot time, and the render-server log |
+| `fixed-nvidia1-a/`, `fixed-nvidia1-b/`, `fixed-amd1/`, `fixed-nvidia2/` | Proof runs with the fix (`src/first-boot-run.sh`): install log, five D3D12 probe results, the five samples (`samples/`, with console captures), Application Error events, `C:\dumps`, dwm's start time against boot time, and the render-server log |
+| `e2e/` | `tests/e2e/run.sh --template windows-11` runs for this branch: `windows-11-amd1/`, and `windows-11-nvidia2-run1/`, `-run2-overloaded/` and `-run3/` |
+| `src/f7-heaven.sh`, `src/pageheap.sh`, `f7-amd1/` | Compat finding F7: five Unigine Heaven D3D11 runs on AMD1 under full PageHeap with WER dumps, through `tests/apps/compat/run.sh` (`pageheap.sh` is unid3d's, copied) |
 | `repro-nvidia1/` | The reproduction before the fix: cdb stacks and heap analysis of the dwm dump, the d3d11 `TrimNotificationCallback` disassembly, the Application Error events and the probe's result, and the render-server log |
 
 The dump itself (445 MB, sha256
@@ -178,6 +180,12 @@ install's final reboot. Nothing else ran before it.
 | `fixed-nvidia1-a/` | Nvidia1 | 5 pass | 5 exit 0; `D3D12HelloTriangle` renders on the console | no crash, no dump; dwm is the one started at boot | 9 |
 | `fixed-nvidia1-b/` | Nvidia1 | 5 pass | 5 exit 0 | no crash, no dump; dwm is the one started at boot | 0 |
 | `fixed-amd1/` | AMD1 | 5 pass | 5 exit 0 | no crash, no dump; dwm is the one started at boot | 0 |
+| `fixed-nvidia2/` | Nvidia2 | 5 pass | 5 exit 0 | no crash, no dump; dwm is the one started at boot | 1 |
+
+Runs a, b and the AMD1 run used the bundle described above. The Nvidia2
+run, the e2e runs and the F7 runs used the bundle built by
+`scripts/build.sh` at `35fa4e9`: main at `b74ea3c` (with nvva's `0070` and
+`0086`) merged with this branch.
 
 `D3D12ExecuteIndirect` still shows only its clear colour, as
 `docs/d3d12app.md` explains. That is a separate limit. No run had any
@@ -185,21 +193,45 @@ Application Error event.
 
 Run a is the one that matters most. Its boot had the same host-side
 context failures as the repro, so it ran under the same conditions, and dwm
-survived. Run b had no context failures, so it does not exercise the trigger.
-The probe passed in all fifteen runs. In the repro, the probe failed because
-its own context was among the dead ones.
+survived. Runs b and AMD1 had no context failures, and the Nvidia2 run had
+one, so they exercise the trigger little or not at all. The probe passed in
+all twenty runs. In the repro, the probe failed because its own context was
+among the dead ones.
+
+### End-to-end runs
+
+`tests/e2e/run.sh --template windows-11` at `35fa4e9`:
+
+| Run | Result | Notes |
+| --- | --- | --- |
+| AMD1 | **12 of 12** | `e2e/windows-11-amd1/` |
+| Nvidia2, run 1 | 11 of 12 | The x86 D3D12 probe passed its readback but presented one frame in 24 s, and its window was in no console capture. This is the known x86 D3D12 stall that worker x86d3d12 is chasing, also seen on AMD1 before this change |
+| Nvidia2, run 2 | 5 of 12 | Most probes failed with device removed (`0x887a0005`, fence timeouts). Two other workers' labs had started on Nvidia2, so the card carried three VMs, over the limit of two. Not counted |
+| Nvidia2, run 3 | **12 of 12** | Run with the card's slot taken through `gpuslot.sh`. `e2e/windows-11-nvidia2-run3/` |
+
+### F7: Heaven D3D11
+
+Worker unid3d reproduced compat finding F7, intermittent heap corruption in
+Unigine Heaven's D3D11 renderer on AMD1, under full PageHeap in 2 of 5 runs.
+Both crashes are a use-after-free of a `yttrium_threaded_flush_label`
+record. `tc_batch_execute` ran it on the threaded context's worker thread
+after the record had been freed (`docs/evidence/unid3d/f7-pageheap/`). That
+is the same callback record as in the dwm crash. A batch that a foreign
+thread's trim flush ran inline, and that the owner thread then submitted to
+the worker, would run its callbacks twice: the first run frees the record,
+and the second, on the worker, reads freed memory.
+
+With `0060`, `src/f7-heaven.sh` ran Heaven D3D11 five times on AMD1 under
+full PageHeap (`f7-amd1/try1` to `try5`). All five exited cleanly after
+WM_CLOSE (4.5 to 10.1 fps by OCR of the on-screen counter), and `C:\win3d\dumps` stayed empty. F7 is most
+likely fixed by `0060`. This is not proven. That Heaven gets trim
+notifications was not observed, and at the old rate of 2 crashes in 5, five
+clean runs in a row would happen by chance about 8 % of the time.
 
 ## What remains
 
-- **Unmet: a third fresh NVIDIA lab.** The brief asks for three. Only two
-  ran: under the BAR1 rule, an NVIDIA card takes at most two of our VMs, and
-  both slots on `Nvidia1` stayed taken by other workers' labs for the rest
-  of the time box. `Nvidia2` is reserved for `nvva`.
-- **Unmet: `tests/e2e/run.sh` 12 of 12** on AMD1 and on an NVIDIA card was
-  not run for this branch, for the same reason and the time box. The patch
-  removes one flush from one DXGI DDI, and the e2e probes went through that
-  UMD in every proof run above. It still needs the full run before it
-  merges.
+- **F7 needs more runs to be certain.** Ten or more clean PageHeap runs
+  would bring the chance of a false all-clear under 1 %.
 - **No deterministic trigger.** The crash needs dwm to lose its device and
   get a trim notification. Neither can be forced from a test program:
   `IDXGIDevice3::Trim` does not call `pfnTrimResidencySet` (it trims the
