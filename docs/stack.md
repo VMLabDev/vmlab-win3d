@@ -321,7 +321,7 @@ committed.
 | host/virglrenderer/workaround | 1 | [`0002`](../patches/host/virglrenderer/workaround/0002-vkr-drop-unsupported-feedback-loop-usage.patch) | vkr: retry vkCreateImage and the image-format queries without feedback-loop usage (superseded by mesa/0020; built only with WITH_WORKAROUND=1) | [`docs/nvidia.md`](nvidia.md) |
 | kmd | 2 | [`0001`](../patches/kmd/0001-kmd-r10-copy.patch) | Convert R10G10B10A2 sources to 8-bit RGBA or BGRA in the KMD's CPU present blit (the prior art's r10 KMD) | [`build/kmd/README.md`](../build/kmd/README.md) |
 | | | [`0002`](../patches/kmd/0002-kmd-cache-gdi-shadow-and-staging-surfaces.patch) | viogpu3d: map GDI shadow and staging surfaces cached | [`docs/present.md`](present.md) |
-| mesa | 37 | [`0001`](../patches/mesa/0001-build-winddk-includes-and-x86-atomics.patch) | build: add the WDK include path and drop x86-unsafe 64-bit Interlocked calls | [`build/mesa/README.md`](../build/mesa/README.md) |
+| mesa | 38 | [`0001`](../patches/mesa/0001-build-winddk-includes-and-x86-atomics.patch) | build: add the WDK include path and drop x86-unsafe 64-bit Interlocked calls | [`build/mesa/README.md`](../build/mesa/README.md) |
 | | | [`0002`](../patches/mesa/0002-util-xmlconfig-case-insensitive-exe-match.patch) | util/xmlconfig: match drirc executable names case-insensitively on Windows | [`build/mesa/README.md`](../build/mesa/README.md) |
 | | | [`0003`](../patches/mesa/0003-util-u_queue-windows-loader-lock-join.patch) | util/u_queue: do not join worker threads under the loader lock on Windows | [`build/mesa/README.md`](../build/mesa/README.md) |
 | | | [`0004`](../patches/mesa/0004-wgl-unbind-through-stw-on-delete.patch) | wgl: unbind the current context through stw_make_current on delete | [`build/mesa/README.md`](../build/mesa/README.md) |
@@ -355,6 +355,7 @@ committed.
 | | | [`0042`](../patches/mesa/0042-d3d9-fixed-function-points.patch) | d3d9: point expansion keeps vertex attributes, perspective size and per-vertex PSIZE | [`docs/ffp.md`](ffp.md) |
 | | | [`0043`](../patches/mesa/0043-d3d9-bump-luminance-formats.patch) | d3d9: L6V5U5 and X8L8V8U8 bump maps for BUMPENVMAPLUMINANCE | [`docs/ffp2.md`](ffp2.md) |
 | | | [`0044`](../patches/mesa/0044-d3d9-indexed-vertex-blend-palette.patch) | d3d9: report the runtime's matrix palette for indexed vertex blending | [`docs/ffp2.md`](ffp2.md) |
+| | | [`0060`](../patches/mesa/0060-d3d10umd-trim-residency-set-leaves-the-context-alone.patch) | d3d10umd: TrimResidencySet leaves the pipe context alone | [`docs/dwmheap.md`](dwmheap.md) |
 | | | [`0070`](../patches/mesa/0070-venus-hide-host-access-to-small-bar-heap.patch) | venus: hide host access to a small BAR heap | [`docs/nvva.md`](nvva.md) |
 | | | [`0086`](../patches/mesa/0086-zink-keep-buffers-mappable-without-visible-vram.patch) | zink: keep buffers mappable when CPU-visible VRAM is missing or full | [`docs/nvva.md`](nvva.md) |
 | | | [`0090`](../patches/mesa/0090-yttrium-d3d9-depth-bias-without-float-representation.patch) | yttrium: convert D3D9 depth bias when the float representation is missing | [`docs/unid3d.md`](unid3d.md) |

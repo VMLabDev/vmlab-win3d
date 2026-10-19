@@ -1,0 +1,12 @@
+[09:40:21] heaven: already staged
+[09:40:22] valley: already staged
+[09:40:23] gzdoom: already staged
+[09:40:24] crispy: already staged
+[09:40:25] freedoom: already staged
+[09:40:27] godot: already staged
+crispy
+freedoom
+godot
+gzdoom
+heaven
+valley

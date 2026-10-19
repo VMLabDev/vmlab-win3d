@@ -1,0 +1,328 @@
+Opened log file 'C:\dbg\out1.txt'
+
+************* Preparing the environment for Debugger Extensions Gallery repositories **************
+   ExtensionRepository : Implicit
+   UseExperimentalFeatureForNugetShare : true
+   AllowNugetExeUpdate : true
+   NonInteractiveNuget : true
+   AllowNugetMSCredentialProviderInstall : true
+   AllowParallelInitializationOfLocalRepositories : true
+
+   -- Configuring repositories
+      ----> Repository : LocalInstalled, Enabled: true
+      ----> Repository : UserExtensions, Enabled: true
+
+>>>>>>>>>>>>> Preparing the environment for Debugger Extensions Gallery repositories completed, duration 0.000 seconds
+
+************* Waiting for Debugger Extensions Gallery to Initialize **************
+
+>>>>>>>>>>>>> Waiting for Debugger Extensions Gallery to Initialize completed, duration 0.000 seconds
+   ----> Repository : LocalInstalled, Enabled: true, Packages count: 0
+   ----> Repository : UserExtensions, Enabled: true, Packages count: 0
+
+Microsoft (R) Windows Debugger Version 10.0.29661.1004 AMD64
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+
+Loading Dump File [C:\dumps\dwm.exe.1204.dmp]
+User Mini Dump File with Full Memory : Only application data is available
+
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+Deferred                                       srv*C:\symcache*https://msdl.microsoft.com/download/symbols
+Symbol search path is: srv*C:\symcache*https://msdl.microsoft.com/download/symbols
+Executable search path is: 
+Windows 10 Version 26100 MP (4 procs) Free x64
+Product: WinNt, suite: SingleUserTS
+Edition build lab: 26100.1.amd64fre.ge_release.240331-1435
+Debug session time: Sun Oct 18 11:39:46.000 2026 (UTC - 7:00)
+System Uptime: 0 days 0:11:11.352
+Process Uptime: 0 days 0:06:35.000
+................................................................
+.............
+This dump file has an exception of interest stored in it.
+The stored exception information can be accessed via .ecxr
+(4b4.638): Unknown exception - code c0000374 (first/second chance not available)
+
++------------------------------------------------------------------------+
+| This target supports Hardware-enforced Stack Protection. A HW based    |
+| "Shadow Stack" may be available to assist in debugging and analysis.   |
+| See aka.ms/userhsp for more info.                                      |
+|                                                                        |
+| dps @ssp                                                               |
+|                                                                        |
++------------------------------------------------------------------------+
+
+For analysis of this file, run !analyze -v
+ntdll!NtWaitForMultipleObjects+0x14:
+00007ffb`1f941914 c3              ret
+0:003> .ecxr; kn 60; ~*kn 40; lmv m viogpu*; q
+rax=0059005c00610074 rbx=00000000c0000374 rcx=0069007200000013
+rdx=000001c53d60a000 rsi=0000000000000001 rdi=00007ffb1f9ad0e0
+rip=00007ffb1f8f7eb5 rsp=00000001004fdb40 rbp=00000001004fdedc
+ r8=0000000000000000  r9=000001c5320015c0 r10=000000000000005c
+r11=0000000000000000 r12=0000000000000000 r13=0000000000000000
+r14=000001c532000340 r15=0000000000000000
+iopl=0         nv up ei pl nz na pe nc
+cs=0033  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00000206
+ntdll!RtlReportFatalFailure+0x9:
+00007ffb`1f8f7eb5 eb00            jmp     ntdll!RtlReportFatalFailure+0xb (00007ffb`1f8f7eb7)
+ # Child-SP          RetAddr               Call Site
+00 00000001`004fdb40 00007ffb`1f876be5     ntdll!RtlReportFatalFailure+0x9
+01 00000001`004fdb90 00007ffb`1f841262     ntdll!RtlReportCriticalFailure+0xa9
+02 00000001`004fdc80 00007ffb`1f90058a     ntdll!RtlpHeapHandleError+0x12
+03 00000001`004fdcb0 00007ffb`1f809643     ntdll!RtlpHpHeapHandleError+0x7a
+04 00000001`004fdce0 00007ffb`1f7fce11     ntdll!RtlpHpFreeHeap+0x2b3
+05 00000001`004fdd50 00007ffb`1cab2d7b     ntdll!RtlFreeHeap+0x231
+*** WARNING: Unable to verify timestamp for viogpu_d3d10.dll
+06 00000001`004fde40 00007ffb`15a52c83     ucrtbase!free_base+0x1b
+07 00000001`004fde70 00007ffb`15a45f56     viogpu_d3d10!D3DKMTConfigureSharedResource+0x1c743
+08 00000001`004ff120 00007ffb`15a48e4a     viogpu_d3d10!D3DKMTConfigureSharedResource+0xfa16
+09 00000001`004ff170 00007ffb`15a042f5     viogpu_d3d10!D3DKMTConfigureSharedResource+0x1290a
+0a 00000001`004ff1d0 00007ffb`18513b92     viogpu_d3d10!OpenAdapter+0x32a55
+0b 00000001`004ff200 00007ffb`19dd75cd     d3d11!NDXGI::CDevice::TrimNotificationCallback+0x82
+0c 00000001`004ff260 00007ffb`1f8633d4     DXCore!DxTrimWnfCallback+0xdd
+0d 00000001`004ff2d0 00007ffb`1f862dae     ntdll!RtlpWnfWalkUserSubscriptionList+0x3c4
+0e 00000001`004ff490 00007ffb`1f861b57     ntdll!RtlpWnfProcessCurrentDescriptor+0x11e
+0f 00000001`004ff4f0 00007ffb`1f861420     ntdll!RtlpWnfNotificationThread+0x87
+10 00000001`004ff550 00007ffb`1f7fa879     ntdll!TppExecuteWaitCallback+0x1d0
+11 00000001`004ff670 00007ffb`1e4bcd87     ntdll!TppWorkerThread+0x599
+12 00000001`004ff9d0 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+13 00000001`004ffa00 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+   0  Id: 4b4.4b8 Suspend: 0 Teb: 00000001`003dd000 Unfrozen
+ # Child-SP          RetAddr               Call Site
+00 00000001`0007f6a8 00007ffb`1e8a2812     win32u!NtUserGetMessage+0x14
+01 00000001`0007f6b0 00007ff7`82cc3678     user32!GetMessageW+0x22
+02 00000001`0007f710 00007ff7`82cc2c05     dwm!CDwmAppHost::Run+0xd8
+03 00000001`0007f780 00007ff7`82cc4b45     dwm!wWinMain+0x1e5
+04 00000001`0007f7d0 00007ffb`1e4bcd87     dwm!__scrt_common_main_seh+0x105
+05 00000001`0007f810 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+06 00000001`0007f840 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+   1  Id: 4b4.4d4 Suspend: 0 Teb: 00000001`003df000 Unfrozen
+ # Child-SP          RetAddr               Call Site
+00 00000001`000ff488 00007ffb`1f7fa65e     ntdll!NtWaitForWorkViaWorkerFactory+0x14
+01 00000001`000ff490 00007ffb`1e4bcd87     ntdll!TppWorkerThread+0x37e
+02 00000001`000ff7f0 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+03 00000001`000ff820 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+   2  Id: 4b4.5d4 Suspend: 0 Teb: 00000001`003e5000 Unfrozen "DWM Compositor Thread"
+ # Child-SP          RetAddr               Call Site
+00 00000001`0047f768 00007ffb`1f7eff6d     ntdll!NtWaitForAlertByThreadId+0x14
+01 00000001`0047f770 00007ffb`1f7f166f     ntdll!RtlpWaitOnCriticalSection+0x5ad
+02 00000001`0047f870 00007ffb`1f7f28e2     ntdll!RtlpEnterCriticalSectionContended+0x1ef
+03 00000001`0047f8f0 00007ffb`184d7a7f     ntdll!RtlEnterCriticalSection+0xf2
+04 00000001`0047f930 00007ffb`184d7a2d     d3d11!ATL::CComCritSecLock<ATL::CComCriticalSection>::Lock+0x13
+05 00000001`0047f960 00007ffb`184d6303     d3d11!ATL::CComCritSecLock<ATL::CComCriticalSection>::CComCritSecLock<ATL::CComCriticalSection>+0x15
+06 00000001`0047f9b0 00007ffb`18526329     d3d11!NDXGI::CDevice::LLOBeginLayerDestruction+0x37
+07 00000001`0047f9f0 00007ffb`185262cf     d3d11!NOutermost::CDevice::LLOBeginLayerDestruction+0x19
+08 00000001`0047fa20 00007ffb`18526284     d3d11!TComObject<NOutermost::CDevice>::~TComObject<NOutermost::CDevice>+0x1f
+09 00000001`0047fa50 00007ffb`184d7e08     d3d11!TComObject<NOutermost::CDevice>::`vector deleting destructor'+0x14
+0a 00000001`0047fa80 00007ffb`184c0336     d3d11!TComObject<NOutermost::CDevice>::Release+0x38
+0b 00000001`0047fab0 00007ffb`18505264     d3d11!CUseCountedObject<NOutermost::CDeviceChild>::Release+0x196
+0c 00000001`0047fae0 00007ffb`19262bd0     d3d11!CLayeredObject<CClassLinkage>::CContainedObject::Release+0x14
+0d 00000001`0047fb10 00007ffb`1925d9a4     dwmcore!CD3DResourceLeakChecker::~CD3DResourceLeakChecker+0x18
+0e 00000001`0047fb40 00007ffb`1910abb1     dwmcore!CD3DDevice::`vector deleting destructor'+0x14
+0f 00000001`0047fb70 00007ffb`19283d0a     dwmcore!CD3DDevice::Release+0x111
+10 00000001`0047fba0 00007ffb`19079470     dwmcore!ReleaseInterface<CD3DDevice>+0x16
+11 00000001`0047fbd0 00007ffb`19079329     dwmcore!CDeviceManager::DeleteUnusedDevices+0xd0
+12 00000001`0047fc00 00007ffb`19077da4     dwmcore!CDeviceManager::ProcessDeviceLost+0x89
+13 00000001`0047fc60 00007ffb`190b8163     dwmcore!CComposition::PostRender+0x138
+14 00000001`0047fd10 00007ffb`190734b6     dwmcore!CComposition::ProcessComposition+0x4c3
+15 00000001`0047fe00 00007ffb`192990e6     dwmcore!CConnection::MainCompositionThreadLoop+0x4a
+16 00000001`0047fe30 00007ffb`1e4bcd87     dwmcore!CConnection::RunCompositionThread+0x142
+17 00000001`0047fe70 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+18 00000001`0047fea0 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+#  3  Id: 4b4.638 Suspend: 0 Teb: 00000001`003e7000 Unfrozen
+ # Child-SP          RetAddr               Call Site
+00 00000001`004fc2b8 00007ffb`1f88ea06     ntdll!NtWaitForMultipleObjects+0x14
+01 00000001`004fc2c0 00007ffb`1f88e66f     ntdll!WerpWaitForCrashReporting+0x82
+02 00000001`004fc340 00007ffb`1f88f878     ntdll!RtlReportExceptionHelper+0x4d3
+03 00000001`004fc4c0 00007ffb`1f94ad2d     ntdll!RtlReportException+0x78
+04 00000001`004fc4f0 00007ffb`1f904703     ntdll!RtlReportFatalFailure$filt$0+0x33
+05 00000001`004fc520 00007ffb`1f9454ff     ntdll!_C_specific_handler+0x93
+06 00000001`004fc590 00007ffb`1f8abd25     ntdll!RtlpExecuteHandlerForException+0xf
+07 00000001`004fc5c0 00007ffb`1f7ef88d     ntdll!RtlDispatchException+0x5f5
+08 00000001`004fcd20 00007ffb`1f8f7eb5     ntdll!RtlRaiseException+0x18d
+09 00000001`004fdb40 00007ffb`1f876be5     ntdll!RtlReportFatalFailure+0x9
+0a 00000001`004fdb90 00007ffb`1f841262     ntdll!RtlReportCriticalFailure+0xa9
+0b 00000001`004fdc80 00007ffb`1f90058a     ntdll!RtlpHeapHandleError+0x12
+0c 00000001`004fdcb0 00007ffb`1f809643     ntdll!RtlpHpHeapHandleError+0x7a
+0d 00000001`004fdce0 00007ffb`1f7fce11     ntdll!RtlpHpFreeHeap+0x2b3
+0e 00000001`004fdd50 00007ffb`1cab2d7b     ntdll!RtlFreeHeap+0x231
+0f 00000001`004fde40 00007ffb`15a52c83     ucrtbase!free_base+0x1b
+10 00000001`004fde70 00007ffb`15a45f56     viogpu_d3d10!D3DKMTConfigureSharedResource+0x1c743
+11 00000001`004ff120 00007ffb`15a48e4a     viogpu_d3d10!D3DKMTConfigureSharedResource+0xfa16
+12 00000001`004ff170 00007ffb`15a042f5     viogpu_d3d10!D3DKMTConfigureSharedResource+0x1290a
+13 00000001`004ff1d0 00007ffb`18513b92     viogpu_d3d10!OpenAdapter+0x32a55
+14 00000001`004ff200 00007ffb`19dd75cd     d3d11!NDXGI::CDevice::TrimNotificationCallback+0x82
+15 00000001`004ff260 00007ffb`1f8633d4     DXCore!DxTrimWnfCallback+0xdd
+16 00000001`004ff2d0 00007ffb`1f862dae     ntdll!RtlpWnfWalkUserSubscriptionList+0x3c4
+17 00000001`004ff490 00007ffb`1f861b57     ntdll!RtlpWnfProcessCurrentDescriptor+0x11e
+18 00000001`004ff4f0 00007ffb`1f861420     ntdll!RtlpWnfNotificationThread+0x87
+19 00000001`004ff550 00007ffb`1f7fa879     ntdll!TppExecuteWaitCallback+0x1d0
+1a 00000001`004ff670 00007ffb`1e4bcd87     ntdll!TppWorkerThread+0x599
+1b 00000001`004ff9d0 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+1c 00000001`004ffa00 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+   4  Id: 4b4.66c Suspend: 0 Teb: 00000001`003e9000 Unfrozen "DWM Token Thread"
+ # Child-SP          RetAddr               Call Site
+00 00000001`0057fcb8 00007ffb`1914dcb7     win32u!NtTokenManagerThread+0x14
+01 00000001`0057fcc0 00007ffb`19268399     dwmcore!CGlobalSurfaceManager::ProcessKernelTokens+0x107
+02 00000001`0057fd20 00007ffb`1e4bcd87     dwmcore!CGlobalSurfaceManager::s_TokenThreadMain+0x9
+03 00000001`0057fd50 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+04 00000001`0057fd80 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+   5  Id: 4b4.670 Suspend: 0 Teb: 00000001`003eb000 Unfrozen "DWM Kernel Sensor Thread"
+ # Child-SP          RetAddr               Call Site
+00 00000001`005ff9f8 00007ffb`19258d7e     win32u!NtKSTWait+0x14
+01 00000001`005ffa00 00007ffb`1e4bcd87     dwmcore!CKstBase::Run+0xd6
+02 00000001`005ffa30 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+03 00000001`005ffa60 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+   6  Id: 4b4.678 Suspend: 0 Teb: 00000001`003ed000 Unfrozen "DWM Master Input Thread"
+ # Child-SP          RetAddr               Call Site
+00 00000001`0067f378 00007ffb`1cf92773     ntdll!NtWaitForMultipleObjects+0x14
+01 00000001`0067f380 00007ffb`19653638     KERNELBASE!WaitForMultipleObjectsEx+0x123
+02 00000001`0067f670 00007ffb`19653313     CoreMessaging!Microsoft::CoreUI::Dispatch::WaitController::Callback_WaitAny+0xc8
+03 00000001`0067f760 00007ffb`19652f6e     CoreMessaging!Microsoft::CoreUI::Dispatch::Win32EventLoopBridge::Callback_DoWait+0x123
+04 00000001`0067f830 00007ffb`19660f2c     CoreMessaging!Microsoft::CoreUI::Dispatch::Win32EventLoopBridge::Callback_Wait+0x5e
+05 00000001`0067f8f0 00007ffb`196604b7     CoreMessaging!Microsoft::CoreUI::Dispatch::WaitCollection::Callback_DoGeneralWait+0x1ec
+06 00000001`0067f9c0 00007ffb`19658804     CoreMessaging!Microsoft::CoreUI::Dispatch::WaitController::Callback_OnDispatch+0xf7
+07 00000001`0067fab0 00007ffb`1965839d     CoreMessaging!Microsoft::CoreUI::Dispatch::Dispatcher::Callback_DispatchLoop+0x334
+08 00000001`0067fbb0 00007ffb`19659208     CoreMessaging!Microsoft::CoreUI::Dispatch::EventLoop::Callback_RunCoreLoop+0x11d
+09 00000001`0067fc20 00007ffb`196bb6f6     CoreMessaging!Microsoft::CoreUI::Dispatch::Win32EventLoopBridge::Callback_Run+0xd8
+0a 00000001`0067fd00 00007ffb`196b480f     CoreMessaging!Microsoft::CoreUI::Dispatch::EventLoop::Callback_Run+0x156
+0b 00000001`0067fd90 00007ffb`1969110b     CoreMessaging!Microsoft::CoreUI::Messaging::MessageSession::Microsoft_CoreUI_IExportMessageSession_Run$+0x33
+0c 00000001`0067fdc0 00007ffb`19244523     CoreMessaging!Microsoft::CoreUI::IExportMessageSession::ExportAdapter$::Run+0x5b
+0d 00000001`0067fe00 00007ffb`1e4bcd87     dwmcore!CGlobalMit::Run+0x1c3
+0e 00000001`0067fe40 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+0f 00000001`0067fe70 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+   7  Id: 4b4.67c Suspend: 0 Teb: 00000001`003ef000 Unfrozen "DWM Manipulation Thread"
+ # Child-SP          RetAddr               Call Site
+00 00000001`006ff3a8 00007ffb`1cf92773     ntdll!NtWaitForMultipleObjects+0x14
+01 00000001`006ff3b0 00007ffb`19653638     KERNELBASE!WaitForMultipleObjectsEx+0x123
+02 00000001`006ff6a0 00007ffb`19653313     CoreMessaging!Microsoft::CoreUI::Dispatch::WaitController::Callback_WaitAny+0xc8
+03 00000001`006ff790 00007ffb`19652f6e     CoreMessaging!Microsoft::CoreUI::Dispatch::Win32EventLoopBridge::Callback_DoWait+0x123
+04 00000001`006ff860 00007ffb`19660f2c     CoreMessaging!Microsoft::CoreUI::Dispatch::Win32EventLoopBridge::Callback_Wait+0x5e
+05 00000001`006ff920 00007ffb`196604b7     CoreMessaging!Microsoft::CoreUI::Dispatch::WaitCollection::Callback_DoGeneralWait+0x1ec
+06 00000001`006ff9f0 00007ffb`19658804     CoreMessaging!Microsoft::CoreUI::Dispatch::WaitController::Callback_OnDispatch+0xf7
+07 00000001`006ffae0 00007ffb`1965839d     CoreMessaging!Microsoft::CoreUI::Dispatch::Dispatcher::Callback_DispatchLoop+0x334
+08 00000001`006ffbe0 00007ffb`19659208     CoreMessaging!Microsoft::CoreUI::Dispatch::EventLoop::Callback_RunCoreLoop+0x11d
+09 00000001`006ffc50 00007ffb`196bb6f6     CoreMessaging!Microsoft::CoreUI::Dispatch::Win32EventLoopBridge::Callback_Run+0xd8
+0a 00000001`006ffd30 00007ffb`196b480f     CoreMessaging!Microsoft::CoreUI::Dispatch::EventLoop::Callback_Run+0x156
+0b 00000001`006ffdc0 00007ffb`1969110b     CoreMessaging!Microsoft::CoreUI::Messaging::MessageSession::Microsoft_CoreUI_IExportMessageSession_Run$+0x33
+0c 00000001`006ffdf0 00007ffb`191c5dd2     CoreMessaging!Microsoft::CoreUI::IExportMessageSession::ExportAdapter$::Run+0x5b
+0d 00000001`006ffe30 00007ffb`192937e0     dwmcore!CGlobalManipulationManager::ManipulationThreadMain+0x1a2
+0e 00000001`006ffe90 00007ffb`1e4bcd87     dwmcore!CManipulationManager::s_ThreadMain+0x10
+0f 00000001`006ffec0 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+10 00000001`006ffef0 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+   8  Id: 4b4.6a0 Suspend: 0 Teb: 00000001`003f1000 Unfrozen "DWM LPC Port Thread"
+ # Child-SP          RetAddr               Call Site
+00 00000001`0071f5b8 00007ffb`1f7eff6d     ntdll!NtWaitForAlertByThreadId+0x14
+01 00000001`0071f5c0 00007ffb`1f7f166f     ntdll!RtlpWaitOnCriticalSection+0x5ad
+02 00000001`0071f6c0 00007ffb`1f7f28e2     ntdll!RtlpEnterCriticalSectionContended+0x1ef
+03 00000001`0071f740 00007ffb`195d0fc6     ntdll!RtlEnterCriticalSection+0xf2
+04 00000001`0071f780 00007ffb`1949a4c9     uDWM!CWindowList::ZOrder+0x36
+05 00000001`0071f7e0 00007ffb`1949a458     dwmredir!CWindowContext::NotifyZorder+0x41
+06 00000001`0071f820 00007ffb`194a01e7     dwmredir!CWindowManager::ZOrderSprite+0xa4
+07 00000001`0071f870 00007ffb`1949f394     dwmredir!CWindowManager::ProcessKernelOnlyAsyncLpc+0x1ab
+08 00000001`0071f8f0 00007ffb`1949c3aa     dwmredir!CSessionPort::ProcessCommand+0x134
+09 00000001`0071f9b0 00007ffb`194a1579     dwmredir!CPortBase::InternalProcessCommand+0x6a
+0a 00000001`0071fa00 00007ffb`1949e714     dwmredir!CPortBase::RoutePacket+0x9d
+0b 00000001`0071fa40 00007ffb`1949e5b9     dwmredir!CPortBase::PortThreadInternal+0x13c
+0c 00000001`0071fac0 00007ffb`1e4bcd87     dwmredir!CPortBase::PortThread+0x9
+0d 00000001`0071faf0 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+0e 00000001`0071fb20 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+   9  Id: 4b4.6c0 Suspend: 0 Teb: 00000001`003f5000 Unfrozen
+ # Child-SP          RetAddr               Call Site
+00 00000001`0079f5f8 00007ffb`1f7fa65e     ntdll!NtWaitForWorkViaWorkerFactory+0x14
+01 00000001`0079f600 00007ffb`1e4bcd87     ntdll!TppWorkerThread+0x37e
+02 00000001`0079f960 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+03 00000001`0079f990 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+  10  Id: 4b4.7ac Suspend: 0 Teb: 00000001`003fd000 Unfrozen
+ # Child-SP          RetAddr               Call Site
+00 00000001`0099f7e8 00007ffb`1f8b3924     ntdll!NtDelayExecution+0x14
+01 00000001`0099f7f0 00007ffb`1cffbb01     ntdll!RtlDelayExecution+0x34
+02 00000001`0099f820 00007ffb`14f6f8a7     KERNELBASE!SleepEx+0x91
+03 00000001`0099f8b0 00007ffb`14f6f9ec     Windows_Gaming_Input!ProviderManagerWorker::WorkerThreadProc+0x16b
+04 00000001`0099fb40 00007ffb`1e4bcd87     Windows_Gaming_Input!ProviderManagerWorker::WorkerThreadProcThunk+0x1c
+05 00000001`0099fb70 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+06 00000001`0099fba0 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+  11  Id: 4b4.5dc Suspend: 0 Teb: 00000001`00200000 Unfrozen
+ # Child-SP          RetAddr               Call Site
+00 00000001`00a1f758 00007ffb`159433f7     ntdll!NtWaitForSingleObject+0x14
+01 00000001`00a1f760 00007ffb`1e4bcd87     gameinput!GameInputServer::WorkerThreadProc+0x35b
+02 00000001`00a1f7b0 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+03 00000001`00a1f7e0 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+  12  Id: 4b4.630 Suspend: 0 Teb: 00000001`00202000 Unfrozen
+ # Child-SP          RetAddr               Call Site
+00 00000001`00a9f6b8 00007ffb`1cf92773     ntdll!NtWaitForMultipleObjects+0x14
+01 00000001`00a9f6c0 00007ffb`16f258e8     KERNELBASE!WaitForMultipleObjectsEx+0x123
+02 00000001`00a9f9b0 00007ffb`16f2336c     ISM!LampArrayRawInputProvider::WorkerThreadProc+0x208
+03 00000001`00a9fa30 00007ffb`1e4bcd87     ISM!LampArrayRawInputProvider::WorkerThreadProcThunk+0x1c
+04 00000001`00a9fa60 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+05 00000001`00a9fa90 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+  13  Id: 4b4.698 Suspend: 0 Teb: 00000001`00204000 Unfrozen
+ # Child-SP          RetAddr               Call Site
+00 00000001`00b1f628 00007ffb`1e8a2812     win32u!NtUserGetMessage+0x14
+01 00000001`00b1f630 00007ffb`16f24c66     user32!GetMessageW+0x22
+02 00000001`00b1f690 00007ffb`1e4bcd87     ISM!SessionMonitor::InstanceThreadProc+0x2de
+03 00000001`00b1f800 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+04 00000001`00b1f830 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+  14  Id: 4b4.930 Suspend: 0 Teb: 00000001`00206000 Unfrozen
+ # Child-SP          RetAddr               Call Site
+00 00000001`00b9f6e8 00007ffb`1f7fa65e     ntdll!NtWaitForWorkViaWorkerFactory+0x14
+01 00000001`00b9f6f0 00007ffb`1e4bcd87     ntdll!TppWorkerThread+0x37e
+02 00000001`00b9fa50 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+03 00000001`00b9fa80 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+  15  Id: 4b4.974 Suspend: 0 Teb: 00000001`0020a000 Unfrozen "uDWM Event Thread"
+ # Child-SP          RetAddr               Call Site
+00 00000001`00c9e758 00007ffb`1f7eff6d     ntdll!NtWaitForAlertByThreadId+0x14
+01 00000001`00c9e760 00007ffb`1f7f166f     ntdll!RtlpWaitOnCriticalSection+0x5ad
+02 00000001`00c9e860 00007ffb`1f7f28e2     ntdll!RtlpEnterCriticalSectionContended+0x1ef
+03 00000001`00c9e8e0 00007ffb`19dd6fe3     ntdll!RtlEnterCriticalSection+0xf2
+04 00000001`00c9e920 00007ffb`184d5b0d     DXCore!D3DKMTRegisterTrimNotification+0x73
+05 00000001`00c9e970 00007ffb`184d8ef4     d3d11!NDXGI::CDevice::LLOCompleteLayerConstruction+0x3e1
+06 00000001`00c9ec40 00007ffb`184d538a     d3d11!NOutermost::CDevice::LLOCompleteLayerConstruction+0x14
+07 00000001`00c9ec70 00007ffb`184d5641     d3d11!TComObject<NOutermost::CDevice>::TComObject<NOutermost::CDevice>+0xf6
+08 00000001`00c9ece0 00007ffb`184d799b     d3d11!D3D11CreateLayeredDevice+0x231
+09 00000001`00c9ede0 00007ffb`184d8397     d3d11!D3D11CoreCreateLayeredDevice+0x11b
+0a 00000001`00c9eeb0 00007ffb`184d6b9f     d3d11!D3D11RegisterLayersAndCreateDevice+0x57f
+0b 00000001`00c9f010 00007ffb`184d93c3     d3d11!D3D11CoreCreateDevice+0x40f
+0c 00000001`00c9f330 00007ffb`1852252e     d3d11!D3D11CreateDeviceAndSwapChainImpl+0x2a3
+0d 00000001`00c9f5a0 00007ffb`1852247c     d3d11!D3D11CreateDeviceAndSwapChain+0x9e
+0e 00000001`00c9f620 00007ffb`18523e06     d3d11!D3D11CreateDeviceImpl+0x5c
+0f 00000001`00c9f690 00007ffb`195a41b2     d3d11!D3D11CreateDevice+0x86
+10 00000001`00c9f700 00007ffb`1956cd0b     uDWM!CGraphicsDeviceManager::InitializeGraphicsDeviceType+0x62
+11 00000001`00c9f7b0 00007ffb`1953357b     uDWM!CGraphicsDeviceManager::InitializeGraphicsDevice+0x43
+12 00000001`00c9f7e0 00007ffb`19578742     uDWM!CGraphicsDeviceManager::EnsureGraphicsDeviceCreated+0x1b
+13 00000001`00c9f810 00007ffb`1955bea3     uDWM!CGraphicsDeviceManager::HandleGraphicsDeviceLost+0x16
+14 00000001`00c9f840 00007ffb`1955ba42     uDWM!CGraphicsDeviceManager::CheckDXGIAdapter+0x3e7
+15 00000001`00c9fba0 00007ffb`1956bebf     uDWM!CGraphicsDeviceManager::ValidateDXGIAdapterAndDevice+0x12
+16 00000001`00c9fbd0 00007ffb`1e4bcd87     uDWM!CDesktopManager::DwmEventThreadProc+0x44f
+17 00000001`00c9fd60 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+18 00000001`00c9fd90 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+  16  Id: 4b4.a30 Suspend: 0 Teb: 00000001`0020c000 Unfrozen
+ # Child-SP          RetAddr               Call Site
+00 00000001`00d1fc08 00007ffb`137a76cb     ntdll!NtAlpcSendWaitReceivePort+0x14
+01 00000001`00d1fc10 00007ffb`137a7ae1     DispBroker!DispBroker::AlpcServer::ProcessMessage+0x7b
+02 00000001`00d1fca0 00007ffb`137c7b86     DispBroker!DispBroker::AlpcServer::RunServerThread+0xb1
+03 00000001`00d1fd00 00007ffb`1e4bcd87     DispBroker!<lambda_5c78cdb7cac41d27a58cb60b4cc08aa3>::operator()+0x2a
+04 00000001`00d1fd30 00007ffb`1f88caec     kernel32!BaseThreadInitThunk+0x17
+05 00000001`00d1fd60 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+  17  Id: 4b4.a48 Suspend: 0 Teb: 00000001`00210000 Unfrozen

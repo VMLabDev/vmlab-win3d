@@ -1,0 +1,89 @@
+2026-10-18T11:55:24 Windows Error Reporting Fault bucket , type 0 | Event Name: AppxDeploymentFailureBlue | Response: Not available | Cab Id: 0
+2026-10-18T11:48:35 Windows Error Reporting Fault bucket 1531561794192819493, type 4 | Event Name: APPCRASH | Response: Not available | Cab Id: 0
+2026-10-18T11:48:30 Application Error Faulting application name: dwm.exe, version: 10.0.26100.9278, time stamp: 0x009bcb8a | Faulting module name: dwmcore.dll, version: 10.0.26100.9278, time stamp: 0x9a1af3ba | Exception code: 0x889800c0 | Fault offset: 0x000000000023b255
+2026-10-18T11:47:33 Windows Error Reporting Fault bucket , type 0 | Event Name: APPCRASH | Response: Not available | Cab Id: 0
+2026-10-18T11:47:27 Windows Error Reporting Fault bucket , type 0 | Event Name: MoAppHang | Response: Not available | Cab Id: 0
+2026-10-18T11:46:43 Windows Error Reporting Fault bucket 1546107854107592657, type 4 | Event Name: APPCRASH | Response: Not available | Cab Id: 0
+2026-10-18T11:46:22 Windows Error Reporting Fault bucket , type 0 | Event Name: APPCRASH | Response: Not available | Cab Id: 0
+2026-10-18T11:45:55 Application Error Faulting application name: dwm.exe, version: 10.0.26100.9278, time stamp: 0x009bcb8a | Faulting module name: dwmcore.dll, version: 10.0.26100.9278, time stamp: 0x9a1af3ba | Exception code: 0x889800c0 | Fault offset: 0x000000000023b255
+2026-10-18T11:44:18 Windows Error Reporting Fault bucket 1542375268607325195, type 5 | Event Name: MoAppHang | Response: Not available | Cab Id: 0
+2026-10-18T11:43:40 Windows Error Reporting Fault bucket , type 0 | Event Name: MoAppHang | Response: Not available | Cab Id: 0
+2026-10-18T11:43:10 Windows Error Reporting Fault bucket , type 0 | Event Name: MoAppHang | Response: Not available | Cab Id: 0
+2026-10-18T11:42:40 Windows Error Reporting Fault bucket , type 0 | Event Name: MoAppHang | Response: Not available | Cab Id: 0
+2026-10-18T11:42:10 Windows Error Reporting Fault bucket , type 0 | Event Name: MoAppHang | Response: Not available | Cab Id: 0
+2026-10-18T11:41:33 Windows Error Reporting Fault bucket , type 0 | Event Name: MoAppHang | Response: Not available | Cab Id: 0
+2026-10-18T11:41:27 Windows Error Reporting Fault bucket , type 0 | Event Name: MoAppHang | Response: Not available | Cab Id: 0
+2026-10-18T11:40:51 Windows Error Reporting Fault bucket , type 0 | Event Name: APPCRASH | Response: Not available | Cab Id: 0
+2026-10-18T11:40:40 Windows Error Reporting Fault bucket , type 0 | Event Name: MoAppHang | Response: Not available | Cab Id: 0
+2026-10-18T11:40:24 Windows Error Reporting Fault bucket , type 0 | Event Name: AppxDeploymentFailureBlue | Response: Not available | Cab Id: 0
+2026-10-18T11:40:07 Windows Error Reporting Fault bucket , type 0 | Event Name: MoAppHang | Response: Not available | Cab Id: 0
+2026-10-18T11:40:03 Windows Error Reporting Fault bucket , type 0 | Event Name: APPCRASH | Response: Not available | Cab Id: 0
+2026-10-18T11:39:46 Windows Error Reporting Fault bucket , type 0 | Event Name: APPCRASH | Response: Not available | Cab Id: 0
+2026-10-18T11:39:40 Windows Error Reporting Fault bucket , type 0 | Event Name: MoAppHang | Response: Not available | Cab Id: 0
+2026-10-18T11:39:10 Windows Error Reporting Fault bucket , type 0 | Event Name: MoAppHang | Response: Not available | Cab Id: 0
+2026-10-18T11:38:21 Application Error Faulting application name: dwm.exe, version: 10.0.26100.9278, time stamp: 0x009bcb8a | Faulting module name: ntdll.dll, version: 10.0.26100.9444, time stamp: 0x6bdf03ca | Exception code: 0xc0000374 | Fault offset: 0x0000000000117eb5
+2026-10-18T11:33:25 Windows Error Reporting Fault bucket , type 0 | Event Name: AppxDeploymentFailureBlue | Response: Not available | Cab Id: 0
+2026-10-18T11:31:23 Windows Error Reporting Fault bucket 2125795266215735465, type 5 | Event Name: StoreAgentSearchUpdatePackagesFailure1 | Response: Not available | Cab Id: 0
+2026-10-18T11:30:43 Windows Error Reporting Fault bucket , type 0 | Event Name: AppxDeploymentFailureBlue | Response: Not available | Cab Id: 0
+2026-10-18T11:12:00 Windows Error Reporting Fault bucket , type 0 | Event Name: StoreAgentSearchUpdatePackagesFailure1 | Response: Not available | Cab Id: 0
+2026-10-18T11:11:04 Windows Error Reporting Fault bucket , type 0 | Event Name: StoreAgentSearchUpdatePackagesFailure1 | Response: Not available | Cab Id: 0
+2026-10-18T11:07:35 Windows Error Reporting Fault bucket , type 0 | Event Name: AppxDeploymentFailureBlue | Response: Not available | Cab Id: 0
+2026-10-18T11:05:28 Windows Error Reporting Fault bucket 1176776581068955309, type 5 | Event Name: StoreAgentSearchUpdatePackagesFailure1 | Response: Not available | Cab Id: 0
+2026-10-18T11:03:38 Windows Error Reporting Fault bucket , type 0 | Event Name: StoreAgentSearchUpdatePackagesFailure1 | Response: Not available | Cab Id: 0
+2026-10-18T11:02:38 Windows Error Reporting Fault bucket , type 0 | Event Name: AppxDeploymentFailureBlue | Response: Not available | Cab Id: 0
+2026-10-18T11:01:45 Windows Error Reporting Fault bucket , type 0 | Event Name: StoreAgentSearchUpdatePackagesFailure1 | Response: Not available | Cab Id: 0
+2026-10-18T10:58:22 Windows Error Reporting Fault bucket , type 0 | Event Name: crashpad_log | Response: Not available | Cab Id: 0
+2026-10-18T10:58:22 Windows Error Reporting Fault bucket 1776400111339701425, type 5 | Event Name: crashpad_log | Response: Not available | Cab Id: 0
+2026-10-18T10:57:51 Windows Error Reporting Fault bucket , type 0 | Event Name: crashpad_log | Response: Not available | Cab Id: 0
+2026-10-18T10:57:51 Windows Error Reporting Fault bucket 1838532962567725819, type 5 | Event Name: crashpad_log | Response: Not available | Cab Id: 0
+2026-10-18T10:57:20 Windows Error Reporting Fault bucket , type 0 | Event Name: crashpad_log | Response: Not available | Cab Id: 0
+2026-10-18T10:57:20 Windows Error Reporting Fault bucket 1726210964877572768, type 5 | Event Name: crashpad_log | Response: Not available | Cab Id: 0
+2026-10-18T10:55:07 Windows Error Reporting Fault bucket , type 0 | Event Name: AppxDeploymentFailureBlue | Response: Not available | Cab Id: 0
+{
+  "schema": 1,
+  "probe": "d3d12",
+  "api": "Direct3D 12",
+  "arch": "x64",
+  "result": "api_failure",
+  "exit_code": 1,
+  "exe": "C:\\win3d\\probes\\x64\\d3d12_probe.exe",
+  "pid": 4868,
+  "session_id": 1,
+  "os_version": "10.0.26100",
+  "finished_utc": "2026-10-18T18:37:15Z",
+  "args": {"seconds": 30, "warp": false, "width": 1024, "height": 640},
+  "adapter": {
+    "name": "Hardsoft VirtIO GPU 3D controller",
+    "vendor": "Red Hat (virtio)",
+    "vendor_id": "0x1af4",
+    "device_id": "0x1050",
+    "subsys_id": "0x11001af4",
+    "dedicated_video_memory_mb": 0,
+    "shared_system_memory_mb": 4076,
+    "dxgi_flag_software": false,
+    "driver_version": "0.0.0.0",
+    "software": false
+  },
+  "device": {
+    "adapter_selection": "default (NULL)",
+    "max_feature_level": "12_2",
+    "highest_shader_model": "6.6",
+    "swap_effect": "FLIP_DISCARD"
+  },
+  "frames_presented": 1,
+  "elapsed_seconds": 0.936,
+  "avg_fps": 1.07,
+  "window_closed_early": false,
+  "readback": {
+    "ok": false,
+    "tolerance": 2,
+    "pixels": [
+      {"name": "red_top_left", "x": 48, "y": 48, "expected": [255, 0, 0], "actual": null, "match": false},
+      {"name": "blue_top_right", "x": 976, "y": 48, "expected": [0, 0, 255], "actual": null, "match": false},
+      {"name": "green_bottom_left", "x": 48, "y": 592, "expected": [0, 255, 0], "actual": null, "match": false}
+    ]
+  },
+  "errors": [
+    "GPU fence 1 not reached within 10 s (device removed reason 0x00000000)"
+  ]
+}

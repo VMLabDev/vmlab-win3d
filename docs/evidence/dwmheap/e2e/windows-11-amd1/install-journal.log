@@ -1,0 +1,117 @@
+2026-10-18T16:58:55.788-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
+2026-10-18T16:58:59.903-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T16:59:04.267-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
+2026-10-18T16:59:04.594-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T16:59:04.611-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-18T16:59:04.616-07:00 [Install]   Signature matches Public Key
+2026-10-18T16:59:04.620-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T16:59:04.625-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T16:59:04.690-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T16:59:04.707-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-18T16:59:04.723-07:00 [Install]   Signature matches Public Key
+2026-10-18T16:59:04.734-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T16:59:04.752-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T16:59:04.885-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-18T16:59:04.890-07:00 [Install]   The operation completed successfully.
+2026-10-18T16:59:05.380-07:00 [Install] test signing is set but not active in this boot
+2026-10-18T16:59:06.035-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T16:59:06.114-07:00 [Install] rebooting; step Driver resumes after the restart
+2026-10-18T17:00:01.466-07:00 [Resume] resume: status RebootPending, step Driver
+2026-10-18T17:00:29.583-07:00 [Resume] pnputil.exe /add-driver C:\ProgramData\vmlab-win3d\bundle\driver\viogpu3d.inf /install -> 0
+2026-10-18T17:00:29.616-07:00 [Resume]   Microsoft PnP Utility
+2026-10-18T17:00:29.628-07:00 [Resume]   Adding driver package:  viogpu3d.inf
+2026-10-18T17:00:30.145-07:00 [Resume]   Driver package added successfully.
+2026-10-18T17:00:30.163-07:00 [Resume]   Published Name:         oem15.inf
+2026-10-18T17:00:30.198-07:00 [Resume]   Driver package installed on device: PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&20
+2026-10-18T17:00:30.230-07:00 [Resume]   Total driver packages:  1
+2026-10-18T17:00:30.250-07:00 [Resume]   Added driver packages:  1
+2026-10-18T17:00:32.367-07:00 [Resume] policy: DenyInstanceIDs\1 = PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&20
+2026-10-18T17:00:32.409-07:00 [Resume] policy: DenyInstanceIDs = 1
+2026-10-18T17:00:32.491-07:00 [Resume] pnputil.exe /enum-devices /instanceid PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&20 /drivers -> 0
+2026-10-18T17:00:32.505-07:00 [Resume]   Microsoft PnP Utility
+2026-10-18T17:00:32.526-07:00 [Resume]   Instance ID:                PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&20
+2026-10-18T17:00:32.533-07:00 [Resume]   Device Description:         Hardsoft VirtIO GPU 3D controller
+2026-10-18T17:00:32.561-07:00 [Resume]   Class Name:                 Display
+2026-10-18T17:00:32.567-07:00 [Resume]   Class GUID:                 {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T17:00:32.585-07:00 [Resume]   Manufacturer Name:          Hardsoft Swed.
+2026-10-18T17:00:32.607-07:00 [Resume]   Status:                     Started
+2026-10-18T17:00:32.613-07:00 [Resume]   Driver Name:                oem15.inf
+2026-10-18T17:00:32.631-07:00 [Resume]   Matching Drivers:
+2026-10-18T17:00:32.636-07:00 [Resume]       Driver Name:            oem15.inf
+2026-10-18T17:00:32.658-07:00 [Resume]       Original Name:          viogpu3d.inf
+2026-10-18T17:00:32.679-07:00 [Resume]       Provider Name:          Hardsoft Swed.
+2026-10-18T17:00:32.685-07:00 [Resume]       Class Name:             Display
+2026-10-18T17:00:32.700-07:00 [Resume]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T17:00:32.706-07:00 [Resume]       Driver Version:         09/27/2026 100.6.101.58100
+2026-10-18T17:00:32.722-07:00 [Resume]       Signer Name:            vmlab-win3d Test Driver Signing
+2026-10-18T17:00:32.760-07:00 [Resume]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T17:00:32.783-07:00 [Resume]       Driver Rank:            00E00000
+2026-10-18T17:00:32.817-07:00 [Resume]       Driver Status:          Best Ranked / Installed
+2026-10-18T17:00:32.843-07:00 [Resume]       Driver Name:            oem7.inf
+2026-10-18T17:00:32.863-07:00 [Resume]       Original Name:          viogpudo.inf
+2026-10-18T17:00:32.881-07:00 [Resume]       Provider Name:          Red Hat, Inc.
+2026-10-18T17:00:32.887-07:00 [Resume]       Class Name:             Display
+2026-10-18T17:00:32.905-07:00 [Resume]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T17:00:32.969-07:00 [Resume]       Driver Version:         07/09/2025 100.101.104.28500
+2026-10-18T17:00:32.999-07:00 [Resume]       Signer Name:            Microsoft Windows Hardware Compatibility Publisher
+2026-10-18T17:00:33.004-07:00 [Resume]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+2026-10-18T17:00:33.016-07:00 [Resume]       Driver Rank:            00F90000
+2026-10-18T17:00:33.035-07:00 [Resume]       Driver Status:          Outranked
+2026-10-18T17:00:33.049-07:00 [Resume]       Driver Name:            oem7.inf
+2026-10-18T17:00:33.121-07:00 [Resume]       Original Name:          viogpudo.inf
+2026-10-18T17:00:33.128-07:00 [Resume]       Provider Name:          Red Hat, Inc.
+2026-10-18T17:00:33.146-07:00 [Resume]       Class Name:             Display
+2026-10-18T17:00:33.170-07:00 [Resume]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T17:00:33.177-07:00 [Resume]       Driver Version:         07/09/2025 100.101.104.28500
+2026-10-18T17:00:33.199-07:00 [Resume]       Signer Name:            Microsoft Windows Hardware Compatibility Publisher
+2026-10-18T17:00:33.206-07:00 [Resume]       Matching Device ID:     PCI\VEN_1AF4&DEV_1050
+2026-10-18T17:00:33.226-07:00 [Resume]       Driver Rank:            00F93001
+2026-10-18T17:00:33.275-07:00 [Resume]       Driver Status:          Outranked
+2026-10-18T17:00:33.284-07:00 [Resume]       Driver Name:            display.inf
+2026-10-18T17:00:33.291-07:00 [Resume]       Provider Name:          Microsoft
+2026-10-18T17:00:33.304-07:00 [Resume]       Class Name:             Display
+2026-10-18T17:00:33.310-07:00 [Resume]       Class GUID:             {4d36e968-e325-11ce-bfc1-08002be10318}
+2026-10-18T17:00:33.329-07:00 [Resume]       Driver Version:         06/21/2006 10.0.26100.1
+2026-10-18T17:00:33.389-07:00 [Resume]       Signer Name:            Microsoft Windows
+2026-10-18T17:00:33.399-07:00 [Resume]       Matching Device ID:     PCI\CC_0300
+2026-10-18T17:00:33.413-07:00 [Resume]       Driver Rank:            00FB2006
+2026-10-18T17:00:33.419-07:00 [Resume]       Driver Status:          Outranked
+2026-10-18T17:00:33.492-07:00 [Resume] driver oem15.inf 100.6.101.58100 installed on PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&20 and pinned
+2026-10-18T17:00:34.821-07:00 [Resume] takeown.exe /F C:\WINDOWS\System32\vulkan-1.dll /A -> 0
+2026-10-18T17:00:34.827-07:00 [Resume]   SUCCESS: The file (or folder): "C:\WINDOWS\System32\vulkan-1.dll" now owned by the administrators group.
+2026-10-18T17:00:34.892-07:00 [Resume] icacls.exe C:\WINDOWS\System32\vulkan-1.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T17:00:34.899-07:00 [Resume]   processed file: C:\WINDOWS\System32\vulkan-1.dll
+2026-10-18T17:00:34.915-07:00 [Resume]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T17:00:35.657-07:00 [Resume] installed C:\WINDOWS\System32\vulkan-1.dll (0871D16D06F2C7C2F60C9B68E5ED3A61A069BF525D8F7CAD2D3C88F3CE71E219)
+2026-10-18T17:00:35.839-07:00 [Resume] installed C:\WINDOWS\System32\vulkaninfo.exe (68266EF104567081F93D00CC347AC3C1849CD3D0E1319F8DC05A576B2E23E83A)
+2026-10-18T17:00:36.092-07:00 [Resume] native d3d12.dll 6B32181599D4D6373F0B49905236B122ED5545C5D061AB4350A80CC095DC15E4 copied to C:\WINDOWS\System32\vmlab-win3d\d3d12-native.dll
+2026-10-18T17:00:36.293-07:00 [Resume] installed C:\WINDOWS\System32\vmlab-win3d\vkd3dcore.dll
+2026-10-18T17:00:36.488-07:00 [Resume] installed C:\WINDOWS\System32\vmlab-win3d\dxgi-vulkan.dll
+2026-10-18T17:00:37.199-07:00 [Resume] takeown.exe /F C:\WINDOWS\System32\d3d12.dll /A -> 0
+2026-10-18T17:00:37.219-07:00 [Resume]   SUCCESS: The file (or folder): "C:\WINDOWS\System32\d3d12.dll" now owned by the administrators group.
+2026-10-18T17:00:37.259-07:00 [Resume] icacls.exe C:\WINDOWS\System32\d3d12.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T17:00:37.271-07:00 [Resume]   processed file: C:\WINDOWS\System32\d3d12.dll
+2026-10-18T17:00:37.300-07:00 [Resume]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T17:00:37.393-07:00 [Resume] installed C:\WINDOWS\System32\d3d12.dll (B5D94F44466887CF5373C8550E3263425034A41E76B0AC11FE8C8A5229ACD9DA)
+2026-10-18T17:00:37.995-07:00 [Resume] takeown.exe /F C:\WINDOWS\SysWOW64\vulkan-1.dll /A -> 0
+2026-10-18T17:00:38.010-07:00 [Resume]   SUCCESS: The file (or folder): "C:\WINDOWS\SysWOW64\vulkan-1.dll" now owned by the administrators group.
+2026-10-18T17:00:38.051-07:00 [Resume] icacls.exe C:\WINDOWS\SysWOW64\vulkan-1.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T17:00:38.063-07:00 [Resume]   processed file: C:\WINDOWS\SysWOW64\vulkan-1.dll
+2026-10-18T17:00:38.074-07:00 [Resume]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T17:00:38.200-07:00 [Resume] installed C:\WINDOWS\SysWOW64\vulkan-1.dll (36EDC9F67CBEC1C5FB8C510AB08EFEA18AFFFBD40D77B829D39F1E76236416CD)
+2026-10-18T17:00:38.296-07:00 [Resume] installed C:\WINDOWS\SysWOW64\vulkaninfo.exe (BB717DB3466B5120B08EFB4A800AD7D4F15CC1C0D5D479C298804539B89C119D)
+2026-10-18T17:00:38.457-07:00 [Resume] native d3d12.dll A43885B075B8043D9FE99F03B26B056B426E1B7D73FAB8D420F4E4FFCB5100AF copied to C:\WINDOWS\SysWOW64\vmlab-win3d\d3d12-native.dll
+2026-10-18T17:00:38.621-07:00 [Resume] installed C:\WINDOWS\SysWOW64\vmlab-win3d\vkd3dcore.dll
+2026-10-18T17:00:38.728-07:00 [Resume] installed C:\WINDOWS\SysWOW64\vmlab-win3d\dxgi-vulkan.dll
+2026-10-18T17:00:38.765-07:00 [Resume] takeown.exe /F C:\WINDOWS\SysWOW64\d3d12.dll /A -> 0
+2026-10-18T17:00:38.771-07:00 [Resume]   SUCCESS: The file (or folder): "C:\WINDOWS\SysWOW64\d3d12.dll" now owned by the administrators group.
+2026-10-18T17:00:38.821-07:00 [Resume] icacls.exe C:\WINDOWS\SysWOW64\d3d12.dll /grant *S-1-5-32-544:F *S-1-5-18:F -> 0
+2026-10-18T17:00:38.848-07:00 [Resume]   processed file: C:\WINDOWS\SysWOW64\d3d12.dll
+2026-10-18T17:00:38.853-07:00 [Resume]   Successfully processed 1 files; Failed processing 0 files
+2026-10-18T17:00:38.914-07:00 [Resume] installed C:\WINDOWS\SysWOW64\d3d12.dll (944CC70E1F65C907C13D598396CBCB2AB9478A231DD653A5DC62C70C8E6BAE02)
+2026-10-18T17:00:42.118-07:00 [Resume] registered startup task vmlab-win3d-repair (-Mode Repair)
+2026-10-18T17:00:42.254-07:00 [Resume] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T17:00:42.319-07:00 [Resume] rebooting; step Verify resumes after the restart
+2026-10-18T17:01:55.476-07:00 [Resume] resume: status RebootPending, step Verify
+2026-10-18T17:02:05.637-07:00 [Resume] removed task vmlab-win3d-resume
+2026-10-18T17:02:05.981-07:00 [Resume] installed: oem15.inf 100.6.101.58100, problem code 0

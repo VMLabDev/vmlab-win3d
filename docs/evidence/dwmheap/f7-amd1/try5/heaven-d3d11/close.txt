@@ -1,0 +1,1 @@
+7832 window=0x20362 title=[Unigine Heaven Benchmark 4.0 Basic (Direct3D11)] closed=True

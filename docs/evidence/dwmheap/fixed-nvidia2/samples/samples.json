@@ -1,0 +1,107 @@
+{
+  "D3D12HelloTriangle": {
+    "exit_code": 0,
+    "exit_code_hex": "0x00000000",
+    "timed_out": false,
+    "session_id": 1,
+    "app_local_modules": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\d3d12.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\vmlab-win3d\\vkd3dcore.dll [system_subdir] ",
+      "C:\\WINDOWS\\SYSTEM32\\vulkan-1.dll [system32] 1.4.363.0",
+      "C:\\WINDOWS\\system32\\libvulkan_virtio.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\vmlab-win3d\\dxgi-vulkan.dll [system_subdir] 10.0.17763.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)"
+    ],
+    "console_png": "console-D3D12HelloTriangle.png",
+    "pass": true
+  },
+  "D3D12HelloTexture": {
+    "exit_code": 0,
+    "exit_code_hex": "0x00000000",
+    "timed_out": false,
+    "session_id": 1,
+    "app_local_modules": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\d3d12.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\vmlab-win3d\\vkd3dcore.dll [system_subdir] ",
+      "C:\\WINDOWS\\SYSTEM32\\vulkan-1.dll [system32] 1.4.363.0",
+      "C:\\WINDOWS\\system32\\libvulkan_virtio.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\vmlab-win3d\\dxgi-vulkan.dll [system_subdir] 10.0.17763.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] "
+    ],
+    "console_png": "console-D3D12HelloTexture.png",
+    "pass": true
+  },
+  "D3D12Bundles": {
+    "exit_code": 0,
+    "exit_code_hex": "0x00000000",
+    "timed_out": false,
+    "session_id": 1,
+    "app_local_modules": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\d3d12.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\vmlab-win3d\\vkd3dcore.dll [system_subdir] ",
+      "C:\\WINDOWS\\SYSTEM32\\vulkan-1.dll [system32] 1.4.363.0",
+      "C:\\WINDOWS\\system32\\libvulkan_virtio.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\vmlab-win3d\\dxgi-vulkan.dll [system_subdir] 10.0.17763.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)"
+    ],
+    "console_png": "console-D3D12Bundles.png",
+    "pass": true
+  },
+  "D3D12nBodyGravity": {
+    "exit_code": 0,
+    "exit_code_hex": "0x00000000",
+    "timed_out": false,
+    "session_id": 1,
+    "app_local_modules": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\d3d12.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\vmlab-win3d\\vkd3dcore.dll [system_subdir] ",
+      "C:\\WINDOWS\\SYSTEM32\\vulkan-1.dll [system32] 1.4.363.0",
+      "C:\\WINDOWS\\system32\\libvulkan_virtio.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\vmlab-win3d\\dxgi-vulkan.dll [system_subdir] 10.0.17763.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)"
+    ],
+    "console_png": "console-D3D12nBodyGravity.png",
+    "pass": true
+  },
+  "D3D12ExecuteIndirect": {
+    "exit_code": 0,
+    "exit_code_hex": "0x00000000",
+    "timed_out": false,
+    "session_id": 1,
+    "app_local_modules": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\d3d12.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\vmlab-win3d\\vkd3dcore.dll [system_subdir] ",
+      "C:\\WINDOWS\\SYSTEM32\\vulkan-1.dll [system32] 1.4.363.0",
+      "C:\\WINDOWS\\system32\\libvulkan_virtio.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\vmlab-win3d\\dxgi-vulkan.dll [system_subdir] 10.0.17763.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)"
+    ],
+    "console_png": "console-D3D12ExecuteIndirect.png",
+    "pass": true
+  }
+}

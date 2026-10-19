@@ -542,11 +542,17 @@ remain:
   arguments are still dropped. The emulation also moves every root
   signature's root parameters into a push UBO and root CBVs to raw VAs,
   with unmeasured cost per draw.
-- **On NVIDIA, dwm.exe can crash in the first boot after the install.** The
-  crash is heap corruption, `0xc0000374`, with `viogpu_d3d10.dll` loaded,
-  during the first D3D12 sample. D3D12 programs then fail until the next
-  reboot. It happened in two fresh Nvidia1 labs and in neither AMD1 lab. One
-  more reboot clears it. The cause is open.
+- **On NVIDIA, dwm.exe crashed in the first boot after the install.**
+  Fixed by `patches/mesa/0060`: the UMD's `TrimResidencySet` flushed its
+  threaded context from DXCore's trim-notification thread while dwm
+  recovered from a lost device, and freed a record twice
+  ([`dwmheap.md`](dwmheap.md)). The lost device itself remains: in a busy
+  first boot on an RTX 5090, Venus contexts can go into a fatal state on the
+  host (`failed to look up object N of type 8`), most likely the shared
+  256 MiB BAR1 running out. The program whose context dies fails (the D3D12
+  probe's fence timed out). With the fix, dwm no longer dies in the trim
+  path while it recovers; a lost device in dwm itself has not been seen in
+  a fixed run yet.
 
 ### DirectDraw: 16 bpp only for 32-bit programs, and flips below the refresh rate on NVIDIA
 

@@ -302,7 +302,13 @@ The crash is intermittent. A heap check (Application Verifier or page heap)
 on `Heaven.exe` is the next step.
 
 **Status:** reproduced under PageHeap in 2 of 5 runs, as a use-after-free in
-the UMD's threaded context. Not fixed ([unid3d.md](unid3d.md#f7-heaven-d3d11-on-amd1)).
+the UMD's threaded context ([unid3d.md](unid3d.md#f7-heaven-d3d11-on-amd1)).
+Most likely fixed by `patches/mesa/0060`: with it, Heaven D3D11 ran 5 of 5
+times under PageHeap on AMD1 with no crash and no dump
+([dwmheap.md](dwmheap.md#f7-heaven-d3d11)). The freed record is the same
+flush-label callback as in the dwm double free that 0060 fixes. Five clean
+runs are not proof: at the old rate of 2 in 5, five clean runs in a row
+would happen by chance about 8 % of the time.
 
 ## Notes that are not failures
 
@@ -358,6 +364,6 @@ is still loading. The later frames render, so this is start-up, not a fault.
 - F3: GZDoom's OpenGL context.
 - F5: fixed (`patches/mesa/0090`).
 - F6: Valley D3D9 runs out of 32-bit address space ([unid3d.md](unid3d.md)).
-- F7: the threaded-context use-after-free behind Heaven D3D11's heap corruption ([unid3d.md](unid3d.md)).
+- F7: the threaded-context use-after-free behind Heaven D3D11's heap corruption; most likely fixed by `patches/mesa/0060` (5 of 5 clean PageHeap runs, [dwmheap.md](dwmheap.md#f7-heaven-d3d11)).
 - Not run: Windows 10, Nvidia1, x86 builds other than Unigine (which is
   32-bit only), and longer runs.

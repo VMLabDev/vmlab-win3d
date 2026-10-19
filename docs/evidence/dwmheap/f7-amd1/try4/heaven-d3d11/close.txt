@@ -1,0 +1,1 @@
+3704 window=0xB0072 title=[Unigine Heaven Benchmark 4.0 Basic (Direct3D11)] closed=True

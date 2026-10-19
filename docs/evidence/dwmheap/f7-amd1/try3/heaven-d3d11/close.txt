@@ -1,0 +1,1 @@
+5672 window=0x40150 title=[Unigine Heaven Benchmark 4.0 Basic (Direct3D11)] closed=True
