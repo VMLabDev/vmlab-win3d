@@ -1,0 +1,38 @@
+﻿{
+    "name":  "godot-d3d12",
+    "exe":  "C:\\apps\\godot\\Godot_v4.7.2-stable_win64.exe",
+    "arguments":  "--path C:\\apps\\godot\\particles --resolution 1280x720 --print-fps --log-file C:\\apps\\godot\\godot-d3d12.log --rendering-driver d3d12",
+    "user":  "VMLABVM-AJF7VO7\\win3d",
+    "session_id":  1,
+    "pid":  4768,
+    "wow64":  false,
+    "started":  "2026-10-18T17:21:49.0267313-07:00",
+    "ended":  "2026-10-18T17:24:50.6648296-07:00",
+    "duration_s":  181.6,
+    "timed_out":  false,
+    "exit_code":  0,
+    "exit_code_hex":  "0x00000000",
+    "task_result":  0,
+    "probe_json":  null,
+    "probe_result":  null,
+    "adapter":  null,
+    "software":  null,
+    "readback_ok":  null,
+    "module_count":  75,
+    "graphics_modules":  [
+                             "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\D3D12.dll [system32] ",
+                             "C:\\WINDOWS\\SYSTEM32\\vmlab-win3d\\vkd3dcore.dll [system_subdir] ",
+                             "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\Windows\\System32\\Windows.Graphics.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\vulkan-1.dll [system32] 1.4.363.0",
+                             "C:\\WINDOWS\\system32\\libvulkan_virtio.dll [system32] ",
+                             "C:\\WINDOWS\\SYSTEM32\\vmlab-win3d\\dxgi-vulkan.dll [system_subdir] 10.0.17763.1 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\system32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] "
+                         ],
+    "app_local_modules":  [
+
+                          ]
+}

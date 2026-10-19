@@ -181,7 +181,29 @@ BAR1 was full. In the AMD1 Godot frames the Windows Start menu was
 open over the demo window. The demo rendered and animated behind it, and the
 FPS figures come from Godot's own log.
 
-MERGED-PLACEHOLDER
+### After merging main (nvva's 0070, 0086; unid3d's 0090)
+
+The branch was then merged with main and the bundle rebuilt at `4d826df`
+(0001 to 0044, 0070, 0075, 0086 and 0090). The same runs were repeated on
+Nvidia2 and AMD1. Each lab held its `gpuslot.sh` slot, so no card was over
+its VM limit (`docs/evidence/godot/proof-merged/<gpu>/`):
+
+| Check | Nvidia2 (RTX 5090) | AMD1 (RADV) |
+| --- | --- | --- |
+| Godot Vulkan | clean exit, 59.9 fps | clean exit, 60.0 fps |
+| Godot D3D12 | clean exit, 51.8 fps | clean exit, 52.6 fps |
+| Godot OpenGL | clean exit, 55.9 fps | clean exit, 62.8 fps |
+| `tests/e2e/run.sh` Done checks | 12 of 12 | 12 of 12 |
+| Host Xid during the runs | none (no Xid line in the kernel log from 10:00 to the end) | not applicable |
+
+A first merged attempt on Nvidia2 shared the card while it was over the
+two-VM limit. In it, Godot Vulkan could not create its swapchain
+(`VkResult -3`): Yttrium's D3D11 allocation of the DXGI display image
+timed out on the Venus ring, and the host logged
+`can't alloc VA space for mapping` at the same time. That is BAR1
+exhaustion ([nvva.md](nvva.md)), not this fault; 0075 adds only
+device-local memory. That attempt and an AMD1 run on an over-limit card
+were discarded and repeated as above.
 
 ## What remains
 
