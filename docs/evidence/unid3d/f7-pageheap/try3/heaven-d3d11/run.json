@@ -1,0 +1,36 @@
+﻿{
+    "name":  "heaven-d3d11",
+    "exe":  "C:\\apps\\heaven\\bin\\Heaven.exe",
+    "arguments":  "-project_name Heaven -data_path ../ -engine_config ../data/heaven_4.0.cfg -system_script heaven/unigine.cpp -video_app direct3d11 -video_multisample 0 -video_fullscreen 0 -video_mode 3 -extern_define ,RELEASE,LANGUAGE_EN,QUALITY_MEDIUM,TESSELLATION_NORMAL -extern_plugin ,GPUMonitor",
+    "user":  "VMLABVM-KFPN1D3\\win3d",
+    "session_id":  1,
+    "pid":  3800,
+    "wow64":  true,
+    "started":  "2026-10-18T15:12:01.3165848-07:00",
+    "ended":  "2026-10-18T15:15:04.0641789-07:00",
+    "duration_s":  182.7,
+    "timed_out":  false,
+    "exit_code":  0,
+    "exit_code_hex":  "0x00000000",
+    "task_result":  0,
+    "probe_json":  null,
+    "probe_result":  null,
+    "adapter":  null,
+    "software":  null,
+    "readback_ok":  null,
+    "module_count":  61,
+    "graphics_modules":  [
+                             "C:\\WINDOWS\\SysWOW64\\dxgi.dll [syswow64] 10.0.26100.9444 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\d3d11.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\apps\\heaven\\bin\\d3dcompiler_42.dll [app_local] 9.27.952.3022",
+                             "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll [syswow64] ",
+                             "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)"
+                         ],
+    "app_local_modules":  [
+                              "C:\\apps\\heaven\\bin\\MSVCR100.dll",
+                              "C:\\apps\\heaven\\bin\\Unigine_x86.dll",
+                              "C:\\apps\\heaven\\bin\\GPUMonitor_x86.dll",
+                              "C:\\apps\\heaven\\bin\\d3dcompiler_42.dll"
+                          ]
+}

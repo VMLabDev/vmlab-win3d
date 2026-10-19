@@ -1,0 +1,1 @@
+6384 window=0x602CE title=[Unigine Valley Benchmark 1.0 Basic (Direct3D11)] closed=True

@@ -79,6 +79,7 @@ or Intel GPU as declared in the host config, `~/.config/vmlab/config.wcl`
 | [ffp.md](ffp.md) | See how D3D9 fixed function was tested against the reference rasterizer, and the software-vertex-processing, fog and point fixes `patches/mesa/0040` to `0042` |
 | [compat.md](compat.md) | See which unmodified free applications (Unigine Heaven and Valley, Godot, GZDoom, Crispy Doom) run on AMD1 and Nvidia2 under each API, and each failure in detail, including the Godot Vulkan Xid 69 |
 | [ffp2.md](ffp2.md) | See D3D9 vertex blending, bump mapping, cube texgen, mixed devices and Windows 10 tested against the reference, and the bump-format and blend-palette changes `patches/mesa/0043` and `0044` |
+| [unid3d.md](unid3d.md) | See the Unigine D3D9 and D3D11 findings F5 to F7: the D3D9 depth-bias fix for NVIDIA (`patches/mesa/0090`), Valley D3D9 running out of 32-bit address space, and Heaven D3D11's use-after-free |
 
 ## Building
 

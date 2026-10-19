@@ -1,0 +1,1 @@
+2200 window=0x5031C title=[Unigine Heaven Benchmark 4.0 Basic (Direct3D11)] closed=True

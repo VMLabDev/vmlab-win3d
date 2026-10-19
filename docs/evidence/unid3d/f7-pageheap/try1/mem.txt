@@ -1,0 +1,5 @@
+t=25 guest_pm=606 guest_ws=828 guest_handles=291 guest_va=1345 qemu_rss=8394 rs_rss=421 rs_maps=4379 rs_dmabuf=88
+t=36 guest_pm=777 guest_ws=976 guest_handles=291 guest_va=1674 qemu_rss=8417 rs_rss=433 rs_maps=4850 rs_dmabuf=124
+t=48 guest_pm=779 guest_ws=911 guest_handles=279 guest_va=1677 qemu_rss=8413 rs_rss=433 rs_maps=4839 rs_dmabuf=148
+t=59 guest_pm=761 guest_ws=800 guest_handles=279 guest_va=1669 qemu_rss=8405 rs_rss=434 rs_maps=4805 rs_dmabuf=152
+t=71 exited

@@ -1,0 +1,20 @@
+2026-10-18 12:31:36.416 [warning pid=1928 process=d3d9_depthbias.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 12:31:36.436 [warning pid=1928 process=d3d9_depthbias.exe] d3d9ddi: unsupported D3D9 tessellation state owner=d3d9-state reason=patch-tessellation-not-implemented fallback=ignore-unadvertised-state state=164 value=0x00000000
+2026-10-18 12:31:36.438 [warning pid=1928 process=d3d9_depthbias.exe] d3d9ddi: D3D9 runtime reserved render state owner=d3d9-state reason=unassigned-ddi-slot fallback=ignore-runtime-metadata state=196 value=0xffffffff
+2026-10-18 12:31:36.696 [warning pid=1928 process=d3d9_depthbias.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-18 12:31:37.357 [warning pid=1928 process=d3d9_depthbias.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 12:31:38.289 [warning pid=1928 process=d3d9_depthbias.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 12:31:39.215 [warning pid=1928 process=d3d9_depthbias.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 12:32:00.985 [warning pid=6560 process=d3d9_depthbias.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 12:32:01.031 [warning pid=6560 process=d3d9_depthbias.exe] d3d9ddi: unsupported D3D9 tessellation state owner=d3d9-state reason=patch-tessellation-not-implemented fallback=ignore-unadvertised-state state=164 value=0x00000000
+2026-10-18 12:32:01.033 [warning pid=6560 process=d3d9_depthbias.exe] d3d9ddi: D3D9 runtime reserved render state owner=d3d9-state reason=unassigned-ddi-slot fallback=ignore-runtime-metadata state=196 value=0xffffffff
+2026-10-18 12:32:01.343 [warning pid=6560 process=d3d9_depthbias.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-18 12:32:02.085 [warning pid=6560 process=d3d9_depthbias.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 12:32:03.011 [warning pid=6560 process=d3d9_depthbias.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 12:32:03.965 [warning pid=6560 process=d3d9_depthbias.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 12:32:09.906 [warning pid=4764 process=d3d9_depthbias.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 12:32:10.013 [warning pid=4764 process=d3d9_depthbias.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-18 12:32:10.496 [warning pid=4764 process=d3d9_depthbias.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 12:32:11.576 [warning pid=4764 process=d3d9_depthbias.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 12:32:12.497 [warning pid=4764 process=d3d9_depthbias.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 12:32:13.934 [warning pid=4764 process=d3d9_depthbias.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
