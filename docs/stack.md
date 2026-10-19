@@ -230,8 +230,8 @@ labs that select them explicitly. Nothing is installed on the host
 | Path | What it is for |
 | --- | --- |
 | `patches/host/build-qemu.sh`, `patches/host/bump-qemu.sh` and the `qemu` pin in `patches/host/PINS` | The vmlab QEMU: QEMU 11.1.1 plus the series on the [VMLabDev/qemu](https://github.com/VMLabDev/qemu/tree/vmlab/egl-headless-external-dmabuf) branch `vmlab/egl-headless-external-dmabuf`, at the pinned commit. Its egl-headless display shows LINEAR scanout dma-bufs that the host's EGL imports as external only. NVIDIA needs it for a visible console; AMD and Intel do not. The build is native against the host's libraries, not in Docker. On vmlab 0.26 or later the host config names it as the NVIDIA GPU's `qemu_binary` ([`nvidia.md`](nvidia.md)); the Zeus runs, on 0.24, used an isolated supervisor (`labs/zeus/vmlab-iso.sh`) |
-| `patches/host/virglrenderer/0001` and `patches/host/build-virglrenderer.sh` | A diagnostic render server: stock virglrenderer 1.3.0 that also logs failed image creation with its create-info. It is selected with `RENDER_SERVER_EXEC_PATH` and used only to investigate a failure ([`nvidia.md`](nvidia.md), [`zeus.md`](zeus.md)) |
-| `patches/host/virglrenderer/workaround/0002` | The host-side workaround for the NVIDIA feedback-loop fault, kept as documentation. `patches/mesa/0020` replaced it; `build-virglrenderer.sh` applies it only with `WITH_WORKAROUND=1` |
+| `patches/host/virglrenderer/0001`, `0002` and `patches/host/build-virglrenderer.sh` | The vmlab render server: virglrenderer 1.3.0 with `0002` (queue-sync fences not exportable, so NVIDIA fences no longer wake about 10 ms late, [`n5.md`](n5.md)) and `0001` (logs failed image creation). NVIDIA host GPU profiles select it with `qemu_env = { RENDER_SERVER_EXEC_PATH: ... }`; it ships as a release asset ([`release.md`](release.md)) |
+| `patches/host/virglrenderer/workaround/0003` | The host-side workaround for the NVIDIA feedback-loop fault, kept as documentation. `patches/mesa/0020` replaced it; `build-virglrenderer.sh` applies it only with `WITH_WORKAROUND=1` |
 
 ### Build-only inputs
 
