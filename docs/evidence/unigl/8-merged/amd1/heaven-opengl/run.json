@@ -1,0 +1,40 @@
+﻿{
+    "name":  "heaven-opengl",
+    "exe":  "C:\\apps\\heaven\\bin\\Heaven.exe",
+    "arguments":  "-project_name Heaven -data_path ../ -engine_config ../data/heaven_4.0.cfg -system_script heaven/unigine.cpp -video_app opengl -video_multisample 0 -video_fullscreen 0 -video_mode 3 -extern_define ,RELEASE,LANGUAGE_EN,QUALITY_MEDIUM,TESSELLATION_NORMAL -extern_plugin ,GPUMonitor",
+    "user":  "VMLABVM-P3U7KJ8\\win3d",
+    "session_id":  1,
+    "pid":  6776,
+    "wow64":  true,
+    "started":  "2026-10-18T16:27:33.6184480-07:00",
+    "ended":  "2026-10-18T16:30:40.8605890-07:00",
+    "duration_s":  187.2,
+    "timed_out":  false,
+    "exit_code":  0,
+    "exit_code_hex":  "0x00000000",
+    "task_result":  0,
+    "probe_json":  null,
+    "probe_result":  null,
+    "adapter":  null,
+    "software":  null,
+    "readback_ok":  null,
+    "module_count":  74,
+    "graphics_modules":  [
+                             "C:\\WINDOWS\\SysWOW64\\opengl32.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\GLU32.dll [syswow64] 10.0.26100.1 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\viogpu_wgl.dll [syswow64] ",
+                             "C:\\WINDOWS\\SysWOW64\\vulkan-1.dll [syswow64] 1.4.363.0",
+                             "C:\\WINDOWS\\SysWOW64\\dxgi.dll [syswow64] 10.0.26100.9444 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\libvulkan_virtio.dll [syswow64] ",
+                             "C:\\WINDOWS\\SysWOW64\\d3d11.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll [syswow64] ",
+                             "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)"
+                         ],
+    "app_local_modules":  [
+                              "C:\\apps\\heaven\\bin\\MSVCR100.dll",
+                              "C:\\apps\\heaven\\bin\\Unigine_x86.dll",
+                              "C:\\apps\\heaven\\bin\\GPUMonitor_x86.dll",
+                              "C:\\apps\\heaven\\bin\\openal32.dll"
+                          ]
+}

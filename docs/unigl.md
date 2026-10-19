@@ -24,8 +24,7 @@ Both RTX 5090s have no resizable BAR. Their BAR1 aperture is 256 MiB
 heap, 246 MiB, with one memory type that is `DEVICE_LOCAL | HOST_VISIBLE |
 HOST_COHERENT`. Venus passes it to the guest unchanged. Every process and
 every VM on the card shares it, and worker nvva found that a Venus blob of it
-costs twice its size there (worker nvva's page, docs/nvva.md once work/nvva
-is merged). On `AMD1` the visible
+costs twice its size there ([nvva.md](nvva.md)). On `AMD1` the visible
 heap is the whole of VRAM, so none of what follows happens.
 
 Zink puts `PIPE_USAGE_DEFAULT` and `DYNAMIC` buffers, and persistent and
@@ -130,13 +129,39 @@ of 12 on both GPUs, with no NVIDIA Xid during the `Nvidia1` run. The
 evidence is copied to `docs/evidence/unigl/e2e/amd1/` and
 `docs/evidence/unigl/e2e/nvidia1/` (`results.txt`).
 
+### After merging main
+
+nvva's `0070` and `0086` merged to main (`b74ea3c`), followed by unid3d's
+`0090`. This branch merged main, and the package built at `d3ecec3` (main's
+series plus `0085`) was checked again:
+
+| Check | `AMD1` | NVIDIA |
+| --- | --- | --- |
+| `tests/e2e/run.sh --template windows-11` | 12 of 12 (`e2e-merged/amd1/`) | 12 of 12 on `Nvidia2`, BAR1 peak 145 MiB, no Xid (`e2e-merged/nvidia2/`) |
+| Heaven and Valley OpenGL (`8-merged/`) | clean, 13.4 and 20.2 fps | clean on `Nvidia2`, 52.7 and 59.9 fps; BAR1 peak 152 MiB, no render-server errors, no Xid |
+
+A first `Nvidia2` e2e run gave 11 of 12. The D3D12 x86 probe passed, but no
+console capture showed its window (`e2e-merged/nvidia2-run1/`). A first
+`Nvidia2` OpenGL run failed: Heaven's DXGI swapchain (the Yttrium D3D11 UMD,
+which Mesa's WGL presents through) could not allocate a display image, and
+its ring timed out. Valley crashed in `viogpu_wgl.dll`. During both runs
+three of this project's VMs shared `Nvidia2`, over the limit of two, and
+BAR1 stood at 238 MiB of 256 with the host logging "can't alloc VA space".
+Its evidence was discarded, and both runs were repeated within the limit.
+
 ## What remains
 
 - Fault 3 is not fixed in general. A guest whose driver still allocates
   from the visible heap (for example a native Vulkan application that asks
   for `DEVICE_LOCAL | HOST_VISIBLE`) can still fail to map when BAR1 is full.
-  With `0070` the guest no longer sees such a type, which covers every
-  driver in the package. nvva's page has the BAR1 accounting.
+  With `0070` the Venus ICD no longer offers such a type, so Zink, DXVK
+  and vkd3d-proton stay out of BAR1. The Yttrium D3D UMD queries memory
+  types itself and still puts display images there (nvva dropped `0071`,
+  which moved them, because NVIDIA cannot import system-memory image
+  dma-bufs across processes). Mesa's WGL presents through that UMD, so an
+  OpenGL program can still lose its swapchain when BAR1 runs out. That
+  happened with three VMs on one card (above). nvva's page has the BAR1
+  accounting.
 - Zink's direct maps of buffers that are not host-visible are now
   unreachable in this package, but `zink_buffer_map` itself still maps them
   without a staging buffer. A device that lacks `HOST_VISIBLE_COHERENT`
