@@ -1,0 +1,172 @@
+{
+  "x64-d3d9_probe": {
+    "frames": 24,
+    "frames_with_window": 10,
+    "visible": true,
+    "animating": true,
+    "png": "console-x64-d3d9_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "53d5f7c2"
+    }
+  },
+  "x86-d3d9_probe": {
+    "frames": 24,
+    "frames_with_window": 7,
+    "visible": true,
+    "animating": true,
+    "png": "console-x86-d3d9_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "44fe142d"
+    }
+  },
+  "x64-d3d11_probe": {
+    "frames": 24,
+    "frames_with_window": 10,
+    "visible": true,
+    "animating": true,
+    "png": "console-x64-d3d11_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "f7b38660"
+    }
+  },
+  "x86-d3d11_probe": {
+    "frames": 20,
+    "frames_with_window": 10,
+    "visible": true,
+    "animating": true,
+    "png": "console-x86-d3d11_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "8cb4b85f"
+    }
+  },
+  "x64-d3d12_probe": {
+    "frames": 24,
+    "frames_with_window": 2,
+    "visible": true,
+    "animating": true,
+    "png": "console-x64-d3d12_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "67fe4d61"
+    }
+  },
+  "x86-d3d12_probe": {
+    "frames": 28,
+    "frames_with_window": 2,
+    "visible": true,
+    "animating": true,
+    "png": "console-x86-d3d12_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "2b3ae536"
+    }
+  },
+  "x64-opengl_probe": {
+    "frames": 17,
+    "frames_with_window": 7,
+    "visible": true,
+    "animating": true,
+    "png": "console-x64-opengl_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "8ab9f139"
+    }
+  },
+  "x86-opengl_probe": {
+    "frames": 19,
+    "frames_with_window": 7,
+    "visible": true,
+    "animating": true,
+    "png": "console-x86-opengl_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "b5fb4459"
+    }
+  },
+  "x64-vulkan_probe": {
+    "frames": 18,
+    "frames_with_window": 8,
+    "visible": true,
+    "animating": true,
+    "png": "console-x64-vulkan_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "71ef93ad"
+    }
+  },
+  "x86-vulkan_probe": {
+    "frames": 13,
+    "frames_with_window": 9,
+    "visible": true,
+    "animating": true,
+    "png": "console-x86-vulkan_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "b6e50293"
+    }
+  }
+}

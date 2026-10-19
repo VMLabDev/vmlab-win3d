@@ -1,0 +1,102 @@
+{
+  "x64-d3d9_probe": {
+    "frames": 24,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x86-d3d9_probe": {
+    "frames": 25,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x64-d3d11_probe": {
+    "frames": 26,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x86-d3d11_probe": {
+    "frames": 17,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x64-d3d12_probe": {
+    "frames": 18,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x86-d3d12_probe": {
+    "frames": 18,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x64-opengl_probe": {
+    "frames": 15,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x86-opengl_probe": {
+    "frames": 14,
+    "frames_with_window": 9,
+    "visible": true,
+    "animating": true,
+    "png": "console-x86-opengl_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "9598ce7f"
+    }
+  },
+  "x64-vulkan_probe": {
+    "frames": 15,
+    "frames_with_window": 9,
+    "visible": true,
+    "animating": true,
+    "png": "console-x64-vulkan_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "b522baca"
+    }
+  },
+  "x86-vulkan_probe": {
+    "frames": 14,
+    "frames_with_window": 9,
+    "visible": true,
+    "animating": true,
+    "png": "console-x86-vulkan_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "d8f36f4d"
+    }
+  }
+}
