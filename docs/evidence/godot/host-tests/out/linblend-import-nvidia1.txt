@@ -1,0 +1,18 @@
+### linear none 1 0 import full
+mem import, cover full
+device 0 NVIDIA GeForce RTX 5090 (pci 0000:01:00) driver 0x988e4100; colour linear, blend none, vkCmdDrawIndexed 6
+B8G8R8A8_UNORM linearTilingFeatures 0x1dd03 (COLOR_ATTACHMENT no)
+colour image format properties: 0 (maxExtent 32768x32768)
+exported 3686400 bytes as dma-buf fd 48 (memory type 1)
+import: image needs 3686400 bytes, bits 0x1f; importing into type 1
+vkWaitForFences: 0
+OK
+### linear alpha 1 0 import full
+mem import, cover full
+device 0 NVIDIA GeForce RTX 5090 (pci 0000:01:00) driver 0x988e4100; colour linear, blend alpha, vkCmdDrawIndexed 6
+B8G8R8A8_UNORM linearTilingFeatures 0x1dd03 (COLOR_ATTACHMENT no)
+colour image format properties: 0 (maxExtent 32768x32768)
+exported 3686400 bytes as dma-buf fd 48 (memory type 1)
+import: image needs 3686400 bytes, bits 0x1f; importing into type 1
+vkWaitForFences: 0
+OK

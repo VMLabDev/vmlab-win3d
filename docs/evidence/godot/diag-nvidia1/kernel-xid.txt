@@ -1,0 +1,1 @@
+Oct 19 05:33:10 helios kernel: NVRM: Xid (PCI:0000:01:00): 69, pid=4094771, name=vkr-ring-40, Class Error: channel 0x000000dd, Class 0000ce97, Offset 0000026c, Data 00000006, ErrorCode 0000013d

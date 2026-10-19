@@ -1,0 +1,377 @@
+[06:13:23] AMD1 has 4 VMs (limit 3); waiting
+[06:15:23] AMD1 has 3 VMs (limit 3); waiting
+[06:17:24] AMD1 has 3 VMs (limit 3); waiting
+[06:19:24] AMD1 has 3 VMs (limit 3); waiting
+[06:21:24] AMD1 has 4 VMs (limit 3); waiting
+[06:23:24] AMD1 has 4 VMs (limit 3); waiting
+[06:25:24] AMD1 has 4 VMs (limit 3); waiting
+[06:27:24] AMD1 has 4 VMs (limit 3); waiting
+[06:29:24] AMD1 has 4 VMs (limit 3); waiting
+[06:31:24] AMD1 has 4 VMs (limit 3); waiting
+[06:33:25] AMD1 has 4 VMs (limit 3); waiting
+[06:35:25] AMD1 has 4 VMs (limit 3); waiting
+[06:37:25] AMD1 has 4 VMs (limit 3); waiting
+[06:39:25] slot free on AMD1
+
+[06:39:25] == compat sweep on AMD1, commit d15ccaa
+date: 2026-10-19T06:39:25+10:00
+commit: d15ccaac72f295d85b0e3db595e1eb7c3ad7b7af
+bundle: /home/wil/dev/vmlab-win3d-wt/godot/out/package/vmlab-win3d-0.1.1 (0.1.1 d58167ab43da5ecd754c30e4e89d96a51afb4e3e)
+host_gpu: AMD1
+kernel: 7.2.3-1-cachyos
+packages: qemu-full 11.1.1-1 virglrenderer 1.3.0-2.1 mesa 3:26.2.2-2 vulkan-radeon 3:26.2.2-2 nvidia-utils 610.57.04-1 
+vmlab: vmlab 0.28.0-alpha
+
+[06:39:25] == fresh lab win3d-godot-amd1 on AMD1
+first-boot: provisioning win...
+first-boot: specialize complete; clearing marker
+first-boot: settling staged AppX (LKG) before first logon
+first-boot: appx: removed MicrosoftWindows.Client.AIX_1000.26100.29.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.AccountsService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.IrisService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.Search_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed NcsiUwpApp_1000.25128.1000.0_neutral_neutral_8wekyb3d8bbwe
+removed MdOdrMcpFilterPackage_1.0.0.0_neutral__cw5n1h2txyewy
+first-boot: installing first-logon XAML registration hook (sysprep-as-SYSTEM workaround)
+first-boot: xaml: hook installed for: MicrosoftWindows.Client.CBS_cw5n1h2txyewy, Microsoft.UI.Xaml.CBS_8wekyb3d8bbwe, MicrosoftWindows.Client.Core_cw5n1h2txyewy
+first-boot: rebooting once to settle shell reconciliation
+first-boot: holding ready until the guest settles (early first logons break the 24H2 shell)
+first-boot: guest settled (uptime 316s)
+first-boot: win ready
+lab "win3d-godot-amd1" is up
+pushed 7 file(s), 42217 bytes to win:C:/win3d/guest
+[06:52:13] activation: 
+
+[06:52:13] == test desktop (autologon user win3d)
+
+[06:53:17] == install vmlab-win3d-0.1.1
+[06:56:43] state: RebootPending|Verify|
+[06:58:16] state: Installed||
+[06:58:16] done: Installed
+
+[06:59:17] == stage the applications
+unigine-heaven-4.0 setup exit 0
+C:\apps\heaven\bin
+C:\apps\heaven\data
+C:\apps\heaven\documentation
+C:\apps\heaven\heaven.bat
+C:\apps\heaven\heaven.ico
+C:\apps\heaven\unigine.url
+C:\apps\heaven\unins000.dat
+C:\apps\heaven\unins000.exe
+C:\apps\heaven\bin\App3DSurround_x86.dll
+C:\apps\heaven\bin\App3DVision_x86.dll
+C:\apps\heaven\bin\AppStereo_x86.dll
+C:\apps\heaven\bin\AppSurround_x86.dll
+C:\apps\heaven\bin\AppWall_x86.dll
+C:\apps\heaven\bin\browser_x86.exe
+C:\apps\heaven\bin\d3dcompiler_42.dll
+C:\apps\heaven\bin\d3dx11_42.dll
+C:\apps\heaven\bin\d3dx9_42.dll
+C:\apps\heaven\bin\GPUMonitor_x86.dll
+C:\apps\heaven\bin\Heaven.exe
+C:\apps\heaven\bin\msvcp100.dll
+C:\apps\heaven\bin\msvcr100.dll
+C:\apps\heaven\bin\openal32.dll
+C:\apps\heaven\bin\QtCoreUnigine_x864.dll
+C:\apps\heaven\bin\QtGuiUnigine_x864.dll
+C:\apps\heaven\bin\QtNetworkUnigine_x864.dll
+C:\apps\heaven\bin\QtWebKitUnigine_x864.dll
+C:\apps\heaven\bin\QtXmlUnigine_x864.dll
+C:\apps\heaven\bin\Unigine_x86.dll
+C:\apps\heaven\bin\X3DAudio1_7.dll
+C:\apps\heaven\bin\XAudio2_7.dll
+C:\apps\heaven\data\launcher
+C:\apps\heaven\data\core.ung
+C:\apps\heaven\data\heaven-version
+C:\apps\heaven\data\heaven.ung
+C:\apps\heaven\data\heaven_4.0.cfg
+C:\apps\heaven\documentation\User_Manual.pdf
+unigine-valley-1.0 setup exit 0
+C:\apps\valley\bin
+C:\apps\valley\data
+C:\apps\valley\documentation
+C:\apps\valley\icon.ico
+C:\apps\valley\unins000.dat
+C:\apps\valley\unins000.exe
+C:\apps\valley\unins000.msg
+C:\apps\valley\valley.bat
+C:\apps\valley\bin\App3DSurround_x86.dll
+C:\apps\valley\bin\App3DVision_x86.dll
+C:\apps\valley\bin\AppStereo_x86.dll
+C:\apps\valley\bin\AppSurround_x86.dll
+C:\apps\valley\bin\AppWall_x86.dll
+C:\apps\valley\bin\browser_x86.exe
+C:\apps\valley\bin\d3dcompiler_42.dll
+C:\apps\valley\bin\d3dx11_42.dll
+C:\apps\valley\bin\d3dx9_42.dll
+C:\apps\valley\bin\GPUMonitor_x86.dll
+C:\apps\valley\bin\msvcp100.dll
+C:\apps\valley\bin\msvcr100.dll
+C:\apps\valley\bin\openal32.dll
+C:\apps\valley\bin\QtCoreUnigine_x864.dll
+C:\apps\valley\bin\QtGuiUnigine_x864.dll
+C:\apps\valley\bin\QtNetworkUnigine_x864.dll
+C:\apps\valley\bin\QtWebKitUnigine_x864.dll
+C:\apps\valley\bin\QtXmlUnigine_x864.dll
+C:\apps\valley\bin\Unigine_x86.dll
+C:\apps\valley\bin\Valley.exe
+C:\apps\valley\bin\X3DAudio1_7.dll
+C:\apps\valley\bin\XAudio2_7.dll
+C:\apps\valley\data\launcher
+C:\apps\valley\data\valley
+C:\apps\valley\data\core.ung
+C:\apps\valley\data\valley-version
+C:\apps\valley\data\valley.ung
+C:\apps\valley\data\valley_1.0.cfg
+C:\apps\valley\documentation\License.pdf
+C:\apps\valley\documentation\User_Manual.pdf
+unpacked gzdoom-4.14.2
+unpacked crispy-doom-7.2.0
+unpacked freedoom-0.13.0
+unpacked godot-4.7.2
+unpacked godot-demo-particles
+ERROR: Condition "res != ((HRESULT)0x00000000)" is true. Returning: String()
+   at: get_system_dir (platform/windows/os_windows.cpp:2502)
+ERROR: Condition "res != ((HRESULT)0x00000000)" is true. Returning: String()
+   at: get_system_dir (platform/windows/os_windows.cpp:2502)
+ERROR: Condition "res != ((HRESULT)0x00000000)" is true. Returning: String()
+   at: get_system_dir (platform/windows/os_windows.cpp:2502)
+ERROR: Condition "res != ((HRESULT)0x00000000)" is true. Returning: String()
+   at: get_system_dir (platform/windows/os_windows.cpp:2502)
+godot --import exit 0
+[   0% ] [90m[1mloading_editor_layout[22m | Started Loading editor (5 steps)[39m[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Loading editor layout...[39m[0m
+[  16% ] [90m[1mloading_editor_layout[22m | Loading docks...[39m[0m
+[92m[ DONE ][39m [1mloading_editor_layout[22m
+[0m
+crispy
+freedoom
+godot
+gzdoom
+heaven
+valley
+
+[07:01:28] == run godot-d3d12: C:\apps\godot\Godot_v4.7.2-stable_win64.exe --path C:\apps\godot\particles --resolution 1280x720 --print-fps --log-file C:\apps\godot\godot-d3d12.log --rendering-driver d3d12
+[07:04:39]   close at 171 s: 5016 window=0x2014A title=[3D Particles (DEBUG)] closed=True
+[07:04:45]   Run-Probe exit 0 (197 s)
+[07:04:47]   exit: clean
+
+[07:04:49] == run godot-vulkan: C:\apps\godot\Godot_v4.7.2-stable_win64.exe --path C:\apps\godot\particles --resolution 1280x720 --print-fps --log-file C:\apps\godot\godot-vulkan.log --rendering-driver vulkan
+[07:07:50]   close at 172 s: 4396 window=0x202E8 title=[3D Particles (DEBUG)] closed=True
+[07:07:55]   Run-Probe exit 0 (186 s)
+[07:07:57]   exit: clean
+
+[07:07:58] == run godot-opengl: C:\apps\godot\Godot_v4.7.2-stable_win64.exe --path C:\apps\godot\particles --resolution 1280x720 --print-fps --log-file C:\apps\godot\godot-opengl.log --rendering-method gl_compatibility --rendering-driver opengl3
+[07:11:03]   close at 172 s: 8440 window=0x402E8 title=[3D Particles (DEBUG)] closed=True
+[07:11:08]   Run-Probe exit 0 (190 s)
+[07:11:10]   exit: clean
+godot-d3d12                  clean                    fps=59.5 average over 137 s (Godot --print-fps)
+godot-opengl                 clean                    fps=64.7 average over 163 s (Godot --print-fps)
+godot-vulkan                 clean                    fps=59.9 average over 161 s (Godot --print-fps)
+lab "win3d-godot-amd1" destroyed
+compat exit 0
+[07:11:13] AMD1 has 3 VMs (limit 3); waiting
+[07:13:13] AMD1 has 3 VMs (limit 3); waiting
+[07:15:13] AMD1 has 3 VMs (limit 3); waiting
+[07:17:13] AMD1 has 3 VMs (limit 3); waiting
+
+[07:19:13] == vmlab-win3d e2e: windows-11, commit d15ccaa
+date: 2026-10-19T07:19:13+10:00
+commit: d15ccaac72f295d85b0e3db595e1eb7c3ad7b7af
+worktree changes: 1
+template: x86_64/windows-11@26100.1742.5
+kernel: 7.2.3-1-cachyos
+qemu (PATH): QEMU emulator version 11.1.1
+packages: qemu-full 11.1.1-1 virglrenderer 1.3.0-2.1 mesa 3:26.2.2-2 vulkan-radeon 3:26.2.2-2 nvidia-utils 610.57.04-1 
+vmlab: vmlab 0.28.0-alpha
+venus gpu: host_gpu AMD1, /dev/dri/renderD129 0000:72:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI] Granite Ridge [Radeon Graphics] (rev c1)
+
+[07:19:14] == 1 build
+[07:19:14] building: sources changed since d58167ab43da5ecd754c30e4e89d96a51afb4e3e
+== manifest and zip
+manifest: 28 files, driver 100.6.101.58100, PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01
+6b8b8458659fcde26d58ca7acf0db6818339ab62dbaa091e85f486bd557381df  vmlab-win3d-0.1.1.zip
+a3a2c02a5d16320c07f6bb9066201c169e20edf0c74031ae0744707b39164ff0  vmlab-win3d-0.1.1/manifest.json
+bundle: /home/wil/dev/vmlab-win3d-wt/godot/out/package/vmlab-win3d-0.1.1
+
+[07:21:07] == 2 fresh lab win3d-godot-e2e-amd1 from x86_64/windows-11@26100.1742.5
+ok: lab "win3d-godot-e2e-amd1" — 1 vm(s), 0 container(s), 0 segment(s)
+first-boot: provisioning win...
+first-boot: specialize complete; clearing marker
+first-boot: settling staged AppX (LKG) before first logon
+first-boot: appx: removed MicrosoftWindows.Client.AIX_1000.26100.29.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.AccountsService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.IrisService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.Search_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed NcsiUwpApp_1000.25128.1000.0_neutral_neutral_8wekyb3d8bbwe
+removed MdOdrMcpFilterPackage_1.0.0.0_neutral__cw5n1h2txyewy
+first-boot: installing first-logon XAML registration hook (sysprep-as-SYSTEM workaround)
+first-boot: xaml: hook installed for: MicrosoftWindows.Client.CBS_cw5n1h2txyewy, Microsoft.UI.Xaml.CBS_8wekyb3d8bbwe, MicrosoftWindows.Client.Core_cw5n1h2txyewy
+first-boot: rebooting once to settle shell reconciliation
+first-boot: holding ready until the guest settles (early first logons break the 24H2 shell)
+first-boot: guest settled (uptime 316s)
+first-boot: win ready
+lab "win3d-godot-e2e-amd1" is up
+
+[07:30:30] == 3 guest scripts, probes and the baseline
+pushed 7 file(s), 42217 bytes to win:C:/win3d/guest
+pushed 1 file(s), 2321 bytes to win:C:/win3d/e2e
+pushed 5 file(s), 174592 bytes to win:C:/win3d/probes/x64
+pushed 5 file(s), 153088 bytes to win:C:/win3d/probes/x86
+pushed 2800056 bytes to win:C:/win3d/lunarg/x64/vulkaninfo.exe
+pushed 2403256 bytes to win:C:/win3d/lunarg/x86/vulkaninfo.exe
+[07:33:22] baseline: Red Hat VirtIO GPU DOD controller (problem 0)
+
+[07:33:22] == 3b test desktop (autologon user win3d)
+[07:33:24] oobe: done after 0 s
+[07:34:26] autologon before-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-FJ8N6LS AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-FJ8N6LS\win3d 
+
+[07:34:26] == 4 install: scripts/install-into-vm.sh /home/wil/dev/vmlab-win3d-wt/godot/.scratch/e2e/windows-11/lab win
+[07:34:26] waiting for the guest agent
+[07:34:28] copying vmlab-win3d-0.1.1 to C:\vmlab-win3d
+pushed 29 file(s), 102415461 bytes to win:C:/vmlab-win3d
+[07:34:31] running C:\vmlab-win3d\Install.cmd
+2026-10-18T21:34:30.006-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
+2026-10-18T21:34:33.555-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T21:34:36.849-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
+2026-10-18T21:34:37.149-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T21:34:37.165-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-18T21:34:37.169-07:00 [Install]   Signature matches Public Key
+2026-10-18T21:34:37.174-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T21:34:37.178-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T21:34:37.228-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T21:34:37.236-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-18T21:34:37.241-07:00 [Install]   Signature matches Public Key
+2026-10-18T21:34:37.244-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T21:34:37.249-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T21:34:37.333-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-18T21:34:37.337-07:00 [Install]   The operation completed successfully.
+2026-10-18T21:34:37.826-07:00 [Install] test signing is set but not active in this boot
+2026-10-18T21:34:38.649-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T21:34:38.723-07:00 [Install] rebooting; step Driver resumes after the restart
+[07:34:42] Install.cmd exited 0
+[07:34:43] state: RebootPending|Driver|
+[07:36:14] state: Installing|Driver|
+[07:36:32] state: Installing|Runtime|
+[07:37:25] state: RebootPending|Verify|
+[07:37:42] state: Installed||
+[07:37:42] done: Installed
+[07:37:50] autologon after-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-FJ8N6LS AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-FJ8N6LS\win3d 
+
+[07:37:50] == 5 interactive-session tests
+[07:37:51] desktop: True 64
+[07:38:08] desktop: True 80
+[07:38:24] desktop: True 97
+[07:38:46] desktop: True 118
+[07:39:07] desktop: True 139
+
+[07:39:10] == 5a vulkaninfo --summary
+    "exit_code":  0,
+    "exit_code_hex":  "0x00000000",
+	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
+	deviceName         = Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+	driverName         = venus
+exit 0 
+	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
+	deviceName         = Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+	driverName         = venus
+exit 0 
+	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
+	deviceName         = Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+	driverName         = venus
+	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
+	deviceName         = Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+	driverName         = venus
+
+[07:39:25] == 5b probes
+[07:39:25] probe x64-d3d9_probe
+[07:39:50]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+[07:39:51] probe x86-d3d9_probe
+[07:40:18]   Run-Probe exit 0
+  console: 9/13 frames show the probe window; animating=True
+[07:40:18] probe x64-d3d11_probe
+[07:40:46]   Run-Probe exit 0
+  console: 9/13 frames show the probe window; animating=True
+[07:40:46] probe x86-d3d11_probe
+[07:41:13]   Run-Probe exit 0
+  console: 9/13 frames show the probe window; animating=True
+[07:41:13] probe x64-d3d12_probe
+[07:41:43]   Run-Probe exit 0
+  console: 8/14 frames show the probe window; animating=True
+[07:41:43] probe x86-d3d12_probe
+[07:42:13]   Run-Probe exit 0
+  console: 6/13 frames show the probe window; animating=True
+[07:42:13] probe x64-opengl_probe
+[07:42:46]   Run-Probe exit 0
+  console: 6/14 frames show the probe window; animating=True
+[07:42:46] probe x86-opengl_probe
+[07:43:14]   Run-Probe exit 0
+  console: 8/13 frames show the probe window; animating=True
+[07:43:14] probe x64-vulkan_probe
+[07:43:42]   Run-Probe exit 0
+  console: 9/13 frames show the probe window; animating=True
+[07:43:42] probe x86-vulkan_probe
+[07:44:11]   Run-Probe exit 0
+  console: 9/13 frames show the probe window; animating=True
+
+[07:44:11] == 5c dxdiag
+                        "D3D Status":  "Enabled",
+                        "AGP Status":  "Enabled"
+                    }
+                ]
+}
+
+[07:44:46] == 6 collect evidence
+pulled 52550 bytes to /home/wil/dev/vmlab-win3d-wt/godot/.scratch/e2e/windows-11/results.zip
+
+[07:44:54] == 7 teardown
+lab "win3d-godot-e2e-amd1" destroyed
+
+[07:44:56] == result (ok)
+Item  Result Check
+------------------------------------------------------------------------------
+1     pass   scripts/build.sh builds the package
+             built; exit 0
+2     pass   documented install command (scripts/install-into-vm.sh)
+             exit 0; Installed
+2+    pass   display device on our driver, problem code 0
+             Hardsoft VirtIO GPU 3D controller
+2     pass   vulkaninfo --summary (x64) lists the Venus device
+             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+2+    pass   vulkaninfo --summary (x86) lists the Venus device
+             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+2+    pass   vulkaninfo --summary (x64) lists exactly one Venus device
+             1 Venus: Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+2+    pass   LunarG vulkaninfo 1.4.363 (x64, pinned) lists Venus through the installed loader
+             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+2+    pass   LunarG vulkaninfo 1.4.363 (x86, pinned) lists Venus through the installed loader
+             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+2     pass   Direct3D 9 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 59.47 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 9 (x86) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 57.56 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 11 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 59.62 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 11 (x86) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 59.63 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 12 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 55.68 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 12 (x86) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 39.49 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   OpenGL (x64) renders on the GPU and shows on the console
+             zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 37.41 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   OpenGL (x86) renders on the GPU and shows on the console
+             zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 61.61 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating
+2+    pass   Vulkan (x64) renders on the GPU and shows on the console
+             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 58.47 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating
+2+    pass   Vulkan (x86) renders on the GPU and shows on the console
+             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 58.97 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   dxdiag reports hardware acceleration on our driver
+             hardware_acceleration=True, card 'Hardsoft VirtIO GPU 3D controller', D3D Enabled, DDraw Enabled, WDDM 2.0
+2+    pass   dxdiag: Direct3D acceleration on our full WDDM device
+             D3D Status Enabled, Full Device (POST), WDDM 2.0
+------------------------------------------------------------------------------
+PASS: 12 of 12 Done checks pass ('+' rows are extra and do not count)
+e2e exit 0

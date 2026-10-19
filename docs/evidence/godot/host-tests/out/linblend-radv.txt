@@ -1,0 +1,17 @@
+### linear alpha 1 2 vram full 4x4
+mem vram, cover full, vrs 4x4
+device 2 AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO) (pci 0000:72:00) driver 0x6802002; colour linear, blend alpha, vkCmdDrawIndexed 6
+B8G8R8A8_UNORM linearTilingFeatures 0x1dd83 (COLOR_ATTACHMENT yes)
+colour image format properties: 0 (maxExtent 16384x16384)
+fragment shading rate: pipeline 1 primitive 1 attachment 1
+vkWaitForFences: 0
+OK
+### linear none 1 2 sysmem small 4x4
+mem sysmem, cover small, vrs 4x4
+device 2 AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO) (pci 0000:72:00) driver 0x6802002; colour linear, blend none, vkCmdDrawIndexed 6
+B8G8R8A8_UNORM linearTilingFeatures 0x1dd83 (COLOR_ATTACHMENT yes)
+colour image format properties: 0 (maxExtent 16384x16384)
+fragment shading rate: pipeline 1 primitive 1 attachment 1
+vkWaitForFences: 0
+pixel in quad 0: 0x80ff8000, background: 0xff191933
+OK

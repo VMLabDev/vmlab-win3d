@@ -1,0 +1,1 @@
+8452 window=0x40280 title=[3D Particles (DEBUG)] closed=True

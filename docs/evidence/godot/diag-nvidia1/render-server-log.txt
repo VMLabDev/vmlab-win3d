@@ -1,0 +1,24 @@
+virgl_render_server[4094771]: vkr: tracing context  / 3D Particles
+virgl_render_server[4094771]: vkr: tracing Venus commands to /home/wil/dev/vmlab-win3d-wt/godot/.scratch/trace/vkr-4094771.bin
+virgl_render_server[4094771]: vkr: vkBindBufferMemory2(): pBindInfos[0].memory (VkDeviceMemory 0x90000000009) has an external handleType of VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT which does not include at least one handle from VkBuffer (VkBuffer 0x80000000008) handleType VkExternalMemoryHandleTypeFlags(0).
+virgl_render_server[4094771]: vkr: vkBindBufferMemory2(): pBindInfos[0].memory (VkDeviceMemory 0xd000000000d) has an external handleType of VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT which does not include at least one handle from VkBuffer (VkBuffer 0xc000000000c) handleType VkExternalMemoryHandleTypeFlags(0).
+virgl_render_server[4094771]: vkr: vkBindBufferMemory2(): pBindInfos[0].memory (VkDeviceMemory 0x1d000000001d) has an external handleType of VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT which does not include at least one handle from VkBuffer (VkBuffer 0x1c000000001c) handleType VkExternalMemoryHandleTypeFlags(0).
+virgl_render_server[4094771]: vkr: vkBindBufferMemory2(): pBindInfos[0].memory (VkDeviceMemory 0x1f000000001f) has an external handleType of VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT which does not include at least one handle from VkBuffer (VkBuffer 0x1e000000001e) handleType VkExternalMemoryHandleTypeFlags(0).
+virgl_render_server[4094771]: vkr: vkBindBufferMemory2(): pBindInfos[0].memory (VkDeviceMemory 0x210000000021) has an external handleType of VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT which does not include at least one handle from VkBuffer (VkBuffer 0x200000000020) handleType VkExternalMemoryHandleTypeFlags(0).
+virgl_render_server[4094771]: vkr: vkBindBufferMemory2(): pBindInfos[0].memory (VkDeviceMemory 0x90000000009) has an external handleType of VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT which does not include at least one handle from VkBuffer (VkBuffer 0x220000000022) handleType VkExternalMemoryHandleTypeFlags(0).
+virgl_render_server[4094771]: vkr: vkBindBufferMemory2(): pBindInfos[0].memory (VkDeviceMemory 0x210000000021) has an external handleType of VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT which does not include at least one handle from VkBuffer (VkBuffer 0x230000000023) handleType VkExternalMemoryHandleTypeFlags(0).
+virgl_render_server[4094771]: vkr: vkBindBufferMemory2(): pBindInfos[0].memory (VkDeviceMemory 0x90000000009) has an external handleType of VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT which does not include at least one handle from VkBuffer (VkBuffer 0x240000000024) handleType VkExternalMemoryHandleTypeFlags(0).
+virgl_render_server[4094771]: vkr: vkBindBufferMemory2(): pBindInfos[0].memory (VkDeviceMemory 0x210000000021) has an external handleType of VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT which does not include at least one handle from VkBuffer (VkBuffer 0x2c000000002c) handleType VkExternalMemoryHandleTypeFlags(0).
+virgl_render_server[4094771]: vkr: sync-submit 1 submit ret=0 wait=0 cbs=72,66
+virgl_render_server[4094771]: vkr: (Warning - This VUID has now been reported 10 times, which is the duplicate_message_limit value, this will be the last time reporting it).
+virgl_render_server[4094771]: vkr: sync-submit 2 submit ret=0 wait=0 cbs=19,1680,24
+virgl_render_server[4094771]: vkr: vkBindImageMemory2(): pBindInfos[0].memory (VkDeviceMemory 0x6740000000674) was created with an import operation with handleType of VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT which is not set in the VkImage (VkImage 0x6730000000673) VkExternalMemoryImageCreateInfo::handleTypes (VkExternalMemoryHandleTypeFlags(0)).
+virgl_render_server[4094771]: vkr: vkBindImageMemory2(): pBindInfos[0].memory (VkDeviceMemory 0x6760000000676) was created with an import operation with handleType of VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT which is not set in the VkImage (VkImage 0x6750000000675) VkExternalMemoryImageCreateInfo::handleTypes (VkExternalMemoryHandleTypeFlags(0)).
+virgl_render_server[4094771]: vkr: sync-submit 3 submit ret=0 wait=0 cbs=72,66
+virgl_render_server[4094771]: vkr: sync-submit 4 submit ret=0 wait=0 cbs=72,66
+virgl_render_server[4094771]: vkr: sync-submit 5 submit ret=0 wait=0 cbs=19
+virgl_render_server[4094771]: vkr: sync-submit 6 submit ret=0 wait=-4 cbs=1732,24
+virgl_render_server[4094771]: vkr: vkQueueSubmit2KHR(): synchronization2 feature is not enabled.
+virgl_render_server[4094771]: vkr: sync-submit 7 submit2 ret=-4 wait=-4 cbs=1735
+virgl_render_server[4094771]: vkr: vkQueueSubmit2 resulted in CS error
+virgl_render_server[4094771]: vkr: ring_submit_cmd: vn_dispatch_command failed

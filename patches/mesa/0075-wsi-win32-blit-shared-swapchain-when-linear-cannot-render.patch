@@ -1,0 +1,251 @@
+Subject: [PATCH] wsi/win32: render DXGI_SHARED swapchains through an OPTIMAL image when LINEAR cannot be a render target
+
+The Yttrium DXGI_SHARED present path gives the application LINEAR
+swapchain images that alias a shared D3D11 texture. NVIDIA's driver
+(610.57.04, RTX 5090) advertises no COLOR_ATTACHMENT in
+linearTilingFeatures for any format, but accepts such an image. A draw into
+it faults on the host GPU (Xid 69) as soon as its pipeline has
+fragment-shading-rate state (ErrorCode 0x13d) or the render pass has depth
+(ErrorCode 0x9c). Godot 4's Vulkan renderer puts
+VkPipelineFragmentShadingRateStateCreateInfoKHR on every pipeline when the
+device offers VK_KHR_fragment_shading_rate, so its first frame, the boot
+splash blit onto the swapchain image, killed the device.
+
+When the device's linearTilingFeatures for the swapchain format lack what
+the swapchain's usage needs (COLOR_ATTACHMENT, STORAGE_IMAGE), the swapchain
+now uses the common WSI image blit: the application renders into an
+OPTIMAL image with its own memory, and the present submission copies it
+into the LINEAR image that aliases the D3D11 texture, which DXGI then
+presents as before. Devices with linear render-target support (RADV)
+keep the zero-copy path unchanged.
+
+Evidence: docs/godot.md, docs/evidence/godot/ (host-tests/linblend.c
+reproduces the Xid with no VM).
+Origin: vmlab-win3d godot worker.
+---
+diff --git a/src/vulkan/wsi/wsi_common.c b/src/vulkan/wsi/wsi_common.c
+index 106eacc..946bb1f 100644
+--- a/src/vulkan/wsi/wsi_common.c
++++ b/src/vulkan/wsi/wsi_common.c
+@@ -419,8 +419,12 @@ get_blit_type(const struct wsi_device *wsi,
+       return wsi_dxgi_image_needs_blit(wsi, dxgi_params, device);
+    }
+ #if defined(HAVE_YTTRIUM)
+-   case WSI_IMAGE_TYPE_DXGI_SHARED:
+-      return WSI_SWAPCHAIN_NO_BLIT;
++   case WSI_IMAGE_TYPE_DXGI_SHARED: {
++      const struct wsi_dxgi_shared_image_params *shared_params =
++         container_of(params, const struct wsi_dxgi_shared_image_params, base);
++      return shared_params->blit ? WSI_SWAPCHAIN_IMAGE_BLIT :
++                                   WSI_SWAPCHAIN_NO_BLIT;
++   }
+ #endif
+ #endif
+ #if defined(VK_USE_PLATFORM_METAL_EXT)
+@@ -2933,7 +2937,19 @@ wsi_cmd_blit_image_to_image(VkCommandBuffer cmd_buffer,
+                             const struct wsi_image_info *info,
+                             struct wsi_image *image)
+ {
+-   assert(info->image_type == WSI_IMAGE_TYPE_DXGI);
++   assert(info->image_type == WSI_IMAGE_TYPE_DXGI
++#if defined(HAVE_YTTRIUM)
++          || info->image_type == WSI_IMAGE_TYPE_DXGI_SHARED
++#endif
++   );
++#if defined(HAVE_YTTRIUM)
++   /* The DXGI_SHARED destination is an ordinary LINEAR image that D3D11
++    * reads after the present fence; the copy overwrites all of it.
++    */
++   const bool shared = info->image_type == WSI_IMAGE_TYPE_DXGI_SHARED;
++#else
++   const bool shared = false;
++#endif
+ 
+    VkImageMemoryBarrier img_mem_barriers[2] = {
+       {
+@@ -2959,7 +2975,8 @@ wsi_cmd_blit_image_to_image(VkCommandBuffer cmd_buffer,
+          .pNext = NULL,
+          .srcAccessMask = 0,
+          .dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT,
+-         .oldLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
++         .oldLayout = shared ? VK_IMAGE_LAYOUT_UNDEFINED :
++                               VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+          .newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+          .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+          .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+@@ -3012,7 +3029,8 @@ wsi_cmd_blit_image_to_image(VkCommandBuffer cmd_buffer,
+    img_mem_barriers[1].srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+    img_mem_barriers[1].dstAccessMask = 0;
+    img_mem_barriers[1].oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+-   img_mem_barriers[1].newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
++   img_mem_barriers[1].newLayout = shared ? VK_IMAGE_LAYOUT_GENERAL :
++                                            VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    wsi->CmdPipelineBarrier(cmd_buffer,
+                            VK_PIPELINE_STAGE_TRANSFER_BIT,
+                            VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+diff --git a/src/vulkan/wsi/wsi_common_private.h b/src/vulkan/wsi/wsi_common_private.h
+index de82c21..80c470d 100644
+--- a/src/vulkan/wsi/wsi_common_private.h
++++ b/src/vulkan/wsi/wsi_common_private.h
+@@ -84,6 +84,12 @@ struct wsi_dxgi_image_params {
+ #if defined(HAVE_YTTRIUM)
+ struct wsi_dxgi_shared_image_params {
+    struct wsi_base_image_params base;
++   /* The device cannot use a LINEAR image of the swapchain format the way
++    * the application asked (wsi_dxgi_shared_linear_unusable), so the
++    * application renders into an OPTIMAL image that is copied into the
++    * LINEAR shared image at present.
++    */
++   bool blit;
+ };
+ #endif
+ 
+diff --git a/src/vulkan/wsi/wsi_common_win32.cpp b/src/vulkan/wsi/wsi_common_win32.cpp
+index 0cc0e3a..b5adb25 100644
+--- a/src/vulkan/wsi/wsi_common_win32.cpp
++++ b/src/vulkan/wsi/wsi_common_win32.cpp
+@@ -714,6 +714,13 @@ wsi_create_dxgi_image_mem(const struct wsi_swapchain *drv_chain,
+ }
+ 
+ #if defined(HAVE_YTTRIUM)
++/* The usage yttrium gives a PIPE_BIND_SHARED texture; the LINEAR image that
++ * aliases the D3D11 texture must match it.
++ */
++#define WSI_DXGI_SHARED_LINEAR_USAGE                                         \
++   (VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |      \
++    VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
++
+ static DXGI_FORMAT
+ wsi_dxgi_format_from_vk(VkFormat format)
+ {
+@@ -787,16 +794,86 @@ wsi_create_dxgi_shared_image_mem(const struct wsi_swapchain *drv_chain,
+       return VK_ERROR_INVALID_EXTERNAL_HANDLE;
+    }
+ 
++   const bool blit = chain->base.blit.type == WSI_SWAPCHAIN_IMAGE_BLIT;
++   VkImage shared_image = image->image;
++   VkResult result;
++   if (blit) {
++      /* The image the application renders to is OPTIMAL; the LINEAR image
++       * that aliases the D3D11 texture is the blit destination.
++       */
++      VkImageCreateInfo create = info->create;
++      create.tiling = VK_IMAGE_TILING_LINEAR;
++      create.usage = WSI_DXGI_SHARED_LINEAR_USAGE;
++      create.flags &= ~(VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT |
++                        VK_IMAGE_CREATE_EXTENDED_USAGE_BIT);
++      create.flags |= VK_IMAGE_CREATE_ALIAS_BIT;
++      create.pNext = NULL;
++      create.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
++      result = wsi->CreateImage(chain->base.device, &create,
++                                &chain->base.alloc, &image->blit.image);
++      if (result != VK_SUCCESS)
++         return result;
++      shared_image = image->blit.image;
++   }
++
+    VkMemoryRequirements reqs;
+-   wsi->GetImageMemoryRequirements(chain->base.device, image->image, &reqs);
++   wsi->GetImageMemoryRequirements(chain->base.device, shared_image, &reqs);
+ 
+-   VkResult result = wsi->win32.create_image_memory_from_win32_handle(
+-      chain->base.device, image->image, handle, reqs.size, &chain->base.alloc,
+-      &image->memory);
+-   if (result != VK_SUCCESS)
++   result = wsi->win32.create_image_memory_from_win32_handle(
++      chain->base.device, shared_image, handle, reqs.size, &chain->base.alloc,
++      blit ? &image->blit.memory : &image->memory);
++   if (result != VK_SUCCESS) {
+       mesa_logw("wsi/win32: DXGI_SHARED shared-memory import failed "
+                 "(VkResult %d)", (int)result);
+-   return result;
++      return result;
++   }
++   if (!blit)
++      return VK_SUCCESS;
++
++   result = wsi->BindImageMemory(chain->base.device, image->blit.image,
++                                 image->blit.memory, 0);
++   if (result != VK_SUCCESS)
++      return result;
++
++   wsi->GetImageMemoryRequirements(chain->base.device, image->image, &reqs);
++   const VkMemoryDedicatedAllocateInfo memory_dedicated_info = {
++      VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO,
++      nullptr,
++      image->image,
++      VK_NULL_HANDLE,
++   };
++   const VkMemoryAllocateInfo memory_info = {
++      VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
++      &memory_dedicated_info,
++      reqs.size,
++      info->select_image_memory_type(wsi, reqs.memoryTypeBits),
++   };
++   return wsi->AllocateMemory(chain->base.device, &memory_info,
++                              &chain->base.alloc, &image->memory);
++}
++
++/* Whether a LINEAR image of the swapchain format cannot be used the way the
++ * application asked for its swapchain images.  NVIDIA (610.57) advertises no
++ * COLOR_ATTACHMENT in linearTilingFeatures for any format, yet accepts the
++ * image; draws into it then fault on the host GPU (Xid 69) as soon as the
++ * pipeline has depth or fragment-shading-rate state (docs/godot.md).
++ */
++static bool
++wsi_dxgi_shared_linear_unusable(const struct wsi_device *wsi,
++                                const VkSwapchainCreateInfoKHR *create_info)
++{
++   VkFormatProperties props;
++   wsi->GetPhysicalDeviceFormatProperties(wsi->pdevice,
++                                          create_info->imageFormat, &props);
++   const VkFormatFeatureFlags have = props.linearTilingFeatures;
++   const VkImageUsageFlags usage = create_info->imageUsage;
++   if ((usage & VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT) &&
++       !(have & VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT))
++      return true;
++   if ((usage & VK_IMAGE_USAGE_STORAGE_BIT) &&
++       !(have & VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT))
++      return true;
++   return false;
+ }
+ #endif
+ 
+@@ -849,6 +926,16 @@ wsi_dxgi_shared_configure_image(const struct wsi_swapchain *chain,
+ 
+    info->create_mem = wsi_create_dxgi_shared_image_mem;
+ 
++   if (chain->blit.type == WSI_SWAPCHAIN_IMAGE_BLIT) {
++      /* The application's image stays as wsi_configure_image made it
++       * (OPTIMAL); wsi_create_dxgi_shared_image_mem creates the LINEAR alias
++       * below as the blit destination.
++       */
++      wsi_configure_image_blit_image(chain, info);
++      info->select_image_memory_type = wsi_select_device_memory_type;
++      return VK_SUCCESS;
++   }
++
+    /* This image aliases the memory of the D3D11 texture created in
+     * wsi_create_dxgi_shared_image_mem, so the two must agree on the layout of
+     * that one allocation.  Vulkan only defines aliasing between images created
+@@ -864,10 +951,7 @@ wsi_dxgi_shared_configure_image(const struct wsi_swapchain *chain,
+     * presented image was scrambled at tile granularity.
+     */
+    info->create.tiling = VK_IMAGE_TILING_LINEAR;
+-   info->create.usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT |
+-                        VK_IMAGE_USAGE_TRANSFER_DST_BIT |
+-                        VK_IMAGE_USAGE_SAMPLED_BIT |
+-                        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
++   info->create.usage = WSI_DXGI_SHARED_LINEAR_USAGE;
+    info->create.flags &= ~(VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT |
+                            VK_IMAGE_CREATE_EXTENDED_USAGE_BIT);
+    info->create.flags |= VK_IMAGE_CREATE_ALIAS_BIT;
+@@ -1579,6 +1663,8 @@ wsi_win32_surface_create_swapchain_internal(
+    struct wsi_dxgi_shared_image_params dxgi_shared_image_params = {
+       { WSI_IMAGE_TYPE_DXGI_SHARED },
+    };
++   dxgi_shared_image_params.blit =
++      wsi_dxgi_shared_linear_unusable(wsi_device, create_info);
+ #endif
+ 
+    struct wsi_cpu_image_params cpu_image_params = {

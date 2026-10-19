@@ -183,6 +183,14 @@ render-server lines are virglrenderer's, from QEMU's log.
   (ErrorCode `0x9c`, `docs/xid69.md`). This is a different error code, from a
   native Vulkan application, so the UMD is not involved.
 
+**Status:** fixed by `patches/mesa/0075` ([godot.md](godot.md)). The Win32
+WSI gave Vulkan applications LINEAR swapchain images, and NVIDIA faults on a
+draw into a LINEAR colour target when the pipeline has fragment-shading-rate
+state, which Godot sets on every pipeline. Swapchains now render into an
+OPTIMAL image where the device lacks linear colour-attachment support. Godot
+Vulkan then ran clean on Nvidia1 at 58.4 fps with no Xid, and its D3D12 and
+OpenGL runs stayed clean.
+
 ### F2: GZDoom Vulkan on Nvidia2
 
 - **Repro:** `gzdoom.exe -iwad freedoom2.wad -config compat-1.ini`, with
@@ -366,8 +374,9 @@ is still loading. The later frames render, so this is start-up, not a fault.
 
 ## What remains
 
-- F1 (Xid 69, ErrorCode `0x13d`), F2 and F4 on NVIDIA: render-server CS
-  errors from native Vulkan and from Zink.
+- F1: fixed (`patches/mesa/0075`, [godot.md](godot.md)).
+- F2 and F4 on NVIDIA: render-server CS errors from native Vulkan and from
+  Zink.
 - F3: GZDoom's OpenGL context.
 - F5: fixed (`patches/mesa/0090`).
 - F6: Valley D3D9 runs out of 32-bit address space ([unid3d.md](unid3d.md)).

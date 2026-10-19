@@ -1,0 +1,1 @@
+7788 window=0x60222 title=[3D Particles (DEBUG)] closed=True
