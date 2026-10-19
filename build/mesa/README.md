@@ -74,14 +74,17 @@ The series has two parts, and the patches apply in name order:
   mixed-case header symlinks that `prepare-build.py` creates, so they are
   build output, not source. The diff was then split by topic. Each patch has
   a header that says what it fixes and which prior-art finding it comes from.
-- **0012 to 0017, 0020 to 0027, 0030 to 0032, 0035, 0040 to 0044, 0060, 0070, 0075, 0085 to 0086 and 0090** are this repository's own fixes, found by
+- **0012 to 0017, 0020 to 0027, 0030 to 0032, 0035, 0040 to 0044, 0060, 0070, 0075, 0080, 0085 to 0086 and 0090** are this repository's own fixes, found by
 
 0005 to 0010, every patch from 0012 to 0026 and 0030 to 0032 change
 `viogpu_d3d10.dll`, the D3D9/D3D10/D3D11 UMD (the `d3d10umd` frontend and the
 Yttrium winsys). 0032 also changes Gallium's `tgsi_to_nir`, in a branch that
 only a TGSI tessellation control shader reaches, which only the UMD makes.
+(WGL).
 0001 to 0003 are build and utility fixes that every DLL shares, 0004 and 0027
+0001 to 0003 are build and utility fixes that every DLL shares, 0004, 0027
 0075 is in Mesa's Win32 WSI, which the Venus ICD `libvulkan_virtio.dll` links.
+and 0080 are in WGL, 0011 and 0070 are in the Venus ICD, and 0086 is in Zink
 are in WGL, 0011 and 0070 are in the Venus ICD, and 0086 is in Zink (WGL).
 are in WGL, 0011, 0070 and 0085 are in the Venus ICD, and 0086 is in Zink (WGL).
 
@@ -131,6 +134,7 @@ are in WGL, 0011, 0070 and 0085 are in the Venus ICD, and 0086 is in Zink (WGL).
 | 0060 d3d10umd-trim-residency-set-leaves-the-context-alone | `TrimResidencySet` no longer flushes the threaded context. The runtime calls it on DXCore's trim-notification thread, and the flush ran a batch outside the context's owner thread; dwm died with a double free (`0xc0000374`) while it recovered a lost device on NVIDIA | [`docs/dwmheap.md`](../../docs/dwmheap.md) |
 | 0070 venus-hide-host-access-to-small-bar-heap | The Venus ICD reports a device-local, host-visible type on a heap less than half the largest device-local heap as device-local only, so Vulkan, DXVK, vkd3d-proton and Zink keep host-visible memory out of the host card's BAR1 (246 MiB without resizable BAR, shared by every VM on the card; "can't alloc VA space for mapping") | [`docs/nvva.md`](../../docs/nvva.md) |
 | 0075 wsi-win32-blit-shared-swapchain-when-linear-cannot-render | Vulkan swapchains render into an OPTIMAL image that the present copies into the LINEAR shared image, when the device's `linearTilingFeatures` lack what the swapchain usage needs (NVIDIA has no linear colour attachment; Godot's first frame raised Xid 69, ErrorCode 0x13d) | [`docs/godot.md`](../../docs/godot.md) |
+| 0080 wgl-pin-opengl32-so-pixel-formats-set-through-gdi-last | The WGL ICD pins `opengl32.dll`, so a pixel format set through GDI before the program loaded `opengl32.dll` is still known to it (GZDoom's `wglCreateContext` failed with `ERROR_INVALID_PIXEL_FORMAT`: "Unable to create an OpenGL render context") | [`docs/gzdoom.md`](../../docs/gzdoom.md) |
 | 0085 venus-allocate-from-small-device-local-heap-synchronously | The Venus ICD allocates from a device-local heap smaller than the largest one (the RTX 5090's 246 MiB BAR window) synchronously, so a host out-of-memory reaches the driver's fallback instead of failing the whole context (Unigine OpenGL crashed on NVIDIA) | [`docs/unigl.md`](../../docs/unigl.md) |
 | 0086 zink-keep-buffers-mappable-without-visible-vram | Zink keeps directly mapped buffers in host-visible memory when the device has no device-local, host-visible type (needed with 0070; Unigine Heaven and Valley crashed). Written by the unigl worker; carried unchanged | [`docs/nvva.md`](../../docs/nvva.md) |
 | 0090 yttrium-d3d9-depth-bias-without-float-representation | D3D9 depth bias works on devices without `VK_EXT_depth_bias_control`'s float representation (NVIDIA): it is converted to integer units for the depth format and requested exact. Before, every pipeline with a D3D9 depth bias failed and its draws were skipped | [`docs/unid3d.md`](../../docs/unid3d.md) |
@@ -169,6 +173,7 @@ Which patches have run in a guest, and where:
 | ffp2 proof, Windows 11 on `Nvidia2` and `AMD1`, Windows 10 on `Nvidia2` (e2e, `d3d9_ffp2`, `d3d9_ffp`) | 0001 to 0017, 0020 to 0027, 0030, 0035, 0040 to 0044 | `docs/ffp2.md` |
 | unigl proof, Windows 11 on `Nvidia1` and `AMD1` (e2e, Unigine Heaven and Valley OpenGL) | 0001 to 0017, 0020 to 0027, 0030, 0035, 0040 to 0044, 0070, 0085, 0086 | `docs/unigl.md` |
 | unid3d proof, Windows 11 on `AMD1`, `Nvidia1` and `Nvidia2` (e2e, `d3d9_depthbias`, Unigine D3D9 and D3D11) | 0001 to 0017, 0020 to 0027, 0030 to 0032, 0035, 0040 to 0044, 0090 | `docs/unid3d.md` |
+| gzdoom proof, Windows 11 on `AMD1` and `Nvidia1` (e2e, `gzgl`, GZDoom OpenGL and Vulkan) | 0001 to 0017, 0020 to 0027, 0030 to 0032, 0035, 0040 to 0044, 0080; the `Nvidia1` runs add 0070 and 0086, the last e2e on each GPU adds 0070, 0086 and 0090 | `docs/gzdoom.md` |
 
 The nvtex proof run (2026-10-18) has the full series, 0001 to 0025, built by
 `scripts/build.sh` at commit `e428846`. Before it, no recorded run had 0015

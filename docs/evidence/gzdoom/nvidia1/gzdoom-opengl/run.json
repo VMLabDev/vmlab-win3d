@@ -1,0 +1,39 @@
+﻿{
+    "name":  "gzdoom-opengl",
+    "exe":  "C:\\apps\\gzdoom\\gzdoom.exe",
+    "arguments":  "-iwad C:\\apps\\freedoom\\freedoom-0.13.0\\freedoom2.wad -config C:\\apps\\gzdoom\\compat-0.ini -nosound -width 1280 -height 720 +vid_fps 1 +logfile C:\\apps\\gzdoom\\gzdoom-opengl.log",
+    "user":  "VMLABVM-2DVH50K\\win3d",
+    "session_id":  1,
+    "pid":  4704,
+    "wow64":  false,
+    "started":  "2026-10-18T16:30:18.1911647-07:00",
+    "ended":  "2026-10-18T16:33:20.1715634-07:00",
+    "duration_s":  182,
+    "timed_out":  false,
+    "exit_code":  0,
+    "exit_code_hex":  "0x00000000",
+    "task_result":  0,
+    "probe_json":  null,
+    "probe_result":  null,
+    "adapter":  null,
+    "software":  null,
+    "readback_ok":  null,
+    "module_count":  75,
+    "graphics_modules":  [
+                             "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\OPENGL32.DLL [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\GLU32.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\system32\\viogpu_wgl.dll [system32] ",
+                             "C:\\WINDOWS\\SYSTEM32\\vulkan-1.dll [system32] 1.4.363.0",
+                             "C:\\WINDOWS\\system32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\system32\\libvulkan_virtio.dll [system32] ",
+                             "C:\\WINDOWS\\system32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] "
+                         ],
+    "app_local_modules":  [
+                              "C:\\apps\\gzdoom\\zmusic.dll",
+                              "C:\\apps\\gzdoom\\sndfile.dll",
+                              "C:\\apps\\gzdoom\\openal32.dll"
+                          ]
+}

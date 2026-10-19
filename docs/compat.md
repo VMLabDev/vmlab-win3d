@@ -193,6 +193,10 @@ OpenGL runs stayed clean.
 
 ### F2: GZDoom Vulkan on Nvidia2
 
+- **Status (2026-10-19): fixed** by `patches/mesa/0070` and `0086`
+  ([nvva.md](nvva.md)): the render-server lines are the BAR1 "allocation
+  refused" failure. GZDoom Vulkan runs clean on Nvidia1 with them
+  ([gzdoom.md](gzdoom.md#f2-gzdoom-vulkan-on-nvidia)).
 - **Repro:** `gzdoom.exe -iwad freedoom2.wad -config compat-1.ini`, with
   `vid_preferbackend=1`.
 - **What happens:** GZDoom finds "Vulkan device: Virtio-GPU Venus (NVIDIA
@@ -211,6 +215,11 @@ OpenGL runs stayed clean.
 
 This happens on both GPUs.
 
+- **Status (2026-10-19): fixed** by `patches/mesa/0080`
+  ([gzdoom.md](gzdoom.md)). GZDoom started its OpenGL renderer through GDI
+  before it loaded `opengl32.dll`; GDI's temporary load of `opengl32.dll`
+  lost the pixel format, and `wglCreateContext` failed. With 0080, GZDoom
+  OpenGL runs clean on AMD1 and Nvidia1 at 35 fps.
 - **Repro:** `vid_preferbackend=0`.
 - **What happens:** GZDoom loads `viogpu_wgl.dll`, then stops with a fatal
   error dialog:
@@ -224,9 +233,7 @@ This happens on both GPUs.
 - **Other OpenGL programs:** Heaven and Valley on AMD1, Godot's GL 3.3
   Compatibility renderer and Blender 4.2 (GL 4.3, acceptance) all create
   contexts.
-- **Next step:** trace GZDoom's WGL calls (pixel format attributes and
-  `wglCreateContextAttribsARB` attributes) against what `viogpu_wgl.dll`
-  accepts. The cause is not diagnosed here.
+- **Cause:** see the status line above.
 
 ### F4: Unigine OpenGL on Nvidia2
 
@@ -375,9 +382,9 @@ is still loading. The later frames render, so this is start-up, not a fault.
 ## What remains
 
 - F1: fixed (`patches/mesa/0075`, [godot.md](godot.md)).
-- F2 and F4 on NVIDIA: render-server CS errors from native Vulkan and from
-  Zink.
-- F3: GZDoom's OpenGL context.
+- F2: GZDoom Vulkan on NVIDIA: fixed by `patches/mesa/0070` and `0086` ([gzdoom.md](gzdoom.md)).
+- F3: GZDoom's OpenGL context: fixed by `patches/mesa/0080` ([gzdoom.md](gzdoom.md)).
+- F4: Unigine OpenGL on NVIDIA: fixed by `patches/mesa/0070`, `0085` and `0086` ([unigl.md](unigl.md)).
 - F5: fixed (`patches/mesa/0090`).
 - F6: Valley D3D9 runs out of 32-bit address space ([unid3d.md](unid3d.md)).
 - F7: the threaded-context use-after-free behind Heaven D3D11's heap corruption; most likely fixed by `patches/mesa/0060` (5 of 5 clean PageHeap runs, [dwmheap.md](dwmheap.md#f7-heaven-d3d11)).

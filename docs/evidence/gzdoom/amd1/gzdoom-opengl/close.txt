@@ -1,0 +1,1 @@
+6472 window=0x20234 title=[Freedoom: Phase 2] closed=True

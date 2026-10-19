@@ -1,0 +1,36 @@
+﻿{
+    "name":  "gzdoom-vulkan",
+    "exe":  "C:\\apps\\gzdoom\\gzdoom.exe",
+    "arguments":  "-iwad C:\\apps\\freedoom\\freedoom-0.13.0\\freedoom2.wad -config C:\\apps\\gzdoom\\compat-1.ini -nosound -width 1280 -height 720 +vid_fps 1 +logfile C:\\apps\\gzdoom\\gzdoom-vulkan.log",
+    "user":  "VMLABVM-IMOGG4G\\win3d",
+    "session_id":  1,
+    "pid":  5808,
+    "wow64":  false,
+    "started":  "2026-10-18T13:34:48.3593041-07:00",
+    "ended":  "2026-10-18T13:37:51.8998760-07:00",
+    "duration_s":  183.5,
+    "timed_out":  false,
+    "exit_code":  0,
+    "exit_code_hex":  "0x00000000",
+    "task_result":  0,
+    "probe_json":  null,
+    "probe_result":  null,
+    "adapter":  null,
+    "software":  null,
+    "readback_ok":  null,
+    "module_count":  76,
+    "graphics_modules":  [
+                             "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\vulkan-1.dll [system32] 1.4.363.0",
+                             "C:\\WINDOWS\\system32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\system32\\libvulkan_virtio.dll [system32] ",
+                             "C:\\WINDOWS\\system32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] "
+                         ],
+    "app_local_modules":  [
+                              "C:\\apps\\gzdoom\\zmusic.dll",
+                              "C:\\apps\\gzdoom\\sndfile.dll",
+                              "C:\\apps\\gzdoom\\openal32.dll"
+                          ]
+}
