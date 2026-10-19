@@ -73,8 +73,10 @@ the last `vmlab: env:` line is the run's own. NVIDIA runs had
 | `windows-11-nvidia2-run2/` (04:59) | patched | 10 of 12 | D3D12 x64 and x86, the same way (4 VMs on `Nvidia2`, 365 NVRM BAR1 errors after 05:00) |
 | `windows-11-nvidia1-run3/` (06:20) | patched | 4 of 12 | no probe window on the console; the server logged `vkAllocateMemory failed: ret -2` (out of device memory) for memory type 4, `DEVICE_LOCAL`, `HOST_VISIBLE`, `HOST_COHERENT` (the 256 MiB BAR1 heap), then `failed to look up object` CS errors (`render-server-errors.txt`, from patch 0001's logging); NVRM BAR1 errors 06:25 to 06:35; the card had 3 VMs |
 | `windows-11-nvidia2-run3-b74ea3c/` (09:16) | patched; package from `main` `b74ea3c` (mesa 0070 and 0086) | 10 of 12 | D3D11 x86 (`CreateSwapChain` 0x887a0005) and D3D12 x64 (fence timeout); the server logged `vkAllocateMemory failed: ret -2` on memory type 4 with dma-buf export (0x200), 2621440 bytes, a 1024×640 swapchain image; NVRM BAR1 errors 09:29:35 to 09:30:35 |
+| `windows-11-nvidia2-exclusive/` (10:54) | patched; package from `main` `b74ea3c` | **12 of 12** | — (Nvidia2 held exclusively through `gpuslot.sh`: no other VM on the card) |
 
-No NVIDIA run reached 12 of 12. Every NVIDIA failure coincided with BAR1
+On a card shared with other VMs, no NVIDIA run reached 12 of 12. Alone on
+`Nvidia2`, the patched server passed 12 of 12. Every NVIDIA failure coincided with BAR1
 exhaustion on the RTX 5090s' 256 MiB BAR1, which worker nvva diagnosed,
 and the stock server failed the same probes the same way in
 `nvidia1-ab/2-stock`. The fence patch changes no memory allocation. With
