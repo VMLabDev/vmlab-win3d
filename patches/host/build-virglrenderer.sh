@@ -61,9 +61,14 @@ esac
 
 # fetch <url> <sha256>: download into $DL once, check the hash, print the path.
 fetch() {
+    # Runs inside $(...), where set -e does not apply, so every step checks
+    # its own status: a failed download must stop the build here, not at tar.
     local f=$DL/${1##*/}
-    if [ ! -f "$f" ]; then curl -fsSL -o "$f.part" "$1"; mv "$f.part" "$f"; fi
-    echo "$2  $f" | sha256sum -c - >&2
+    if [ ! -f "$f" ]; then
+        curl -fsSL -o "$f.part" "$1" || { rm -f "$f.part"; echo "error: download failed: $1" >&2; return 1; }
+        mv "$f.part" "$f" || return 1
+    fi
+    echo "$2  $f" | sha256sum -c - >&2 || { echo "error: sha256 mismatch for $f" >&2; return 1; }
     echo "$f"
 }
 mkdir -p "$DL"
