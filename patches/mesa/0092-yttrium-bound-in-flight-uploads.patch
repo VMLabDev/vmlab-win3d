@@ -1,0 +1,563 @@
+Subject: [PATCH] yttrium: bound in-flight upload buffers in 32-bit processes
+
+Upload buffers (u_upload_mgr buffers under the ordered context worker)
+are mapped blobs, and each stays alive until the last batch that used
+it retires. Batches are retired by polling when a new one is acquired,
+up to 64 wait to be submitted as one group, and the pool grows to 256
+batches. A program that streams uploads faster than the host completes
+them therefore keeps hundreds alive. Unigine Valley's D3D9 renderer, a
+32-bit process, creates about 450 MB/s of 4 MiB upload buffers; it held
+over 1 GiB of upload maps, ran out of its 4 GiB address space, and hung
+or crashed (compat finding F6).
+
+Count the bytes of live upload buffers. After each context flush, while
+they exceed the budget, submit the pending group, retire the completed
+batches, then wait for the oldest batch. The budget is 256 MiB in a
+32-bit process and unbounded in a 64-bit one; UPLOAD_BUDGET_MB in
+yttrium.ini overrides it (0 turns it off).
+
+With UPLOAD_STATS=1 (yttrium.ini or D3D10UMD_YTTRIUM_UPLOAD_STATS in the
+environment), log every 5 s the created and live counts and bytes of
+upload buffers, other buffers, textures, buffer-replacement storages,
+the winsys's own Venus memory mappings, blob-mapped and heap-backed
+resources. Off by default.
+
+Evidence: docs/f6va.md, docs/evidence/f6va/.
+Origin: vmlab-win3d f6va worker.
+---
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_context.c b/src/gallium/winsys/yttrium/gdi/yttrium_context.c
+index a43095e..11339a2 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_context.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_context.c
+@@ -347,6 +347,9 @@ yttrium_flush_internal(struct pipe_context *ctx,
+       }
+       if (flush_called && !flush_ok)
+          YTTRIUM_WARN("yttrium: Venus flush failed\n");
++      if (flush_called && flush_ok)
++         yttrium_venus_bound_in_flight_uploads(
++            screen->venus, yttrium_resource_uploads_over_budget);
+    }
+ 
+    if (signal_context && flush_called && flush_ok)
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_gdi_public.h b/src/gallium/winsys/yttrium/gdi/yttrium_gdi_public.h
+index aac1204..48b1894 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_gdi_public.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_gdi_public.h
+@@ -108,6 +108,11 @@ yttrium_gdi_debug_get_option(const char *name, const char *dfault);
+ bool
+ yttrium_gdi_debug_get_bool_option(const char *name, bool dfault);
+ 
++/* Whether the live upload buffers of the ordered context worker exceed the
++ * upload budget (yttrium_resource_uploads_over_budget). */
++bool
++yttrium_gdi_uploads_over_budget(void);
++
+ int64_t
+ yttrium_gdi_debug_get_num_option(const char *name, int64_t dfault);
+ 
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_resource.c b/src/gallium/winsys/yttrium/gdi/yttrium_resource.c
+index e5fe977..5549e5d 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_resource.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_resource.c
+@@ -19,6 +19,7 @@
+ #include "virtio-gpu/virgl_hw.h"
+ 
+ #include "util/u_atomic.h"
++#include "util/os_time.h"
+ 
+ #include "yttrium_gdi_public.h"
+ #include "yttrium_internal.h"
+@@ -162,6 +163,161 @@ yttrium_buffer_storage_pool_return(struct yttrium_buffer_storage *storage)
+    return pooled;
+ }
+ 
++/* Resource statistics, logged every 5 s with D3D10UMD_YTTRIUM_UPLOAD_STATS=1
++ * (docs/f6va.md): upload buffers (u_upload_mgr buffers under the ordered
++ * context worker), other buffers, textures, buffer-replacement storages
++ * and the winsys's own Venus memory mappings. created counts and MiB are totals; live ones are current. */
++enum yttrium_stats_class {
++   YTTRIUM_STATS_UPLOAD,
++   YTTRIUM_STATS_BUFFER,
++   YTTRIUM_STATS_TEXTURE,
++   YTTRIUM_STATS_STORAGE,
++   YTTRIUM_STATS_VENUS_MAPPING,
++   YTTRIUM_STATS_MAPPED_BLOB,
++   YTTRIUM_STATS_MAPPED_LOCK,
++   YTTRIUM_STATS_HEAP_DATA,
++   YTTRIUM_STATS_BLOB_MAP,
++   YTTRIUM_STATS_SKIPPED_UNMAP,
++   YTTRIUM_STATS_COUNT,
++};
++
++static struct {
++   int64_t created, created_bytes, live, live_bytes, peak_live_bytes;
++} yttrium_stats[YTTRIUM_STATS_COUNT];
++static int64_t yttrium_stats_last_log_ns;
++
++static bool
++yttrium_stats_enabled(void)
++{
++   static int enabled = -1;
++   if (enabled < 0)
++      enabled = yttrium_gdi_debug_get_bool_option(
++         "D3D10UMD_YTTRIUM_UPLOAD_STATS", false) ? 1 : 0;
++   return enabled != 0;
++}
++
++static void
++yttrium_stats_update(enum yttrium_stats_class c, int64_t bytes, bool create)
++{
++   if (!yttrium_stats_enabled())
++      return;
++
++   if (create) {
++      p_atomic_inc(&yttrium_stats[c].created);
++      p_atomic_add(&yttrium_stats[c].created_bytes, bytes);
++      p_atomic_inc(&yttrium_stats[c].live);
++      const int64_t live =
++         p_atomic_add_return(&yttrium_stats[c].live_bytes, bytes);
++      if (live > p_atomic_read(&yttrium_stats[c].peak_live_bytes))
++         p_atomic_set(&yttrium_stats[c].peak_live_bytes, live);
++   } else {
++      p_atomic_dec(&yttrium_stats[c].live);
++      p_atomic_add(&yttrium_stats[c].live_bytes, -bytes);
++   }
++
++   const int64_t now = os_time_get_nano();
++   const int64_t last = p_atomic_read(&yttrium_stats_last_log_ns);
++   if (now - last < 5000000000ll ||
++       p_atomic_cmpxchg(&yttrium_stats_last_log_ns, last, now) != last)
++      return;
++   static const char *const names[YTTRIUM_STATS_COUNT] = {
++      "upload", "buffer", "texture", "storage", "venus-mapping",
++      "resource-blob-map", "resource-lock-map", "resource-heap-data",
++      "blob-map-escape", "skipped-blob-unmap",
++   };
++   for (unsigned i = 0; i < YTTRIUM_STATS_COUNT; i++) {
++      YTTRIUM_WARN("yttrium: %s stats created=%lld created_mib=%lld live=%lld live_mib=%lld peak_live_mib=%lld\n",
++                   names[i],
++                   (long long)p_atomic_read(&yttrium_stats[i].created),
++                   (long long)(p_atomic_read(&yttrium_stats[i].created_bytes) >> 20),
++                   (long long)p_atomic_read(&yttrium_stats[i].live),
++                   (long long)(p_atomic_read(&yttrium_stats[i].live_bytes) >> 20),
++                   (long long)(p_atomic_read(&yttrium_stats[i].peak_live_bytes) >> 20));
++   }
++}
++
++/* For yttrium_venus_map_memory and yttrium_venus_unmap_memory. */
++void
++yttrium_stats_venus_mapping(uint64_t bytes, bool create)
++{
++   yttrium_stats_update(YTTRIUM_STATS_VENUS_MAPPING, (int64_t)bytes, create);
++}
++
++/* Every VIOGPU_RES_MAP_BLOB and VIOGPU_RES_UNMAP_BLOB escape that succeeded,
++ * and unmaps skipped because the runtime destroyed the allocation. */
++void
++yttrium_stats_blob_map(uint64_t bytes, bool create)
++{
++   yttrium_stats_update(YTTRIUM_STATS_BLOB_MAP, (int64_t)bytes, create);
++}
++
++void
++yttrium_stats_skipped_unmap(uint64_t bytes)
++{
++   yttrium_stats_update(YTTRIUM_STATS_SKIPPED_UNMAP, (int64_t)bytes, true);
++}
++
++/* Bytes of live upload buffers, for the upload budget
++ * (yttrium_venus_bound_in_flight_uploads). Counted with or without stats. */
++static int64_t yttrium_live_upload_bytes;
++
++uint64_t
++yttrium_resource_live_upload_bytes(void)
++{
++   const int64_t bytes = p_atomic_read(&yttrium_live_upload_bytes);
++   return bytes > 0 ? (uint64_t)bytes : 0;
++}
++
++/* 256 MiB in a 32-bit process, unbounded in a 64-bit one; UPLOAD_BUDGET_MB
++ * in yttrium.ini overrides it (0 turns it off). */
++static uint64_t
++yttrium_resource_upload_budget(void)
++{
++   static int64_t budget_mb = -1;
++
++   if (budget_mb < 0) {
++      const int64_t value = yttrium_gdi_debug_get_num_option(
++         "D3D10UMD_YTTRIUM_UPLOAD_BUDGET_MB",
++         sizeof(void *) == 4 ? 256 : 0);
++      budget_mb = value > 0 ? value : 0;
++   }
++   return (uint64_t)budget_mb << 20;
++}
++
++bool
++yttrium_resource_uploads_over_budget(void)
++{
++   const uint64_t budget = yttrium_resource_upload_budget();
++   return budget && yttrium_resource_live_upload_bytes() > budget;
++}
++
++bool
++yttrium_gdi_uploads_over_budget(void)
++{
++   return yttrium_resource_uploads_over_budget();
++}
++
++static void
++yttrium_upload_stats_update(const struct yttrium_resource *res, bool create)
++{
++   if (res->ordered_worker_upload_buffer)
++      p_atomic_add(&yttrium_live_upload_bytes,
++                   create ? (int64_t)res->size : -(int64_t)res->size);
++
++   const enum yttrium_stats_class c =
++      res->ordered_worker_upload_buffer ? YTTRIUM_STATS_UPLOAD :
++      res->base.target == PIPE_BUFFER ? YTTRIUM_STATS_BUFFER :
++      YTTRIUM_STATS_TEXTURE;
++   yttrium_stats_update(c, (int64_t)res->size, create);
++   if (res->map)
++      yttrium_stats_update(res->map_is_blob ? YTTRIUM_STATS_MAPPED_BLOB :
++                                              YTTRIUM_STATS_MAPPED_LOCK,
++                           (int64_t)res->size, create);
++   if (res->owns_data && res->data)
++      yttrium_stats_update(YTTRIUM_STATS_HEAP_DATA,
++                           (int64_t)res->data_capacity, create);
++}
++
+ static void
+ yttrium_ordered_upload_rehome_venus_handles(
+    struct yttrium_venus_resource *venus)
+@@ -798,6 +954,7 @@ yttrium_map_allocation(struct pipe_screen *pscreen,
+    *out_map = (void *)(uintptr_t)map.ResourceMapBlob.UserVa;
+    *out_map_info = map.ResourceMapBlob.MapInfo;
+    *out_map_is_blob = true;
++   yttrium_stats_blob_map(size, true);
+ 
+    YTTRIUM_LOG("yttrium: mapped %s blob hAllocation=0x%lx va=%p size=0x%llx map_info=0x%x\n",
+                label, (unsigned long)hAllocation, *out_map,
+@@ -982,8 +1139,10 @@ yttrium_unmap_display_allocation(struct pipe_screen *pscreen,
+       NTSTATUS status = screen->device->escape(screen->device, &unmap,
+                                                sizeof(unmap));
+       if (!NT_SUCCESS(status)) {
+-         YTTRIUM_LOG("yttrium: VIOGPU_RES_UNMAP_BLOB failed status=0x%lx hAllocation=0x%lx\n",
++         YTTRIUM_WARN("yttrium: VIOGPU_RES_UNMAP_BLOB failed status=0x%lx hAllocation=0x%lx\n",
+                       status, (unsigned long)res->hAllocation);
++      } else {
++         yttrium_stats_blob_map(res->size, false);
+       }
+    }
+ 
+@@ -1011,6 +1170,8 @@ yttrium_buffer_storage_destroy(struct yttrium_buffer_storage *storage)
+                       (unsigned long)status,
+                       (unsigned long)storage->hAllocation,
+                       (unsigned long long)storage->size);
++      } else {
++         yttrium_stats_blob_map(storage->size, false);
+       }
+    }
+ 
+@@ -1027,6 +1188,7 @@ yttrium_buffer_storage_destroy(struct yttrium_buffer_storage *storage)
+       }
+    }
+ 
++   yttrium_stats_update(YTTRIUM_STATS_STORAGE, (int64_t)storage->size, false);
+    FREE(storage);
+ }
+ 
+@@ -1077,6 +1239,7 @@ yttrium_buffer_storage_attach(struct yttrium_resource *res)
+ 
+    storage->reference_count = 1;
+    storage->screen = yttrium_screen(res->base.screen);
++   yttrium_stats_update(YTTRIUM_STATS_STORAGE, (int64_t)res->size, true);
+    storage->hAllocation = res->hAllocation;
+    storage->hResource = res->hResource;
+    storage->hAllocationResource = res->hAllocationResource;
+@@ -1828,6 +1991,7 @@ yttrium_resource_create(struct pipe_screen *pscreen,
+        (res->replacement_storage || yttrium_buffer_storage_attach(res)))
+       threaded_resource(&res->base)->is_shared = false;
+ 
++   yttrium_upload_stats_update(res, true);
+    return &res->base;
+ }
+ 
+@@ -1859,6 +2023,7 @@ yttrium_resource_destroy(struct pipe_screen *pscreen,
+ 
+    yttrium_trace_resource_destroy_state(
+       YTTRIUM_TRACE_RESOURCE_DESTROY_BEGIN, 0, res);
++   yttrium_upload_stats_update(res, false);
+ 
+    YTTRIUM_LOG("yttrium: resource_destroy begin resource=%p hAllocation=0x%lx hResource=%p res_id=%u mem_id=0x%llx display=%u primary=%u classic=%u owns=%u size=0x%llx stride=%u venus=(init=%u buffer=%u image_id=%llu buffer_id=%llu memory_id=%llu)\n",
+                 (void *)res,
+@@ -1943,6 +2108,8 @@ yttrium_resource_destroy(struct pipe_screen *pscreen,
+    }
+ 
+    if (res->hAllocation) {
++      if (res->allocation_destroyed_by_runtime && res->map && res->map_is_blob)
++         yttrium_stats_skipped_unmap(res->size);
+       if (res->allocation_destroyed_by_runtime) {
+          YTTRIUM_LOG("yttrium: release runtime-owned allocation without "
+                      "DeallocateCb hAllocation=0x%lx res_id=%u\n",
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_resource.h b/src/gallium/winsys/yttrium/gdi/yttrium_resource.h
+index c418027..8715bfa 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_resource.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_resource.h
+@@ -63,6 +63,16 @@ struct pipe_resource *
+ yttrium_resource_create(struct pipe_screen *pscreen,
+                         const struct pipe_resource *templ);
+ 
++/* Bytes held by live upload buffers (u_upload_mgr buffers under the ordered
++ * context worker). */
++uint64_t
++yttrium_resource_live_upload_bytes(void);
++
++/* Whether the live upload buffers exceed the upload budget (256 MiB in a
++ * 32-bit process by default, none in a 64-bit one; UPLOAD_BUDGET_MB). */
++bool
++yttrium_resource_uploads_over_budget(void);
++
+ void
+ yttrium_resource_destroy(struct pipe_screen *pscreen,
+                          struct pipe_resource *resource);
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus.c
+index daeb96c..61c0cbf 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus.c
+@@ -700,6 +700,16 @@ yttrium_venus_flush_labeled(struct yttrium_venus *venus, const char *label)
+    return ok;
+ }
+ 
++void
++yttrium_venus_bound_in_flight_uploads(struct yttrium_venus *venus,
++                                      bool (*over_budget)(void))
++{
++   const struct yttrium_venus_backend *backend =
++      yttrium_venus_backend_or_null(venus);
++   if (backend && backend->bound_in_flight_uploads)
++      backend->bound_in_flight_uploads(venus->ctx, over_budget);
++}
++
+ bool
+ yttrium_venus_flush_async_labeled(struct yttrium_venus *venus,
+                                   const char *label)
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus.h b/src/gallium/winsys/yttrium/gdi/yttrium_venus.h
+index 99bcf6b..bde07e2 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus.h
+@@ -802,6 +802,12 @@ yttrium_venus_flush_async_present_publish(
+ bool
+ yttrium_venus_flush_labeled(struct yttrium_venus *venus, const char *label);
+ 
++/* After a flush, wait for the oldest batches while over_budget reports the
++ * live upload buffers over the upload budget (yttrium_venus2_batch.c). */
++void
++yttrium_venus_bound_in_flight_uploads(struct yttrium_venus *venus,
++                                      bool (*over_budget)(void));
++
+ bool
+ yttrium_venus_flush_async_labeled(struct yttrium_venus *venus,
+                                   const char *label);
+@@ -1071,6 +1077,17 @@ struct yttrium_venus_allocation_snapshot {
+    bool allocation_destroyed_by_runtime;
+ };
+ 
++/* Counts the winsys's Venus memory mappings for D3D10UMD_YTTRIUM_UPLOAD_STATS
++ * (yttrium_resource.c). */
++void
++yttrium_stats_venus_mapping(uint64_t bytes, bool create);
++
++void
++yttrium_stats_blob_map(uint64_t bytes, bool create);
++
++void
++yttrium_stats_skipped_unmap(uint64_t bytes);
++
+ bool
+ yttrium_venus_resource_fini(struct yttrium_venus *venus,
+                             struct gdikmt_context *ctx,
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2.h b/src/gallium/winsys/yttrium/gdi/yttrium_venus2.h
+index b32610b..2b22eb1 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2.h
+@@ -42,6 +42,11 @@
+ #undef yttrium_venus_flush
+ #undef yttrium_venus_flush_async
+ #undef yttrium_venus_flush_async_present_publish
++
++/* See yttrium_venus_bound_in_flight_uploads (yttrium_venus.h). */
++void
++yttrium_venus2_bound_in_flight_uploads(struct yttrium_venus *venus,
++                                       bool (*over_budget)(void));
+ #undef yttrium_venus_last_submit_order
+ #undef yttrium_venus_submit_order_complete
+ #undef yttrium_venus_wait_resource
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_batch.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_batch.c
+index 104c1e8..a873367 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_batch.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_batch.c
+@@ -588,6 +588,8 @@ yttrium_venus_destroy_retired_allocation(
+       return;
+ 
+    if (retired->allocation_destroyed_by_runtime) {
++      if (retired->map && retired->map_is_blob)
++         yttrium_stats_skipped_unmap(retired->allocation_size);
+       YTTRIUM_LOG("yttrium: Venus release runtime-owned allocation without "
+                   "DeallocateCb hAllocation=0x%lx size=0x%llx\n",
+                   (unsigned long)retired->hAllocation,
+@@ -610,10 +612,12 @@ yttrium_venus_destroy_retired_allocation(
+       NTSTATUS status = venus->device->escape(venus->device, &unmap,
+                                               sizeof(unmap));
+       if (!NT_SUCCESS(status)) {
+-         YTTRIUM_LOG("yttrium: Venus retired allocation unmap blob failed status=0x%lx hAllocation=0x%lx size=0x%llx\n",
+-                     (unsigned long)status,
+-                     (unsigned long)retired->hAllocation,
+-                     (unsigned long long)retired->allocation_size);
++         YTTRIUM_WARN("yttrium: Venus retired allocation unmap blob failed status=0x%lx hAllocation=0x%lx size=0x%llx\n",
++                      (unsigned long)status,
++                      (unsigned long)retired->hAllocation,
++                      (unsigned long long)retired->allocation_size);
++      } else {
++         yttrium_stats_blob_map(retired->allocation_size, false);
+       }
+    }
+ 
+@@ -3979,3 +3983,41 @@ yttrium_venus_begin_transfer_batch(struct yttrium_venus *venus)
+    return yttrium_venus_begin_command_batch(venus, "transfer batch",
+                                            false, true);
+ }
++
++/*
++ * Upload buffers (u_upload_mgr buffers under the ordered context worker) are
++ * mapped blobs, and each stays alive until the last batch that used it
++ * retires. Batches are retired by polling when a new one is acquired, up to
++ * 64 wait to be submitted as one group, and the pool grows to 256 batches,
++ * so a program that streams uploads faster than the host completes them
++ * keeps hundreds of them alive (docs/f6va.md). After a flush, while the
++ * live upload buffers are over the budget (over_budget), submit what is
++ * pending, retire what has completed, then wait for the oldest batch.
++ */
++void
++yttrium_venus2_bound_in_flight_uploads(struct yttrium_venus *venus,
++                                       bool (*over_budget)(void))
++{
++   static const char label[] = "upload budget";
++
++   if (!venus || !over_budget || !over_budget())
++      return;
++
++   if (!yttrium_venus_flush_pending_submits(venus, label) ||
++       !yttrium_venus_retire_completed_batches(venus, label))
++      return;
++
++   while (over_budget()) {
++      struct yttrium_venus_batch *oldest = NULL;
++      for (uint32_t i = 0; i < venus->batch_count; i++) {
++         struct yttrium_venus_batch *batch = venus->batches[i];
++         if (!batch || !batch->busy || batch->pending_submit ||
++             !batch->submit_order)
++            continue;
++         if (!oldest || batch->submit_order < oldest->submit_order)
++            oldest = batch;
++      }
++      if (!oldest || !yttrium_venus_wait_batch(venus, oldest, label))
++         return;
++   }
++}
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c
+index b347499..e22a03e 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_impl.c
+@@ -486,6 +486,10 @@ yttrium_venus_unmap_memory(struct yttrium_venus *venus,
+        !mapping->hAllocation)
+       return;
+ 
++   if (mapping->map_is_blob)
++      yttrium_stats_venus_mapping(mapping->size, false);
++   if (mapping->map_is_blob)
++      yttrium_stats_blob_map(mapping->size, false);
+    if (mapping->map && mapping->map_is_blob) {
+       VIOGPU_ESCAPE unmap;
+       memset(&unmap, 0, sizeof(unmap));
+@@ -583,6 +587,8 @@ yttrium_venus_map_memory(struct yttrium_venus *venus,
+    if (NT_SUCCESS(status) && map.ResourceMapBlob.UserVa) {
+       mapping->map = (void *)(uintptr_t)map.ResourceMapBlob.UserVa;
+       mapping->map_is_blob = true;
++      yttrium_stats_venus_mapping(size, true);
++      yttrium_stats_blob_map(size, true);
+       return true;
+    }
+ 
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h
+index 9140e5d..1ebae06 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h
+@@ -1524,6 +1524,10 @@ yttrium_venus_batch_retire_resource(
+    struct yttrium_venus_batch *batch,
+    struct yttrium_venus_retired_resource *retired);
+ 
++void
++yttrium_venus2_bound_in_flight_uploads(struct yttrium_venus *venus,
++                                      bool (*over_budget)(void));
++
+ struct yttrium_venus_batch *
+ yttrium_venus_find_latest_pipeline_batch(
+    struct yttrium_venus *venus,
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_transport.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_transport.c
+index b1a4ccf..200688e 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_transport.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_transport.c
+@@ -445,6 +445,7 @@ yttrium_venus_bo_create(struct yttrium_venus *venus,
+ 
+    bo->map = (void *)(uintptr_t)map.ResourceMapBlob.UserVa;
+    bo->map_info = map.ResourceMapBlob.MapInfo;
++   yttrium_stats_blob_map(bo->size, true);
+    memset(bo->map, 0, bo->size);
+ 
+    YTTRIUM_LOG("yttrium: Venus BO hAllocation=0x%lx res_id=%u size=0x%llx map=%p\n",
+@@ -473,6 +474,8 @@ yttrium_venus_bo_destroy(struct yttrium_venus *venus,
+                       (unsigned long)unmap_status,
+                       (unsigned long)bo->hAllocation, bo->hResource,
+                       bo->res_id, (unsigned long long)bo->size);
++      } else {
++         yttrium_stats_blob_map(bo->size, false);
+       }
+    }
+ 
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus_backend.h b/src/gallium/winsys/yttrium/gdi/yttrium_venus_backend.h
+index a5fb8a6..f23209b 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus_backend.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus_backend.h
+@@ -254,6 +254,7 @@ struct yttrium_venus_backend {
+                                     VkImageAspectFlags aspect_mask);
+    bool (*flush)(void *ctx);
+    bool (*flush_async)(void *ctx);
++   void (*bound_in_flight_uploads)(void *ctx, bool (*over_budget)(void));
+    bool (*flush_async_present_publish)(
+       void *ctx,
+       const struct yttrium_venus_present_publication *publication);
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus_backend_adapter.h b/src/gallium/winsys/yttrium/gdi/yttrium_venus_backend_adapter.h
+index a3bcd10..0daec45 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus_backend_adapter.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus_backend_adapter.h
+@@ -458,6 +458,12 @@ backend_flush_async(void *ctx)
+    return YTTRIUM_VENUS_BACKEND_SYM(flush_async)(ctx);
+ }
+ 
++static void
++backend_bound_in_flight_uploads(void *ctx, bool (*over_budget)(void))
++{
++   YTTRIUM_VENUS_BACKEND_SYM(bound_in_flight_uploads)(ctx, over_budget);
++}
++
+ static bool
+ backend_flush_async_present_publish(
+    void *ctx,
+@@ -890,6 +896,7 @@ const struct yttrium_venus_backend YTTRIUM_VENUS_BACKEND_SYM(backend) = {
+    .copy_depth_stencil_image = backend_copy_depth_stencil_image,
+    .flush = backend_flush,
+    .flush_async = backend_flush_async,
++   .bound_in_flight_uploads = backend_bound_in_flight_uploads,
+    .flush_async_present_publish = backend_flush_async_present_publish,
+    .last_submit_order = backend_last_submit_order,
+    .submit_order_complete = backend_submit_order_complete,
