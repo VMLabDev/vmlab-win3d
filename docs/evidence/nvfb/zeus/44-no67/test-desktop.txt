@@ -1,0 +1,4 @@
+oobe: done after 96 s
+created user win3d
+autologon set for VMLABVM-0EF1GJT\win3d
+rebooting in 5 s

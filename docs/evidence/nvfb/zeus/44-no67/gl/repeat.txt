@@ -1,0 +1,15 @@
+d3d12-x64-d3d12-1 (): pass fps 0.24 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+d3d12-x64-d3d12-2 (): pass fps 50.92 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+d3d12-x64-d3d12-3 (): pass fps 51.0 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+d3d12 x64-d3d12: 0 of 3 failed ()
+d3d12-x86-d3d12-1 (): pass fps 0.17 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+d3d12-x86-d3d12-2 (): pass fps 50.7 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+d3d12-x86-d3d12-3 (): pass fps 50.67 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+d3d12 x86-d3d12: 0 of 3 failed ()
+base-x64-opengl-1 (): readback_mismatch fps 27.31 readback False [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+base-x64-opengl-2 (): readback_mismatch fps 62.42 readback False [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+base-x64-opengl-3 (): readback_mismatch fps 61.15 readback False [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+base-x64-opengl-4 (): readback_mismatch fps 61.32 readback False [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+base-x64-opengl-5 (): readback_mismatch fps 61.73 readback False [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+base-x64-opengl-6 (): pass fps 62.32 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+base x64-opengl: 5 of 6 failed ()

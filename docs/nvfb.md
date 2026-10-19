@@ -12,7 +12,7 @@ remains. Evidence is in `docs/evidence/nvfb/`. Investigated on 2026-10-19.
 | Item | Result |
 | --- | --- |
 | Cause | In the guest, the host GPU's writes to NVIDIA memory type 2 (`HOST_VISIBLE` and `HOST_COHERENT`, uncached system memory) are not visible to the guest CPU. The guest reads a stale line from the CPU cache, and the GPU's write never invalidates that line. Venus put its feedback buffer (fence, semaphore, event and query status) in that type. The host itself sees the same writes |
-| Owner | The guest Venus driver chose the memory type. The underlying behaviour belongs to the host platform, an Intel CPU host with this NVIDIA GPU. On helios (an AMD CPU) the RTX 5090s pass with feedback in type 2; fbguest was not run in a helios guest |
+| Owner | The guest Venus driver chose the memory type. The underlying behaviour belongs to the host platform, an Intel CPU host with this NVIDIA GPU. On helios (an AMD CPU) a guest on an RTX 5090 sees every GPU write in type 2 (`helios/nv1-fbguest-0b26b36/`), so 0067 changes nothing there |
 | Fix | `patches/mesa/0065`: Venus feedback buffers use a `HOST_COHERENT` and `HOST_CACHED` type (NVIDIA type 3), where the GPU's writes reach the guest. `patches/mesa/0066`: at device creation Venus checks that one fence feedback write lands, and disables feedback for that device if it does not. `patches/mesa/0067`: the same check tests the uncached type, and where the GPU's writes do not arrive, Venus backs that type with the cached one for every application (this also fixes the black OpenGL readback) |
 | Zeus Nvidia1, `tests/e2e/run.sh --template windows-11`, package defaults | With 0065 and 0066 (`6dabb22`): runs 1 and 3 **12 of 12**, run 2 **11 of 12**, a black OpenGL readback. With 0067 as well (`0b26b36`, `main` merged): ZEUSFINAL |
 | Regressions | See [Proof](#proof) |
@@ -129,7 +129,24 @@ the package uses the host's own virglrenderer (decision D3).
 | helios Nvidia2 (RTX 5090), e2e, `bf4d948` (the committed 0067) | `helios/nv2-e2e-bf4d948/` | **12 of 12**. D3D12 3.7 and 9.4 fps and OpenGL 8.7 and 11.8 fps while another worker's benchmark VM shared the card |
 | helios Nvidia1, e2e, the same tree without 0065 to 0067 (`src/diag/build.sh mainonly -0065 -0066 -0067`) | `helios/ab-mainonly-nv1-e2e/` | **12 of 12** (D3D12 42.5 and 21.4 fps, OpenGL 8.4 and 9.3 fps, so the slow OpenGL is not ours) |
 | Both 5090 labs above, warm repeats back to back | `helios/ab-repeat/repeat.txt` | D3D12 x64 43.5 to 45.6 fps without 0065 to 0067, 44.2 to 45.7 with; x86 41.1 to 42.1 and 44.7 to 46.3; OpenGL 59.1 to 59.4 and 59.1 to 60.8. No difference |
-| Zeus Nvidia1, e2e, `bf4d948`, two runs | ZEUSRUNS | ZEUSRESULT |
+| Zeus Nvidia1, e2e run 1, `bf4d948` | `zeus/43-e2e-bf4d948-1/` | **12 of 12**. D3D12 51.5 and 45.5 fps, OpenGL 53.3 and 51.4 fps |
+| Zeus Nvidia1, e2e run 2, `bf4d948` | `zeus/45-e2e-bf4d948-2/` | RUN2 |
+| Zeus Nvidia1, fresh lab, `main` without 0065 to 0067 | `zeus/42-mainonly/` | The original bug: fbguest's first fence wait times out, D3D12 fails 3 of 3 (`api_failure`), OpenGL hangs |
+| Zeus Nvidia1, fresh lab, merged `main` with 0065 + 0066, without 0067 | `zeus/44-no67/` | x64 OpenGL black readback **5 of 6**; with 0067, 0 of 24 (`zeus/41-memlog2/`) |
+
+## A slow first D3D12 run
+
+In a fresh lab where D3D12 is the first API to run after fbguest, the
+first D3D12 probe of each architecture presents one frame in 8 to 20
+seconds (0.03 to 0.24 fps); every later run reaches 50 fps. This happens with
+0065 and 0066 alone (`zeus/44-no67/`: 0.24 and 0.17 fps), with 0067
+(`zeus/41-memlog2/`: 0.04 and 0.03 fps) and with 0066 alone
+(`zeus/14-selftest-only-feedback-on/`), so it is not 0067. In the
+acceptance runs D3D12 comes after D3D9 and D3D11 and normally does not
+stall. The one exception was x64 on helios Nvidia1 (`helios/nv1-e2e-0b26b36/`),
+the only 5090 failure. Its readback was correct; one frame in 20 s left
+nothing for the console captures. Its cause is not investigated; a cold
+vkd3d-proton shader cache in the new lab fits.
 
 ## The black OpenGL readback
 
@@ -216,7 +233,8 @@ Startup cost. fbguest takes the median of 11 `vkCreateDevice` calls:
 | Zeus Nvidia1, 0065 + 0066 (`zeus/12-fixed-feedback-on/`) | 64 ms | 62 ms |
 | Zeus Nvidia1, 0067 with three rounds (`zeus/32-r67b/`) | 112 ms | 95 ms |
 | Zeus Nvidia1, committed 0067 (`zeus/41-memlog2/`) | 74 ms | 71 ms |
-| Zeus Nvidia1, `main` without 0065 to 0067 (`zeus/42-mainonly/`) | MAINX64 | MAINX86 |
+| Zeus Nvidia1, 0065 + 0066 on merged `main`, without 0067 (`zeus/44-no67/`) | 68 ms | 74 ms |
+| Zeus Nvidia1, `main` without 0065 to 0067 (`zeus/42-mainonly/`) | 62 ms | 60 ms |
 
 On a host where the writes arrive, the check is one more 4 KiB allocation
 and mapping in the same single submission and fence poll as 0066. The
