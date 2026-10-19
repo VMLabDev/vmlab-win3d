@@ -1,0 +1,10 @@
+# Guest Venus allocation log (instrumentation: src/venus-alloc-log.diff), Heaven OpenGL on Nvidia1
+# package: nvva 0070+0071 drafts + unigl 0085 (first 0086 not yet written); all allocations synchronous
+# summary of vn_AllocateMemory by memory type:
+#        2 type=0 flags=0x0 
+#      148 type=1 flags=0x1 
+#       69 type=2 flags=0x6 
+# failed allocations: 1 (map bo_init lines with result!=0 below)
+12:53:27.498 pid=6308 Heaven.exe host vkAllocateMemory id=7400 type=1 size=2097152 result=0 small=0
+12:53:27.498 pid=6308 Heaven.exe vn_AllocateMemory id=7400 type=1 flags=0x1 size=2097152 export=0x0 import=0x0 guest_vram=0 result=0
+12:53:29.835 pid=6308 Heaven.exe map bo_init id=7400 size=2097152 result=-2

@@ -1,0 +1,1 @@
+5864 window=0x9025E title=[Unigine Valley Benchmark 1.0 Basic (OpenGL)] closed=True

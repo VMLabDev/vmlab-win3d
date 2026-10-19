@@ -1,0 +1,1 @@
+392 window=0x30314 title=[Unigine Valley Benchmark 1.0 Basic (OpenGL)] closed=True

@@ -52,9 +52,6 @@ DOC_DEFAULT = {
 }
 DOC_OVERRIDE = {
     "mesa/0021-yttrium-d3d11-typed-uav-loads-without-formatless-read.patch": "docs/zeus.md",
-    # unigl's patch, carried unchanged by nvva; its header names docs/unigl.md,
-    # which lands with the unigl branch. Drop this entry then.
-    "mesa/0086-zink-keep-buffers-mappable-without-visible-vram.patch": "docs/nvva.md",
 }
 
 

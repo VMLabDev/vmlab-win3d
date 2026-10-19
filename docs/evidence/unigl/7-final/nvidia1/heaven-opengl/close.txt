@@ -1,0 +1,1 @@
+6120 window=0x200B2 title=[Unigine Heaven Benchmark 4.0 Basic (OpenGL)] closed=True

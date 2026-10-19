@@ -1,0 +1,19 @@
+-- AppCrash_Valley.exe_8a1673d048ea997636d4ee18fc8f81afd14b8e_a432d84d_b9626b40-385c-4a67-8fa6-53b4fc6594a5 2026-10-18T12:32:50.2065511-07:00
+EventType=APPCRASH
+Sig[0].Name=Application Name
+Sig[0].Value=Valley.exe
+Sig[1].Name=Application Version
+Sig[1].Value=1.0.0.0
+Sig[2].Name=Application Timestamp
+Sig[2].Value=511cbdf2
+Sig[3].Name=Fault Module Name
+Sig[3].Value=viogpu_wgl.dll
+Sig[4].Name=Fault Module Version
+Sig[4].Value=0.0.0.0
+Sig[5].Name=Fault Module Timestamp
+Sig[5].Value=00000000
+Sig[6].Name=Exception Code
+Sig[6].Value=c0000005
+Sig[7].Name=Exception Offset
+Sig[7].Value=002699c8
+AppPath=C:\apps\valley\bin\Valley.exe

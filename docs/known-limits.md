@@ -434,6 +434,20 @@ issues from the prior art:
 - DXVK 3.1.1 has a clear-only black-frame bug in its D3D9/D3D11 path. This
   package uses only DXVK's DXGI, for D3D12, which the bug does not affect.
 
+### OpenGL on NVIDIA: buffers stay out of the small BAR heap
+
+The RTX 5090s on helios have no resizable BAR, so their CPU-visible VRAM is
+a 256 MiB BAR1 window that every VM on the card shares. Unigine Heaven and
+Valley with OpenGL crashed on NVIDIA when that window ran out, or when Zink
+mapped a buffer it had moved out of the window (compat F4,
+[unigl.md](unigl.md)). With `patches/mesa/0070` (nvva), `0085` and `0086`,
+Zink keeps such buffers in host memory, and both benchmarks run on
+`Nvidia1` (72 and 64 fps). On NVIDIA, OpenGL buffers that Zink would put in
+VRAM visible to the CPU now live in host memory, which the GPU reads over
+PCIe. A guest driver that still allocates host-visible VRAM can fail to map
+it when BAR1 is full; with `0070` no driver in the package sees such a
+memory type.
+
 ### 32-bit Unigine: Valley D3D9 runs out of address space; Heaven D3D11 has a use-after-free
 
 [unid3d.md](unid3d.md) has the evidence.

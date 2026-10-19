@@ -1,0 +1,47 @@
+virgl_render_server[785230]: vkr: failed to look up object 25 of type 8
+virgl_render_server[785230]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[785230]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[787899]: vkr: failed to look up object 25 of type 8
+virgl_render_server[787899]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[787899]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[796551]: vkr: failed to look up object 25 of type 8
+virgl_render_server[796551]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[796551]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[802428]: vkr: failed to look up object 25 of type 8
+virgl_render_server[802428]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[802428]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[802428]: vkr: destroying context 110 (yttrium) with a valid instance
+virgl_render_server[802428]: vkr: destroying device with valid objects
+virgl_render_server[810391]: vkr: failed to look up object 25 of type 8
+virgl_render_server[810391]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[810391]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[815768]: vkr: failed to look up object 25 of type 8
+virgl_render_server[815768]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[815768]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[816930]: vkr: failed to look up object 25 of type 8
+virgl_render_server[816930]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[816930]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[818229]: vkr: failed to look up object 25 of type 8
+virgl_render_server[818229]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[818229]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[819448]: vkr: failed to look up object 25 of type 8
+virgl_render_server[819448]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[819448]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[820421]: vkr: failed to look up object 25 of type 8
+virgl_render_server[820421]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[820421]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[821809]: vkr: failed to look up object 25 of type 8
+virgl_render_server[821809]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[821809]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[772315]: vkr: destroying device with valid objects
+virgl_render_server[821809]: vkr: destroying context 124 (yttrium) with a valid instance
+virgl_render_server[821809]: vkr: destroying device with valid objects
+virgl_render_server[823275]: vkr: failed to look up object 25 of type 8
+virgl_render_server[823275]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[823275]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[825028]: vkr: failed to look up object 25 of type 8
+virgl_render_server[825028]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[825028]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[825695]: vkr: failed to look up object 25 of type 8
+virgl_render_server[825695]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[825695]: vkr: ring_submit_cmd: vn_dispatch_command failed

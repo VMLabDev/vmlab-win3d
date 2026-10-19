@@ -1,0 +1,7 @@
+      1 [warning pid=7780 process=Heaven.exe] yttrium: Venus ring submit failed reason=wait-seqno status=7 cmd_size=52 reply_size=52 seqno=10268 valid=0 cur=10268 head=10140 tail=10268 ring_status=0x2 failed=1 reply_map=1a431000 reply_size_bo=1048576 reply_res_id=N cmd0=0x00000038 cmd1=0x00000001 cmd2=0x00000004 cmd3=0x00000000
+      1 [warning pid=7780 process=Heaven.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=Nx8 usage=0x80017; creating the image without it
+      1 [warning pid=7780 process=Heaven.exe] yttrium: Venus display image allocation failed for display target 1280x720 format=105 bind=0x10008a; refusing implicit buffer fallback
+      1 [warning pid=7780 process=Heaven.exe] yttrium: FATAL: Venus ring wait-seqno timeout wait_ms=15000 head=10140 tail=10268 seqno=10268 status=0x2 command=vkGetImageSubresourceLayout(56) command_size=52 reply_size=52 ring_cur=10268
+      1 [warning pid=7780 process=Heaven.exe] yttrium: ERROR: Venus ring marked failed; reporting device removal owner=venus2-ring reason=wait-seqno-timeout runtime_destroying=0 callback=1
+      1 [warning pid=7780 process=Heaven.exe] yttrium: ERROR: Venus image subresource layout query failed owner=venus2 operation=vkGetImageSubresourceLayout resource_owner=display-image image_id=9 reason=local-ring-enqueue-failed action=fail-resource-create
+      1 [error pid=7780 process=Heaven.exe] d3d10umd: pfnSetErrorCb hr=0x8007000e caller=CreateResource:1007 device=19f55480
