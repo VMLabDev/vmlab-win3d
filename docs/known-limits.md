@@ -455,8 +455,9 @@ issues from the prior art:
 - Unigine Heaven D3D11 on AMD1 crashes intermittently with heap corruption.
   Under PageHeap it crashed in 2 of 5 runs, in both cases on a use-after-free
   of a queued flush label (`yttrium_threaded_set_flush_label`) run by the
-  threaded context's worker. The cause in the modified
-  `u_threaded_context` is not found.
+  threaded context's worker. `patches/mesa/0060` (the dwm double free in the
+  same flush-label path) most likely fixes it: 5 of 5 PageHeap runs were clean
+  with it ([dwmheap.md](dwmheap.md)), which is not yet proof.
 
 ### D3D9 fixed function: what is and is not covered
 
