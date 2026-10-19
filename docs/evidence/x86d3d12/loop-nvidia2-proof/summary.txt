@@ -1,0 +1,2 @@
+x64: 50 runs, 50 pass, frames min 822, fps mean 54.9 min 39.6, console windows min 9, run_s max 26.4, startup_seconds mean 0.77 max 1.12
+x86: 50 runs, 50 pass, frames min 642, fps mean 54.6 min 30.9, console windows min 8, run_s max 26.6, startup_seconds mean 0.85 max 4.04
