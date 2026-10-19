@@ -1,0 +1,24 @@
+# helios ~/.config/vmlab/config.wcl after deploy.sh, 2026-10-19T11:34:23+10:00
+import <vmlab-host.wcl>
+
+// Host GPUs on helios. A lab's `gpu {}` names one with `host_gpu`, or takes the default.
+gpu "AMD1"    { address = "0000:72:00.0" }                  // Ryzen 9 9950X iGPU (amdgpu, renderD129)
+gpu "Nvidia1" {                                             // RTX 5090 (nvidia, renderD128)
+  address     = "0000:01:00.0"
+  default     = true
+  // QEMU (upstream master + our egl-headless external-only dma-buf series)
+  // (VMLabDev/qemu vmlab/egl-headless-external-dmabuf, d8a6048aae); stock
+  // QEMU shows a black console for a Venus guest on NVIDIA.
+  qemu_binary = "/home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64"
+  // vmlab render server (vmlab-win3d patches/host/virglrenderer 0001+0002): plain queue-sync
+  // fences, no 10 ms Venus fence floor on NVIDIA (docs/n5.md).
+  qemu_env    = { RENDER_SERVER_EXEC_PATH: "/home/wil/.local/opt/virglrenderer-vmlab/libexec/virgl_render_server" }
+}
+gpu "Nvidia2" {                                             // RTX 5090 (nvidia, renderD130)
+  address     = "0000:05:00.0"
+  // Same patched QEMU as Nvidia1 (egl-headless external-only dma-buf fix).
+  qemu_binary = "/home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64"
+  // vmlab render server (vmlab-win3d patches/host/virglrenderer 0001+0002): plain queue-sync
+  // fences, no 10 ms Venus fence floor on NVIDIA (docs/n5.md).
+  qemu_env    = { RENDER_SERVER_EXEC_PATH: "/home/wil/.local/opt/virglrenderer-vmlab/libexec/virgl_render_server" }
+}
