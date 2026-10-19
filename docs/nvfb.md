@@ -118,22 +118,18 @@ the package uses the host's own virglrenderer (decision D3).
 | Run | Evidence (`docs/evidence/nvfb/`) | Result |
 | --- | --- | --- |
 | Zeus Nvidia1, e2e run 1, `6dabb22` (0065 + 0066), package defaults | `zeus/11-e2e-run1/` | **12 of 12**. D3D12 55 fps, Vulkan 58.5 fps, OpenGL 60 to 62 fps |
-| Zeus Nvidia1, e2e run 2, the same | `zeus/13-e2e-run2/` | **11 of 12**: x86 OpenGL readback black ([below](#the-black-opengl-readback)); every Vulkan, D3D12 and the other OpenGL check pass |
-| Zeus Nvidia1, fbguest with feedback on, `6dabb22` | `zeus/12-fixed-feedback-on/` | Fence waits work (Venus feedback now in type 3). Type 2 still misses for the test's own reads: that is the host's behaviour, and no package component reads GPU-written type-2 memory |
-| Zeus Nvidia1, 0066 without 0065 (an experimental bundle, built from this branch with 0065 removed), feedback on | `zeus/14-selftest-only-feedback-on/` | The self-test fallback works. fbguest's fence waits all complete, where `main`'s timed out (`01-main-feedback-on/`). The Vulkan probe passes (56 fps, x64 and x86), and D3D12 passes at 51 fps, as fast as with `VN_PERF` set. The first D3D12 run of each architecture in the fresh lab ran at only 0.06 and 0.18 fps (x64 also read back only the clear colour); later runs did not. OpenGL hit the black readback below |
-| helios AMD1, `tests/e2e/run.sh --template windows-11`, `6dabb22` | `helios/amd1-e2e/` | **12 of 12** |
+| Zeus Nvidia1, e2e run 2, the same | `zeus/13-e2e-run2/` | **11 of 12**: x86 OpenGL readback black ([below](#the-black-opengl-readback)) |
 | Zeus Nvidia1, e2e run 3, the same | `zeus/16-e2e-run3/` | **12 of 12** |
-| helios Nvidia1, e2e | — | **Not run**: Nvidia1 stayed at the two-VM limit for our labs (the 2026-10-19 BAR1 rule) until the time box ran out |
-| Zeus Intel1, `tests/e2e/run.sh --template windows-11 --host-gpu Intel1`, `6dabb22` | `zeus/15-e2e-intel1/` | **12 of 12** |
-
-Startup cost of 0066: when the check passes it is one submission and one
-fence wait, inside a `vkCreateDevice` that takes about 50 to 90 ms in these
-guests anyway. On Zeus Nvidia1, where the check passes with 0065,
-fbguest's median `vkCreateDevice` over 11 calls was 62 to 64 ms (minimum 55
-to 57 ms) with 0065 and 0066 (`zeus/12-fixed-feedback-on/`), against 46 to
-91 ms for single calls on `main` (`zeus/01-` to `03-`). The difference is
-within the noise. The check takes the same path on any host where it
-passes. No separate timing was taken on helios.
+| Zeus Nvidia1, fbguest with feedback on, `6dabb22` | `zeus/12-fixed-feedback-on/` | Fence waits work (Venus feedback now in type 3). Type 2 still misses for the test's own reads; 0067 later fixed that |
+| Zeus Nvidia1, 0066 without 0065 (an experimental bundle), feedback on | `zeus/14-selftest-only-feedback-on/` | The self-test fallback works. fbguest's fence waits all complete, where `main`'s timed out (`01-main-feedback-on/`). Vulkan passes (56 fps), D3D12 passes at 51 fps, as fast as with `VN_PERF` set |
+| Zeus Intel1, e2e, `6dabb22` | `zeus/15-e2e-intel1/` | **12 of 12** |
+| helios AMD1, e2e, `6dabb22` | `helios/amd1-e2e/` | **12 of 12** |
+| Zeus Nvidia1, e2e, `0b26b36` (`main` merged, 0065 to 0067 with the three-round check) | `zeus/40-e2e-0b26b36-a/` | **12 of 12** |
+| helios Nvidia1 (RTX 5090), e2e, `0b26b36` | `helios/nv1-e2e-0b26b36/` | **11 of 12**: x64 D3D12 drew 1 frame in 20 s (readback correct, nothing on the console). Rerun in the same lab: 14 fps, then on a quieter card 41 to 46 fps. See [the D3D12 first run](#a-slow-first-d3d12-run) |
+| helios Nvidia2 (RTX 5090), e2e, `bf4d948` (the committed 0067) | `helios/nv2-e2e-bf4d948/` | **12 of 12**. D3D12 3.7 and 9.4 fps and OpenGL 8.7 and 11.8 fps while another worker's benchmark VM shared the card |
+| helios Nvidia1, e2e, the same tree without 0065 to 0067 (`src/diag/build.sh mainonly -0065 -0066 -0067`) | `helios/ab-mainonly-nv1-e2e/` | **12 of 12** (D3D12 42.5 and 21.4 fps, OpenGL 8.4 and 9.3 fps, so the slow OpenGL is not ours) |
+| Both 5090 labs above, warm repeats back to back | `helios/ab-repeat/repeat.txt` | D3D12 x64 43.5 to 45.6 fps without 0065 to 0067, 44.2 to 45.7 with; x86 41.1 to 42.1 and 44.7 to 46.3; OpenGL 59.1 to 59.4 and 59.1 to 60.8. No difference |
+| Zeus Nvidia1, e2e, `bf4d948`, two runs | ZEUSRUNS | ZEUSRESULT |
 
 ## The black OpenGL readback
 
@@ -191,27 +187,42 @@ application's view does not change; the host GPU then accesses the memory
 coherently with the CPU caches, in both directions.
 
 A stale read needs the line to still be in the cache when the GPU writes.
-The first version checked once, and in 2 of 10 GL processes and in one
-fbguest device, the line had been evicted, so the check passed and nothing
-was remapped (`zeus/31-r67/`). The check now re-reads the words just
-before each submission and runs up to three rounds, stopping at the first
-stale read. With that (`zeus/32-r67b/`):
+The first version checked once after a blocking fence wait. In 2 of 10 GL
+processes, and in one fbguest device, the line had been evicted by then,
+so the check passed and nothing was remapped (`zeus/31-r67/`). Three rounds
+fixed the detection (24 of 24 processes, `zeus/32-r67b/`) but cost too
+much on a busy host. On helios, with ten VMs running, one fence round trip
+took 5 to 10 ms (`helios/nv1-fbguest-0b26b36/`). The check now runs one
+round and does not block. It polls the fence and reads the test words on
+every iteration, so their lines are cached when the GPU writes. On Zeus
+Nvidia1 (`zeus/41-memlog2/`, the committed 0067 plus the allocation log):
 
-| Run (Zeus Nvidia1, 6 each) | Black readbacks | Processes with type 2 backed by type 3 |
+| Run (6 GL, 3 D3D12 each) | Black readbacks | Processes with type 2 backed by type 3 |
 | --- | --- | --- |
-| x64, `ZINK_DEBUG=sync` | 0 of 6 | 6 of 6 |
-| x64, defaults | 0 of 6 | 6 of 6 |
-| x86, `ZINK_DEBUG=sync` | 0 of 6 | 6 of 6 |
-| x86, defaults | 0 of 6 | 6 of 6 |
+| x64 OpenGL, `ZINK_DEBUG=sync` | 0 of 6 | 6 of 6 |
+| x64 OpenGL, defaults | 0 of 6 | 5 of 6 |
+| x86 OpenGL, `ZINK_DEBUG=sync` | 0 of 6 | 6 of 6 |
+| x86 OpenGL, defaults | 0 of 6 | 6 of 6 |
+| x64 and x86 D3D12 | 0 of 6 failed | 6 of 6 |
 
-fbguest's own type-2 buffer now sees every GPU write as well (0 misses in
-all three variants, x64 and x86), because its allocation is backed by type
-3.
+Detection is 29 of 30. The one process the check missed still read back
+correctly. fbguest's own type-2 buffer, now backed by type 3, saw every GPU
+write in all three variants (x64 and x86).
 
-On a host where the check fails (Zeus Nvidia1) it costs the failed round's
-20 ms wait plus the extra buffer: fbguest's median `vkCreateDevice` went
-from 62 to 64 ms to 95 to 112 ms (`zeus/32-r67b/fbguest-*.txt`). On a host
-where the writes arrive it is three short rounds; HELIOSCOST
+Startup cost. fbguest takes the median of 11 `vkCreateDevice` calls:
+
+| Host, bundle | x64 | x86 |
+| --- | --- | --- |
+| Zeus Nvidia1, 0065 + 0066 (`zeus/12-fixed-feedback-on/`) | 64 ms | 62 ms |
+| Zeus Nvidia1, 0067 with three rounds (`zeus/32-r67b/`) | 112 ms | 95 ms |
+| Zeus Nvidia1, committed 0067 (`zeus/41-memlog2/`) | 74 ms | 71 ms |
+| Zeus Nvidia1, `main` without 0065 to 0067 (`zeus/42-mainonly/`) | MAINX64 | MAINX86 |
+
+On a host where the writes arrive, the check is one more 4 KiB allocation
+and mapping in the same single submission and fence poll as 0066. The
+timing on helios could not be isolated: with ten VMs on the host,
+`vkCreateDevice` alone varied from 154 to 657 ms between calls
+(`helios/nv1-fbguest-0b26b36/`).
 
 ## What remains
 
