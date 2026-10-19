@@ -14,16 +14,21 @@ result depends on the host GPU. Four were tried:
 
 | Host GPU, driver | Host | Result | Needs | Evidence |
 | --- | --- | --- | --- | --- |
-| AMD Radeon iGPU (Granite Ridge), RADV, Mesa 26.2.2 | helios | **Full pass**: every Done check in `docs/brief.md` item 2, on `windows-11` and `windows-10` | A plain vmlab lab that names the AMD GPU (`host_gpu = "AMD1"`; the final runs used vmlab 0.25.0-alpha at commit `6105889`) | [`acceptance.md`](acceptance.md) |
-| NVIDIA RTX 5090, 610.57.04 | helios | **Full pass**, 12 of 12 Done checks, through `tests/e2e/run.sh`: `windows-11` and `windows-10` on `Nvidia1` (vmlab 0.27.0-alpha) and `windows-11` on `Nvidia2` (vmlab 0.28.0-alpha); the guest lists exactly one Venus device. Depth draws into the back buffer need `patches/mesa/0022`, and mipmapped D3D9 textures need `0023` (below) | `patches/mesa/0020`, `0022` and `0023` (in the package) **and** the patched QEMU (the VMLabDev/qemu commit in `patches/host/PINS`) as the GPU's `qemu_binary` in the host config. Helios's host config gives both `Nvidia1` and `Nvidia2` one; without it the probes render but the console is black | [`acceptance.md`](acceptance.md#nvidia-rtx-5090), [`nvidia.md`](nvidia.md) |
+| AMD Radeon iGPU (Granite Ridge), RADV, Mesa 26.2.2 | helios | **Full pass**: every Done check in `docs/brief.md` item 2, on `windows-11` and `windows-10`, and every stretch application renders (package 0.1.1-alpha-rc1, vmlab 0.28.0-alpha) | A plain vmlab lab that names the AMD GPU (`host_gpu = "AMD1"`) | [`acceptance.md`](acceptance.md) |
+| NVIDIA RTX 5090, 610.57.04 | helios | **Full pass**, 12 of 12 Done checks, through `tests/e2e/run.sh` with package 0.1.1-alpha-rc1 and vmlab 0.28.0-alpha: `windows-11` and `windows-10` on `Nvidia1` and `windows-11` on `Nvidia2`; the guest lists exactly one Venus device, every stretch application renders, and the host logged no Xid. Depth draws into the back buffer need `patches/mesa/0022`, and mipmapped and R5G6B5 D3D9 textures need `0023` and `0025` (below). Applications that fill the 256 MiB BAR1 need `0070` and `0086`, and Vulkan applications with shading-rate state need `0075` (below) | `patches/mesa/0020`, `0022`, `0023` and `0025` (in the package) **and** the patched QEMU (the VMLabDev/qemu commit in `patches/host/PINS`) as the GPU's `qemu_binary` in the host config. Helios's host config gives both `Nvidia1` and `Nvidia2` one; without it the probes render but the console is black. The vmlab render server, selected with `qemu_env`, removes a 10 ms floor from every Venus fence ("Presentation pacing" below) | [`acceptance.md`](acceptance.md#nvidia-rtx-5090), [`nvidia.md`](nvidia.md) |
 | Intel Iris Xe (Raptor Lake-P), ANV, Mesa 26.2.2 | Zeus | **Full pass** on `windows-11`, 12 of 12 Done checks. Without `patches/mesa/0021`, dwm crash-loops and the console is black | `patches/mesa/0021` (in the package) | [`zeus.md`](zeus.md) |
-| NVIDIA RTX 4060 Max-Q (laptop), 615.71.09 | Zeus | **Full pass**, 12 of 12 twice (2026-10-19, `bf4d948` of branch `work/nvfb`, package defaults, the patched QEMU, vmlab 0.28). On this host the guest does not see the GPU's writes to uncached host-visible memory (type 2) and the GPU does not see the guest's; without the fixes every Vulkan, D3D12 and OpenGL client hung on its first fence (Venus feedback lived there), and with only the feedback fix about one OpenGL readback in three came back black (Zink's upload buffers live there). The first D3D12 run in a fresh lab can present only one frame (not caused by the fixes) | `patches/mesa/0065` to `0067` (in the package) and the patched QEMU as `qemu_binary` | [`nvfb.md`](nvfb.md), [`zeus.md`](zeus.md#nvidia-rtx-4060) |
+| NVIDIA RTX 4060 Max-Q (laptop), 615.71.09 | Zeus | **Full pass**, 12 of 12 twice (2026-10-19, `bf4d948` of branch `work/nvfb`, package defaults, the patched QEMU, vmlab 0.28). On this host the guest does not see the GPU's writes to uncached host-visible memory (type 2) and the GPU does not see the guest's; without the fixes every Vulkan, D3D12 and OpenGL client hung on its first fence (Venus feedback lived there), and with only the feedback fix about one OpenGL readback in three came back black (Zink's upload buffers live there). In a fresh lab the first D3D12 probe could present only one frame in its 20 seconds (not caused by the fixes, cause not investigated); the probes now count `--seconds` from their first frame ([`x86d3d12.md`](x86d3d12.md)) | `patches/mesa/0065` to `0067` (in the package) and the patched QEMU as `qemu_binary` | [`nvfb.md`](nvfb.md), [`zeus.md`](zeus.md#nvidia-rtx-4060) |
 
 All four hosts ran QEMU 11.1.1 (on NVIDIA, the vmlab QEMU built on it) and
 virglrenderer 1.3.0. No other GPU or driver version was tried. On
 2026-10-18 the vmlab QEMU moved to upstream master (`d8a6048aae`), and
 `windows-11` passed 12 of 12 with it on `Nvidia1`, `Nvidia2` and `AMD1`
-(`docs/evidence/qemu-master/`).
+(`docs/evidence/qemu-master/`). Since 2026-10-19 helios's host config also
+gives `Nvidia1` and `Nvidia2` the vmlab render server: virglrenderer 1.3.0's
+`virgl_render_server` with `patches/host/virglrenderer/0001` and `0002`.
+QEMU keeps the host's own `libvirglrenderer` 1.3.0
+([`nvidia.md`](nvidia.md#the-patched-render-server-on-the-gpus-profile)).
+`AMD1` keeps the stock server.
 
 **Without the patched QEMU, NVIDIA gives a black console.** NVIDIA's EGL
 imports a LINEAR dma-buf only as an external texture, and stock QEMU's
@@ -58,12 +63,12 @@ Every mipmapped D3D9 colour texture outside the system-memory pools was a
 LINEAR image, and NVIDIA allows LINEAR images with one mip level only. 0023
 makes such textures OPTIMAL when the host refuses LINEAR. Both samples now
 render textured on `Nvidia1` and `AMD1`, and the probes pass 10 of 10 on both
-([`nvtex.md`](nvtex.md)). The other stretch applications have not
-run on NVIDIA. The acceptance evidence that shows the hang is
-`docs/evidence/acceptance/windows-11-nvidia1/apps/`; the `Nvidia2` run's
-`windows-11-nvidia2/apps/` is in git history at `a58acd3`. `run.sh` collects
-the Done evidence before the stretch applications, so a hang there costs only
-the application results.
+([`nvtex.md`](nvtex.md)). `0025` fixes R5G6B5 textures, which were black
+on NVIDIA. In the 0.1.1-alpha-rc1 acceptance runs every stretch application
+(the D3D9 and D3D11 SDK samples and Blender) renders on `Nvidia1` and
+`Nvidia2`, and the host logged no Xid
+([`acceptance.md`](acceptance.md#nvidia-rtx-5090)). The 0.1.0-alpha
+evidence that shows the hang is in git history at `82d8e51`.
 
 > **The RTX 4060 once needed a host reboot.** On 2026-10-17 the NVIDIA GSP
 > failed to boot during a Venus run on Zeus (Xid 119, then Xid 79 "GPU has
@@ -135,12 +140,15 @@ which NVIDIA needs for its console, and 0.27.0-alpha added the PCI-filter
 Vulkan layer that leaves the guest only the named GPU (`docs/host.md`,
 "Update: vmlab 0.26 and 0.27"). An AMD or Intel lab still works on 0.25,
 but a guest on a host with two GPUs of the same driver sees both before
-0.27. The NVIDIA acceptance runs used 0.27.0-alpha.
+0.27. The current acceptance runs, on AMD and NVIDIA, used 0.28.0-alpha.
 
 The evidence in `docs/evidence/host/` and `docs/evidence/package/` was taken
 on vmlab 0.23 with the workarounds (`docs/evidence/package/lab-vmlab.wcl`).
-The acceptance, NVIDIA and Zeus evidence was taken on vmlab 0.24, with the
-GPU named by `gpu.address` in the lab file.
+The NVIDIA diagnosis (`docs/evidence/nvidia/`) and the first Zeus round
+were taken on vmlab 0.24, with the GPU named by `gpu.address` in the lab
+file. The acceptance evidence and the second Zeus round are from vmlab
+0.28.0-alpha ([`acceptance.md`](acceptance.md#evidence-index),
+[`zeus.md`](zeus.md)).
 
 Two vmlab limits remain, with no fix:
 
@@ -170,9 +178,11 @@ before it writes the values, and prints an `oobe:` line saying how long it
 waited (`test-desktop.txt`). `tests/e2e/run.sh` still records the values
 before and after the install (`autologon-*.txt`) and sets them again when
 they are missing, logging `autologon fallback fired` and writing
-`autologon-fallback.txt`. In the five runs since, on `Nvidia1` and
-`Nvidia2`, the wait ended at once or within 5 s, and the fallback did not
-fire. This affects only the tests, not the package.
+`autologon-fallback.txt`. In the five 0.1.1-alpha-rc1 acceptance runs, on
+`AMD1`, `Nvidia1` and `Nvidia2`, the wait took 0 to 25 s, the values
+survived, and the fallback did not fire
+([`acceptance.md`](acceptance.md#findings-from-these-runs)). This affects
+only the tests, not the package.
 
 ### Evaluation templates need the lab NIC and `slmgr /ato`
 
@@ -323,7 +333,7 @@ installed. Evidence: decision 0001, "Fast Startup and hibernation hazard";
 `docs/evidence/package/00-baseline-installer-state.txt` (the template already
 had hibernation off).
 
-### Presentation pacing is unmeasured; D3D9 is below the refresh rate on NVIDIA
+### Presentation pacing is unmeasured; D3D9 on NVIDIA needs the vmlab render server
 
 Nobody has measured frame pacing or console latency for this package. The
 prior art measured its own builds of the same components (prior-art §3,
@@ -345,8 +355,12 @@ uncached destination and read an uncached source. `patches/kmd/0002` and
 DirectDraw at several hundred Blts per second.
 
 On `Nvidia1` the D3D9 probe rose from about 22 to 39 fps, still below the
-refresh rate. There each windowed D3D9 Present waits about 16 to 20 ms,
-whatever the window size, with the CPU idle. The cause is on the host
+refresh rate. In the 0.1.1-alpha-rc1 acceptance runs it reached 51 to 52
+fps on `Nvidia1` and 40 to 42 on `Nvidia2` (`windows-11`), and 27 and 46
+fps (x64, x86) on `windows-10` `Nvidia1`
+([`acceptance.md`](acceptance.md#findings-from-these-runs)). On `Nvidia1`
+each windowed D3D9 Present waited about 16 to 20 ms, whatever the window
+size, with the CPU idle. The cause is on the host
 ([`n5.md`](n5.md)): virglrenderer creates its Venus queue-sync fences
 exportable, and NVIDIA 610.57.04 wakes `vkWaitForFences` on such fences up to
 about 10 ms late. Every guest DMA buffer therefore completes at least 10 ms
@@ -355,8 +369,10 @@ virglrenderer patch removes the delay (ring fences 10.2 ms to 1.2 ms). The
 vmlab render server carries it, and an NVIDIA GPU's host config block
 selects it with `qemu_env` ([`nvidia.md`](nvidia.md#the-patched-render-server-on-the-gpus-profile));
 with it the D3D9 repro runs vblank-paced at about 55 per second on
-`Nvidia1`, against 22 with the stock server in the same lab. A host
-without it keeps the 10 ms floor. Presentation only has
+`Nvidia1`, against 22 with the stock server in the same lab
+(`docs/evidence/hostvirgl/README.md`). Helios's `Nvidia1` and `Nvidia2`
+have used it since 2026-10-19. An NVIDIA host without it keeps the 10 ms
+floor. `AMD1` gains nothing from it. Presentation only has
 to make a game watchable on the console (`docs/brief.md`); deeper
 frame-pacing work is out of scope.
 
@@ -377,22 +393,27 @@ Windows. See `build/kmd/README.md`.
 
 ### Windows 10
 
-Windows 10 passes. On a fresh lab from the local `windows-10` template
-(`x86_64/windows-10@19045.2006.8`) on the AMD host, every Done check in
-`docs/brief.md` item 2 passed, 12 of 12. It ran the same package as the
-Windows 11 run: commit `6105889`, with every Mesa patch including 0015 to
-0017 and 0021 (`docs/acceptance.md`; `docs/evidence/acceptance/windows-10/`).
-The DirectX SDK D3D9 and D3D11 samples and Blender also rendered there.
+Windows 10 passes. On fresh labs from the local `windows-10` template
+(`x86_64/windows-10@19045.2006.8`), every Done check in `docs/brief.md`
+item 2 passed, 12 of 12, on `AMD1` and on `Nvidia1`, with package
+0.1.1-alpha-rc1, the same package as the Windows 11 runs
+(`docs/acceptance.md`; `docs/evidence/acceptance/windows-10/`,
+`docs/evidence/acceptance/windows-10-nvidia1/`). The DirectX SDK D3D9 and
+D3D11 samples and Blender rendered on both. The D3D9 fixed-function probes
+also ran on Windows 10, on `Nvidia2` ([`ffp2.md`](ffp2.md)).
 
-Blender's window was translucent on Windows 10: the wallpaper showed through
-its viewport and panels (`docs/evidence/acceptance/windows-10/apps/console-opengl-x64-Blender.png`).
-Mesa's WGL asked for a premultiplied-alpha swapchain for every window, so
-the compositor blended the alpha Blender leaves in its framebuffer.
-`patches/mesa/0027` presents WGL windows opaque ([`present.md`](present.md)).
+Blender's window was translucent on Windows 10 in the 0.1.0 runs: the
+wallpaper showed through its viewport and panels. Mesa's WGL asked for a
+premultiplied-alpha swapchain for every window, so the compositor blended
+the alpha Blender leaves in its framebuffer. `patches/mesa/0027` presents
+WGL windows opaque ([`present.md`](present.md)), and the rc1 runs show
+Blender opaque on `AMD1` and `Nvidia1`
+(`docs/evidence/acceptance/windows-10/apps/console-opengl-x64-Blender.png`).
 
 What was not run on Windows 10:
 
-- any host other than AMD;
+- the acceptance run on `Nvidia2` and on the Zeus hosts (Intel Iris Xe and
+  RTX 4060);
 - the uninstall and reinstall cycle, which ran on Windows 11 only
   (`docs/evidence/package/README.md`).
 
@@ -407,19 +428,30 @@ OpenGL and Vulkan, x64 and x86), two diagnostic probes (`probes/dxut-enum`,
   `ParallaxOcclusionMapping` (D3D9) render, textured on NVIDIA since
   `patches/mesa/0023`; `SubD11` and `BasicHLSL11`
   (D3D11) render after `patches/mesa/0015` to `0017`, with the window
-  caveat below;
-- Blender 4.2.3 (OpenGL 4.3) renders its UI and viewport.
-- The compatibility sweep ([compat.md](compat.md)) runs Unigine Heaven and
+  caveat below. In the 0.1.1-alpha-rc1 acceptance runs they render on
+  `AMD1`, `Nvidia1` and `Nvidia2`;
+- Blender 4.2.3 (OpenGL 4.3) renders its UI and viewport on the same three
+  GPUs.
+- The compatibility sweep ([compat.md](compat.md)) ran Unigine Heaven and
   Valley (D3D11, D3D9, OpenGL), Godot 4.7.2 (D3D12, Vulkan, OpenGL), GZDoom
   (Vulkan, OpenGL) and Crispy Doom (D3D9), each for about 3 minutes on AMD1
-  and Nvidia2:
-  - AMD1: 10 of 12 runs pass. Valley D3D9 hangs, and GZDoom cannot create
-    an OpenGL context. Heaven D3D11 crashed once with heap corruption.
-  - Nvidia2: 5 of 12 runs pass. Godot's Vulkan renderer causes a host Xid 69
-    (ErrorCode `0x13d`). GZDoom Vulkan and both Unigine OpenGL runs crash.
-    Unigine D3D9 skipped its draws that use depth bias, because the device
-    lacks the float depth-bias representation (fixed by `patches/mesa/0090`;
-    see the Unigine section below).
+  and Nvidia2. With the 0.1.1-alpha-rc1 package, 10 of 12 runs passed on
+  AMD1 and 5 of 12 on Nvidia2. Each failure was then investigated in its
+  own branch and rerun there; the whole sweep has not been rerun:
+  - F1, Godot Vulkan on NVIDIA (host Xid 69, ErrorCode `0x13d`): fixed by
+    `patches/mesa/0075` ([godot.md](godot.md)).
+  - F2, GZDoom Vulkan on NVIDIA, and F4, Unigine OpenGL on NVIDIA: the
+    256 MiB BAR1 running out. Fixed by `patches/mesa/0070` and `0086`, with
+    `0085` for Unigine ([gzdoom.md](gzdoom.md), [unigl.md](unigl.md)).
+  - F3, GZDoom could not create an OpenGL context on either GPU: fixed by
+    `patches/mesa/0080` ([gzdoom.md](gzdoom.md)).
+  - F5, Unigine D3D9 skipped its depth-bias draws on NVIDIA: fixed by
+    `patches/mesa/0090` ([unid3d.md](unid3d.md)).
+  - F6, Valley D3D9 ran out of 32-bit address space and hung: fixed by
+    `patches/mesa/0091` and `0092` ([f6va.md](f6va.md)).
+  - F7, Heaven D3D11 crashed once on AMD1 with heap corruption: most likely
+    fixed by `patches/mesa/0060`, not yet proven (the Unigine section
+    below).
 
 D3D9 fixed function goes through the shaders that the Windows runtime
 generates; its coverage and what it still lacks are in the next section.
@@ -435,9 +467,8 @@ same components:
 
 Those results do not carry over automatically. This repository re-exported
 the prior art's Mesa fixes as patches and dropped its diagnostics and side
-threads (`build/mesa/README.md`, `build/d3d12/README.md`). Apart from the
-probes, none of the patched code has run in a guest since. Known application
-issues from the prior art:
+threads (`build/mesa/README.md`, `build/d3d12/README.md`). What has run
+here since is the list above. Known application issues from the prior art:
 
 - Some applications need the Visual C++ runtime (GravityMark failed with
   `0xC0000135` without it). That is an application prerequisite, not a
@@ -453,13 +484,16 @@ Valley with OpenGL crashed on NVIDIA when that window ran out, or when Zink
 mapped a buffer it had moved out of the window (compat F4,
 [unigl.md](unigl.md)). With `patches/mesa/0070` (nvva), `0085` and `0086`,
 Zink keeps such buffers in host memory, and both benchmarks run on
-`Nvidia1` (72 and 64 fps). On NVIDIA, OpenGL buffers that Zink would put in
+`Nvidia1` (72 and 64 fps) and, in the merged package, on `Nvidia2` (53 and
+60 fps). On NVIDIA, OpenGL buffers that Zink would put in
 VRAM visible to the CPU now live in host memory, which the GPU reads over
-PCIe. A guest driver that still allocates host-visible VRAM can fail to map
-it when BAR1 is full; with `0070` no driver in the package sees such a
-memory type.
+PCIe. With `0070` the Venus driver no longer offers host-visible VRAM, so
+Zink, DXVK and vkd3d-proton stay out of BAR1. The Yttrium UMD picks its
+memory types itself and still puts display images there, and Mesa's WGL
+presents through it, so an OpenGL program can still lose its swapchain
+when BAR1 runs out ("Two Windows VMs per RTX 5090" above).
 
-### 32-bit Unigine: Valley D3D9 address space (fixed); Heaven D3D11 has a use-after-free
+### 32-bit Unigine: Valley D3D9 address space (fixed); Heaven D3D11 use-after-free (most likely fixed)
 
 [unid3d.md](unid3d.md) and [f6va.md](f6va.md) have the evidence.
 
@@ -479,7 +513,9 @@ memory type.
   of a queued flush label (`yttrium_threaded_set_flush_label`) run by the
   threaded context's worker. `patches/mesa/0060` (the dwm double free in the
   same flush-label path) most likely fixes it: 5 of 5 PageHeap runs were clean
-  with it ([dwmheap.md](dwmheap.md)), which is not yet proof.
+  with it ([dwmheap.md](dwmheap.md#f7-heaven-d3d11)), which is not yet proof.
+  At the old rate of 2 in 5, five clean runs would happen by chance about
+  8 % of the time; ten or more would make it under 1 %.
 
 ### D3D9 fixed function: what is and is not covered
 
@@ -552,7 +588,7 @@ with clang-cl and the MSVC CRT (`build/d3d12-samples/`) and run through the
 installed package with no app-local DLLs (`docs/d3d12app.md`).
 `D3D12HelloTriangle`, `D3D12HelloTexture`, `D3D12Bundles` and
 `D3D12nBodyGravity` render and exit 0 on AMD1 and Nvidia1. Two failures
-remain:
+were found. The first is fixed in part, the second is fixed:
 
 - **`ExecuteIndirect` with a command signature that sets vertex or index
   buffer views** draws wrongly, with no error. Venus (guest Mesa 26.1.0 and
@@ -572,10 +608,10 @@ remain:
   ([`dwmheap.md`](dwmheap.md)). The lost device itself remains: in a busy
   first boot on an RTX 5090, Venus contexts can go into a fatal state on the
   host (`failed to look up object N of type 8`), most likely the shared
-  256 MiB BAR1 running out. The program whose context dies fails (the D3D12
-  probe's fence timed out). With the fix, dwm no longer dies in the trim
-  path while it recovers; a lost device in dwm itself has not been seen in
-  a fixed run yet.
+  256 MiB BAR1 running out ("Two Windows VMs per RTX 5090" above). The
+  program whose context dies fails (the D3D12 probe's fence timed out). With
+  the fix, dwm no longer dies in the trim path while it recovers; a lost
+  device in dwm itself has not been seen in a fixed run yet.
 
 ### The first D3D12 launch in a new guest waits on Defender's cloud check
 
