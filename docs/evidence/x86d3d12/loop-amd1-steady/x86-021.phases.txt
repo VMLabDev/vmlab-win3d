@@ -1,0 +1,36 @@
+# x86d3d12 phase trace, pid 8544, 2026-10-18T22:16:59.820Z, stall 5000 ms
+      22.5 phase main
+      22.6 phase probe_init
+      74.4 phase CreateDXGIFactory1
+      86.4 phase D3D12CreateDevice
+     158.1 phase describe adapter
+     161.3 phase CreateCommandQueue
+     161.6 phase CreateSwapChainForHwnd
+     220.1 phase RTV heap and GetBuffer
+     220.4 phase root signature
+     220.5 phase D3DCompile
+     228.8 phase CreateGraphicsPipelineState
+     230.5 phase command list, buffers, fence
+     236.5 phase frame loop
+     236.6 phase frame 0
+     236.9 phase Present
+     238.1 phase fence wait
+     323.6 phase frame 1
+     323.9 phase Present
+     323.9 phase fence wait
+     419.8 phase frame 2
+     420.0 phase Present
+     420.1 phase fence wait
+     426.3 phase frame 3
+     426.5 phase Present
+     426.5 phase fence wait
+   20031.0 phase readback
+   20031.1 frames 1007, max Present 7.9 ms (frame 99), max fence 155.7 ms (frame 591), max frame 155.9 ms (frame 591)
+   20031.2 phase teardown
+   20032.2 phase swap->Release
+   20164.7 phase queue->Release
+   20165.9 phase dev->Release
+   20187.4 phase factory->Release
+   20187.6 phase probe_finish
+   20189.0 phase exit
+

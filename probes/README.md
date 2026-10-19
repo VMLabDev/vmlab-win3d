@@ -47,7 +47,7 @@ pinned glslang.
 
 | Option | Default | Meaning |
 | --- | --- | --- |
-| `--seconds N` | 30 | Render for N seconds, then read back and exit. `0` renders one frame. |
+| `--seconds N` | 30 | Render for N seconds, counted from the first frame, then read back and exit. `0` renders one frame. A slow start-up does not shorten the render time (`startup_seconds` below). |
 | `--out FILE` | `<probe>.json` in the current directory | Where the JSON result goes. |
 | `--width W`, `--height H` | 1024, 640 | Client area size in pixels. At least 320×240. |
 | `--warp` | off | D3D11 and D3D12 only: use the WARP software adapter instead of the default adapter. |
@@ -97,6 +97,7 @@ Schema version 1. Example (abridged) from `d3d11_probe.exe` on WARP:
   "frames_presented": 1790,
   "elapsed_seconds": 30.004,
   "avg_fps": 59.66,
+  "startup_seconds": 0.212,
   "window_closed_early": false,
   "readback": {
     "ok": true,
@@ -128,6 +129,7 @@ Schema version 1. Example (abridged) from `d3d11_probe.exe` on WARP:
 | `frames_presented` | int | Successful presents (occluded presents are not counted) |
 | `elapsed_seconds` | number | From start-up to the last present |
 | `avg_fps` | number | `frames_presented / elapsed_seconds`. It includes start-up, so it understates the steady rate on short runs |
+| `startup_seconds` | number | From start-up to the start of the first frame. Absent when no frame started. In a fresh Windows guest the first run of a probe can take tens of seconds here while Microsoft Defender checks new DLLs with its cloud service (`docs/x86d3d12.md`) |
 | `window_closed_early` | bool | The window was closed before `--seconds` elapsed |
 | `readback.ok` | bool | Every marker was read and matched within `tolerance` |
 | `readback.pixels[]` | array | `name`, `x`, `y` (client pixels, origin top left), `expected` and `actual` as `[r, g, b]` (`actual` is `null` if no readback happened), `match` |

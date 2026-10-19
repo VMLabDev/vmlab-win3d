@@ -1,0 +1,193 @@
+2026-10-06T06:48:26.842Z [Cloud] Start of cloud request. Passive mode: 0
+2026-10-06T06:48:27.081Z [Cloud] End of cloud request.
+2026-10-06T06:48:27.165Z [Cloud] Start of cloud request. Passive mode: 0
+2026-10-06T06:48:27.251Z [Cloud] End of cloud request.
+2026-10-06T06:48:27.523Z [Cloud] Start of cloud request. Passive mode: 0
+2026-10-06T06:48:27.645Z [Cloud] End of cloud request.
+2026-10-06T06:48:27.666Z [Cloud] Start of cloud request. Passive mode: 0
+2026-10-06T06:48:27.766Z [Cloud] End of cloud request.
+2026-10-06T06:48:28.385Z [Cloud] Start of cloud request. Passive mode: 0
+2026-10-06T06:48:28.650Z [Cloud] End of cloud request.
+2026-10-06T06:48:28.834Z [Cloud] Start of cloud request. Passive mode: 0
+2026-10-06T06:48:29.069Z [Cloud] End of cloud request.
+2026-10-06T06:48:29.223Z [Cloud] Start of cloud request. Passive mode: 0
+2026-10-06T06:48:29.473Z [Cloud] End of cloud request.
+2026-10-06T06:48:32.254Z [Cloud] Start of cloud request. Passive mode: 0
+2026-10-06T06:48:32.340Z [Cloud] End of cloud request.
+2026-10-06T06:48:37.734Z [Cloud] Start of cloud request. Passive mode: 0
+2026-10-06T06:48:37.926Z [Cloud] End of cloud request.
+2026-10-06T06:48:39.088Z [Cloud] Start of cloud request. Passive mode: 0
+2026-10-06T06:48:39.178Z [Cloud] End of cloud request.
+2026-10-06T06:48:39.569Z [Cloud] Start of cloud request. Passive mode: 0
+2026-10-06T06:48:39.657Z [Cloud] End of cloud request.
+2026-10-06T06:48:39.721Z [Cloud] Start of cloud request. Passive mode: 0
+2026-10-06T06:48:39.804Z [Cloud] End of cloud request.
+2026-10-06T06:48:40.481Z [Cloud] Start of cloud request. Passive mode: 0
+2026-10-06T06:48:40.589Z [Cloud] End of cloud request.
+2026-10-06T06:48:40.607Z [Cloud] Start of cloud request. Passive mode: 0
+2026-10-06T06:48:40.695Z [Cloud] End of cloud request.
+2026-10-06T06:48:41.839Z [Cloud] Start of cloud request. Passive mode: 0
+2026-10-06T06:48:41.930Z [RTP] [MpRtp] Engine VFZ lofi/sample/expensive: \Device\HarddiskVolume3\ProgramData\vmlab\vmlab-agent.exe. status=0x40070000, statusex=0x310, threatid=0x80000000, sigseq=0x41e7a07c3454
+2026-10-06T06:48:41.930Z [Cloud] End of cloud request.
+2026-10-06T06:48:41.995Z [Cloud] Start of cloud request. Passive mode: 0
+2026-10-06T06:48:42.079Z [Cloud] End of cloud request.
+2026-10-06T06:48:42.383Z [Cloud] Start of cloud request. Passive mode: 0
+2026-10-06T06:48:42.468Z [Cloud] End of cloud request.
+2026-10-06T07:12:53.236Z ProcessImageName: svchost.exe, Pid: 2604, TotalTime: 3870, Count: 31, MaxTime: 3125, MaxTimeFile: \Device\HarddiskVolume3\Users\Administrator\AppData\Local\Temp\DO2A2D.tmp, EstimatedImpact: 0%
+2026-10-06T07:12:53.236Z ProcessImageName: setup.exe, Pid: 9560, TotalTime: 3278, Count: 115, MaxTime: 203, MaxTimeFile: \Device\HarddiskVolume3\Program Files (x86)\Microsoft\EdgeCore\154.0.4258.53\EBWebView\x86\EmbeddedBrowserWebView.dll, EstimatedImpact: 10%
+2026-10-06T07:12:53.236Z ProcessImageName: OneDrive.exe, Pid: 3936, TotalTime: 1905, Count: 13, MaxTime: 1875, MaxTimeFile: \Device\HarddiskVolume3\Users\Administrator\AppData\Local\Microsoft\OneDrive\Update\OneDriveSetup.exe, EstimatedImpact: 11%
+2026-10-06T07:12:53.236Z ProcessImageName: explorer.exe, Pid: 5608, TotalTime: 1560, Count: 314, MaxTime: 171, MaxTimeFile: \Device\HarddiskVolume3\Windows\System32\OneDriveSetup.exe, EstimatedImpact: 0%
+2026-10-06T07:12:53.236Z ProcessImageName: svchost.exe, Pid: 1268, TotalTime: 1439, Count: 64, MaxTime: 109, MaxTimeFile: \Device\HarddiskVolume3\Users\Administrator\AppData\Local\Microsoft\OneDrive\23.081.0416.0001\Qt5Gui.dll, EstimatedImpact: 0%
+2026-10-06T07:12:53.236Z ProcessImageName: svchost.exe, Pid: 2076, TotalTime: 1318, Count: 142, MaxTime: 31, MaxTimeFile: \Device\HarddiskVolume3\Windows\System32\Tasks\Microsoft\Windows\UpdateOrchestrator\Schedule Work->(UTF-16LE), EstimatedImpact: 0%
+2026-10-06T07:12:53.236Z ProcessImageName: svchost.exe, Pid: 6988, TotalTime: 820, Count: 22, MaxTime: 218, MaxTimeFile: \Device\Harddisk0\DR0, EstimatedImpact: 0%
+2026-10-06T07:12:53.236Z ProcessImageName: tzsync.exe, Pid: 1056, TotalTime: 777, Count: 21, MaxTime: 390, MaxTimeFile: \Device\HarddiskVolume3\Windows\Microsoft.NET\assembly\GAC_MSIL\System\v4.0_4.0.0.0__b77a5c561934e089\System.dll, EstimatedImpact: 41%
+2026-10-06T07:12:53.236Z ProcessImageName: WmiPrvSE.exe, Pid: 9924, TotalTime: 604, Count: 60, MaxTime: 31, MaxTimeFile: \Device\HarddiskVolume3\Windows\System32\drivers\dxgmms2.sys, EstimatedImpact: 0%
+2026-10-06T07:12:53.236Z ProcessImageName: powershell.exe, Pid: 7828, TotalTime: 566, Count: 72, MaxTime: 78, MaxTimeFile: \Device\HarddiskVolume3\Windows\Microsoft.NET\assembly\GAC_MSIL\System.Management\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Management.dll, EstimatedImpact: 2%
+2026-10-06T07:12:53.236Z ProcessImageName: OneDriveSetup.exe, Pid: 2332, TotalTime: 371, Count: 28, MaxTime: 109, MaxTimeFile: \Device\HarddiskVolume3\Users\Administrator\AppData\Local\Microsoft\OneDrive\OneDrive.exe, EstimatedImpact: 1%
+2026-10-06T07:12:53.236Z ProcessImageName: OneDriveSetup.exe, Pid: 5796, TotalTime: 337, Count: 69, MaxTime: 78, MaxTimeFile: \Device\HarddiskVolume3\Users\ADMINI~1\AppData\Local\Temp\tmpB21.tmp, EstimatedImpact: 1%
+2026-10-06T07:12:53.236Z ProcessImageName: WmiPrvSE.exe, Pid: 6728, TotalTime: 315, Count: 67, MaxTime: 15, MaxTimeFile: \Device\HarddiskVolume3\Windows\INF\printqueue.inf, EstimatedImpact: 35%
+2026-10-06T07:12:53.236Z ProcessImageName: services.exe, Pid: 976, TotalTime: 294, Count: 8, MaxTime: 187, MaxTimeFile: \Device\HarddiskVolume3\Windows\System32\sppsvc.exe, EstimatedImpact: 0%
+2026-10-06T07:12:53.236Z ProcessImageName: OneDrive.Sync.Service.exe, Pid: 6736, TotalTime: 286, Count: 46, MaxTime: 46, MaxTimeFile: \Device\HarddiskVolume3\Users\Administrator\AppData\Local\Microsoft\OneDrive\26.173.0906.0008\OneDrive.Sync.Service.dll, EstimatedImpact: 4%
+2026-10-06T07:17:53.400 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-06T07:20:34.546 ProcessImageName: explorer.exe, Pid: 5712, TotalTime: 652, Count: 101, MaxTime: 109, MaxTimeFile: \Device\HarddiskVolume3\Windows\SystemResources\imageres.dll.mun, EstimatedImpact: 1%
+2026-10-06T07:20:34.546 ProcessImageName: svchost.exe, Pid: 4696, TotalTime: 460, Count: 25, MaxTime: 78, MaxTimeFile: \Device\HarddiskVolume3\ProgramData\Microsoft\Windows Defender\Definition Updates\{660C4911-5E2B-467A-80F8-CF9D904D5551}\mpengine.dll, EstimatedImpact: 1%
+2026-10-06T07:20:34.546 ProcessImageName: svchost.exe, Pid: 7000, TotalTime: 281, Count: 2, MaxTime: 281, MaxTimeFile: \Device\Harddisk0\DR0, EstimatedImpact: 68%
+2026-10-06T07:20:34.546 ProcessImageName: svchost.exe, Pid: 448, TotalTime: 242, Count: 17, MaxTime: 31, MaxTimeFile: \Device\HarddiskVolume3\Windows\SystemApps\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\SoftLandingTask\SoftLandingTask.exe, EstimatedImpact: 0%
+2026-10-06T07:20:34.546 ProcessImageName: svchost.exe, Pid: 8808, TotalTime: 197, Count: 14, MaxTime: 31, MaxTimeFile: \Device\HarddiskVolume3\Windows\System32\MessagingDataModel2.dll, EstimatedImpact: 24%
+2026-10-06T07:20:34.546 ProcessImageName: svchost.exe, Pid: 4148, TotalTime: 166, Count: 15, MaxTime: 31, MaxTimeFile: \Device\HarddiskVolume3\Windows\System32\efswrt.dll, EstimatedImpact: 1%
+2026-10-06T07:20:34.546 ProcessImageName: RuntimeBroker.exe, Pid: 6692, TotalTime: 165, Count: 37, MaxTime: 15, MaxTimeFile: \Device\HarddiskVolume3\Windows\ImmersiveControlPanel\SystemSettingsViewModel.Desktop.dll, EstimatedImpact: 1%
+2026-10-06T07:20:34.546 ProcessImageName: CrossDeviceResume.exe, Pid: 6040, TotalTime: 152, Count: 50, MaxTime: 62, MaxTimeFile: \Device\HarddiskVolume3\Windows\SystemApps\Microsoft.WindowsAppRuntime.CBS_8wekyb3d8bbwe\Microsoft.ui.xaml.dll, EstimatedImpact: 15%
+2026-10-06T07:20:34.546 ProcessImageName: WindowsTerminal.exe, Pid: 10164, TotalTime: 151, Count: 42, MaxTime: 31, MaxTimeFile: \Device\HarddiskVolume3\Program Files\WindowsApps\Microsoft.UI.Xaml.2.8_8.2511.26001.0_x64__8wekyb3d8bbwe\Microsoft.UI.Xaml.dll, EstimatedImpact: 16%
+2026-10-06T07:20:34.546 ProcessImageName: sihost.exe, Pid: 4924, TotalTime: 150, Count: 29, MaxTime: 15, MaxTimeFile: \Device\HarddiskVolume3\Windows\System32\WindowManagement.dll, EstimatedImpact: 2%
+2026-10-06T07:20:34.546 ProcessImageName: svchost.exe, Pid: 2892, TotalTime: 121, Count: 7, MaxTime: 31, MaxTimeFile: \Device\HarddiskVolume3\Windows\System32\ThreatIntelligence.dll, EstimatedImpact: 14%
+2026-10-06T07:20:34.546 ProcessImageName: svchost.exe, Pid: 1128, TotalTime: 121, Count: 6, MaxTime: 46, MaxTimeFile: \Device\HarddiskVolume3\Users\Administrator\AppData\Local\Microsoft\OneDrive\26.173.0906.0008\FileCoAuth.exe, EstimatedImpact: 0%
+2026-10-06T07:20:34.546 ProcessImageName: svchost.exe, Pid: 5200, TotalTime: 106, Count: 10, MaxTime: 31, MaxTimeFile: \Device\HarddiskVolume3\Windows\System32\ContentDeliveryManager.Utilities.dll, EstimatedImpact: 4%
+2026-10-06T07:20:34.546 ProcessImageName: SenseTask.exe, Pid: 4040, TotalTime: 105, Count: 14, MaxTime: 15, MaxTimeFile: \Device\HarddiskVolume3\Windows\Logs\DISM\dism.log, EstimatedImpact: 16%
+2026-10-06T08:54:06.551 Dynamic signature dropped
+2026-10-06T08:54:06.551 Dynamic signature dropped
+2026-10-06T08:54:06.759 ProcessImageName: taskhostw.exe, Pid: 7096, TotalTime: 1145, Count: 685, MaxTime: 125, MaxTimeFile: \Device\HarddiskVolume3\Windows\System32\SecureBootUpdates\BucketConfidenceData.cab, EstimatedImpact: 14%
+2026-10-06T08:54:06.759 ProcessImageName: svchost.exe, Pid: 2268, TotalTime: 630, Count: 41, MaxTime: 234, MaxTimeFile: \Device\HarddiskVolume3\Users\Administrator\AppData\Local\Microsoft\OneDrive\OneDriveStandaloneUpdater.exe, EstimatedImpact: 0%
+2026-10-06T08:54:06.759 ProcessImageName: OneDrive.exe, Pid: 4520, TotalTime: 333, Count: 80, MaxTime: 46, MaxTimeFile: \Device\HarddiskVolume3\Users\Administrator\AppData\Local\Microsoft\OneDrive\26.173.0906.0008\FileSyncClient.dll, EstimatedImpact: 0%
+2026-10-06T08:54:06.759 ProcessImageName: WmiPrvSE.exe, Pid: 5352, TotalTime: 332, Count: 44, MaxTime: 31, MaxTimeFile: \Device\HarddiskVolume3\Windows\System32\drivers\storport.sys, EstimatedImpact: 5%
+2026-10-06T08:54:06.759 ProcessImageName: svchost.exe, Pid: 7572, TotalTime: 294, Count: 5, MaxTime: 140, MaxTimeFile: \Device\HarddiskVolume3\Windows\SysWOW64\wmp.dll, EstimatedImpact: 13%
+2026-10-06T08:54:06.759 ProcessImageName: svchost.exe, Pid: 980, TotalTime: 137, Count: 7, MaxTime: 31, MaxTimeFile: \Device\HarddiskVolume3\Windows\System32\wsp_fs.dll, EstimatedImpact: 44%
+2026-10-06T08:54:06.759 ProcessImageName: svchost.exe, Pid: 9596, TotalTime: 136, Count: 15, MaxTime: 31, MaxTimeFile: \Device\HarddiskVolume3\Windows\System32\WsmSvc.dll, EstimatedImpact: 0%
+2026-10-06T08:54:06.759 ProcessImageName: svchost.exe, Pid: 7296, TotalTime: 136, Count: 8, MaxTime: 31, MaxTimeFile: \Device\HarddiskVolume3\Windows\System32\devinv.dll, EstimatedImpact: 0%
+2026-10-06T08:54:06.759 ProcessImageName: svchost.exe, Pid: 4148, TotalTime: 121, Count: 18, MaxTime: 31, MaxTimeFile: \Device\HarddiskVolume3\Windows\System32\libsmartscreenn.dll, EstimatedImpact: 0%
+2026-10-06T08:54:06.759 ProcessImageName: powershell.exe, Pid: 3792, TotalTime: 91, Count: 30, MaxTime: 31, MaxTimeFile: \Device\HarddiskVolume3\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psm1, EstimatedImpact: 3%
+2026-10-06T08:54:06.759 ProcessImageName: svchost.exe, Pid: 324, TotalTime: 91, Count: 7, MaxTime: 31, MaxTimeFile: \Device\HarddiskVolume3\Windows\System32\ntoskrnl.exe, EstimatedImpact: 14%
+2026-10-06T08:54:06.759 ProcessImageName: svchost.exe, Pid: 6748, TotalTime: 90, Count: 15, MaxTime: 15, MaxTimeFile: \Device\HarddiskVolume3\Windows\ServiceProfiles\NetworkService\AppData\Local\Microsoft\Windows\DeliveryOptimization\Cache\a53439e3-880e-4201-b399-1eaa512f1ecd\content.phf, EstimatedImpact: 0%
+2026-10-06T08:54:06.759 ProcessImageName: DeviceCensus.exe, Pid: 8524, TotalTime: 76, Count: 11, MaxTime: 46, MaxTimeFile: \Device\HarddiskVolume3\Windows\System32\Speech_OneCore\common\sapi_onecore.dll, EstimatedImpact: 8%
+2026-10-06T08:54:06.759 ProcessImageName: svchost.exe, Pid: 1128, TotalTime: 76, Count: 3, MaxTime: 46, MaxTimeFile: \Device\HarddiskVolume3\Users\Administrator\AppData\Local\Microsoft\OneDrive\26.173.0906.0008\FileCoAuth.exe, EstimatedImpact: 0%
+2026-10-06T08:54:06.759 ProcessImageName: backgroundTaskHost.exe, Pid: 7984, TotalTime: 75, Count: 17, MaxTime: 15, MaxTimeFile: \Device\HarddiskVolume3\Users\Administrator\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\ContentManagementSDK\Creatives\280810\1791269603->(UTF-16LE), EstimatedImpact: 2%
+2026-10-06T09:19:51.364 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-06T09:19:51.370 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-06T09:19:51.537 [Cloud] End of cloud request.
+2026-10-06T09:19:51.546 [Cloud] End of cloud request.
+2026-10-19T06:49:54.904 Dynamic signature dropped
+2026-10-19T06:49:54.904 Dynamic signature dropped
+2026-10-18T23:52:42.799 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-18T23:52:45.535 Dynamic signature received
+2026-10-18T23:52:45.535 Dynamic signature received
+2026-10-18T23:52:45.540 Dynamic signature received
+2026-10-18T23:52:45.540 Dynamic signature received
+2026-10-18T23:52:45.540 Dynamic signature received
+2026-10-18T23:52:45.542 Dynamic signature received
+2026-10-18T23:52:45.542 Dynamic signature received
+2026-10-18T23:52:45.545 Dynamic signature received
+2026-10-18T23:52:45.545 Dynamic signature received
+2026-10-18T23:52:45.547 Dynamic signature received
+2026-10-18T23:52:45.547 Dynamic signature received
+2026-10-18T23:52:45.547 Dynamic signature received
+2026-10-18T23:52:45.549 Dynamic signature received
+2026-10-18T23:52:45.551 Dynamic signature received
+2026-10-18T23:52:45.551 Dynamic signature received
+2026-10-18T23:52:45.556 Dynamic signature received
+2026-10-18T23:52:45.558 Dynamic signature received
+2026-10-18T23:52:45.558 Dynamic signature received
+2026-10-18T23:52:45.558 Dynamic signature received
+2026-10-18T23:52:45.558 Dynamic signature received
+2026-10-18T23:52:45.561 Dynamic signature received
+2026-10-18T23:52:45.563 Dynamic signature received
+2026-10-18T23:52:45.563 Dynamic signature received
+2026-10-18T23:52:45.565 Dynamic signature received
+2026-10-18T23:52:45.565 Dynamic signature received
+2026-10-18T23:52:45.565 Dynamic signature received
+2026-10-18T23:52:45.568 [Cloud] End of cloud request.
+2026-10-18T23:53:08.669 [RTP] [MpRtp] Engine VFZ lofi/sample/expensive: \Device\HarddiskVolume3\win3d\probes\x86\d3d9_probe.exe. status=0x40050000, statusex=0x0, threatid=0x80000000, sigseq=0x157ec9bbaade
+2026-10-18T23:53:08.709 [RTP] [MpRtp] Engine VFZ lofi/sample/expensive: \Device\HarddiskVolume3\win3d\probes\x86\d3d11_probe.exe. status=0x40050000, statusex=0x0, threatid=0x80000000, sigseq=0x157ec9bbaade
+2026-10-18T23:53:08.747 [RTP] [MpRtp] Engine VFZ lofi/sample/expensive: \Device\HarddiskVolume3\win3d\probes\x86\opengl_probe.exe. status=0x40050000, statusex=0x0, threatid=0x80000000, sigseq=0x157ec9bbaade
+2026-10-18T23:53:08.788 [RTP] [MpRtp] Engine VFZ lofi/sample/expensive: \Device\HarddiskVolume3\win3d\probes\x86\vulkan_probe.exe. status=0x40050000, statusex=0x0, threatid=0x80000000, sigseq=0x157ec9bbaade
+2026-10-18T23:53:08.836 [RTP] [MpRtp] Engine VFZ lofi/sample/expensive: \Device\HarddiskVolume3\win3d\probes\x86\d3d12_probe.exe. status=0x40050000, statusex=0x0, threatid=0x80000000, sigseq=0x157ec9bbaade
+2026-10-18T23:53:08.874 [RTP] [MpRtp] Engine VFZ lofi/sample/expensive: \Device\HarddiskVolume3\win3d\probes\x86\d3d12_probe.exe.orig. status=0x40050000, statusex=0x0, threatid=0x80000000, sigseq=0x157ec9bbaade
+2026-10-18T23:57:12.793 [RTP] [MpRtp] Engine VFZ lofi/sample/expensive: \Device\HarddiskVolume3\vmlab-win3d\runtime\x86\vulkaninfo.exe. status=0x40050000, statusex=0x0, threatid=0x80000000, sigseq=0x157ec9bbaade
+2026-10-18T23:57:13.117 Lua SetAttribute:Filter caching disabled for \Device\HarddiskVolume3\vmlab-win3d\runtime\x86\dxgi-vulkan.dll (runtime MpDisableCaching from 0x002c79bdb1307253)
+2026-10-18T23:57:14.622 Lua SetAttribute:Filter caching disabled for \Device\HarddiskVolume3\vmlab-win3d\runtime\x64\dxgi-vulkan.dll (runtime MpDisableCaching from 0x002c79bdb1307253)
+2026-10-18T23:57:25.492 [RTP] [MpRtp] Engine VFZ lofi/sample/expensive: \Device\HarddiskVolume3\ProgramData\vmlab-win3d\bundle\runtime\x86\vulkaninfo.exe. status=0x40050000, statusex=0x0, threatid=0x80000000, sigseq=0x157e0ecd20d5
+2026-10-18T23:58:36.984 [RTP] [MpRtp] Engine VFZ lofi/sample/expensive: \Device\HarddiskVolume3\ProgramData\vmlab-win3d\bundle\runtime\x86\vulkaninfo.exe. status=0x40050000, statusex=0x0, threatid=0x80000000, sigseq=0x157ec9bbaade
+2026-10-18T23:58:43.919 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-18T23:58:50.398 [Cloud] End of cloud request.
+2026-10-18T23:58:50.513 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-18T23:58:51.815 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-18T23:58:51.842 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-18T23:58:51.851 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-18T23:58:51.871 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-18T23:58:52.545 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-18T23:58:55.229 [Cloud] End of cloud request.
+2026-10-18T23:58:57.485 [RTP] [MpRtp] Engine VFZ lofi/sample/expensive: \Device\HarddiskVolume3\Windows\System32\d3d12.dll. status=0x40050000, statusex=0x0, threatid=0x80000000, sigseq=0x86e7316cce29
+2026-10-19T00:00:06.164 [RTP] [MpRtp] Engine VFZ lofi/sample/expensive: \Device\HarddiskVolume3\ProgramData\vmlab-win3d\bundle\runtime\x86\vulkaninfo.exe. status=0x40050000, statusex=0x0, threatid=0x80000000, sigseq=0x157ec9bbaade
+2026-10-19T00:01:41.062 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:01:49.044 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:01:51.846 Dynamic signature received
+2026-10-19T00:01:51.847 [Cloud] End of cloud request.
+2026-10-19T00:01:57.277 Dynamic signature received
+2026-10-19T00:01:57.277 [RTP] [MpRtp] Engine VFZ lofi/sample/expensive: \Device\HarddiskVolume3\Windows\SysWOW64\vulkaninfo.exe. status=0x40050000, statusex=0x0, threatid=0x80000000, sigseq=0x157e0ecd20d5
+2026-10-19T00:01:57.278 [Cloud] End of cloud request.
+2026-10-19T00:01:57.352 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:02:05.357 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:02:07.188 [Cloud] End of cloud request.
+2026-10-19T00:02:13.367 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:02:19.947 [Cloud] End of cloud request.
+2026-10-19T00:02:20.057 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:02:24.504 Dynamic signature received
+2026-10-19T00:02:24.507 [Cloud] End of cloud request.
+2026-10-19T00:02:24.687 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:02:32.069 [Cloud] End of cloud request.
+2026-10-19T00:02:54.756 [Cloud] End of cloud request.
+2026-10-19T00:03:03.381 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:03:10.832 Dynamic signature received
+2026-10-19T00:03:10.833 [Cloud] End of cloud request.
+2026-10-19T00:03:37.512 [RTP] [MpRtp] Engine VFZ lofi/sample/expensive: \Device\HarddiskVolume3\win3d\probes\x86\d3d9_probe.exe. status=0x40050000, statusex=0x0, threatid=0x80000000, sigseq=0x157ec9bbaade
+2026-10-19T00:03:37.544 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:03:44.758 Dynamic signature received
+2026-10-19T00:03:44.759 [Cloud] End of cloud request.
+2026-10-19T00:03:45.217 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:03:50.650 [Cloud] End of cloud request.
+2026-10-19T00:04:10.669 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:04:18.664 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:04:19.079 Dynamic signature received
+2026-10-19T00:04:19.081 [Cloud] End of cloud request.
+2026-10-19T00:04:34.577 Dynamic signature received
+2026-10-19T00:04:34.578 [Cloud] End of cloud request.
+2026-10-19T00:04:54.872 [RTP] [MpRtp] Engine VFZ lofi/sample/expensive: \Device\HarddiskVolume3\win3d\probes\x86\d3d11_probe.exe. status=0x40050000, statusex=0x0, threatid=0x80000000, sigseq=0x157ec9bbaade
+2026-10-19T00:04:54.903 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:05:00.377 Dynamic signature received
+2026-10-19T00:05:00.379 [Cloud] End of cloud request.
+2026-10-19T00:05:26.694 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:05:34.683 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:05:42.010 Dynamic signature received
+2026-10-19T00:05:42.012 [Cloud] End of cloud request.
+2026-10-19T00:05:42.779 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:05:50.789 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:05:53.830 Dynamic signature received
+2026-10-19T00:05:54.009 [Cloud] End of cloud request.
+2026-10-19T00:05:59.296 Dynamic signature received
+2026-10-19T00:05:59.296 [Cloud] End of cloud request.
+2026-10-19T00:06:08.252 Dynamic signature received
+2026-10-19T00:06:08.254 [Cloud] End of cloud request.
+2026-10-19T00:06:08.781 [RTP] [MpRtp] Engine VFZ lofi/sample/expensive: \Device\HarddiskVolume3\win3d\probes\x86\d3d12_probe.exe. status=0x40050000, statusex=0x0, threatid=0x80000000, sigseq=0x157ec9bbaade
+2026-10-19T00:06:08.814 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:06:14.457 Dynamic signature received
+2026-10-19T00:06:14.458 [Cloud] End of cloud request.
+2026-10-19T00:06:14.580 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:06:22.579 [Cloud] Start of cloud request. Passive mode: 0

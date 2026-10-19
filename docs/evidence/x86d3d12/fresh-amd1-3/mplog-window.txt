@@ -1,0 +1,30 @@
+2026-10-19T00:40:35.942 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:40:38.379 Dynamic signature received
+2026-10-19T00:40:38.379 RTSD:RTSD recieved, rescanning impacted resources
+2026-10-19T00:40:38.380 [Cloud] End of cloud request.
+2026-10-19T00:40:38.877 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:40:42.330 Dynamic signature received
+2026-10-19T00:40:42.330 RTSD:RTSD recieved, rescanning impacted resources
+2026-10-19T00:40:42.330 [Cloud] End of cloud request.
+2026-10-19T00:40:42.967 [RTP] [Mini-filter] Unsuccessful scan status(#33): \Device\HarddiskVolume3\Users\win3d\AppData\Local\Microsoft\OneDrive\settings\CxP.db. Process: (unknown), Status: 0xc000004b, State: 0, ScanRequest #11201, FileId: 0x400000001dbc1, Reas
+2026-10-19T00:40:43.080 [RTP] [Mini-filter] OpenWithoutRead notification (396, 10638, \Device\HarddiskVolume3\Users\win3d\AppData\Local\Microsoft\OneDrive\Update\OneDriveSetup.exe) sent successfully.
+2026-10-19T00:41:03.293 [RTP] [MpRtp] Engine VFZ lofi/sample/expensive: \Device\HarddiskVolume3\win3d\probes\x86\d3d12_probe.exe. status=0x40050000, statusex=0x0, threatid=0x80000000, sigseq=0x157ec9bbaade
+2026-10-19T00:41:03.327 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:41:11.319 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:41:12.637 Dynamic signature received
+2026-10-19T00:41:12.638 RTSD:RTSD recieved, rescanning impacted resources
+2026-10-19T00:41:12.638 [Cloud] End of cloud request.
+2026-10-19T00:41:19.386 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:41:24.922 Dynamic signature received
+2026-10-19T00:41:24.923 [Cloud] End of cloud request.
+2026-10-19T00:41:26.191 Dynamic signature received
+2026-10-19T00:41:26.191 RTSD:RTSD recieved, rescanning impacted resources
+2026-10-19T00:41:26.191 [Cloud] End of cloud request.
+2026-10-19T00:41:26.444 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:41:30.382 Dynamic signature received
+2026-10-19T00:41:30.383 RTSD:RTSD recieved, rescanning impacted resources
+2026-10-19T00:41:30.383 [Cloud] End of cloud request.
+2026-10-19T00:41:30.634 [Cloud] Start of cloud request. Passive mode: 0
+2026-10-19T00:41:34.391 Dynamic signature received
+2026-10-19T00:41:34.392 RTSD:RTSD recieved, rescanning impacted resources
+2026-10-19T00:41:34.392 [Cloud] End of cloud request.

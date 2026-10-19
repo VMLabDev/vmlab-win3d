@@ -1,0 +1,186 @@
+
+[09:14:15] == vmlab-win3d e2e: windows-11, commit 93f3a9e
+date: 2026-10-19T09:14:15+10:00
+commit: 93f3a9e2c17b892b844e9e0850b86b23b892bc4d
+worktree changes: 1
+template: x86_64/windows-11@26100.1742.5
+kernel: 7.2.3-1-cachyos
+qemu (PATH): QEMU emulator version 11.1.1
+packages: qemu-full 11.1.1-1 virglrenderer 1.3.0-2.1 mesa 3:26.2.2-2 vulkan-radeon 3:26.2.2-2 nvidia-utils 610.57.04-1 
+vmlab: vmlab 0.28.0-alpha
+venus gpu: host_gpu AMD1, /dev/dri/renderD129 0000:72:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI] Granite Ridge [Radeon Graphics] (rev c1)
+
+[09:14:16] == 1 build
+[09:14:16] reused (out/package built at 93f3a9e2c17b892b844e9e0850b86b23b892bc4d; no change to build installer probes patches scripts/build.sh since)
+
+[09:14:16] == 2 fresh lab win3d-x86d3d12-amd1 from x86_64/windows-11@26100.1742.5
+[09:14:16] destroying the previous win3d-x86d3d12-amd1
+lab "win3d-x86d3d12-amd1" destroyed
+ok: lab "win3d-x86d3d12-amd1" — 1 vm(s), 0 container(s), 0 segment(s)
+first-boot: provisioning win...
+first-boot: specialize complete; clearing marker
+first-boot: settling staged AppX (LKG) before first logon
+first-boot: appx settle skipped (exec `powershell.exe -NoProfile -NonInteractive -Command $prov = (Get-AppxProvisionedPackage -Online).DisplayName; Get-AppxPackage -AllUsers | Where-Object { -not $_.IsFramework -and -not $_.IsResourcePackage -and $prov -notcontains $_.Name -and -not ($_.PackageUserInformation | Where-Object InstallState -eq 'Installed') } | ForEach-Object { $r = 'removed'; try { Remove-AppxPackage -Package $_.PackageFullName -AllUsers -ErrorAction Stop } catch { $r = 'settled' }; Write-Output ($r + ' ' + $_.PackageFullName) }` timed out after 120s)
+first-boot: rebooting once to settle shell reconciliation
+first-boot: win ready
+lab "win3d-x86d3d12-amd1" is up
+
+[09:26:50] == 3 guest scripts, probes and the baseline
+pushed 7 file(s), 42217 bytes to win:C:/win3d/guest
+pushed 1 file(s), 2321 bytes to win:C:/win3d/e2e
+pushed 6 file(s), 217600 bytes to win:C:/win3d/probes/x64
+pushed 6 file(s), 193024 bytes to win:C:/win3d/probes/x86
+pushed 2800056 bytes to win:C:/win3d/lunarg/x64/vulkaninfo.exe
+pushed 2403256 bytes to win:C:/win3d/lunarg/x86/vulkaninfo.exe
+[09:27:16] baseline: Red Hat VirtIO GPU DOD controller (problem 0)
+
+[09:27:16] == 3b test desktop (autologon user win3d)
+[09:31:42] oobe: done after 263 s
+[09:33:02] autologon before-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-R4ODJG8 AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-R4ODJG8\win3d 
+
+[09:33:02] == 4 install: scripts/install-into-vm.sh /home/wil/dev/vmlab-win3d-wt/x86d3d12/.scratch/e2e/windows-11/lab win
+[09:33:02] waiting for the guest agent
+[09:33:04] copying vmlab-win3d-0.1.1 to C:\vmlab-win3d
+pushed 29 file(s), 102422629 bytes to win:C:/vmlab-win3d
+[09:33:09] running C:\vmlab-win3d\Install.cmd
+2026-10-18T16:33:10.064-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
+2026-10-18T16:33:14.635-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T16:33:20.109-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
+2026-10-18T16:33:20.491-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T16:33:20.514-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-18T16:33:20.518-07:00 [Install]   Signature matches Public Key
+2026-10-18T16:33:20.525-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T16:33:20.531-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T16:33:20.638-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T16:33:20.642-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-18T16:33:20.647-07:00 [Install]   Signature matches Public Key
+2026-10-18T16:33:20.651-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T16:33:20.660-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T16:33:20.760-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-18T16:33:20.767-07:00 [Install]   The operation completed successfully.
+2026-10-18T16:33:21.320-07:00 [Install] test signing is set but not active in this boot
+2026-10-18T16:33:22.370-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T16:33:22.466-07:00 [Install] rebooting; step Driver resumes after the restart
+[09:33:24] Install.cmd exited 0
+[09:33:26] state: RebootPending|Driver|
+[09:34:57] state: Installing|Driver|
+[09:35:13] state: RebootPending|Verify|
+[09:36:41] state: Installed||
+[09:36:41] done: Installed
+[09:36:49] autologon after-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-R4ODJG8 AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-R4ODJG8\win3d 
+
+[09:36:49] == 5 interactive-session tests
+[09:36:50] desktop: True 66
+[09:37:07] desktop: True 82
+[09:37:24] desktop: True 99
+[09:37:41] desktop: True 116
+[09:38:03] desktop: True 138
+
+[09:38:05] == 5a vulkaninfo --summary
+    "exit_code":  0,
+    "exit_code_hex":  "0x00000000",
+	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
+	deviceName         = Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+	driverName         = venus
+exit 0 
+	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
+	deviceName         = Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+	driverName         = venus
+exit 0 
+	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
+	deviceName         = Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+	driverName         = venus
+	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
+	deviceName         = Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+	driverName         = venus
+
+[09:38:32] == 5b probes
+[09:38:32] probe x64-d3d9_probe
+[09:39:17]   Run-Probe exit 0
+  console: 8/20 frames show the probe window; animating=True
+[09:39:18] probe x86-d3d9_probe
+[09:39:49]   Run-Probe exit 0
+  console: 8/15 frames show the probe window; animating=True
+[09:39:49] probe x64-d3d11_probe
+[09:40:25]   Run-Probe exit 0
+  console: 9/17 frames show the probe window; animating=True
+[09:40:25] probe x86-d3d11_probe
+[09:41:06]   Run-Probe exit 0
+  console: 9/19 frames show the probe window; animating=True
+[09:41:06] probe x64-d3d12_probe
+[09:41:42]   Run-Probe exit 0
+  console: 1/17 frames show the probe window; animating=False
+[09:41:42] probe x86-d3d12_probe
+[09:42:44]   Run-Probe exit 0
+  console: 6/29 frames show the probe window; animating=True
+[09:42:44] probe x64-opengl_probe
+[09:43:22]   Run-Probe exit 0
+  console: 7/18 frames show the probe window; animating=True
+[09:43:22] probe x86-opengl_probe
+[09:43:52]   Run-Probe exit 0
+  console: 8/14 frames show the probe window; animating=True
+[09:43:52] probe x64-vulkan_probe
+[09:44:24]   Run-Probe exit 0
+  console: 9/15 frames show the probe window; animating=True
+[09:44:24] probe x86-vulkan_probe
+[09:44:58]   Run-Probe exit 0
+  console: 9/16 frames show the probe window; animating=True
+
+[09:44:58] == 5c dxdiag
+                        "D3D Status":  "Enabled",
+                        "AGP Status":  "Enabled"
+                    }
+                ]
+}
+
+[09:45:27] == 6 collect evidence
+pulled 55634 bytes to /home/wil/dev/vmlab-win3d-wt/x86d3d12/.scratch/e2e/windows-11/results.zip
+
+[09:45:32] == 7 teardown
+[09:45:32] --keep: win3d-x86d3d12-amd1 left running; destroy with (cd /home/wil/dev/vmlab-win3d-wt/x86d3d12/.scratch/e2e/windows-11/lab && vmlab destroy)
+
+[09:45:32] == result (ok)
+Item  Result Check
+------------------------------------------------------------------------------
+1     pass   scripts/build.sh builds the package
+             reused; exit 0
+2     pass   documented install command (scripts/install-into-vm.sh)
+             exit 0; Installed
+2+    pass   display device on our driver, problem code 0
+             Hardsoft VirtIO GPU 3D controller
+2     pass   vulkaninfo --summary (x64) lists the Venus device
+             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+2+    pass   vulkaninfo --summary (x86) lists the Venus device
+             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+2+    pass   vulkaninfo --summary (x64) lists exactly one Venus device
+             1 Venus: Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+2+    pass   LunarG vulkaninfo 1.4.363 (x64, pinned) lists Venus through the installed loader
+             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+2+    pass   LunarG vulkaninfo 1.4.363 (x86, pinned) lists Venus through the installed loader
+             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+2     pass   Direct3D 9 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 30.82 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 9 (x86) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 47.66 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 11 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 59.76 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 11 (x86) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 57.83 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 12 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 9.3 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found
+2     pass   Direct3D 12 (x86) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 37.8 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   OpenGL (x64) renders on the GPU and shows on the console
+             zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 32.87 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   OpenGL (x86) renders on the GPU and shows on the console
+             zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 52.17 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating
+2+    pass   Vulkan (x64) renders on the GPU and shows on the console
+             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 59.81 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating
+2+    pass   Vulkan (x86) renders on the GPU and shows on the console
+             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 59.46 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   dxdiag reports hardware acceleration on our driver
+             hardware_acceleration=True, card 'Hardsoft VirtIO GPU 3D controller', D3D Enabled, DDraw Enabled, WDDM 2.0
+2+    pass   dxdiag: Direct3D acceleration on our full WDDM device
+             D3D Status Enabled, Full Device (POST), WDDM 2.0
+------------------------------------------------------------------------------
+PASS: 12 of 12 Done checks pass ('+' rows are extra and do not count)

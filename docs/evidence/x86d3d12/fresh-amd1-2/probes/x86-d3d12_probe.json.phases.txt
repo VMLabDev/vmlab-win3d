@@ -1,0 +1,154 @@
+# x86d3d12 phase trace, pid 6028, 2026-10-19T00:06:26.438Z, stall 5000 ms
+   11956.4 phase main
+   11956.6 phase probe_init
+   12000.2 phase CreateDXGIFactory1
+   12009.9 phase D3D12CreateDevice
+   16448.1 phase describe adapter
+   16450.7 phase CreateCommandQueue
+   16451.0 phase CreateSwapChainForHwnd
+   21487.4 STALL phase held 5036 ms in 'CreateSwapChainForHwnd'
+---- stack scan (phase held 5036 ms), phase 'CreateSwapChainForHwnd' ----
+thread 1708 (main) ip ntdll.dll+0x7a04c (ZwCreateSection+0xc)
+    sp+0x0000 ntdll.dll+0x5aaf0 (RtlAddressInSectionTable+0x1490)
+    sp+0x004c ntdll.dll+0x43aaf (RtlReleaseSRWLockExclusive+0x5f)
+    sp+0x0060 ntdll.dll+0x5a9eb (RtlAddressInSectionTable+0x138b)
+    sp+0x0084 ntdll.dll+0x5d153 (RtlQueryInformationActiveActivationContext+0x273)
+    sp+0x0114 ntdll.dll+0x6c627 (RtlGetActiveActivationContext+0x47)
+    sp+0x013c ntdll.dll+0x3f929 (RtlAllocateHeap+0xa9)
+    sp+0x018c ntdll.dll+0x48dba (RtlInitializeCriticalSectionEx+0xa1a)
+    sp+0x01b0 ntdll.dll+0x56699 (RtlExpandEnvironmentStrings+0x969)
+    sp+0x01b8 ntdll.dll+0x566f7 (RtlExpandEnvironmentStrings+0x9c7)
+    sp+0x0200 ntdll.dll+0xb04ce (LdrHotPatchNotify+0x3ee)
+    sp+0x024c ntdll.dll+0x44857 (LdrLoadDll+0x167)
+    sp+0x03f4 KERNELBASE.dll+0x14fe83 (LoadLibraryExW+0x153)
+    sp+0x0414 d3d12.dll+0x1c1e (D3D12GetInterface+0x48e)
+    sp+0x0434 d3d12.dll+0x1b0f (D3D12GetInterface+0x37f)
+    sp+0x04a8 ntdll.dll+0xb381f (RtlIsCurrentThreadAttachExempt+0x1c5f)
+    sp+0x04c8 ntdll.dll+0xb382c (RtlIsCurrentThreadAttachExempt+0x1c6c)
+    sp+0x05fc ucrtbase.dll+0x50045 (fegetround+0x5)
+    sp+0x0600 ucrtbase.dll+0x4e843 (lroundf+0xd3)
+    sp+0x0618 ucrtbase.dll+0x4ca81 (_get_printf_count_output+0x821)
+    sp+0x063c ucrtbase.dll+0x4e934 (lroundf+0x1c4)
+    sp+0x066c ucrtbase.dll+0x4e6ae (_get_printf_count_output+0x244e)
+    sp+0x0698 ucrtbase.dll+0x27c33 (fputc+0x483)
+    sp+0x06b8 ucrtbase.dll+0x27b94 (fputc+0x3e4)
+    sp+0x06bc ucrtbase.dll+0x69366 (roundf+0x1426)
+    sp+0x06dc ucrtbase.dll+0x6fd42 (_itoa_s+0x402)
+    sp+0x06f8 ucrtbase.dll+0x6fd8e (_itoa_s+0x44e)
+    sp+0x0730 ucrtbase.dll+0x28ac9 (_strlwr_s_l+0x309)
+    sp+0x0760 ucrtbase.dll+0x28950 (_strlwr_s_l+0x190)
+    sp+0x0770 ucrtbase.dll+0x28960 (_strlwr_s_l+0x1a0)
+    sp+0x086c ntdll.dll+0x5cab4 (RtlQueryInformationActivationContext+0x574)
+    sp+0x0884 ntdll.dll+0x5c995 (RtlQueryInformationActivationContext+0x455)
+    sp+0x0898 ntdll.dll+0x5c9af (RtlQueryInformationActivationContext+0x46f)
+    sp+0x08f0 ntdll.dll+0x7a83c (ZwCreateThreadEx+0xc)
+    sp+0x08f4 KERNELBASE.dll+0x14dcfc (CreateRemoteThreadEx+0x30c)
+    sp+0x0920 KERNELBASE.dll+0x14de5e (CreateRemoteThreadEx+0x46e)
+    sp+0x0934 ntdll.dll+0xb3e78 (RtlIsCurrentThreadAttachExempt+0x22b8)
+    sp+0x093c ntdll.dll+0xb3e7d (RtlIsCurrentThreadAttachExempt+0x22bd)
+    sp+0x094c ntdll.dll+0x41406 (LdrGetDllHandleEx+0x446)
+    sp+0x0988 ntdll.dll+0x4141c (LdrGetDllHandleEx+0x45c)
+    sp+0x0a4c dxgi.dll+0x53878 (DXGIReportAdapterConfiguration+0x3a28)
+thread 2260 ip ntdll.dll+0x7ba0c (ZwWaitForWorkViaWorkerFactory+0xc)
+    sp+0x0000 ntdll.dll+0x56e57 (TpCallbackIndependent+0x487)
+    sp+0x01c4 KERNEL32.DLL+0x15d49 (BaseThreadInitThunk+0x19)
+    sp+0x01d4 ntdll.dll+0x6e1fb (RtlInitializeExceptionChain+0x6b)
+    sp+0x022c ntdll.dll+0x6e181 (RtlGetAppContainerNamedObjectPath+0x231)
+thread 1596 ip ntdll.dll+0x7ba0c (ZwWaitForWorkViaWorkerFactory+0xc)
+    sp+0x0000 ntdll.dll+0x56e57 (TpCallbackIndependent+0x487)
+    sp+0x01c4 KERNEL32.DLL+0x15d49 (BaseThreadInitThunk+0x19)
+    sp+0x01d4 ntdll.dll+0x6e1fb (RtlInitializeExceptionChain+0x6b)
+    sp+0x022c ntdll.dll+0x6e181 (RtlGetAppContainerNamedObjectPath+0x231)
+thread 1300 ip ntdll.dll+0x7ba0c (ZwWaitForWorkViaWorkerFactory+0xc)
+    sp+0x0000 ntdll.dll+0x56e57 (TpCallbackIndependent+0x487)
+    sp+0x01c4 KERNEL32.DLL+0x15d49 (BaseThreadInitThunk+0x19)
+    sp+0x01d4 ntdll.dll+0x6e1fb (RtlInitializeExceptionChain+0x6b)
+    sp+0x022c ntdll.dll+0x6e181 (RtlGetAppContainerNamedObjectPath+0x231)
+thread 5848 ip ntdll.dll+0x7b9dc (ZwWaitForAlertByThreadId+0xc)
+    sp+0x0000 ntdll.dll+0x442a2 (RtlSleepConditionVariableSRW+0x192)
+    sp+0x005c KERNELBASE.dll+0x169543 (SleepConditionVariableSRW+0x23)
+    sp+0x0080 vkd3dcore.dll+0x1acfb (D3D12GetInterface+0x1946b)
+    sp+0x00fc vkd3dcore.dll+0x1e3ab (D3D12GetInterface+0x1cb1b)
+    sp+0x0108 KERNEL32.DLL+0x15d49 (BaseThreadInitThunk+0x19)
+    sp+0x0118 ntdll.dll+0x6e1fb (RtlInitializeExceptionChain+0x6b)
+    sp+0x0170 ntdll.dll+0x6e181 (RtlGetAppContainerNamedObjectPath+0x231)
+thread 7480 ip ntdll.dll+0x7b9dc (ZwWaitForAlertByThreadId+0xc)
+    sp+0x0000 ntdll.dll+0x442a2 (RtlSleepConditionVariableSRW+0x192)
+    sp+0x0058 KERNELBASE.dll+0x169543 (SleepConditionVariableSRW+0x23)
+    sp+0x007c vkd3dcore.dll+0x74441 (D3D12GetInterface+0x72bb1)
+    sp+0x00b4 vkd3dcore.dll+0x7640b (D3D12GetInterface+0x74b7b)
+    sp+0x00c0 KERNEL32.DLL+0x15d49 (BaseThreadInitThunk+0x19)
+    sp+0x00d0 ntdll.dll+0x6e1fb (RtlInitializeExceptionChain+0x6b)
+    sp+0x0128 ntdll.dll+0x6e181 (RtlGetAppContainerNamedObjectPath+0x231)
+thread 5788 ip ntdll.dll+0x7b9dc (ZwWaitForAlertByThreadId+0xc)
+    sp+0x0000 ntdll.dll+0x442a2 (RtlSleepConditionVariableSRW+0x192)
+    sp+0x004c vkd3dcore.dll+0x16afe (D3D12GetInterface+0x1526e)
+    sp+0x0054 KERNELBASE.dll+0x169543 (SleepConditionVariableSRW+0x23)
+    sp+0x0078 vkd3dcore.dll+0x579dc (D3D12GetInterface+0x5614c)
+    sp+0x00d4 vkd3dcore.dll+0x2c14b (D3D12GetInterface+0x2a8bb)
+    sp+0x00e0 KERNEL32.DLL+0x15d49 (BaseThreadInitThunk+0x19)
+    sp+0x00f0 ntdll.dll+0x6e1fb (RtlInitializeExceptionChain+0x6b)
+    sp+0x0148 ntdll.dll+0x6e181 (RtlGetAppContainerNamedObjectPath+0x231)
+thread 5284 ip ntdll.dll+0x7b9dc (ZwWaitForAlertByThreadId+0xc)
+    sp+0x0000 ntdll.dll+0x442a2 (RtlSleepConditionVariableSRW+0x192)
+    sp+0x0054 KERNELBASE.dll+0x169543 (SleepConditionVariableSRW+0x23)
+    sp+0x0078 vkd3dcore.dll+0x51ade (D3D12GetInterface+0x5024e)
+    sp+0x0098 DComp.DLL+0x6a04f (DllCanUnloadNow+0xc67f)
+    sp+0x00ac ntdll.dll+0x79b66 (RtlIpv6AddressToStringA+0x166)
+    sp+0x00d4 ntdll.dll+0x3b17c (RtlDeactivateActivationContextUnsafeFast+0x9c)
+    sp+0x00f4 ntdll.dll+0x95a9e (RtlNumberOfSetBitsUlongPtr+0xbee)
+    sp+0x010c ntdll.dll+0x95a9e (RtlNumberOfSetBitsUlongPtr+0xbee)
+    sp+0x0114 ntdll.dll+0x53519 (RtlLeaveCriticalSection+0xb9)
+    sp+0x0128 ntdll.dll+0x79c6c (ZwSetEvent+0xc)
+    sp+0x012c ntdll.dll+0x6e01a (RtlGetAppContainerNamedObjectPath+0xca)
+    sp+0x013c ntdll.dll+0x3b01b (RtlLocaleNameToLcid+0x75b)
+    sp+0x0140 ntdll.dll+0x3afef (RtlLocaleNameToLcid+0x72f)
+    sp+0x0170 ntdll.dll+0x951ae (RtlNumberOfSetBitsUlongPtr+0x2fe)
+    sp+0x0194 ntdll.dll+0x3af4c (RtlLocaleNameToLcid+0x68c)
+    sp+0x0198 ntdll.dll+0x3af8d (RtlLocaleNameToLcid+0x6cd)
+    sp+0x01a0 ntdll.dll+0xb0ba2 (LdrHotPatchNotify+0xac2)
+    sp+0x01d4 ntdll.dll+0x7b8dc (ZwTestAlert+0xc)
+    sp+0x01d8 ntdll.dll+0x3453f (LdrInitializeThunk+0x30f)
+    sp+0x0228 ntdll.dll+0xb0f5b (LdrHotPatchNotify+0xe7b)
+    sp+0x0244 ntdll.dll+0x79fdc (ZwContinue+0xc)
+    sp+0x0248 ntdll.dll+0x34259 (LdrInitializeThunk+0x29)
+    sp+0x04b4 vkd3dcore.dll+0x2c14b (D3D12GetInterface+0x2a8bb)
+    sp+0x04c0 KERNEL32.DLL+0x15d49 (BaseThreadInitThunk+0x19)
+    sp+0x04d0 ntdll.dll+0x6e1fb (RtlInitializeExceptionChain+0x6b)
+    sp+0x0528 ntdll.dll+0x6e181 (RtlGetAppContainerNamedObjectPath+0x231)
+thread 924 ip ntdll.dll+0x79bcc (ZwWaitForSingleObject+0xc)
+    sp+0x0000 ntdll.dll+0x55d1a (RtlEnterCriticalSection+0x193a)
+    sp+0x0024 ntdll.dll+0x3aebd (RtlLocaleNameToLcid+0x5fd)
+    sp+0x0054 ntdll.dll+0x951ae (RtlNumberOfSetBitsUlongPtr+0x2fe)
+    sp+0x0084 ntdll.dll+0xb0ba2 (LdrHotPatchNotify+0xac2)
+    sp+0x00bc ntdll.dll+0x34524 (LdrInitializeThunk+0x2f4)
+    sp+0x010c ntdll.dll+0xb0f5b (LdrHotPatchNotify+0xe7b)
+    sp+0x0134 ntdll.dll+0x34241 (LdrInitializeThunk+0x11)
+---- end stack scan ----
+   22192.9 phase RTV heap and GetBuffer
+   22193.0 phase root signature
+   22193.0 phase D3DCompile
+   22199.1 phase CreateGraphicsPipelineState
+   22199.3 phase command list, buffers, fence
+   22203.7 phase frame loop
+   22203.7 phase frame 0
+   22204.3 phase Present
+   22204.8 phase fence wait
+   22273.4 phase frame 1
+   22273.5 phase Present
+   22273.6 phase fence wait
+   22345.0 phase frame 2
+   22345.1 phase Present
+   22345.2 phase fence wait
+   22354.4 phase frame 3
+   22354.5 phase Present
+   22354.5 phase fence wait
+   31983.4 phase readback
+   31983.5 frames 583, max Present 0.9 ms (frame 390), max fence 71.4 ms (frame 1), max frame 71.6 ms (frame 1)
+   31983.6 phase teardown
+   31984.3 phase swap->Release
+   32110.9 phase queue->Release
+   32111.9 phase dev->Release
+   32134.2 phase factory->Release
+   32134.5 phase probe_finish
+   32135.9 phase exit

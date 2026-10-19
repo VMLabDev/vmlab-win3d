@@ -1,0 +1,2 @@
+x64: 2 runs, 2 pass, frames min 203, fps mean 12.8 min 10.1, console windows min 4, run_s max 43.9
+x86: 3 runs, 3 pass, frames min 25, fps mean 9.9 min 1.2, console windows min 1, run_s max 42.8

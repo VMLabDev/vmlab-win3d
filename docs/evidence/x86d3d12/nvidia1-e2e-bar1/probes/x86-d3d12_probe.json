@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "probe": "d3d12",
+  "api": "Direct3D 12",
+  "arch": "x86",
+  "result": "api_failure",
+  "exit_code": 1,
+  "exe": "C:\\win3d\\probes\\x86\\d3d12_probe.exe",
+  "pid": 6504,
+  "session_id": 1,
+  "os_version": "10.0.26100",
+  "finished_utc": "2026-10-18T21:34:56Z",
+  "args": {"seconds": 20, "warp": false, "width": 1024, "height": 640},
+  "adapter": {
+    "name": "Hardsoft VirtIO GPU 3D controller",
+    "vendor": "Red Hat (virtio)",
+    "vendor_id": "0x1af4",
+    "device_id": "0x1050",
+    "subsys_id": "0x11001af4",
+    "dedicated_video_memory_mb": 0,
+    "shared_system_memory_mb": 4076,
+    "dxgi_flag_software": false,
+    "driver_version": "0.0.0.0",
+    "software": false
+  },
+  "device": {
+    "adapter_selection": "default (NULL)",
+    "max_feature_level": "12_2",
+    "highest_shader_model": "6.6",
+    "swap_effect": "FLIP_DISCARD"
+  },
+  "frames_presented": 1,
+  "elapsed_seconds": 23.141,
+  "avg_fps": 0.04,
+  "window_closed_early": false,
+  "readback": {
+    "ok": false,
+    "tolerance": 2,
+    "pixels": [
+      {"name": "red_top_left", "x": 48, "y": 48, "expected": [255, 0, 0], "actual": null, "match": false},
+      {"name": "blue_top_right", "x": 976, "y": 48, "expected": [0, 0, 255], "actual": null, "match": false},
+      {"name": "green_bottom_left", "x": 48, "y": 592, "expected": [0, 255, 0], "actual": null, "match": false}
+    ]
+  },
+  "errors": [
+    "GPU fence 1 not reached within 10 s (device removed reason 0x00000000)"
+  ]
+}

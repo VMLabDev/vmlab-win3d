@@ -64,6 +64,7 @@ or Intel GPU as declared in the host config, `~/.config/vmlab/config.wcl`
 | [d3d12app.md](d3d12app.md) | See how Microsoft's D3D12 samples are built unmodified with clang-cl and xwin, how they ran on AMD1 and Nvidia1, and why ExecuteIndirect draws nothing |
 | [dwmheap.md](dwmheap.md) | Find out why dwm crashed with heap corruption in the first boot on NVIDIA, how the dump traced it to the UMD's trim path, and what `patches/mesa/0060` changes |
 | [ei.md](ei.md) | See why D3D12 `ExecuteIndirect` with root-state arguments drew nothing on Venus, and the vkd3d-proton emulation `patches/vkd3d-proton/0006` |
+| [x86d3d12.md](x86d3d12.md) | See why the x86 D3D12 probe sometimes drew one frame after 20 to 70 s in a fresh lab: Defender's cloud check on the first load of new unsigned images, caught with a phase-traced repro, and the probes' `--seconds` change |
 | [nvidia.md](nvidia.md) | See why Venus failed on the RTX 5090 and what fixes it: `patches/mesa/0020` and a patched QEMU |
 | [zeus.md](zeus.md) | See the package on an Intel Iris Xe (passes with `patches/mesa/0021`) and a laptop RTX 4060 (Venus feedback writes invisible to the guest) |
 | [nvfb.md](nvfb.md) | See why Venus fences hung on the RTX 4060 Laptop (GPU writes to uncached memory invisible to the guest) and the fixes `patches/mesa/0065` to `0067` |

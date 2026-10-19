@@ -577,6 +577,20 @@ remain:
   path while it recovers; a lost device in dwm itself has not been seen in
   a fixed run yet.
 
+### The first D3D12 launch in a new guest waits on Defender's cloud check
+
+In a fresh guest, Microsoft Defender Antivirus holds the first load of each
+new unsigned image until its cloud protection answers: the program's
+executable, and the package's `d3d12.dll`, `vmlab-win3d\vkd3dcore.dll` and
+`vmlab-win3d\dxgi-vulkan.dll`, once per bitness. On helios's slow internet
+link each answer took 4 to 16 seconds, and a first 32-bit D3D12 launch took
+up to about 70 seconds in total before its first frame. Later launches are
+fast. This made acceptance runs score 11 of 12, because the D3D12 probe's
+20 seconds ran out during start-up. The probes now count `--seconds` from
+their first frame and report `startup_seconds`. The package does not
+exclude itself from Defender. Publisher-signed binaries would avoid the
+check ([x86d3d12.md](x86d3d12.md)).
+
 ### DirectDraw: 16 bpp only for 32-bit programs, and flips below the refresh rate on NVIDIA
 
 Fullscreen exclusive DirectDraw works: the mode change, the flip chain,
