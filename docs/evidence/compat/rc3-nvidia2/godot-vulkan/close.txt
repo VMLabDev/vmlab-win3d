@@ -1,0 +1,1 @@
+3532 window=0xB0292 title=[3D Particles (DEBUG)] closed=True

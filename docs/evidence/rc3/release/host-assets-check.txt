@@ -1,0 +1,52 @@
+# qemu-vmlab-egl-0.1.1-alpha-rc3: install.sh --check, then install into a scratch prefix and --version
+ldd: every shared library the binary needs is present and new enough
+ISA: the binary needs x86-64-v2; this CPU supports up to x86-64-v4
+run: QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+exit 0
+ldd: every shared library the binary needs is present and new enough
+ISA: the binary needs x86-64-v2; this CPU supports up to x86-64-v4
+run: QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+installed: <scratch>/prefix-qemu/bin/qemu-system-x86_64
+QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+
+Add this line to each NVIDIA GPU block in the vmlab host config,
+~/.config/vmlab/config.wcl (vmlab 0.26.0-alpha or later):
+
+  qemu_binary = "<scratch>/prefix-qemu/bin/qemu-system-x86_64"
+
+For example:
+
+  gpu "Nvidia1" {
+    address     = "0000:01:00.0"
+    qemu_binary = "<scratch>/prefix-qemu/bin/qemu-system-x86_64"
+  }
+
+Then check it with: vmlab validate
+exit 0
+QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+Copyright (c) 2003-2026 Fabrice Bellard and the QEMU Project developers
+
+# virglrenderer-vmlab-0.1.1-alpha-rc3: install.sh --check, then install into a scratch prefix
+host virglrenderer: 1.3.0
+ldd: every shared library the server needs is present and new enough
+ISA: the server needs x86-64-v2; this CPU supports up to x86-64-v4
+run: the server starts
+exit 0
+host virglrenderer: 1.3.0
+ldd: every shared library the server needs is present and new enough
+ISA: the server needs x86-64-v2; this CPU supports up to x86-64-v4
+run: the server starts
+installed <scratch>/prefix-vr/libexec/virgl_render_server
+
+Add this line to every NVIDIA GPU block in ~/.config/vmlab/config.wcl
+(vmlab 0.26.0-alpha or later), next to its qemu_binary, then restart the
+VMs on that GPU:
+
+  qemu_env = { RENDER_SERVER_EXEC_PATH: "<scratch>/prefix-vr/libexec/virgl_render_server" }
+exit 0
+
+# The binaries the helios host config runs (Nvidia1 and Nvidia2 qemu_binary and RENDER_SERVER_EXEC_PATH) against these assets
+297e047d44da86c6e91ada246b9a0cd9d081497f7fc791fc87c8220dc966d510  <scratch>/q/qemu-vmlab-egl-0.1.1-alpha-rc3/bin/qemu-system-x86_64
+0adf8849559a5b61157d88d54bc78bd804228920f2fadc3aaceb36c2901844b1  ~/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64
+69d6fc6afbe88c8dafc02324df414fd29791073fbefbeb60eeb4d450fda2cff1  <scratch>/v/virglrenderer-vmlab-0.1.1-alpha-rc3/libexec/virgl_render_server
+69d6fc6afbe88c8dafc02324df414fd29791073fbefbeb60eeb4d450fda2cff1  ~/.local/opt/virglrenderer-vmlab/libexec/virgl_render_server

@@ -1,0 +1,1 @@
+4752 window=0x1302E2 title=[Freedoom: Phase 2] closed=True

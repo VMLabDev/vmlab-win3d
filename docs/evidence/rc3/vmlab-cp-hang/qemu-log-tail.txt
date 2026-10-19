@@ -1,0 +1,3 @@
+vmlab: argv: /home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64 -name vmlab:win3d-rc3-w10-nvidia1/win -L /usr/share/qemu -machine q35 -accel kvm -cpu host,vmx=off,svm=off -smp 4 -m 8192M -display none -vnc unix:/run/user/1000/vmlab/labs/win3d-rc3-w10-nvidia1/vms/win/vnc.sock,share=ignore -qmp unix:/run/user/1000/vmlab/labs/win3d-rc3-w10-nvidia1/vms/win/qmp.sock,server=on,wait=off -monitor 
+vmlab: env: VK_LOADER_DRIVERS_SELECT=*nvidia* VK_ADD_IMPLICIT_LAYER_PATH=/home/wil/.local/share/vmlab/vk-layer/0df9161736fcf95d VMLAB_VK_PCI_ADDRESS=0000:01:00.0 RENDER_SERVER_EXEC_PATH=/home/wil/.local/opt/virglrenderer-vmlab/libexec/virgl_render_server
+virtio_gpu_virgl_process_cmd: ctrl 0x102, error 0x1203

@@ -1,0 +1,129 @@
+
+[17:54:59] == vmlab-win3d e2e: windows-10, commit ee9ce49
+date: 2026-10-19T17:54:59+10:00
+commit: ee9ce49fefc7d6820653b6014d44d876fc12965d
+worktree changes: 2
+template: x86_64/windows-10@19045.2006.8
+kernel: 7.2.3-1-cachyos
+qemu (PATH): QEMU emulator version 11.1.1
+qemu (Nvidia1 qemu_binary): /home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64, QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+packages: qemu-full 11.1.1-1 virglrenderer 1.3.0-2.1 mesa 3:26.2.2-2 vulkan-radeon 3:26.2.2-2 nvidia-utils 610.57.04-1 
+vmlab: vmlab 0.30.0-alpha
+venus gpu: host_gpu Nvidia1, /dev/dri/renderD128 0000:01:00.0 VGA compatible controller: NVIDIA Corporation GB202 [GeForce RTX 5090] (rev a1)
+
+[17:54:59] == 1 build
+[17:54:59] reused (out/package built at ee9ce49fefc7d6820653b6014d44d876fc12965d; no change to build installer probes patches scripts/build.sh since)
+
+[17:54:59] == 2 fresh lab win3d-rc3-w10-nvidia1 from x86_64/windows-10@19045.2006.8
+ok: lab "win3d-rc3-w10-nvidia1" — 1 vm(s), 0 container(s), 0 segment(s)
+first-boot: provisioning win...
+first-boot: specialize complete; clearing marker
+first-boot: settling staged AppX (LKG) before first logon
+first-boot: appx settle skipped (exec `powershell.exe -NoProfile -NonInteractive -Command $prov = (Get-AppxProvisionedPackage -Online).DisplayName; Get-AppxPackage -AllUsers | Where-Object { -not $_.IsFramework -and -not $_.IsResourcePackage -and $prov -notcontains $_.Name -and -not ($_.PackageUserInformation | Where-Object InstallState -eq 'Installed') } | ForEach-Object { $r = 'removed'; try { Remove-AppxPackage -Package $_.PackageFullName -AllUsers -ErrorAction Stop } catch { $r = 'settled' }; Write-Output ($r + ' ' + $_.PackageFullName) }` timed out after 120s)
+first-boot: rebooting once to settle shell reconciliation
+first-boot: win ready
+lab "win3d-rc3-w10-nvidia1" is up
+
+[18:02:26] == 3 guest scripts, probes and the baseline
+pushed 7 file(s), 42217 bytes to win:C:/win3d/guest
+pushed 1 file(s), 2321 bytes to win:C:/win3d/e2e
+pushed 5 file(s), 176128 bytes to win:C:/win3d/probes/x64
+pushed 5 file(s), 153600 bytes to win:C:/win3d/probes/x86
+pushed 2800056 bytes to win:C:/win3d/lunarg/x64/vulkaninfo.exe
+pushed 2403256 bytes to win:C:/win3d/lunarg/x86/vulkaninfo.exe
+[18:02:33] baseline: Red Hat VirtIO GPU DOD controller (problem 0)
+
+[18:02:33] == 3b test desktop (autologon user win3d)
+[18:05:25] oobe: done after 171 s
+[18:06:26] autologon before-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-1P9DMFM AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user= 
+
+[18:06:26] == 4 install: scripts/install-into-vm.sh /home/wil/dev/vmlab-win3d-wt/rc3/.scratch/e2e/windows-10-nvidia1/lab win
+[18:06:26] waiting for the guest agent
+[18:06:27] copying vmlab-win3d-0.1.1 to C:\vmlab-win3d
+Terminated                 "$VMLAB" cp "$BUNDLE" "$VM:C:/vmlab-win3d"
+[18:26:35] autologon after-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-1P9DMFM AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-1P9DMFM\win3d 
+
+[18:26:35] == 5 interactive-session tests
+[18:26:36] desktop: True 1201
+
+[18:26:39] == 5a vulkaninfo --summary
+    "exit_code":  1,
+    "exit_code_hex":  "0x00000001",
+exit 9009 
+exit 9009 
+
+[18:26:51] == 5b probes
+[18:26:51] probe x64-d3d9_probe
+[18:27:17]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+[18:27:17] probe x86-d3d9_probe
+[18:27:41]   Run-Probe exit 0
+  console: 10/11 frames show the probe window; animating=True
+[18:27:41] probe x64-d3d11_probe
+[18:28:04]   Run-Probe exit 0
+  console: 10/11 frames show the probe window; animating=True
+[18:28:05] probe x86-d3d11_probe
+[18:28:30]   Run-Probe exit 0
+  console: 10/12 frames show the probe window; animating=True
+[18:28:30] probe x64-d3d12_probe
+[18:28:56]   Run-Probe exit 0
+  console: 10/12 frames show the probe window; animating=True
+[18:28:56] probe x86-d3d12_probe
+[18:29:19]   Run-Probe exit 0
+  console: 10/11 frames show the probe window; animating=True
+[18:29:19] probe x64-opengl_probe
+[18:29:43]   Run-Probe exit 0
+  console: 10/11 frames show the probe window; animating=True
+[18:29:43] probe x86-opengl_probe
+[18:30:06]   Run-Probe exit 0
+  console: 10/11 frames show the probe window; animating=True
+[18:30:06] probe x64-vulkan_probe
+[18:30:14]   Run-Probe exit 1
+  console: 0/4 frames show the probe window; animating=False
+[18:30:14] probe x86-vulkan_probe
+[18:30:23]   Run-Probe exit 1
+  console: 0/4 frames show the probe window; animating=False
+
+[18:30:23] == 5c dxdiag
+                        "D3D Status":  "Enabled",
+                        "AGP Status":  "Enabled"
+                    }
+                ]
+}
+
+[18:30:34] == 6 collect evidence
+pulled 45256 bytes to /home/wil/dev/vmlab-win3d-wt/rc3/.scratch/e2e/windows-10-nvidia1/results.zip
+
+[18:30:37] == 6b stretch: third-party applications
+[18:30:37] unpacking the DirectX SDK's samples, media, redistributable and developer runtime
+[18:30:40] copying the DirectX SDK and Blender into the guest
+pushed 800475102 bytes to win:C:/apps/dxsdk.zip
+pushed 383613057 bytes to win:C:/apps/blender.zip
+pushed 10277328 bytes to win:C:/apps/vcredist_x64.exe
+pushed 8993744 bytes to win:C:/apps/vcredist_x86.exe
+blender-4.2.3-windows-x64
+DXSDK
+vcredist_x64.exe
+vcredist_x86.exe
+[18:31:11] installing the DirectX End-User Runtime from the SDK (DXSETUP /silent) and the VC++ 2010 runtime
+DXSETUP exit 0
+vcredist_x64 exit 0
+vcredist_x86 exit 0
+System32\msvcr100.dll True
+SysWOW64\msvcr100.dll True
+System32\d3dx10_43.dll True
+System32\d3dx9_43.dll True
+System32\d3dx11_43.dll True
+System32\D3DCompiler_43.dll True
+SysWOW64\d3dx9_43.dll True
+SysWOW64\D3DCompiler_43.dll True
+[18:31:47] installing the SDK developer runtime (D3D11Ref.dll)
+System32\D3D11Ref.dll 8a93549fa4fdcb453409128d493b1f8e262d85a2e562ce78eb1b14ce715ac7ee
+SysWOW64\D3D11Ref.dll 6335bd1f8a137c6a6696878c67652d1c75551c858e589559dfafa15a5e54c8c3
+[18:31:47] app d3d9-x64-BasicHLSL: C:\apps\DXSDK\Samples\C++\Direct3D\Bin\x64\BasicHLSL.exe -windowed
+[18:32:24]   Run-Probe exit 124 (124 = still running at 30 s, then closed)
+[18:32:24] app d3d9-x86-BasicHLSL: C:\apps\DXSDK\Samples\C++\Direct3D\Bin\x86\BasicHLSL.exe -windowed
+[18:33:00]   Run-Probe exit 124 (124 = still running at 30 s, then closed)
+[18:33:00] app d3d9-x64-ParallaxOcclusionMapping: C:\apps\DXSDK\Samples\C++\Direct3D\Bin\x64\ParallaxOcclusionMapping.exe -windowed
+[18:33:37]   Run-Probe exit 124 (124 = still running at 30 s, then closed)
+[18:33:37] app d3d11-x64-BasicHLSL11: C:\apps\DXSDK\Samples\C++\Direct3D11\Bin\x64\BasicHLSL11.exe -windowed

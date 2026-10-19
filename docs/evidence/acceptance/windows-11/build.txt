@@ -1,4 +1,4 @@
-mode: reused (out/package built at 0d3eb68b7780c21061b34c9768df08aa418497e4; no change to build installer probes patches scripts/build.sh since)
+mode: reused (out/package built at ee9ce49fefc7d6820653b6014d44d876fc12965d; no change to build installer probes patches scripts/build.sh since)
 exit: 0
 command: scripts/build.sh
 ## manifest.json
@@ -6,7 +6,7 @@ command: scripts/build.sh
   "schema": 1,
   "name": "vmlab-win3d",
   "version": "0.1.1",
-  "commit": "0d3eb68b7780c21061b34c9768df08aa418497e4",
+  "commit": "ee9ce49fefc7d6820653b6014d44d876fc12965d",
   "driver_date": "09/27/2026",
   "driver_version": "100.6.101.58100",
   "hardware_id": "PCI\\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01",
@@ -155,5 +155,5 @@ command: scripts/build.sh
   ]
 }
 ## SHA256SUMS
-43e6e8f6ab78bd23a5bf21dc86982a7bd96ee3ba716bd3bb040045271f1c24e9  vmlab-win3d-0.1.1.zip
-7de55b27748d335e0cd47d4b0d52c0a8faeb5a3295ac8de87495b5d0fac658f2  vmlab-win3d-0.1.1/manifest.json
+5c52d52ba7ad9d07d4c1c2022b6ab71e495a811f9b0d8c81071dc2b7efbff082  vmlab-win3d-0.1.1.zip
+b36cbda671e192ad27659157d6d19707407d43cf872cc2d3a6f79d61ac770ef0  vmlab-win3d-0.1.1/manifest.json

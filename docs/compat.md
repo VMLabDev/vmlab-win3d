@@ -17,8 +17,10 @@ failure below is recorded in enough detail for a later worker to pick it up.
 The failures were then fixed one by one (each failure's status below). The
 whole sweep ran again on AMD1 with release candidate 0.1.1-alpha-rc2
 (package built at `0d3eb68`), and **all 12 runs pass**
-([rc2 on AMD1](#release-candidate-011-alpha-rc2-on-amd1)). It has not run
-again on NVIDIA yet.
+([rc2 on AMD1](#release-candidate-011-alpha-rc2-on-amd1)). With release
+candidate 0.1.1-alpha-rc3 (built at `ee9ce49`, the same guest package)
+it ran again on Nvidia2, after helios got Resizable BAR, and **all 12 runs
+pass** there too ([rc3 on Nvidia2](#release-candidate-011-alpha-rc3-on-nvidia2)).
 
 ## How to rerun it
 
@@ -142,14 +144,14 @@ full time, and exited cleanly on WM_CLOSE.
 
 By API:
 
-| API | AMD1 | Nvidia2 | AMD1, rc2 |
-| --- | --- | --- | --- |
-| D3D11 | 2 of 2 pass; Heaven crashed in 1 of 2 runs | 2 of 2 pass | 2 of 2 pass |
-| D3D9 | 2 of 3 pass; Valley hangs | 1 of 3 pass; both Unigine runs fail (F5) | 3 of 3 pass |
-| OpenGL | 3 of 4 pass; GZDoom fails (F3) | 1 of 4 pass; only Godot | 4 of 4 pass |
-| Vulkan | 2 of 2 pass | 0 of 2 pass; Xid 69 (F1) and a crash (F2) | 2 of 2 pass |
-| D3D12 | 1 of 1 passes | 1 of 1 passes | 1 of 1 passes |
-| All | 10 of 12 | 5 of 12 | **12 of 12** |
+| API | AMD1 | Nvidia2 | AMD1, rc2 | Nvidia2, rc3 |
+| --- | --- | --- | --- | --- |
+| D3D11 | 2 of 2 pass; Heaven crashed in 1 of 2 runs | 2 of 2 pass | 2 of 2 pass | 2 of 2 pass |
+| D3D9 | 2 of 3 pass; Valley hangs | 1 of 3 pass; both Unigine runs fail (F5) | 3 of 3 pass | 3 of 3 pass |
+| OpenGL | 3 of 4 pass; GZDoom fails (F3) | 1 of 4 pass; only Godot | 4 of 4 pass | 4 of 4 pass |
+| Vulkan | 2 of 2 pass | 0 of 2 pass; Xid 69 (F1) and a crash (F2) | 2 of 2 pass | 2 of 2 pass |
+| D3D12 | 1 of 1 passes | 1 of 1 passes | 1 of 1 passes | 1 of 1 passes |
+| All | 10 of 12 | 5 of 12 | **12 of 12** | **12 of 12** |
 
 ### Release candidate 0.1.1-alpha-rc2 on AMD1
 
@@ -188,6 +190,59 @@ logged a host kernel line, and the UMD logged no line for any of the
 programs. The Unigine frame rates are higher than in the first sweep (13 to
 33 against 13 to 21), but they are means of OCR samples, so they are not a
 measurement of the fixes.
+
+### Release candidate 0.1.1-alpha-rc3 on Nvidia2
+
+The same sweep, one pass, on 2026-10-19 with the rc3 package
+(`vmlab-win3d-0.1.1`, built by `scripts/release.sh 0.1.1-alpha-rc3` at
+`ee9ce49`; [`docs/evidence/rc3/`](evidence/rc3/README.md)), in its own lab
+(`win3d-rc3-compat-nvidia2`). Since the first sweep, helios has Resizable
+BAR: BAR1 is 32 GiB, and Venus guests on NVIDIA now get host-visible VRAM
+([`nvva.md`](nvva.md)). The host has vmlab 0.30.0-alpha, the patched QEMU
+and the vmlab render server as Nvidia2's `qemu_binary` and `qemu_env`
+(`rc3-nvidia2/host.txt`). The guest was activated
+(`rc3-nvidia2/activation.txt`). Nvidia2 was not quiet: for the whole sweep
+it also ran the rc3 windows-11 e2e lab and a probe-loop lab, the ReBAR load
+check in [`docs/evidence/rc3/`](evidence/rc3/README.md#rebar-load-check).
+
+```sh
+COMPAT_LAB=win3d-rc3-compat-nvidia2 COMPAT_EV=$PWD/docs/evidence/compat/rc3-nvidia2 \
+  tests/apps/compat/run.sh --host-gpu Nvidia2 --keep
+```
+
+| Application | API | Nvidia2, first sweep | Nvidia2, rc3 | FPS, rc3 | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| Unigine Heaven 4.0 | D3D11 | Pass | Pass | 53.9 (OCR) | [rc3-nvidia2/heaven-d3d11](evidence/compat/rc3-nvidia2/heaven-d3d11/) |
+| Unigine Heaven 4.0 | D3D9 | **Renders wrong** (F5) | **Pass**: the airship scene fully lit, no skipped draws | 24.6 (OCR) | [rc3-nvidia2/heaven-d3d9](evidence/compat/rc3-nvidia2/heaven-d3d9/) |
+| Unigine Heaven 4.0 | OpenGL | **Crash** at 26 s (F4) | **Pass** | 110.2 (OCR) | [rc3-nvidia2/heaven-opengl](evidence/compat/rc3-nvidia2/heaven-opengl/) |
+| Unigine Valley 1.0 | D3D11 | Pass | Pass | 17.6 (OCR) | [rc3-nvidia2/valley-d3d11](evidence/compat/rc3-nvidia2/valley-d3d11/) |
+| Unigine Valley 1.0 | D3D9 | **Crash** at 111 s (F5) | **Pass**: renders to the end and exits cleanly | 9.9 (OCR) | [rc3-nvidia2/valley-d3d9](evidence/compat/rc3-nvidia2/valley-d3d9/) |
+| Unigine Valley 1.0 | OpenGL | **Crash** at 17 s (F4) | **Pass** | 61.2 (OCR) | [rc3-nvidia2/valley-opengl](evidence/compat/rc3-nvidia2/valley-opengl/) |
+| Godot 4.7.2, 3D Particles demo | D3D12 | Pass | Pass | 60.0 | [rc3-nvidia2/godot-d3d12](evidence/compat/rc3-nvidia2/godot-d3d12/) |
+| Godot 4.7.2, 3D Particles demo | Vulkan | **Xid 69** (F1) | **Pass**, no Xid | 59.2 | [rc3-nvidia2/godot-vulkan](evidence/compat/rc3-nvidia2/godot-vulkan/) |
+| Godot 4.7.2, 3D Particles demo | OpenGL 3.3 (Compatibility) | Pass | Pass | 56.9 | [rc3-nvidia2/godot-opengl](evidence/compat/rc3-nvidia2/godot-opengl/) |
+| GZDoom 4.14.2, Freedoom 2 | Vulkan | **Crash** (F2) | **Pass**: renders its title loop and exits cleanly | 34.8 (OCR) | [rc3-nvidia2/gzdoom-vulkan](evidence/compat/rc3-nvidia2/gzdoom-vulkan/) |
+| GZDoom 4.14.2, Freedoom 2 | OpenGL | **Fails to start** (F3) | **Pass** | 34.9 (OCR) | [rc3-nvidia2/gzdoom-opengl](evidence/compat/rc3-nvidia2/gzdoom-opengl/) |
+| Crispy Doom 7.2.0, Freedoom 2 | D3D9 (SDL renderer) | Pass; quit prompt | Pass; the same quit prompt | - | [rc3-nvidia2/crispy-doom-d3d9](evidence/compat/rc3-nvidia2/crispy-doom-d3d9/) |
+
+Every run except Crispy Doom exited with code 0 within 60 s of WM_CLOSE.
+Crispy Doom waits at its quit prompt, as before. No run wrote a Windows
+Error Reporting report or a host kernel line. The host logged no Xid and no
+`can't alloc VA space` line during the sweep
+([ReBAR load check](evidence/rc3/README.md#rebar-load-check)). The only
+app-local graphics modules are the D3DX 9 and D3DCompiler 42 DLLs that
+Unigine ships in its own `bin\` (Heaven and Valley, D3D9 and D3D11), as in
+`rc2-amd1/results.json`. The UMD logged its usual warnings (feedback-loop
+usage refused, unsupported D3D9 states; `yttrium-log.txt`).
+
+Valley's middle frame is dark in the D3D9 run and black in the OpenGL run
+(`console-2.png`). These frames are the benchmark's night scene and a scene
+change. The first and last frames of both runs show the scene fully
+rendered. The rc2 AMD1 Valley D3D9 run has a black last frame of the same
+kind. The
+Unigine and GZDoom frame rates are OCR means of the on-screen counter, and
+the Unigine samples vary widely (Heaven OpenGL: 13 to 172), so they are not
+a measurement.
 
 ## Failures
 
@@ -442,8 +497,10 @@ is still loading. The later frames render, so this is start-up, not a fault.
 - F5: fixed (`patches/mesa/0090`).
 - F6: fixed (`patches/mesa/0091` and `0092`, [f6va.md](f6va.md)).
 - F7: the threaded-context use-after-free behind Heaven D3D11's heap corruption; most likely fixed by `patches/mesa/0060` (5 of 5 clean PageHeap runs, [dwmheap.md](dwmheap.md#f7-heaven-d3d11), and a clean run in the rc2 sweep).
-- The whole sweep on NVIDIA with a package that has every fix: F1, F2, F4
-  and F5 were fixed and checked one by one, but the sweep itself has run
-  on NVIDIA only with the first package.
+- The whole sweep on NVIDIA with a package that has every fix: done with
+  rc3 on Nvidia2, 12 of 12, on a Resizable BAR host
+  ([rc3 on Nvidia2](#release-candidate-011-alpha-rc3-on-nvidia2)). It has
+  not run on an NVIDIA host without Resizable BAR with this package, where
+  `patches/mesa/0070` is active.
 - Not run: Windows 10, Nvidia1, x86 builds other than Unigine (which is
   32-bit only), and longer runs.

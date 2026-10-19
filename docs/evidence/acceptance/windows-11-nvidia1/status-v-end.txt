@@ -1,5 +1,8 @@
-lab "win3d-rc-w11-nv1"
+lab "win3d-rc3-w11-nvidia1"
 
-  NAME KIND      STATUS  IP TEMPLATE/IMAGE
-  win  vm        running -  x86_64/windows-11@26100.1742.5
+  NAME KIND      STATUS  IP         TEMPLATE/IMAGE
+  win  vm        running 10.213.0.2 x86_64/windows-11@26100.1742.5
       state=running ready=yes cached=yes arch=x86_64 cpus=4 memory=8GiB agent=f1e4515 host_gpu=Nvidia1 qemu=/home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64
+
+  SEGMENT SUBNET             GATEWAY         NAT/DHCP DROPPED    PEER
+  nat     10.213.0.0/24      10.213.0.1      on/on    0          -

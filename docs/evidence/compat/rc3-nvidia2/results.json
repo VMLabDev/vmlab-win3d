@@ -1,0 +1,238 @@
+{
+  "crispy-doom-d3d9": {
+    "exit": "exit=None timed_out=True",
+    "exit_code": null,
+    "timed_out": true,
+    "duration_s": 232.5,
+    "session_id": 1,
+    "app_local_graphics": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SYSTEM32\\D3D9.DLL [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] "
+    ]
+  },
+  "godot-d3d12": {
+    "exit": "clean",
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 180.7,
+    "session_id": 1,
+    "app_local_graphics": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\D3D12.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\vmlab-win3d\\vkd3dcore.dll [system_subdir] ",
+      "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\Windows\\System32\\Windows.Graphics.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\vulkan-1.dll [system32] 1.4.363.0",
+      "C:\\WINDOWS\\system32\\libvulkan_virtio.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\vmlab-win3d\\dxgi-vulkan.dll [system_subdir] 10.0.17763.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] "
+    ],
+    "fps": "60.0 average over 135 s (Godot --print-fps)"
+  },
+  "godot-opengl": {
+    "exit": "clean",
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 181.3,
+    "session_id": 1,
+    "app_local_graphics": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\opengl32.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\GLU32.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_wgl.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\vulkan-1.dll [system32] 1.4.363.0",
+      "C:\\WINDOWS\\system32\\libvulkan_virtio.dll [system32] ",
+      "C:\\WINDOWS\\system32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] ",
+      "C:\\Windows\\System32\\Windows.Graphics.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)"
+    ],
+    "fps": "56.9 average over 155 s (Godot --print-fps)"
+  },
+  "godot-vulkan": {
+    "exit": "clean",
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 183.5,
+    "session_id": 1,
+    "app_local_graphics": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\vulkan-1.dll [system32] 1.4.363.0",
+      "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\libvulkan_virtio.dll [system32] ",
+      "C:\\Windows\\System32\\Windows.Graphics.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] "
+    ],
+    "fps": "59.2 average over 161 s (Godot --print-fps)"
+  },
+  "gzdoom-opengl": {
+    "exit": "clean",
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 183.7,
+    "session_id": 1,
+    "app_local_graphics": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\OPENGL32.DLL [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\GLU32.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_wgl.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\vulkan-1.dll [system32] 1.4.363.0",
+      "C:\\WINDOWS\\system32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\libvulkan_virtio.dll [system32] ",
+      "C:\\WINDOWS\\system32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] "
+    ],
+    "fps": "34.9 mean of the on-screen counter in 30 of 30 frames (OCR)"
+  },
+  "gzdoom-vulkan": {
+    "exit": "clean",
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 182,
+    "session_id": 1,
+    "app_local_graphics": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\vulkan-1.dll [system32] 1.4.363.0",
+      "C:\\WINDOWS\\system32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\libvulkan_virtio.dll [system32] ",
+      "C:\\WINDOWS\\system32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] "
+    ],
+    "fps": "34.8 mean of the on-screen counter in 25 of 30 frames (OCR)"
+  },
+  "heaven-d3d11": {
+    "exit": "clean",
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 183.7,
+    "session_id": 1,
+    "app_local_graphics": [
+      "C:\\apps\\heaven\\bin\\d3dcompiler_42.dll [app_local] 9.27.952.3022"
+    ],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SysWOW64\\dxgi.dll [syswow64] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\d3d11.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\apps\\heaven\\bin\\d3dcompiler_42.dll [app_local] 9.27.952.3022",
+      "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll [syswow64] ",
+      "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)"
+    ],
+    "fps": "53.9 mean of the on-screen counter in 8 of 30 frames (OCR)"
+  },
+  "heaven-d3d9": {
+    "exit": "clean",
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 179.7,
+    "session_id": 1,
+    "app_local_graphics": [
+      "C:\\apps\\heaven\\bin\\d3dx9_42.dll [app_local] 9.27.952.3001",
+      "C:\\apps\\heaven\\bin\\d3dcompiler_42.dll [app_local] 9.27.952.3022"
+    ],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SysWOW64\\d3d9.dll [syswow64] 10.0.26100.8972 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\apps\\heaven\\bin\\d3dx9_42.dll [app_local] 9.27.952.3001",
+      "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll [syswow64] ",
+      "C:\\apps\\heaven\\bin\\d3dcompiler_42.dll [app_local] 9.27.952.3022"
+    ],
+    "fps": "24.6 mean of the on-screen counter in 11 of 30 frames (OCR)"
+  },
+  "heaven-opengl": {
+    "exit": "clean",
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 185.1,
+    "session_id": 1,
+    "app_local_graphics": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SysWOW64\\opengl32.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\GLU32.dll [syswow64] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\viogpu_wgl.dll [syswow64] ",
+      "C:\\WINDOWS\\SysWOW64\\vulkan-1.dll [syswow64] 1.4.363.0",
+      "C:\\WINDOWS\\SysWOW64\\dxgi.dll [syswow64] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\libvulkan_virtio.dll [syswow64] ",
+      "C:\\WINDOWS\\SysWOW64\\d3d11.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll [syswow64] ",
+      "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)"
+    ],
+    "fps": "110.2 mean of the on-screen counter in 9 of 30 frames (OCR)"
+  },
+  "valley-d3d11": {
+    "exit": "clean",
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 194.9,
+    "session_id": 1,
+    "app_local_graphics": [
+      "C:\\apps\\valley\\bin\\d3dcompiler_42.dll [app_local] 9.27.952.3022"
+    ],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SysWOW64\\dxgi.dll [syswow64] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\d3d11.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\apps\\valley\\bin\\d3dcompiler_42.dll [app_local] 9.27.952.3022",
+      "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll [syswow64] ",
+      "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)"
+    ],
+    "fps": "17.6 mean of the on-screen counter in 12 of 30 frames (OCR)"
+  },
+  "valley-d3d9": {
+    "exit": "clean",
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 185.8,
+    "session_id": 1,
+    "app_local_graphics": [
+      "C:\\apps\\valley\\bin\\d3dx9_42.dll [app_local] 9.27.952.3001",
+      "C:\\apps\\valley\\bin\\d3dcompiler_42.dll [app_local] 9.27.952.3022"
+    ],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SysWOW64\\d3d9.dll [syswow64] 10.0.26100.8972 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\apps\\valley\\bin\\d3dx9_42.dll [app_local] 9.27.952.3001",
+      "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll [syswow64] ",
+      "C:\\apps\\valley\\bin\\d3dcompiler_42.dll [app_local] 9.27.952.3022"
+    ],
+    "fps": "9.9 mean of the on-screen counter in 14 of 30 frames (OCR)"
+  },
+  "valley-opengl": {
+    "exit": "clean",
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 183.2,
+    "session_id": 1,
+    "app_local_graphics": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SysWOW64\\opengl32.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\GLU32.dll [syswow64] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\viogpu_wgl.dll [syswow64] ",
+      "C:\\WINDOWS\\SysWOW64\\vulkan-1.dll [syswow64] 1.4.363.0",
+      "C:\\WINDOWS\\SysWOW64\\dxgi.dll [syswow64] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\libvulkan_virtio.dll [syswow64] ",
+      "C:\\WINDOWS\\SysWOW64\\d3d11.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll [syswow64] ",
+      "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)"
+    ],
+    "fps": "61.2 mean of the on-screen counter in 16 of 30 frames (OCR)"
+  }
+}

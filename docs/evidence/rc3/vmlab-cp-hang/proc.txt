@@ -1,0 +1,62 @@
+# /proc/174419/wchan
+futex_wait
+# /proc/174419/stack
+cat: /proc/174419/stack: Permission denied
+# /proc/174419/io
+rchar: 18916
+wchar: 8
+syscr: 34
+syscw: 1
+read_bytes: 0
+write_bytes: 0
+cancelled_write_bytes: 0
+# /proc/174419/status
+State:	S (sleeping)
+Threads:	33
+# threads wchan
+174419 futex_wait S
+174420 __x64_sys_epoll_wait S
+174421 futex_wait S
+174422 futex_wait S
+174423 futex_wait S
+174424 futex_wait S
+174425 futex_wait S
+174426 futex_wait S
+174427 futex_wait S
+174428 futex_wait S
+174429 futex_wait S
+174430 futex_wait S
+174431 futex_wait S
+174432 futex_wait S
+174433 futex_wait S
+174434 futex_wait S
+174435 futex_wait S
+174436 futex_wait S
+174437 futex_wait S
+174438 futex_wait S
+174439 futex_wait S
+174440 futex_wait S
+174441 futex_wait S
+174442 futex_wait S
+174443 futex_wait S
+174444 futex_wait S
+174445 futex_wait S
+174446 futex_wait S
+174447 futex_wait S
+174448 futex_wait S
+174449 futex_wait S
+174450 futex_wait S
+174451 futex_wait S
+# fds
+total 0
+lrwx------ 1 wil wil 64 Oct 19 18:26 0 -> /dev/pts/81
+l-wx------ 1 wil wil 64 Oct 19 18:26 1 -> pipe:[828442]
+lrwx------ 1 wil wil 64 Oct 19 18:26 10 -> socket:[819595]
+l-wx------ 1 wil wil 64 Oct 19 18:26 2 -> pipe:[828442]
+lrwx------ 1 wil wil 64 Oct 19 18:26 3 -> anon_inode:[eventpoll]
+lrwx------ 1 wil wil 64 Oct 19 18:26 4 -> anon_inode:[eventfd]
+lrwx------ 1 wil wil 64 Oct 19 18:26 5 -> anon_inode:[eventpoll]
+lrwx------ 1 wil wil 64 Oct 19 18:26 6 -> socket:[826657]
+lrwx------ 1 wil wil 64 Oct 19 18:26 7 -> socket:[826658]
+lrwx------ 1 wil wil 64 Oct 19 18:26 8 -> socket:[826657]
+lrwx------ 1 wil wil 64 Oct 19 18:26 9 -> socket:[826659]

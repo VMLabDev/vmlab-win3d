@@ -6,10 +6,10 @@
   "result": "pass",
   "exit_code": 0,
   "exe": "C:\\win3d\\probes\\x64\\vulkan_probe.exe",
-  "pid": 6860,
+  "pid": 7996,
   "session_id": 1,
   "os_version": "10.0.26100",
-  "finished_utc": "2026-10-19T03:25:34Z",
+  "finished_utc": "2026-10-19T08:21:52Z",
   "args": {"seconds": 20, "warp": false, "width": 1024, "height": 640},
   "adapter": {
     "name": "Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))",
@@ -32,10 +32,10 @@
     "swapchain_format": "B8G8R8A8_UNORM",
     "swapchain_images": 2
   },
-  "frames_presented": 1206,
-  "elapsed_seconds": 20.184,
-  "avg_fps": 59.75,
-  "startup_seconds": 0.153,
+  "frames_presented": 1205,
+  "elapsed_seconds": 20.258,
+  "avg_fps": 59.48,
+  "startup_seconds": 0.237,
   "window_closed_early": false,
   "readback": {
     "ok": true,

@@ -1,7 +1,7 @@
 {
   "x64-d3d9_probe": {
-    "frames": 13,
-    "frames_with_window": 9,
+    "frames": 20,
+    "frames_with_window": 10,
     "visible": true,
     "animating": true,
     "png": "console-x64-d3d9_probe.png",
@@ -13,11 +13,11 @@
         "blue",
         "green"
       ],
-      "crc": "f105ee5d"
+      "crc": "edc9d7ee"
     }
   },
   "x86-d3d9_probe": {
-    "frames": 15,
+    "frames": 28,
     "frames_with_window": 10,
     "visible": true,
     "animating": true,
@@ -30,12 +30,12 @@
         "blue",
         "green"
       ],
-      "crc": "2bbb524d"
+      "crc": "0b5c9f46"
     }
   },
   "x64-d3d11_probe": {
-    "frames": 13,
-    "frames_with_window": 9,
+    "frames": 20,
+    "frames_with_window": 10,
     "visible": true,
     "animating": true,
     "png": "console-x64-d3d11_probe.png",
@@ -47,11 +47,11 @@
         "blue",
         "green"
       ],
-      "crc": "b2ca6544"
+      "crc": "7489ef2d"
     }
   },
   "x86-d3d11_probe": {
-    "frames": 13,
+    "frames": 20,
     "frames_with_window": 10,
     "visible": true,
     "animating": true,
@@ -64,12 +64,12 @@
         "blue",
         "green"
       ],
-      "crc": "42b31899"
+      "crc": "e19bc86f"
     }
   },
   "x64-d3d12_probe": {
-    "frames": 15,
-    "frames_with_window": 9,
+    "frames": 19,
+    "frames_with_window": 10,
     "visible": true,
     "animating": true,
     "png": "console-x64-d3d12_probe.png",
@@ -81,12 +81,12 @@
         "blue",
         "green"
       ],
-      "crc": "0c57ed07"
+      "crc": "37b063cf"
     }
   },
   "x86-d3d12_probe": {
-    "frames": 17,
-    "frames_with_window": 9,
+    "frames": 49,
+    "frames_with_window": 10,
     "visible": true,
     "animating": true,
     "png": "console-x86-d3d12_probe.png",
@@ -98,12 +98,12 @@
         "blue",
         "green"
       ],
-      "crc": "54aa8f1e"
+      "crc": "452fda02"
     }
   },
   "x64-opengl_probe": {
-    "frames": 15,
-    "frames_with_window": 10,
+    "frames": 28,
+    "frames_with_window": 9,
     "visible": true,
     "animating": true,
     "png": "console-x64-opengl_probe.png",
@@ -115,11 +115,11 @@
         "blue",
         "green"
       ],
-      "crc": "5bbe4d14"
+      "crc": "9c613658"
     }
   },
   "x86-opengl_probe": {
-    "frames": 14,
+    "frames": 28,
     "frames_with_window": 10,
     "visible": true,
     "animating": true,
@@ -132,11 +132,11 @@
         "blue",
         "green"
       ],
-      "crc": "dace9e09"
+      "crc": "afb7accc"
     }
   },
   "x64-vulkan_probe": {
-    "frames": 13,
+    "frames": 20,
     "frames_with_window": 10,
     "visible": true,
     "animating": true,
@@ -149,12 +149,12 @@
         "blue",
         "green"
       ],
-      "crc": "2f462ff0"
+      "crc": "d28e06fa"
     }
   },
   "x86-vulkan_probe": {
-    "frames": 12,
-    "frames_with_window": 9,
+    "frames": 15,
+    "frames_with_window": 10,
     "visible": true,
     "animating": true,
     "png": "console-x86-vulkan_probe.png",
@@ -166,7 +166,7 @@
         "blue",
         "green"
       ],
-      "crc": "430a283b"
+      "crc": "2ea4a4b0"
     }
   }
 }

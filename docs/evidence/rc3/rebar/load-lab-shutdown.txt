@@ -1,0 +1,56 @@
+
+
+TimeCreated  : 10/19/2026 2:09:43 AM
+Id           : 6006
+ProviderName : EventLog
+Message      : The Event log service was stopped.
+
+TimeCreated  : 10/19/2026 2:09:33 AM
+Id           : 1074
+ProviderName : User32
+Message      : The process C:\WINDOWS\system32\wlms\wlms.exe (VMLABVM-RF55VEQ) has initiated the shutdown of computer VMLABVM-RF55VEQ on behalf of user NT AUTHORITY\SYSTEM for the following reason: Other (Planned)
+                Reason Code: 0x80000000
+                Shutdown Type: shutdown
+                Comment: The license period for this installation of Windows has expired. The operating system is shutting down.
+               
+
+TimeCreated  : 10/19/2026 1:09:11 AM
+Id           : 6006
+ProviderName : EventLog
+Message      : The Event log service was stopped.
+
+TimeCreated  : 10/19/2026 1:08:28 AM
+Id           : 1074
+ProviderName : User32
+Message      : The process C:\WINDOWS\system32\shutdown.exe (VMLABVM-RF55VEQ) has initiated the restart of computer VMLABVM-RF55VEQ on behalf of user NT AUTHORITY\SYSTEM for the following reason: Operating System: Reconfiguration (Planned)
+                Reason Code: 0x80020004
+                Shutdown Type: restart
+                Comment: vmlab-win3d setup continues after this restart.
+
+TimeCreated  : 10/19/2026 1:07:05 AM
+Id           : 6006
+ProviderName : EventLog
+Message      : The Event log service was stopped.
+
+TimeCreated  : 10/19/2026 1:06:42 AM
+Id           : 1074
+ProviderName : User32
+Message      : The process C:\WINDOWS\system32\shutdown.exe (VMLABVM-RF55VEQ) has initiated the restart of computer VMLABVM-RF55VEQ on behalf of user NT AUTHORITY\SYSTEM for the following reason: Operating System: Reconfiguration (Planned)
+                Reason Code: 0x80020004
+                Shutdown Type: restart
+                Comment: vmlab-win3d setup continues after this restart.
+
+
+
+
+Windows(R), EnterpriseEval edition:
+    Windows is in Notification mode
+
+
+Name                              
+----                              
+Red Hat VirtIO Ethernet Adapter   
+Red Hat VirtIO Ethernet Adapter #2
+
+
+

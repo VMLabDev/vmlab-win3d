@@ -5,7 +5,7 @@ import <vmlab.wcl>
 // file into .scratch/e2e/<template>[-<gpu>]/lab/ and rewrites the lab name,
 // the template line for --template and host_gpu for --host-gpu; as committed
 // it is the windows-11 lab on AMD1.
-lab "win3d-nvva-e2e" {
+lab "win3d-rc3-w11-nvidia2" {
   vm "win" {
     template = "x86_64/windows-11@26100.1742.5"
     // The package is test-signed (decision 0001); Secure Boot must be off.
@@ -17,6 +17,10 @@ lab "win3d-nvva-e2e" {
     // AMD1 is the host config's AMD iGPU (0000:72:00.0, RADV, renderD129).
     // run.sh --host-gpu Nvidia1 or Nvidia2 picks an RTX 5090, which needs
     // qemu_binary on its host GPU profile (docs/nvidia.md).
+    // The templates are Windows evaluation editions. They activate online,
+    // and without a NIC they stay unactivated and wlms.exe shuts the VM down
+    // about an hour after boot. NAT gives the guest internet egress only.
+    nic { nat = true }
     gpu {
       mode     = "vulkan"
       host_gpu = "Nvidia2"

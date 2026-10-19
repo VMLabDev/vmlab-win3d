@@ -472,6 +472,14 @@ it. The validation layer used in the diagnosis came from Arch's
 
 ## Limits and open items
 
+- **BAR1 and the number of VMs per card.** Without Resizable BAR an
+  RTX 5090's BAR1 is 256 MiB, shared by every VM on the card, and more than
+  two Windows VMs per card run it out ([`nvva.md`](nvva.md)). Helios has
+  Resizable BAR since 2026-10-19 (BAR1 32 GiB). With it, release candidate
+  rc3 passed the acceptance on both cards, and three VMs on one card
+  logged no `can't alloc VA space` line, with BAR1 at most 764 MiB
+  ([rc3](evidence/rc3/README.md#rebar-load-check)).
+
 - **Resolved in vmlab 0.27: both RTX 5090s were visible to the guest.**
   On vmlab 0.24 and 0.25, vulkaninfo listed two Venus devices with the same
   UUID (`04-guest-fix/vulkaninfo-summary.txt`). The PCI-filter layer above

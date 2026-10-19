@@ -1,0 +1,1 @@
+8188 window=0x6023C title=[Unigine Heaven Benchmark 4.0 Basic (OpenGL)] closed=True

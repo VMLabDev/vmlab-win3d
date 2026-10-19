@@ -1,0 +1,40 @@
+
+==============NVSMI LOG==============
+
+Timestamp                                              : Mon Oct 19 19:41:25 2026
+Driver Version                                         : 610.57.04 [Deprecated; will be removed in CUDA 14.0. Use KMD Version instead]
+CUDA Version                                           : 13.3 [Deprecated; will be removed in CUDA 14.0. Use CUDA UMD Version instead]
+KMD Version                                            : 610.57.04
+CUDA UMD Version                                       : 13.3
+
+Attached GPUs                                          : 2
+GPU 00000000:01:00.0
+    FB Memory Usage
+        Total                                          : 32607 MiB
+        Reserved                                       : 491 MiB
+        Used                                           : 2623 MiB
+        Free                                           : 29494 MiB
+    BAR1 Memory Usage
+        Total                                          : 32768 MiB
+        Used                                           : 51 MiB
+        Free                                           : 32717 MiB
+    Conf Compute Protected Memory Usage
+        Total                                          : 0 MiB
+        Used                                           : 0 MiB
+        Free                                           : 0 MiB
+
+GPU 00000000:05:00.0
+    FB Memory Usage
+        Total                                          : 32607 MiB
+        Reserved                                       : 458 MiB
+        Used                                           : 2690 MiB
+        Free                                           : 29461 MiB
+    BAR1 Memory Usage
+        Total                                          : 32768 MiB
+        Used                                           : 382 MiB
+        Free                                           : 32386 MiB
+    Conf Compute Protected Memory Usage
+        Total                                          : 0 MiB
+        Used                                           : 0 MiB
+        Free                                           : 0 MiB
+

@@ -1,0 +1,332 @@
+---- d3d9_ffp2 run-repro.sh start 1792399876
+2026-10-19 01:51:43.764 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:51:43.772 [warning pid=3508 process=d3d9_ffp2.exe] d3d9ddi: unsupported D3D9 tessellation state owner=d3d9-state reason=patch-tessellation-not-implemented fallback=ignore-unadvertised-state state=164 value=0x00000000
+2026-10-19 01:51:43.772 [warning pid=3508 process=d3d9_ffp2.exe] d3d9ddi: D3D9 runtime reserved render state owner=d3d9-state reason=unassigned-ddi-slot fallback=ignore-runtime-metadata state=196 value=0xffffffff
+2026-10-19 01:51:44.086 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-19 01:51:45.371 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:51:47.086 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:51:47.943 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:51:48.742 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:51:49.522 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:51:50.318 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:51:51.062 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:51:51.073 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:51:51.940 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:51:51.956 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:51:52.719 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:51:53.554 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:51:57.417 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:51:57.467 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:51:58.242 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:51:59.786 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:51:59.804 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:52:00.608 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:52:00.629 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:52:02.287 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:52:02.378 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:52:03.422 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:52:03.448 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:52:05.439 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:52:05.464 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:52:08.879 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:52:08.908 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:52:09.694 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:52:11.556 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:52:11.577 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:52:12.833 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:52:13.616 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:52:15.904 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:52:16.657 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:52:19.622 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:52:19.635 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x428 usage=0x80017; creating the image without it
+2026-10-19 01:52:20.872 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:52:22.806 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:52:22.821 [warning pid=3508 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:52:50.384 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:52:50.556 [warning pid=5216 process=d3d9_ffp2.exe] d3d9ddi: unsupported D3D9 tessellation state owner=d3d9-state reason=patch-tessellation-not-implemented fallback=ignore-unadvertised-state state=164 value=0x00000000
+2026-10-19 01:52:50.557 [warning pid=5216 process=d3d9_ffp2.exe] d3d9ddi: D3D9 runtime reserved render state owner=d3d9-state reason=unassigned-ddi-slot fallback=ignore-runtime-metadata state=196 value=0xffffffff
+2026-10-19 01:52:50.685 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-19 01:52:51.293 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:52:52.027 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:52:52.840 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:52:53.734 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:52:54.541 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:52:55.392 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:52:56.179 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:52:56.191 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:52:57.947 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:52:58.013 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:53:01.217 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:07.307 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:08.667 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:09.648 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:11.404 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:11.419 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:53:13.274 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:15.058 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:15.095 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:53:17.459 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:17.478 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:53:18.313 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:18.333 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:53:21.718 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:21.814 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:53:23.112 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:23.158 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:53:24.310 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:24.367 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:53:25.289 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:25.306 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:53:26.042 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:53:26.785 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:53:27.514 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:53:30.580 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:30.593 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:53:31.945 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:31.955 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:53:32.740 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:32.754 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:53:33.485 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:53:34.625 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x428 usage=0x80017; creating the image without it
+2026-10-19 01:53:35.393 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:35.406 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x428 usage=0x80017; creating the image without it
+2026-10-19 01:53:36.453 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:36.942 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:37.440 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:37.983 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:38.154 [warning pid=5216 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:53:47.813 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:47.826 [warning pid=5224 process=d3d9_ffp2.exe] d3d9ddi: unsupported D3D9 tessellation state owner=d3d9-state reason=patch-tessellation-not-implemented fallback=ignore-unadvertised-state state=164 value=0x00000000
+2026-10-19 01:53:47.826 [warning pid=5224 process=d3d9_ffp2.exe] d3d9ddi: D3D9 runtime reserved render state owner=d3d9-state reason=unassigned-ddi-slot fallback=ignore-runtime-metadata state=196 value=0xffffffff
+2026-10-19 01:53:47.966 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-19 01:53:48.403 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:48.882 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:49.361 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:49.847 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:50.360 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:50.912 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:51.426 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:51.440 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:53:52.008 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:52.022 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:53:52.522 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:53.013 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:53.489 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:53.973 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:54.458 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:55.011 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:55.465 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:55.478 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:53:56.404 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:56.948 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:53:57.498 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:57.519 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:53:58.076 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:53:58.093 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:53:59.263 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:53:59.994 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:00.013 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:54:00.539 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:00.560 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:54:01.747 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:01.852 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:54:04.315 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:54:04.891 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:54:07.324 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:54:07.921 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:54:08.462 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:54:11.083 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x428 usage=0x80017; creating the image without it
+2026-10-19 01:54:13.321 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:13.961 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:14.584 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:14.611 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:54:15.369 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:15.390 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:54:16.007 [warning pid=5224 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:22.539 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:22.552 [warning pid=7424 process=d3d9_ffp2.exe] d3d9ddi: unsupported D3D9 tessellation state owner=d3d9-state reason=patch-tessellation-not-implemented fallback=ignore-unadvertised-state state=164 value=0x00000000
+2026-10-19 01:54:22.554 [warning pid=7424 process=d3d9_ffp2.exe] d3d9ddi: D3D9 runtime reserved render state owner=d3d9-state reason=unassigned-ddi-slot fallback=ignore-runtime-metadata state=196 value=0xffffffff
+2026-10-19 01:54:22.672 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-19 01:54:23.080 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:23.556 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:24.094 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:24.546 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:30.383 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:30.957 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:31.555 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:31.567 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:54:32.134 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:32.149 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:54:32.735 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:34.533 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:37.354 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:38.407 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:38.444 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:54:39.487 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:40.514 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:41.526 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:41.582 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:54:42.485 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:42.539 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:54:43.401 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:43.468 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:54:44.205 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:44.229 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:54:44.794 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:54:45.396 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:54:46.303 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:46.328 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:54:47.067 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:47.095 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:54:48.946 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:48.967 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:54:49.532 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:49.564 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:54:50.215 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:54:50.801 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:50.815 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:54:51.484 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:51.498 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:54:52.718 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:52.730 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:54:53.711 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:53.721 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:54:54.252 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:54:55.347 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:55.365 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:54:56.017 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:54:56.033 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x428 usage=0x80017; creating the image without it
+2026-10-19 01:54:57.396 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:00.441 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:55:01.699 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:01.816 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:55:04.220 [warning pid=7424 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:11.696 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:11.708 [warning pid=5388 process=d3d9_ffp2.exe] d3d9ddi: unsupported D3D9 tessellation state owner=d3d9-state reason=patch-tessellation-not-implemented fallback=ignore-unadvertised-state state=164 value=0x00000000
+2026-10-19 01:55:11.709 [warning pid=5388 process=d3d9_ffp2.exe] d3d9ddi: D3D9 runtime reserved render state owner=d3d9-state reason=unassigned-ddi-slot fallback=ignore-runtime-metadata state=196 value=0xffffffff
+2026-10-19 01:55:11.877 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-19 01:55:12.362 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:12.960 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:13.572 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:14.067 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:14.614 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:15.316 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:15.870 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:15.879 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:55:16.338 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:16.351 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:55:16.850 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:17.396 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:18.597 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:20.651 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:55:21.201 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:22.210 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:22.228 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:55:23.704 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:23.763 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:55:24.425 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:24.485 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:55:25.218 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:25.280 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:55:25.864 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:25.884 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:55:26.327 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:26.345 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:55:26.818 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:26.837 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:55:29.584 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:29.600 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:55:30.310 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:55:30.869 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:30.879 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:55:31.802 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:31.811 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:55:32.812 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:32.823 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:55:33.277 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:33.287 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x418 usage=0x80017; creating the image without it
+2026-10-19 01:55:35.314 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x428 usage=0x80017; creating the image without it
+2026-10-19 01:55:37.900 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:39.062 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:39.081 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:55:39.869 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:39.886 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x408 usage=0x80017; creating the image without it
+2026-10-19 01:55:40.448 [warning pid=5388 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:47.122 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:47.243 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-19 01:55:47.862 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:48.531 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:48.975 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:49.523 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:50.298 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:51.127 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:51.554 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:54.090 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:55:56.229 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:01.255 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69251 host_fence_status=1 feedback_after_host_query=1 label=pipe resource flush
+2026-10-19 01:56:01.255 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=pipe resource flush result=2 timeout_ns=5000000000
+2026-10-19 01:56:01.255 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: resource flush wait failed owner=yttrium_resource reason=Venus batch wait failed resource=00000208f45a2570 res_id=30139
+2026-10-19 01:56:06.270 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69378 host_fence_status=1 feedback_after_host_query=1 label=context destroy flush
+2026-10-19 01:56:06.270 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=context destroy flush result=2 timeout_ns=5000000000
+2026-10-19 01:56:11.286 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69423 host_fence_status=1 feedback_after_host_query=1 label=context destroy flush
+2026-10-19 01:56:11.286 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=context destroy flush result=2 timeout_ns=5000000000
+2026-10-19 01:56:11.286 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: context destroy failed to drain Venus batches before releasing context resources
+2026-10-19 01:56:16.302 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69344 host_fence_status=1 feedback_after_host_query=1 label=batch queue destroy
+2026-10-19 01:56:16.302 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=batch queue destroy result=2 timeout_ns=5000000000
+2026-10-19 01:56:21.318 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69284 host_fence_status=1 feedback_after_host_query=1 label=batch queue destroy
+2026-10-19 01:56:21.318 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=batch queue destroy result=2 timeout_ns=5000000000
+2026-10-19 01:56:21.924 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:22.505 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:23.041 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:23.527 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:24.042 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:30.234 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:30.740 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:31.746 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:37.862 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:38.562 [warning pid=9080 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:46.511 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:46.605 [warning pid=204 process=d3d9_ffp2.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-19 01:56:47.474 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:47.943 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:48.430 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:48.941 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:49.417 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:49.911 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:50.370 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:51.149 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:51.655 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:52.195 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:52.688 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:53.238 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:56:58.271 [warning pid=204 process=d3d9_ffp2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69271 host_fence_status=1 feedback_after_host_query=1 label=pipe resource flush
+2026-10-19 01:56:58.272 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=pipe resource flush result=2 timeout_ns=5000000000
+2026-10-19 01:56:58.272 [warning pid=204 process=d3d9_ffp2.exe] yttrium: resource flush wait failed owner=yttrium_resource reason=Venus batch wait failed resource=05aae528 res_id=30647
+2026-10-19 01:57:03.287 [warning pid=204 process=d3d9_ffp2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69248 host_fence_status=1 feedback_after_host_query=1 label=context destroy flush
+2026-10-19 01:57:03.287 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=context destroy flush result=2 timeout_ns=5000000000
+2026-10-19 01:57:08.302 [warning pid=204 process=d3d9_ffp2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69237 host_fence_status=1 feedback_after_host_query=1 label=context destroy flush
+2026-10-19 01:57:08.302 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=context destroy flush result=2 timeout_ns=5000000000
+2026-10-19 01:57:08.302 [warning pid=204 process=d3d9_ffp2.exe] yttrium: context destroy failed to drain Venus batches before releasing context resources
+2026-10-19 01:57:13.318 [warning pid=204 process=d3d9_ffp2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69346 host_fence_status=1 feedback_after_host_query=1 label=batch queue destroy
+2026-10-19 01:57:13.318 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=batch queue destroy result=2 timeout_ns=5000000000
+2026-10-19 01:57:18.335 [warning pid=204 process=d3d9_ffp2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69363 host_fence_status=1 feedback_after_host_query=1 label=batch queue destroy
+2026-10-19 01:57:18.335 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=batch queue destroy result=2 timeout_ns=5000000000
+2026-10-19 01:57:20.629 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:57:22.577 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:57:23.007 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:57:24.578 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:57:25.628 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:57:29.355 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:57:41.760 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:57:43.230 [warning pid=204 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:57:55.540 [warning pid=5540 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:57:55.750 [warning pid=5540 process=d3d9_ffp2.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-19 01:57:56.638 [warning pid=5540 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:57:57.654 [warning pid=5540 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:57:58.667 [warning pid=5540 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:57:59.698 [warning pid=5540 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:58:00.943 [warning pid=5540 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:58:12.894 [warning pid=5540 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:58:16.800 [warning pid=5540 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:58:17.725 [warning pid=5540 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-19 01:58:19.116 [warning pid=5540 process=d3d9_ffp2.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it

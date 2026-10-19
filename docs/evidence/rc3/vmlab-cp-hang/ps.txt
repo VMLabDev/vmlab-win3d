@@ -1,0 +1,57 @@
+    PID    PPID STAT     ELAPSED     TIME WCHAN                            CMD
+ 174419  174248 S<l+       19:36 00:00:00 futex_wait                       vmlab cp /home/wil/dev/vmlab-win3d-wt/rc3/out/package/vmlab-win3d-0.1.1 win:C:/vmlab-win3d
+
+vmlab,174419 cp /home/wil/dev/vmlab-win3d-wt/rc3/out/package/vmlab-win3d-0.1.1 win:C:/vmlab-win3d
+  |-{vmlab},174420
+  |-{vmlab},174421
+  |-{vmlab},174422
+  |-{vmlab},174423
+  |-{vmlab},174424
+  |-{vmlab},174425
+  |-{vmlab},174426
+  |-{vmlab},174427
+  |-{vmlab},174428
+  |-{vmlab},174429
+  |-{vmlab},174430
+  |-{vmlab},174431
+  |-{vmlab},174432
+  |-{vmlab},174433
+  |-{vmlab},174434
+  |-{vmlab},174435
+  |-{vmlab},174436
+  |-{vmlab},174437
+  |-{vmlab},174438
+  |-{vmlab},174439
+  |-{vmlab},174440
+  |-{vmlab},174441
+  |-{vmlab},174442
+  |-{vmlab},174443
+  |-{vmlab},174444
+  |-{vmlab},174445
+  |-{vmlab},174446
+  |-{vmlab},174447
+  |-{vmlab},174448
+  |-{vmlab},174449
+  |-{vmlab},174450
+  `-{vmlab},174451
+
+systemd,1 --switched-root --system --deserialize=54
+  `-systemd,5222 --user
+      `-ghostty,6577 --gtk-single-instance=true --initial-window=false
+          `-bash,6872 --posix
+              `-herdr,7561
+                  `-herdr,7562 server
+                      `-bash,105633
+                          `-bash,105661
+                              `-bash,105662 tests/e2e/run.sh --template windows-10 --host-gpu Nvidia1 --lab win3d-rc3-w10-nvidia1 --apps
+                                  `-bash,174248 /home/wil/dev/vmlab-win3d-wt/rc3/scripts/install-into-vm.sh /home/wil/dev/vmlab-win3d-wt/rc3/.scratch/e2e/windows-10-nvidia1/lab win
+                                      `-vmlab,174419 cp /home/wil/dev/vmlab-win3d-wt/rc3/out/package/vmlab-win3d-0.1.1 win:C:/vmlab-win3d
+                                          |-{vmlab},174420
+                                          |-{vmlab},174421
+                                          |-{vmlab},174422
+                                          |-{vmlab},174423
+                                          |-{vmlab},174424
+                                          |-{vmlab},174425
+                                          |-{vmlab},174426
+                                          |-{vmlab},174427
+                                          |-{vmlab},174428

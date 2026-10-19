@@ -1,0 +1,32 @@
+
+FullName                                   Length  LastWriteTime        
+--------                                   ------  -------------        
+C:\vmlab-win3d\runtime                             10/19/2026 1:06:28 AM
+C:\vmlab-win3d\Install.cmd                 622     10/19/2026 1:06:28 AM
+C:\vmlab-win3d\manifest.json               4810    10/19/2026 1:06:28 AM
+C:\vmlab-win3d\README.txt                  825     10/19/2026 1:06:28 AM
+C:\vmlab-win3d\Uninstall.cmd               628     10/19/2026 1:06:28 AM
+C:\vmlab-win3d\vmlab-win3d-test.cer        1180    10/19/2026 1:06:28 AM
+C:\vmlab-win3d\vmlab-win3d.ps1             57475   10/19/2026 1:06:28 AM
+C:\vmlab-win3d\runtime\x64                         10/19/2026 1:06:28 AM
+C:\vmlab-win3d\runtime\x86                         10/19/2026 1:06:28 AM
+C:\vmlab-win3d\runtime\x64\d3d12.dll       434176  10/19/2026 1:06:28 AM
+C:\vmlab-win3d\runtime\x64\dxgi-vulkan.dll 5607424 10/19/2026 1:06:28 AM
+C:\vmlab-win3d\runtime\x64\vkd3dcore.dll   6434816 10/19/2026 1:06:28 AM
+C:\vmlab-win3d\runtime\x64\vulkan-1.dll    576000  10/19/2026 1:06:28 AM
+C:\vmlab-win3d\runtime\x64\vulkaninfo.exe  2105856 10/19/2026 1:06:28 AM
+C:\vmlab-win3d\runtime\x86\d3d12.dll       380928  10/19/2026 1:06:28 AM
+C:\vmlab-win3d\runtime\x86\dxgi-vulkan.dll 5861376 10/19/2026 1:06:28 AM
+C:\vmlab-win3d\runtime\x86\vkd3dcore.dll   6131712 10/19/2026 1:06:28 AM
+C:\vmlab-win3d\runtime\x86\vulkan-1.dll    538624  10/19/2026 1:06:28 AM
+C:\vmlab-win3d\runtime\x86\vulkaninfo.exe  2399232 10/19/2026 1:06:28 AM
+
+
+
+
+Count      Sum
+-----      ---
+   16 30535684
+
+
+

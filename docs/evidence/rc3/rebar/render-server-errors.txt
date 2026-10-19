@@ -1,0 +1,16 @@
+# Render-server and QEMU error lines per rc3 lab (~/.local/state/vmlab/labs/<lab>/vms/win/qemu.log), counted 2026-10-19 after the runs.
+# pattern: failed to look up object | CS error | vkAllocateMemory failed | ring | timed out | fatal
+win3d-rc3-compat-nvidia2     total-non-vmlab=15 matches=0
+win3d-rc3-load               total-non-vmlab=23 matches=0
+win3d-rc3-w10-nvidia1b       total-non-vmlab=15 matches=0
+win3d-rc3-w10-nvidia1        total-non-vmlab=2 matches=0
+win3d-rc3-w11-amd1           total-non-vmlab=0 matches=0
+win3d-rc3-w11-nvidia1        total-non-vmlab=25 matches=0
+win3d-rc3-w11-nvidia2        total-non-vmlab=22 matches=0
+
+# other distinct lines (pids stripped):
+      1 qemu-system-x86_64: terminating on signal 15 from pid 354503 ()
+      1 virgl_render_server: vkr: destroying context N (opengl_probe.exe) with a valid instance
+     52 virgl_render_server: vkr: destroying context N (yttrium) with a valid instance
+     46 virgl_render_server: vkr: destroying device with valid objects
+      2 virtio_gpu_virgl_process_cmd: ctrl 0x102, error 0x1203

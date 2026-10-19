@@ -1,0 +1,8 @@
+[2m2026-10-19T07:54:59.227849Z[0m [32m INFO[0m network fast path selected [3mtier[0m[2m=[0m"userspace" [3mmode[0m[2m=[0m"auto"
+[2m2026-10-19T07:54:59.227868Z[0m [32m INFO[0m fast-path tier afxdp unavailable: creating host tap: Operation not permitted (os error 1) — creating a tap needs CAP_NET_ADMIN. In a container, add `--cap-add NET_ADMIN` (the fast path also needs `--cap-add BPF`) — run the vmlab daemons with CAP_BPF + CAP_NET_ADMIN to enable
+[2m2026-10-19T07:54:59.227874Z[0m [32m INFO[0m fast-path tier sockmap unavailable: not used in auto mode: af_unix kernel splicing measures slower than the userspace fabric (psock backlog workqueue); force with `fastpath = "sockmap"` to evaluate it
+[2m2026-10-19T07:54:59.229471Z[0m [32m INFO[0m lab daemon for win3d-rc3-w10-nvidia1 listening on /run/user/1000/vmlab/labs/win3d-rc3-w10-nvidia1/control.sock
+[2m2026-10-19T07:54:59.229485Z[0m [32m INFO[0m event [3mevent[0m[2m=[0mhost.disk_low [3mdata[0m[2m=[0m{"free_percent":5,"path":"/home/wil/dev/vmlab-win3d-wt/rc3/.scratch/e2e/windows-10-nvidia1/lab/.vmlab"}
+[2m2026-10-19T07:54:59.326879Z[0m [32m INFO[0m event [3mevent[0m[2m=[0mvm.starting [3mdata[0m[2m=[0m{"vm":"win"}
+[2m2026-10-19T08:00:23.602291Z[0m [32m INFO[0m event [3mevent[0m[2m=[0mvm.ready [3mdata[0m[2m=[0m{"vm":"win"}
+[2m2026-10-19T08:00:23.606710Z[0m [32m INFO[0m event [3mevent[0m[2m=[0mlab.up [3mdata[0m[2m=[0m{"vms":["win"]}
