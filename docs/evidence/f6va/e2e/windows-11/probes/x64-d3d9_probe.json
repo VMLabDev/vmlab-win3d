@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "probe": "d3d9",
+  "api": "Direct3D 9",
+  "arch": "x64",
+  "result": "pass",
+  "exit_code": 0,
+  "exe": "C:\\win3d\\probes\\x64\\d3d9_probe.exe",
+  "pid": 3572,
+  "session_id": 1,
+  "os_version": "10.0.26100",
+  "finished_utc": "2026-10-19T02:18:37Z",
+  "args": {"seconds": 20, "warp": false, "width": 1024, "height": 640},
+  "adapter": {
+    "name": "Hardsoft VirtIO GPU 3D controller",
+    "vendor": "Red Hat (virtio)",
+    "vendor_id": "0x1af4",
+    "device_id": "0x1050",
+    "driver": "viogpu_d3d10.dll",
+    "driver_version": "0.0.0.0",
+    "software": false
+  },
+  "device": {
+    "create_function": "Direct3DCreate9Ex",
+    "adapter_count": 1,
+    "vertex_shader_version": "3.0",
+    "pixel_shader_version": "3.0",
+    "hw_transform_and_light": true,
+    "vertex_processing": "hardware",
+    "device_type": "HAL"
+  },
+  "frames_presented": 1191,
+  "elapsed_seconds": 20.024,
+  "avg_fps": 59.48,
+  "window_closed_early": false,
+  "readback": {
+    "ok": true,
+    "tolerance": 2,
+    "pixels": [
+      {"name": "red_top_left", "x": 48, "y": 48, "expected": [255, 0, 0], "actual": [255, 0, 0], "match": true},
+      {"name": "blue_top_right", "x": 976, "y": 48, "expected": [0, 0, 255], "actual": [0, 0, 255], "match": true},
+      {"name": "green_bottom_left", "x": 48, "y": 592, "expected": [0, 255, 0], "actual": [0, 255, 0], "match": true}
+    ]
+  },
+  "errors": []
+}

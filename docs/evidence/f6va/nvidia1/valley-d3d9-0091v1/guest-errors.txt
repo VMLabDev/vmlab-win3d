@@ -1,0 +1,62 @@
+== Application log (errors, last 15 min)
+== System log (errors and warnings, last 15 min)
+2026-10-18T23:26:10.1376283-07:00 Microsoft-Windows-Time-Service 134: NtpClient was unable to set a manual peer to use as a time source because of DNS resolution error on 'time.windows.com,0x9'. NtpClient will try again in 15 minutes and double the reattempt interval thereafter. The error was: No such host is known. (0x80072AF9)
+2026-10-18T23:26:08.6296824-07:00 Microsoft-Windows-Time-Service 134: NtpClient was unable to set a manual peer to use as a time source because of DNS resolution error on 'time.windows.com,0x9'. NtpClient will try again in 15 minutes and double the reattempt interval thereafter. The error was: No such host is known. (0x80072AF9)
+2026-10-18T23:25:42.2193622-07:00 Microsoft-Windows-Wininit 15: Credential Guard and/or VBS Key Isolation are configured but the secure kernel is not running; continuing without them.
+2026-10-18T23:25:27.9369753-07:00 Microsoft-Windows-HAL 18: The performance counter is not readable from user mode. System performance may be degraded.
+2026-10-18T23:25:27.9369669-07:00 Microsoft-Windows-HAL 17: The clock interrupt is backed by a platform timer instead of a per-processor source. System performance may be degraded.
+2026-10-18T23:25:03.0528404-07:00 Service Control Manager 7023: The Connected Devices Platform Service service terminated with the following error: Unspecified error
+2026-10-18T23:25:01.8153372-07:00 Service Control Manager 7043: The Delivery Optimization service did not shut down properly after receiving a preshutdown control.
+2026-10-18T23:25:01.4712943-07:00 Microsoft-Windows-DistributedCOM 10010: The server {A47979D2-C419-11D9-A5B4-001185AD2B89} did not register with DCOM within the required timeout.
+2026-10-18T23:23:47.4554171-07:00 Microsoft-Windows-DistributedCOM 10016: The application-specific permission settings do not grant Local Activation permission for the COM Server application with CLSID {9EA82395-E31B-41CA-8DF7-EC1CEE7194DF} and APPID {2ED83BAA-B2FD-43B1-99BF-E6149C622692} to the user NT AUTHORITY\NETWORK SERVICE SID (S-1-5-20) from address LocalHost (Using LRPC) running in the application container Unavailable SID (Unavailable). This security permission can be modified using the Component Services administrative tool.
+2026-10-18T23:23:44.8275551-07:00 Service Control Manager 7022: The Connected Devices Platform Service service hung on starting.
+2026-10-18T23:23:01.4414935-07:00 Service Control Manager 7023: The Network List Service service terminated with the following error: The device is not ready.
+2026-10-18T23:23:01.2819690-07:00 Microsoft-Windows-DistributedCOM 10010: The server {A47979D2-C419-11D9-A5B4-001185AD2B89} did not register with DCOM within the required timeout.
+2026-10-18T23:21:01.2349815-07:00 Service Control Manager 7023: The Network List Service service terminated with the following error: The device is not ready.
+2026-10-18T23:21:00.6378587-07:00 Microsoft-Windows-DistributedCOM 10010: The server {A47979D2-C419-11D9-A5B4-001185AD2B89} did not register with DCOM within the required timeout.
+2026-10-18T23:19:00.5690632-07:00 Service Control Manager 7023: The netprofm service terminated with the following error: The device is not ready.
+2026-10-18T23:18:49.2104834-07:00 Microsoft-Windows-Wininit 15: Credential Guard and/or VBS Key Isolation are configured but the secure kernel is not running; continuing without them.
+2026-10-18T23:18:17.5292329-07:00 Microsoft-Windows-HAL 18: The performance counter is not readable from user mode. System performance may be degraded.
+2026-10-18T23:18:17.5292252-07:00 Microsoft-Windows-HAL 17: The clock interrupt is backed by a platform timer instead of a per-processor source. System performance may be degraded.
+== Yttrium UMD log
+2026-10-18 16:47:58.376 [warning pid=5152 process=Valley.exe] d3d9ddi: draw failed owner=d3d9umd reason=backend_native_draw_failed action=return_E_FAIL
+2026-10-18 16:47:58.376 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo missing stage=vs raw=0 binding=0 elem=0 size=0x0 data=00000000
+2026-10-18 16:47:58.380 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo upload collect vs_ubo=0x1 tcs_ubo=0x0 tes_ubo=0x0 gs_ubo=0x0 fs_ubo=0x1
+2026-10-18 16:47:58.381 [warning pid=5152 process=Valley.exe] d3d9ddi: draw failed owner=d3d9umd reason=backend_native_draw_failed action=return_E_FAIL
+2026-10-18 16:47:58.381 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo missing stage=vs raw=0 binding=0 elem=0 size=0x0 data=00000000
+2026-10-18 16:47:58.383 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo upload collect vs_ubo=0x1 tcs_ubo=0x0 tes_ubo=0x0 gs_ubo=0x0 fs_ubo=0x1
+2026-10-18 16:47:58.386 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo missing stage=vs raw=0 binding=0 elem=0 size=0x0 data=00000000
+2026-10-18 16:47:58.386 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo upload collect vs_ubo=0x1 tcs_ubo=0x0 tes_ubo=0x0 gs_ubo=0x0 fs_ubo=0x1
+2026-10-18 16:47:58.384 [warning pid=5152 process=Valley.exe] d3d9ddi: draw failed owner=d3d9umd reason=backend_native_draw_failed action=return_E_FAIL
+2026-10-18 16:47:58.388 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo missing stage=vs raw=0 binding=0 elem=0 size=0x0 data=00000000
+2026-10-18 16:47:58.390 [warning pid=5152 process=Valley.exe] d3d9ddi: draw failed owner=d3d9umd reason=backend_native_draw_failed action=return_E_FAIL
+2026-10-18 16:47:58.390 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo upload collect vs_ubo=0x1 tcs_ubo=0x0 tes_ubo=0x0 gs_ubo=0x0 fs_ubo=0x1
+2026-10-18 16:47:58.391 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo missing stage=vs raw=0 binding=0 elem=0 size=0x0 data=00000000
+2026-10-18 16:47:58.392 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo upload collect vs_ubo=0x1 tcs_ubo=0x0 tes_ubo=0x0 gs_ubo=0x0 fs_ubo=0x1
+2026-10-18 16:47:58.392 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo missing stage=vs raw=0 binding=0 elem=0 size=0x0 data=00000000
+2026-10-18 16:47:58.392 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo upload collect vs_ubo=0x1 tcs_ubo=0x0 tes_ubo=0x0 gs_ubo=0x0 fs_ubo=0x1
+2026-10-18 16:47:58.393 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo missing stage=vs raw=0 binding=0 elem=0 size=0x0 data=00000000
+2026-10-18 16:47:58.393 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo upload collect vs_ubo=0x1 tcs_ubo=0x0 tes_ubo=0x0 gs_ubo=0x0 fs_ubo=0x1
+2026-10-18 16:47:58.393 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo missing stage=vs raw=0 binding=0 elem=0 size=0x0 data=00000000
+2026-10-18 16:47:58.394 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo upload collect vs_ubo=0x1 tcs_ubo=0x0 tes_ubo=0x0 gs_ubo=0x0 fs_ubo=0x1
+2026-10-18 16:47:58.394 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo missing stage=vs raw=0 binding=0 elem=0 size=0x0 data=00000000
+2026-10-18 16:47:58.394 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo upload collect vs_ubo=0x1 tcs_ubo=0x0 tes_ubo=0x0 gs_ubo=0x0 fs_ubo=0x1
+2026-10-18 16:47:58.394 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo missing stage=vs raw=0 binding=0 elem=0 size=0x0 data=00000000
+2026-10-18 16:47:58.394 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo upload collect vs_ubo=0x1 tcs_ubo=0x0 tes_ubo=0x0 gs_ubo=0x0 fs_ubo=0x1
+2026-10-18 16:47:58.396 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo missing stage=vs raw=0 binding=0 elem=0 size=0x0 data=00000000
+2026-10-18 16:47:58.396 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo upload collect vs_ubo=0x1 tcs_ubo=0x0 tes_ubo=0x0 gs_ubo=0x0 fs_ubo=0x1
+2026-10-18 16:47:58.396 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo missing stage=vs raw=0 binding=0 elem=0 size=0x0 data=00000000
+2026-10-18 16:47:58.396 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo upload collect vs_ubo=0x1 tcs_ubo=0x0 tes_ubo=0x0 gs_ubo=0x0 fs_ubo=0x1
+2026-10-18 16:47:58.396 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo missing stage=vs raw=0 binding=0 elem=0 size=0x0 data=00000000
+2026-10-18 16:47:58.397 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo upload collect vs_ubo=0x1 tcs_ubo=0x0 tes_ubo=0x0 gs_ubo=0x0 fs_ubo=0x1
+2026-10-18 16:47:58.397 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo missing stage=vs raw=0 binding=0 elem=0 size=0x0 data=00000000
+2026-10-18 16:47:58.397 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo upload collect vs_ubo=0x1 tcs_ubo=0x0 tes_ubo=0x0 gs_ubo=0x0 fs_ubo=0x1
+2026-10-18 16:47:58.397 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo missing stage=vs raw=0 binding=0 elem=0 size=0x0 data=00000000
+2026-10-18 16:47:58.398 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo upload collect vs_ubo=0x1 tcs_ubo=0x0 tes_ubo=0x0 gs_ubo=0x0 fs_ubo=0x1
+2026-10-18 16:47:58.398 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo missing stage=vs raw=0 binding=0 elem=0 size=0x0 data=00000000
+2026-10-18 16:47:58.398 [warning pid=5152 process=Valley.exe] yttrium: shader_draw_probe try_draw skipped ubo upload collect vs_ubo=0x1 tcs_ubo=0x0 tes_ubo=0x0 gs_ubo=0x0 fs_ubo=0x1
+2026-10-18 16:56:33.629 [warning pid=2108 process=WindowsTerminal.exe] yttrium: upload stats created=1 created_mib=4 live=1 live_mib=4 peak_live_mib=4
+2026-10-18 16:56:33.673 [warning pid=2108 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=9 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 16:56:33.958 [warning pid=2108 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 16:56:34.381 [warning pid=2108 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+== windows on the user desktop

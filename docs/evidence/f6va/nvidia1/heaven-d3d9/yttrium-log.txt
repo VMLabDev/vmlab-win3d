@@ -1,0 +1,40 @@
+     36 [warning pid=8964 process=Heaven.exe] yttrium: storage stats created=0 created_mib=0 live=0 live_mib=0 peak_live_mib=0
+     36 [warning pid=8964 process=Heaven.exe] yttrium: skipped-blob-unmap stats created=0 created_mib=0 live=0 live_mib=0 peak_live_mib=0
+     36 [warning pid=8964 process=Heaven.exe] yttrium: resource-lock-map stats created=0 created_mib=0 live=0 live_mib=0 peak_live_mib=0
+     31 [warning pid=8964 process=Heaven.exe] yttrium: resource-heap-data stats created=567 created_mib=837 live=230 live_mib=176 peak_live_mib=190
+     20 [warning pid=8964 process=Heaven.exe] yttrium: texture stats created=726 created_mib=1428 live=380 live_mib=745 peak_live_mib=745
+     11 [warning pid=8964 process=Heaven.exe] yttrium: venus-mapping stats created=20 created_mib=40 live=18 live_mib=38 peak_live_mib=38
+      6 [warning pid=8964 process=Heaven.exe] yttrium: venus-mapping stats created=21 created_mib=44 live=19 live_mib=42 peak_live_mib=42
+      4 [warning pid=8964 process=Heaven.exe] yttrium: venus-mapping stats created=17 created_mib=34 live=17 live_mib=34 peak_live_mib=34
+      3 [warning pid=8964 process=Heaven.exe] yttrium: venus-mapping stats created=21 created_mib=44 live=18 live_mib=41 peak_live_mib=42
+      3 [warning pid=8964 process=Heaven.exe] yttrium: venus-mapping stats created=18 created_mib=35 live=17 live_mib=34 peak_live_mib=34
+      3 [warning pid=8964 process=Heaven.exe] yttrium: texture stats created=722 created_mib=1420 live=382 live_mib=745 peak_live_mib=745
+      3 [warning pid=8964 process=Heaven.exe] yttrium: texture stats created=722 created_mib=1420 live=380 live_mib=745 peak_live_mib=745
+      3 [warning pid=8964 process=Heaven.exe] yttrium: buffer stats created=286 created_mib=46 live=185 live_mib=27 peak_live_mib=42
+      3 [warning pid=8964 process=Heaven.exe] yttrium: buffer stats created=268 created_mib=42 live=194 live_mib=29 peak_live_mib=42
+      2 [warning pid=8964 process=Heaven.exe] yttrium: venus-mapping stats created=1 created_mib=0 live=1 live_mib=0 peak_live_mib=0
+      2 [warning pid=8964 process=Heaven.exe] yttrium: venus-mapping stats created=19 created_mib=36 live=17 live_mib=34 peak_live_mib=34
+      2 [warning pid=8964 process=Heaven.exe] yttrium: upload stats created=1 created_mib=0 live=1 live_mib=0 peak_live_mib=0
+      2 [warning pid=8964 process=Heaven.exe] yttrium: texture stats created=726 created_mib=1428 live=379 live_mib=741 peak_live_mib=745
+      2 [warning pid=8964 process=Heaven.exe] yttrium: texture stats created=725 created_mib=1425 live=380 live_mib=745 peak_live_mib=745
+      2 [warning pid=8964 process=Heaven.exe] yttrium: resource-heap-data stats created=560 created_mib=834 live=226 live_mib=175 peak_live_mib=190
+      2 [warning pid=8964 process=Heaven.exe] yttrium: buffer stats created=531 created_mib=92 live=225 live_mib=34 peak_live_mib=51
+      2 [warning pid=8964 process=Heaven.exe] yttrium: buffer stats created=450 created_mib=77 live=233 live_mib=36 peak_live_mib=46
+      2 [warning pid=8964 process=Heaven.exe] yttrium: buffer stats created=286 created_mib=46 live=194 live_mib=29 peak_live_mib=42
+      1 [warning pid=8964 process=Heaven.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+      1 [warning pid=8964 process=Heaven.exe] yttrium: Venus renderer refuses feedback-loop usage for format=97 tiling=1 flags=Nx408 usage=0x80017; creating the image without it
+      1 [warning pid=8964 process=Heaven.exe] yttrium: Venus renderer refuses feedback-loop usage for format=4 tiling=1 flags=Nx8 usage=0x80017; creating the image without it
+      1 [warning pid=8964 process=Heaven.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=Nx8 usage=0x80017; creating the image without it
+      1 [warning pid=8964 process=Heaven.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=Nx428 usage=0x80017; creating the image without it
+      1 [warning pid=8964 process=Heaven.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=Nx418 usage=0x80017; creating the image without it
+      1 [warning pid=8964 process=Heaven.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=Nx408 usage=0x80017; creating the image without it
+      1 [warning pid=8964 process=Heaven.exe] yttrium: Venus renderer refuses feedback-loop usage for format=1000340000 tiling=1 flags=Nx428 usage=0x80017; creating the image without it
+      1 [warning pid=8964 process=Heaven.exe] yttrium: Venus renderer refuses feedback-loop usage for format=1000340000 tiling=0 flags=Nx428 usage=0x80017; creating the image without it
+      1 [warning pid=8964 process=Heaven.exe] yttrium: venus-mapping stats created=7 created_mib=6 live=7 live_mib=6 peak_live_mib=6
+      1 [warning pid=8964 process=Heaven.exe] yttrium: venus-mapping stats created=18 created_mib=35 live=16 live_mib=33 peak_live_mib=34
+      1 [warning pid=8964 process=Heaven.exe] yttrium: venus-mapping stats created=16 created_mib=33 live=16 live_mib=33 peak_live_mib=33
+      1 [warning pid=8964 process=Heaven.exe] yttrium: venus-mapping stats created=15 created_mib=32 live=15 live_mib=32 peak_live_mib=32
+      1 [warning pid=8964 process=Heaven.exe] yttrium: venus-mapping stats created=0 created_mib=0 live=0 live_mib=0 peak_live_mib=0
+      1 [warning pid=8964 process=Heaven.exe] yttrium: upload stats created=7913 created_mib=2004 live=30 live_mib=8 peak_live_mib=11
+      1 [warning pid=8964 process=Heaven.exe] yttrium: upload stats created=756 created_mib=204 live=32 live_mib=8 peak_live_mib=10
+      1 [warning pid=8964 process=Heaven.exe] yttrium: upload stats created=6225 created_mib=1579 live=17 live_mib=5 peak_live_mib=11

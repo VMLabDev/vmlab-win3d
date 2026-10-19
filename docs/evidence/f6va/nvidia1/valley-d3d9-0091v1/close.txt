@@ -1,0 +1,1 @@
+5152 window=0x5028C title=[Unigine Valley Benchmark 1.0 Basic (Direct3D9)] closed=True

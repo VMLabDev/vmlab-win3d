@@ -1,0 +1,16 @@
+# Valley D3D9 buffer locks in a 40 s run with D3D10UMD_D3D9_TRACE=1 (package with 0091 v2), Nvidia1.
+# flags are D3DDDI_LOCKFLAGS: 0x4 NoOverwrite, 0x8 Discard, 0x10 RangeValid.
+# flags locks bytes_MB avg_bytes
+0x0000000c 5196 17002.2 3272165
+0x00000000 1171 113.0 96499
+0x0000001c 880 0.9 1063
+0x00000008 71 12.7 179514
+0x00000018 31 0.1 4289
+0x00000010 5 0.2 39368
+# most-locked buffers with flags 0x0000000c: count resource size
+   4052 2bc3d188 4194304
+    741 11add650 8192
+    358 1b3506d0 1920
+     23 1b350c50 240
+     16 1b350360 48
+# Present calls: 978

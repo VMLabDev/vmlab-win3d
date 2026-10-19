@@ -1,0 +1,2 @@
+virgl_render_server[2598909]: vkr: vkCmdDrawIndexed resulted in CS error
+virgl_render_server[2598909]: vkr: ring_submit_cmd: vn_dispatch_command failed

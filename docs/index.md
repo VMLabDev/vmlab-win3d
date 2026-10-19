@@ -83,6 +83,7 @@ or Intel GPU as declared in the host config, `~/.config/vmlab/config.wcl`
 | [unid3d.md](unid3d.md) | See the Unigine D3D9 and D3D11 findings F5 to F7: the D3D9 depth-bias fix for NVIDIA (`patches/mesa/0090`), Valley D3D9 running out of 32-bit address space, and Heaven D3D11's use-after-free |
 | [unigl.md](unigl.md) | See the Unigine OpenGL finding F4 on NVIDIA: the RTX 5090's small BAR heap, the Venus allocation and Zink mapping fixes (`patches/mesa/0085`, `0086`, with nvva's `0070`), and the proof on both NVIDIA cards and AMD1 |
 | [godot.md](godot.md) | See why Godot's Vulkan renderer raised a host Xid 69 (ErrorCode `0x13d`) on the RTX 5090 and how `patches/mesa/0075` fixed it: LINEAR swapchain images plus pipeline fragment-shading-rate state |
+| [f6va.md](f6va.md) | See how compat finding F6 was fixed: 32-bit D3D9 programs (Unigine Valley) ran out of address space through the ordered-context-worker upload path (`patches/mesa/0091` and `0092`) |
 
 ## Building
 

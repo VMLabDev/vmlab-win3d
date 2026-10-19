@@ -459,24 +459,21 @@ PCIe. A guest driver that still allocates host-visible VRAM can fail to map
 it when BAR1 is full; with `0070` no driver in the package sees such a
 memory type.
 
-### 32-bit Unigine: Valley D3D9 runs out of address space; Heaven D3D11 has a use-after-free
+### 32-bit Unigine: Valley D3D9 address space (fixed); Heaven D3D11 has a use-after-free
 
-[unid3d.md](unid3d.md) has the evidence.
+[unid3d.md](unid3d.md) and [f6va.md](f6va.md) have the evidence.
 
 - D3D9 depth bias works on NVIDIA since `patches/mesa/0090`. Before it,
   Unigine D3D9 skipped every draw that used a depth bias.
-- Unigine Valley's D3D9 renderer, a 32-bit process, uses 3.75 GiB of its
-  4 GiB address space within 90 s. The UMD's ordered-context-worker upload
-  path creates about 4 MiB of mapped upload buffers per lock and keeps
-  hundreds of them alive. Allocations then fail. Venus commands go out
-  malformed (`vkCmdBeginRenderPass` or `vkCmdPipelineBarrier` resulted in a
-  CS error), and Valley hangs or crashes. Heaven's D3D9 renderer (2 GiB, not
-  large-address-aware) can fail the same way on NVIDIA at exit. As a
-  workaround, `ORDERED_CONTEXT_WORKER=0` in
-  `C:\ProgramData\Yttrium\yttrium.ini` turns the worker off for every
-  program. Valley D3D9 then ran cleanly on AMD1 at 6 fps and 1.7 GiB. The
-  file is not part of the package. It is a diagnostic option, and other
-  programs have not been tested with it.
+- Unigine Valley's D3D9 renderer, a 32-bit process, ran out of its 4 GiB
+  address space within 90 s through the UMD's ordered-context-worker upload
+  path, then hung or crashed. `patches/mesa/0091` and `0092` fix it
+  ([f6va.md](f6va.md)): Valley D3D9 runs 10 minutes on `AMD1` and `Nvidia1`
+  within 2.1 GiB, and Heaven D3D9 exits cleanly. In a 32-bit process the
+  UMD now holds its live upload buffers to 256 MiB (`UPLOAD_BUDGET_MB` in
+  `C:\ProgramData\Yttrium\yttrium.ini`). A program that keeps more in
+  flight is slowed down to that budget instead of failing. No tested
+  program reaches it.
 - Unigine Heaven D3D11 on AMD1 crashes intermittently with heap corruption.
   Under PageHeap it crashed in 2 of 5 runs, in both cases on a use-after-free
   of a queued flush label (`yttrium_threaded_set_flush_label`) run by the

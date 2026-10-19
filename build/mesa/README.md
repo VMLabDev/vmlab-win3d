@@ -74,9 +74,9 @@ The series has two parts, and the patches apply in name order:
   mixed-case header symlinks that `prepare-build.py` creates, so they are
   build output, not source. The diff was then split by topic. Each patch has
   a header that says what it fixes and which prior-art finding it comes from.
-- **0012 to 0017, 0020 to 0027, 0030 to 0032, 0035, 0040 to 0044, 0060, 0065 to 0067, 0070, 0075, 0080, 0085 to 0086 and 0090** are this repository's own fixes, found by
+- **0012 to 0017, 0020 to 0027, 0030 to 0032, 0035, 0040 to 0044, 0060, 0065 to 0067, 0070, 0075, 0080, 0085 to 0086 and 0090 to 0092** are this repository's own fixes, found by
 
-0005 to 0010, every patch from 0012 to 0026 and 0030 to 0032 change
+0005 to 0010, every patch from 0012 to 0026, 0030 to 0032 and 0090 to 0092 change
 `viogpu_d3d10.dll`, the D3D9/D3D10/D3D11 UMD (the `d3d10umd` frontend and the
 Yttrium winsys). 0032 also changes Gallium's `tgsi_to_nir`, in a branch that
 only a TGSI tessellation control shader reaches, which only the UMD makes.
@@ -142,6 +142,8 @@ are in WGL, 0011, 0070 and 0085 are in the Venus ICD, and 0086 is in Zink (WGL).
 | 0085 venus-allocate-from-small-device-local-heap-synchronously | The Venus ICD allocates from a device-local heap smaller than the largest one (the RTX 5090's 246 MiB BAR window) synchronously, so a host out-of-memory reaches the driver's fallback instead of failing the whole context (Unigine OpenGL crashed on NVIDIA) | [`docs/unigl.md`](../../docs/unigl.md) |
 | 0086 zink-keep-buffers-mappable-without-visible-vram | Zink keeps directly mapped buffers in host-visible memory when the device has no device-local, host-visible type (needed with 0070; Unigine Heaven and Valley crashed). Written by the unigl worker; carried unchanged | [`docs/nvva.md`](../../docs/nvva.md) |
 | 0090 yttrium-d3d9-depth-bias-without-float-representation | D3D9 depth bias works on devices without `VK_EXT_depth_bias_control`'s float representation (NVIDIA): it is converted to integer units for the depth format and requested exact. Before, every pipeline with a D3D9 depth bias failed and its draws were skipped | [`docs/unid3d.md`](../../docs/unid3d.md) |
+| 0091 d3d9-stop-copying-vertex-buffer-locks-for-ordered-worker | With the ordered context worker, D3D9 vertex-buffer locks are no longer copied whole into upload buffers: a `DISCARD|NOOVERWRITE` buffer lock is a NOOVERWRITE lock (as in DXVK), DISCARD and NOOVERWRITE locks need no copy, and after a plain lock each draw copies only the vertices it reads. Copies and user-pointer vertex data are packed into the uploader and the draw rebased. Unigine Valley D3D9, a 32-bit process, created about 400 MB/s of 4 MiB mapped upload buffers and ran out of address space (compat F6) | [`docs/f6va.md`](../../docs/f6va.md) |
+| 0092 yttrium-bound-in-flight-uploads | In a 32-bit process the live upload buffers are held to 256 MiB (`UPLOAD_BUDGET_MB`): over it, a flush waits for the oldest batches and D3D9 Present waits for the worker. `UPLOAD_STATS=1` logs upload, buffer, texture and blob-map counts every 5 s | [`docs/f6va.md`](../../docs/f6va.md) |
 
 0021 has no mail header. `scripts/pins-table.py` carries its one-line
 description.

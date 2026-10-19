@@ -1,0 +1,448 @@
+Subject: [PATCH] d3d9: stop copying every vertex-buffer lock for the ordered worker
+
+With the ordered context worker, queued draws read a vertex buffer when
+the worker records them, so a later write lock could change what they
+read. The frontend therefore copied the locked range of every write
+lock into the stream uploader at Unlock (a snapshot), and draws until
+the next lock read that copy. Unigine Valley's D3D9 renderer locks one
+4 MiB vertex buffer whole with D3DLOCK_DISCARD|D3DLOCK_NOOVERWRITE about
+100 times a second, so it copied about 400 MB/s into 4 MiB upload
+buffers (mapped blobs). The copies were placed at an upload offset of at
+least their offset in the vertex buffer, which wasted the rest of each
+upload buffer, and snapshots of buffers written once were kept for the
+buffer's lifetime. Valley, a 32-bit process, ran out of address space
+in 90 s and hung or crashed (compat finding F6).
+
+Take no copy where none is needed. A D3DLOCK_DISCARD lock is staged by
+the threaded context in new memory and copied into the buffer in order.
+A D3DLOCK_NOOVERWRITE lock promises not to touch data that queued draws
+read. A buffer lock with both flags is a NOOVERWRITE lock, as DXVK's
+D3D9 treats it ("Ignore DISCARD if NOOVERWRITE is set"); before, the
+frontend mapped it with both PIPE_MAP_DISCARD_RANGE and
+PIPE_MAP_UNSYNCHRONIZED. After a plain write lock, which the threaded
+context orders but whose data queued draws may still read, each draw
+copies only the vertex range it reads into the stream uploader, until
+the buffer is locked again or two presents pass. The draw sees the
+data as it was at the draw, which is what D3D9 requires.
+
+Pack these copies and user-pointer vertex data at the uploader's next
+free offset. When that makes a stream's buffer offset negative, rebase
+the draw: its first vertex becomes vertex 0, each per-vertex stream's
+buffer offset grows by first * stride, and start_vertex or index_bias
+drops by first. Every fetch address stays the same.
+
+At Present, when the winsys reports its upload buffers over budget
+(patch 0092; 32-bit processes), flush and wait for the worker, so that
+the threaded context cannot queue many frames of uploads.
+
+Evidence: docs/f6va.md, docs/evidence/f6va/.
+Origin: vmlab-win3d f6va worker.
+---
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Draw.cpp b/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
+index 17ca89c..08be5b8 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
+@@ -2678,6 +2678,13 @@ D3D9FillStreamVertexBuffer(D3D9Device *device, UINT stream,
+    return true;
+ }
+ 
++/* D3D9SubResource::worker_draw_copy ends this many presents after the lock
++ * that set it. Copying the vertices only matters for draws recorded soon
++ * after a lock, before the buffer is locked again. A buffer written once
++ * and drawn for the rest of the run would copy at every draw. Afterwards the
++ * draws read the buffer itself (docs/f6va.md). */
++#define D3D9_WORKER_DRAW_COPY_MAX_PRESENTS 2
++
+ static bool
+ D3D9UploadWorkerUserVertexBuffers(
+    D3D9Device *device,
+@@ -2692,14 +2699,17 @@ D3D9UploadWorkerUserVertexBuffers(
+    UINT instance_count,
+    struct pipe_vertex_buffer *vbuffers,
+    UINT vbuffer_count,
+-   D3D9AutoUploadResources *uploads)
++   D3D9AutoUploadResources *uploads,
++   int64_t *vertex_rebase)
+ {
+    struct pipe_context *pipe = device ? device->pipe : NULL;
+-   if (!pipe || !pipe->stream_uploader || !elements || !element_count ||
+-       !vbuffers || !uploads)
++   if (!pipe || !pipe->stream_uploader || !pipe->buffer_map ||
++       !pipe->buffer_unmap || !elements || !element_count || !vbuffers ||
++       !uploads || !vertex_rebase || vbuffer_count > PIPE_MAX_ATTRIBS)
+       return false;
+ 
+    uploads->pipe = pipe;
++   *vertex_rebase = 0;
+ 
+    const int64_t indexed_first = (int64_t)min_index + index_bias;
+    if (indexed && indexed_first < 0)
+@@ -2710,6 +2720,22 @@ D3D9UploadWorkerUserVertexBuffers(
+    const uint64_t vertices = indexed ?
+       (num_vertices ? num_vertices : 1) : vertex_count;
+ 
++   /* Copies are packed into the stream uploader wherever there is room, so a
++    * stream's new buffer_offset (the upload offset minus the source offset
++    * of the first vertex) can be negative. Such a draw is rebased so that
++    * its first vertex is vertex 0: every per-vertex stream's buffer_offset
++    * grows by vertex_first * stride and the caller lowers start_vertex or
++    * index_bias by vertex_first. Each fetch address stays the same. Asking
++    * the uploader for an offset of at least the source offset instead left
++    * most of an upload buffer unused for every copy from far into a large
++    * buffer (docs/f6va.md). */
++   bool used_streams[PIPE_MAX_ATTRIBS] = {};
++   bool remapped[PIPE_MAX_ATTRIBS] = {};
++   UINT strides[PIPE_MAX_ATTRIBS] = {};
++   UINT divisors[PIPE_MAX_ATTRIBS] = {};
++   int64_t offsets[PIPE_MAX_ATTRIBS] = {};
++   bool need_rebase = false;
++
+    for (UINT stream = 0; stream < vbuffer_count; ++stream) {
+       struct pipe_vertex_buffer *vbuffer = &vbuffers[stream];
+ 
+@@ -2736,12 +2762,16 @@ D3D9UploadWorkerUserVertexBuffers(
+ 
+       /* vbuffer_count is the highest active stream plus one, so sparse
+        * declarations leave empty entries in the array.  There is nothing to
+-       * snapshot for those entries. */
++       * copy for those entries. */
+       if (!used)
+          continue;
+       if (!span || !vbuffer->buffer.user)
+          return false;
+ 
++      used_streams[stream] = true;
++      strides[stream] = stride;
++      divisors[stream] = divisor;
++
+       const uint64_t first = divisor ? 0 : vertex_first;
+       const uint64_t count = divisor ?
+          DIV_ROUND_UP((uint64_t)MAX2(instance_count, 1u), divisor) :
+@@ -2757,6 +2787,8 @@ D3D9UploadWorkerUserVertexBuffers(
+       if (source_offset > UINT_MAX - size)
+          return false;
+ 
++      const uint8_t *source = NULL;
++      struct pipe_transfer *transfer = NULL;
+       if (!vbuffer->is_user_buffer) {
+          if (stream >= ARRAYSIZE(device->streams) ||
+              !device->streams[stream].vertex_buffer)
+@@ -2766,53 +2798,79 @@ D3D9UploadWorkerUserVertexBuffers(
+             device->streams[stream].vertex_buffer);
+          D3D9SubResource *sub = resource && resource->surf_count ?
+             &resource->surfaces[0] : NULL;
+-         if (!sub || !sub->worker_upload_buffer)
++         if (!sub || !sub->worker_draw_copy || !resource->pipe_resource)
+             continue;
++         if (device->present_serial - sub->worker_draw_copy_present_serial >=
++             D3D9_WORKER_DRAW_COPY_MAX_PRESENTS) {
++            sub->worker_draw_copy = false;
++            continue;
++         }
+ 
+          const uint64_t logical_source =
+             (uint64_t)vbuffer->buffer_offset + source_offset;
+-         const uint64_t snapshot_start = sub->worker_upload_source_offset;
+-         const uint64_t snapshot_end =
+-            snapshot_start + sub->worker_upload_size;
+-         if (logical_source < snapshot_start ||
+-             logical_source + size < logical_source ||
+-             logical_source + size > snapshot_end)
++         if (logical_source + size > resource->pipe_resource->width0)
+             continue;
+ 
+-         const uint64_t new_buffer_offset =
+-            (uint64_t)sub->worker_upload_offset + vbuffer->buffer_offset;
+-         if (new_buffer_offset < snapshot_start ||
+-             new_buffer_offset - snapshot_start > UINT_MAX)
++         struct pipe_box box;
++         u_box_1d((int)logical_source, (int)size, &box);
++         source = (const uint8_t *)pipe->buffer_map(
++            pipe, resource->pipe_resource, 0,
++            PIPE_MAP_READ | PIPE_MAP_UNSYNCHRONIZED, &box, &transfer);
++         if (!source) {
++            if (transfer)
++               pipe->buffer_unmap(pipe, transfer);
+             return false;
+-
+-         vbuffer->buffer.resource = sub->worker_upload_buffer;
+-         vbuffer->buffer_offset =
+-            (unsigned)(new_buffer_offset - snapshot_start);
+-         continue;
++         }
++      } else {
++         source = (const uint8_t *)vbuffer->buffer.user + source_offset;
+       }
+ 
+       unsigned upload_offset = 0;
+       struct pipe_resource *upload_buffer = NULL;
+       struct pipe_resource *release_buffer = NULL;
+       u_upload_data(pipe->stream_uploader,
+-                    (unsigned)source_offset,
++                    0,
+                     (unsigned)size,
+                     16,
+-                    (const uint8_t *)vbuffer->buffer.user + source_offset,
++                    source,
+                     &upload_offset,
+                     &upload_buffer,
+                     &release_buffer);
+-      if (!upload_buffer || upload_offset < source_offset) {
++      if (transfer)
++         pipe->buffer_unmap(pipe, transfer);
++      if (!upload_buffer) {
+          pipe_resource_release(pipe, release_buffer);
+          return false;
+       }
+ 
++      pipe_resource_release(pipe, uploads->resources[stream]);
+       uploads->resources[stream] = release_buffer;
+       vbuffer->is_user_buffer = false;
+       vbuffer->buffer.resource = upload_buffer;
+-      vbuffer->buffer_offset = upload_offset - (unsigned)source_offset;
++      offsets[stream] = (int64_t)upload_offset - (int64_t)source_offset;
++      remapped[stream] = true;
++      if (offsets[stream] < 0)
++         need_rebase = true;
+    }
+ 
++   const int64_t rebase = need_rebase ? (int64_t)vertex_first : 0;
++   if (rebase > INT_MAX)
++      return false;
++
++   for (UINT stream = 0; stream < vbuffer_count; ++stream) {
++      if (!used_streams[stream])
++         continue;
++
++      int64_t offset = remapped[stream] ?
++         offsets[stream] : (int64_t)vbuffers[stream].buffer_offset;
++      if (!divisors[stream])
++         offset += rebase * strides[stream];
++      if (offset < 0 || offset > UINT_MAX)
++         return false;
++      vbuffers[stream].buffer_offset = (unsigned)offset;
++   }
++
++   *vertex_rebase = rebase;
+    return true;
+ }
+ 
+@@ -2977,13 +3035,20 @@ D3D9DrawDiffuse(D3D9Device *device, D3DPRIMITIVETYPE primitive_type,
+ 
+    const UINT instance_count = D3D9DrawInstanceCount(device);
+    D3D9AutoUploadResources worker_vertex_uploads;
++   int64_t vertex_rebase = 0;
+    if (D3D9OrderedContextWorkerEnabled() &&
+        !D3D9UploadWorkerUserVertexBuffers(
+           device, elements, element_count, indexed, index_bias,
+           min_index, num_vertices, start_vertex, vertex_count,
+           instance_count, vbuffers, vbuffer_count,
+-          &worker_vertex_uploads))
++          &worker_vertex_uploads, &vertex_rebase))
+       return E_FAIL;
++   if (vertex_rebase) {
++      if (indexed)
++         index_bias -= (INT)vertex_rebase;
++      else
++         start_vertex -= (UINT)vertex_rebase;
++   }
+ 
+    /* The generated POSITIONT vertex shader passes a PSIZE element through
+     * (D3D9InitPositionTRuntimePsFixedFunctionVsInfo). */
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Private.h b/src/gallium/frontends/d3d10umd/D3D9Private.h
+index 04c1131..bc81716 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Private.h
++++ b/src/gallium/frontends/d3d10umd/D3D9Private.h
+@@ -84,6 +84,8 @@ struct D3D9Device
+    UINT render_states[256];
+    UINT texture_stage_states[D3D9_TEXTURE_STAGE_COUNT][D3D9_TEXTURE_STAGE_STATE_COUNT];
+    UINT texture_transform_count;
++   /* Counts Present calls; ages D3D9SubResource::worker_draw_copy. */
++   uint64_t present_serial;
+    BOOL texture_transform_count_pending;
+    BOOL texture_transform_count_consumed;
+    D3DMATRIX transforms[512];
+@@ -153,10 +155,15 @@ struct D3D9SubResource
+    bool transfer_write;
+    struct pipe_box transfer_box;
+    void *transfer_map;
+-   struct pipe_resource *worker_upload_buffer;
+-   unsigned worker_upload_offset;
+-   unsigned worker_upload_source_offset;
+-   unsigned worker_upload_size;
++   /* Ordered context worker: a write lock that mapped the buffer itself
++    * ended here, so draws copy the vertices they read until the next lock
++    * (D3D9UploadWorkerUserVertexBuffers). Set at D3D9Device::present_serial
++    * worker_draw_copy_present_serial. */
++   bool worker_draw_copy;
++   uint64_t worker_draw_copy_present_serial;
++   /* The buffer lock that made transfer had neither D3DLOCK_DISCARD nor
++    * D3DLOCK_NOOVERWRITE. */
++   bool transfer_plain;
+    bool cpu_locked;
+    bool cpu_lock_write;
+    bool cpu_lock_packed_mips;
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Resource.cpp b/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
+index 1f7be76..69d7653 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
+@@ -35,43 +35,9 @@ D3D9OrderedContextWorkerEnabled()
+ static void
+ D3D9ReleaseWorkerBufferUpload(D3D9Device *device, D3D9SubResource *sub)
+ {
+-   if (!sub || !sub->worker_upload_buffer)
+-      return;
+-
+-   if (device && device->pipe) {
+-      pipe_resource_release(device->pipe, sub->worker_upload_buffer);
+-      sub->worker_upload_buffer = NULL;
+-   } else {
+-      pipe_resource_reference(&sub->worker_upload_buffer, NULL);
+-   }
+-   sub->worker_upload_offset = 0;
+-   sub->worker_upload_source_offset = 0;
+-   sub->worker_upload_size = 0;
+-}
+-
+-static bool
+-D3D9CaptureWorkerBufferUpload(D3D9Device *device, D3D9SubResource *sub)
+-{
+-   if (!device || !device->pipe || !device->pipe->stream_uploader || !sub ||
+-       !sub->transfer_map || sub->transfer_box.x < 0 ||
+-       sub->transfer_box.width <= 0)
+-      return false;
+-
+-   const unsigned source_offset = (unsigned)sub->transfer_box.x;
+-   const unsigned size = (unsigned)sub->transfer_box.width;
+-   unsigned upload_offset = 0;
+-   struct pipe_resource *upload_buffer = NULL;
+-   u_upload_data_ref(device->pipe->stream_uploader, source_offset, size, 16,
+-                     sub->transfer_map, &upload_offset, &upload_buffer);
+-   if (!upload_buffer || upload_offset < source_offset)
+-      return false;
+-
+-   D3D9ReleaseWorkerBufferUpload(device, sub);
+-   sub->worker_upload_buffer = upload_buffer;
+-   sub->worker_upload_offset = upload_offset;
+-   sub->worker_upload_source_offset = source_offset;
+-   sub->worker_upload_size = size;
+-   return true;
++   (void)device;
++   if (sub)
++      sub->worker_draw_copy = false;
+ }
+ 
+ static bool
+@@ -1918,6 +1884,7 @@ D3D9EndReadbackLock(D3D9Device *device, D3D9SubResource *sub)
+    sub->transfer = NULL;
+    sub->transfer_on_readback = false;
+    sub->transfer_write = false;
++   sub->transfer_plain = false;
+    memset(&sub->transfer_box, 0, sizeof(sub->transfer_box));
+ }
+ 
+@@ -2470,8 +2437,6 @@ D3D9FreeResource(D3D9Resource *resource)
+    pipe_resource_reference(&resource->managed_source_pipe_resource, NULL);
+    for (UINT i = 0; i < resource->surf_count; ++i) {
+       pipe_resource_reference(&resource->surfaces[i].readback_resource, NULL);
+-      pipe_resource_reference(
+-         &resource->surfaces[i].worker_upload_buffer, NULL);
+       if (resource->surfaces[i].owns_data)
+          free(resource->surfaces[i].data);
+    }
+@@ -3322,6 +3287,7 @@ D3D9Lock(HANDLE hDevice, D3DDDIARG_LOCK *data)
+          sub->transfer_map = NULL;
+          sub->transfer_on_readback = false;
+          sub->transfer_write = false;
++         sub->transfer_plain = false;
+          memset(&sub->transfer_box, 0, sizeof(sub->transfer_box));
+       } else {
+          D3D9Tracef("Lock rejected active map resource=%p sub=%u "
+@@ -3334,7 +3300,12 @@ D3D9Lock(HANDLE hDevice, D3DDDIARG_LOCK *data)
+ 
+    struct pipe_box box;
+    memset(&box, 0, sizeof(box));
+-   const unsigned usage = D3D9PipeMapUsage(data->Flags);
++   unsigned usage = D3D9PipeMapUsage(data->Flags);
++   /* D3DLOCK_DISCARD with D3DLOCK_NOOVERWRITE on a buffer is a NOOVERWRITE
++    * lock, as DXVK's D3D9 and Windows drivers treat it. Valley locks a 4 MiB
++    * vertex buffer whole with both, about 100 times a second. */
++   if (buffer_resource && data->Flags.Discard && data->Flags.NoOverwrite)
++      usage &= ~PIPE_MAP_DISCARD_RANGE;
+    void *map = NULL;
+ 
+    if (buffer_resource) {
+@@ -3381,6 +3352,8 @@ D3D9Lock(HANDLE hDevice, D3DDDIARG_LOCK *data)
+       data->SlicePitch = 0;
+       if (sub->transfer) {
+          sub->transfer_write = (usage & PIPE_MAP_WRITE) != 0;
++         sub->transfer_plain =
++            !data->Flags.Discard && !data->Flags.NoOverwrite;
+          sub->transfer_box = box;
+          sub->transfer_map = map;
+       }
+@@ -3557,7 +3530,6 @@ D3D9Unlock(HANDLE hDevice, const D3DDDIARG_UNLOCK *data)
+       return E_INVALIDARG;
+    }
+ 
+-   bool worker_upload_ok = true;
+    if (sub->transfer_on_readback) {
+       if (!device->pipe->texture_unmap)
+          return E_NOTIMPL;
+@@ -3584,9 +3556,21 @@ D3D9Unlock(HANDLE hDevice, const D3DDDIARG_UNLOCK *data)
+        resource->pipe_resource->target == PIPE_BUFFER) {
+       if (!device->pipe->buffer_unmap)
+          return E_NOTIMPL;
+-      if (sub->transfer_write && resource->flags.VertexBuffer &&
+-          D3D9OrderedContextWorkerEnabled())
+-         worker_upload_ok = D3D9CaptureWorkerBufferUpload(device, sub);
++      /* With the ordered context worker, queued draws read the buffer when
++       * the worker records them. A DISCARD lock needs nothing: the threaded
++       * context stages it in new memory and copies it into the buffer in
++       * order. A NOOVERWRITE lock promises not to touch data that queued
++       * draws read. After a plain write lock, the draws that follow copy the
++       * vertices they read into the stream uploader at the draw. Copying
++       * every write lock's whole range at Unlock instead took a 4 MiB copy
++       * for each of Valley's whole-buffer locks, about 400 MB/s, and ran
++       * the 32-bit process out of address space (docs/f6va.md). */
++      if (sub->transfer_write && sub->transfer_plain &&
++          resource->flags.VertexBuffer &&
++          D3D9OrderedContextWorkerEnabled()) {
++         sub->worker_draw_copy = true;
++         sub->worker_draw_copy_present_serial = device->present_serial;
++      }
+       device->pipe->buffer_unmap(device->pipe, sub->transfer);
+       sub->transfer = NULL;
+    } else {
+@@ -3600,11 +3584,12 @@ D3D9Unlock(HANDLE hDevice, const D3DDDIARG_UNLOCK *data)
+    if (sub->transfer_write)
+       D3D9MarkAutogenMipmapsDirty(resource, subresource_index);
+    sub->transfer_write = false;
++   sub->transfer_plain = false;
+    memset(&sub->transfer_box, 0, sizeof(sub->transfer_box));
+    sub->cpu_dirty = false;
+    D3D9Tracef("Unlock pipe resource=%p sub=%u\n",
+               resource, subresource_index);
+-   return worker_upload_ok ? S_OK : E_OUTOFMEMORY;
++   return S_OK;
+ }
+ 
+ HRESULT APIENTRY
+@@ -4235,6 +4220,17 @@ D3D9Present(HANDLE hDevice, const D3DDDIARG_PRESENT *data)
+ 
+    if (!device || !data)
+       return E_INVALIDARG;
++   device->present_serial++;
++
++   /* The threaded context can queue many frames of draws, and each holds
++    * its upload buffers. Over the winsys's upload budget (32-bit processes,
++    * docs/f6va.md), flush, which waits for the oldest GPU batches, and let
++    * the worker catch up before the next frame. */
++   if (D3D9OrderedContextWorkerEnabled() && device->pipe &&
++       yttrium_gdi_uploads_over_budget()) {
++      device->pipe->flush(device->pipe, NULL, PIPE_FLUSH_ASYNC);
++      threaded_context_unwrap_sync(device->pipe);
++   }
+ 
+    HANDLE src_handle = data->hSrcResource ? data->hSrcResource :
+       device->render_targets[0];

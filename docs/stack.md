@@ -224,15 +224,14 @@ evidence for each row, is in
 `patches/host/` is **not part of the guest package**. `scripts/build.sh`
 does not build it, and the installer does not use it. It holds patches to
 two host components and the scripts that build them into `out/host/`, for
-labs that select them explicitly. Neither replaces a system package
-(decision D3): each installs under `~/.local/opt`, and the host config's
-GPU blocks name it. Its pins are the `host` rows of the pin table below.
+labs that select them explicitly. Nothing is installed on the host
+(decision D3). Its pins are the `host` rows of the pin table below.
 
 | Path | What it is for |
 | --- | --- |
 | `patches/host/build-qemu.sh`, `patches/host/bump-qemu.sh` and the `qemu` pin in `patches/host/PINS` | The vmlab QEMU: QEMU 11.1.1 plus the series on the [VMLabDev/qemu](https://github.com/VMLabDev/qemu/tree/vmlab/egl-headless-external-dmabuf) branch `vmlab/egl-headless-external-dmabuf`, at the pinned commit. Its egl-headless display shows LINEAR scanout dma-bufs that the host's EGL imports as external only. NVIDIA needs it for a visible console; AMD and Intel do not. The build is native against the host's libraries, not in Docker. On vmlab 0.26 or later the host config names it as the NVIDIA GPU's `qemu_binary` ([`nvidia.md`](nvidia.md)); the Zeus runs, on 0.24, used an isolated supervisor (`labs/zeus/vmlab-iso.sh`) |
-| `patches/host/virglrenderer/0001`, `0002` and `patches/host/build-virglrenderer.sh` | The vmlab render server: virglrenderer 1.3.0's `virgl_render_server` with 0002, which creates vkr's queue-sync fences without SYNC_FD export and so removes a 10 ms floor from every Venus fence on NVIDIA ([`n5.md`](n5.md)), and 0001, which logs failed image creation with its create-info. NVIDIA GPU profiles select it with `qemu_env = { RENDER_SERVER_EXEC_PATH: ... }` ([`nvidia.md`](nvidia.md)); the build is native, x86-64-v2, like QEMU's |
-| `patches/host/virglrenderer/workaround/0003` | The host-side workaround for the NVIDIA feedback-loop fault, kept as documentation. `patches/mesa/0020` replaced it; `build-virglrenderer.sh` applies it only with `WITH_WORKAROUND=1` |
+| `patches/host/virglrenderer/0001` and `patches/host/build-virglrenderer.sh` | A diagnostic render server: stock virglrenderer 1.3.0 that also logs failed image creation with its create-info. It is selected with `RENDER_SERVER_EXEC_PATH` and used only to investigate a failure ([`nvidia.md`](nvidia.md), [`zeus.md`](zeus.md)) |
+| `patches/host/virglrenderer/workaround/0002` | The host-side workaround for the NVIDIA feedback-loop fault, kept as documentation. `patches/mesa/0020` replaced it; `build-virglrenderer.sh` applies it only with `WITH_WORKAROUND=1` |
 
 ### Build-only inputs
 
@@ -325,7 +324,7 @@ committed.
 | host/virglrenderer/workaround | 1 | [`0003`](../patches/host/virglrenderer/workaround/0003-vkr-drop-unsupported-feedback-loop-usage.patch) | vkr: retry vkCreateImage and the image-format queries without feedback-loop usage (superseded by mesa/0020; built only with WITH_WORKAROUND=1) | [`docs/nvidia.md`](nvidia.md) |
 | kmd | 2 | [`0001`](../patches/kmd/0001-kmd-r10-copy.patch) | Convert R10G10B10A2 sources to 8-bit RGBA or BGRA in the KMD's CPU present blit (the prior art's r10 KMD) | [`build/kmd/README.md`](../build/kmd/README.md) |
 | | | [`0002`](../patches/kmd/0002-kmd-cache-gdi-shadow-and-staging-surfaces.patch) | viogpu3d: map GDI shadow and staging surfaces cached | [`docs/present.md`](present.md) |
-| mesa | 44 | [`0001`](../patches/mesa/0001-build-winddk-includes-and-x86-atomics.patch) | build: add the WDK include path and drop x86-unsafe 64-bit Interlocked calls | [`build/mesa/README.md`](../build/mesa/README.md) |
+| mesa | 46 | [`0001`](../patches/mesa/0001-build-winddk-includes-and-x86-atomics.patch) | build: add the WDK include path and drop x86-unsafe 64-bit Interlocked calls | [`build/mesa/README.md`](../build/mesa/README.md) |
 | | | [`0002`](../patches/mesa/0002-util-xmlconfig-case-insensitive-exe-match.patch) | util/xmlconfig: match drirc executable names case-insensitively on Windows | [`build/mesa/README.md`](../build/mesa/README.md) |
 | | | [`0003`](../patches/mesa/0003-util-u_queue-windows-loader-lock-join.patch) | util/u_queue: do not join worker threads under the loader lock on Windows | [`build/mesa/README.md`](../build/mesa/README.md) |
 | | | [`0004`](../patches/mesa/0004-wgl-unbind-through-stw-on-delete.patch) | wgl: unbind the current context through stw_make_current on delete | [`build/mesa/README.md`](../build/mesa/README.md) |
@@ -369,6 +368,8 @@ committed.
 | | | [`0085`](../patches/mesa/0085-venus-allocate-from-small-device-local-heap-synchronously.patch) | venus: allocate from a small device-local heap synchronously | [`docs/unigl.md`](unigl.md) |
 | | | [`0086`](../patches/mesa/0086-zink-keep-buffers-mappable-without-visible-vram.patch) | zink: keep buffers mappable when CPU-visible VRAM is missing or full | [`docs/unigl.md`](unigl.md) |
 | | | [`0090`](../patches/mesa/0090-yttrium-d3d9-depth-bias-without-float-representation.patch) | yttrium: convert D3D9 depth bias when the float representation is missing | [`docs/unid3d.md`](unid3d.md) |
+| | | [`0091`](../patches/mesa/0091-d3d9-stop-copying-vertex-buffer-locks-for-ordered-worker.patch) | d3d9: stop copying every vertex-buffer lock for the ordered worker | [`docs/f6va.md`](f6va.md) |
+| | | [`0092`](../patches/mesa/0092-yttrium-bound-in-flight-uploads.patch) | yttrium: bound in-flight upload buffers in 32-bit processes | [`docs/f6va.md`](f6va.md) |
 | vkd3d-proton | 6 | [`0001`](../patches/vkd3d-proton/0001-vkd3d-Reject-root-signatures-with-overlapping-regist.patch) | vkd3d: Reject root signatures with overlapping register bindings. | [`build/d3d12/README.md`](../build/d3d12/README.md) |
 | | | [`0002`](../patches/vkd3d-proton/0002-vkd3d-Report-FORMAT_INFO-plane-counts-without-a-Vulk.patch) | vkd3d: Report FORMAT_INFO plane counts without a Vulkan format mapping. | [`build/d3d12/README.md`](../build/d3d12/README.md) |
 | | | [`0003`](../patches/vkd3d-proton/0003-vkd3d-Allow-depth-stencil-textures-in-CPU-visible-he.patch) | vkd3d: Allow depth-stencil textures in CPU-visible heaps. | [`build/d3d12/README.md`](../build/d3d12/README.md) |

@@ -1,0 +1,1 @@
+1108 window=0x60040 title=[Unigine Valley Benchmark 1.0 Basic (Direct3D9)] closed=True
