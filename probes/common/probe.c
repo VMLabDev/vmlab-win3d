@@ -303,6 +303,7 @@ int probe_init(probe_ctx *ctx, int argc, wchar_t **argv, const char *probe,
     ctx->arch = "x86";
 #endif
     ctx->seconds = 30;
+    ctx->render_start = -1;
     ctx->width = 1024;
     ctx->height = 640;
     swprintf(ctx->out_path, MAX_PATH, L"%hs.json", probe);
@@ -393,9 +394,12 @@ double probe_now(const probe_ctx *ctx)
     return (double)(now.QuadPart - ctx->start.QuadPart) / (double)ctx->freq.QuadPart;
 }
 
-int probe_last_frame(const probe_ctx *ctx)
+int probe_last_frame(probe_ctx *ctx)
 {
-    return ctx->closed || probe_now(ctx) >= ctx->seconds;
+    double now = probe_now(ctx);
+    if (ctx->render_start < 0)
+        ctx->render_start = now;
+    return ctx->closed || now - ctx->render_start >= ctx->seconds;
 }
 
 void probe_frame_presented(probe_ctx *ctx)
@@ -662,6 +666,8 @@ int probe_finish(probe_ctx *ctx)
     fprintf(f, ",\n  \"frames_presented\": %ld,\n  \"elapsed_seconds\": %.3f,\n", ctx->frames,
             elapsed);
     fprintf(f, "  \"avg_fps\": %.2f,\n", elapsed > 0 ? ctx->frames / elapsed : 0.0);
+    if (ctx->render_start >= 0)
+        fprintf(f, "  \"startup_seconds\": %.3f,\n", ctx->render_start);
     fprintf(f, "  \"window_closed_early\": %s,\n", ctx->closed ? "true" : "false");
     fprintf(f, "  \"readback\": {\n    \"ok\": %s,\n    \"tolerance\": 2,\n    \"pixels\": [",
             rb_ok ? "true" : "false");

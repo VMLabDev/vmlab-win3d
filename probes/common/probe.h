@@ -57,6 +57,7 @@ typedef struct probe_ctx {
     HWND hwnd;
     int closed;           /* the window was closed */
     LARGE_INTEGER freq, start;
+    double render_start;  /* probe_now() at the first frame, or -1 before it */
     double end_time;
     long frames;
     probe_marker markers[PROBE_MARKERS];
@@ -75,9 +76,12 @@ int probe_pump(probe_ctx *ctx);
 /* Seconds since probe_init. */
 double probe_now(const probe_ctx *ctx);
 
-/* Whether this frame is the last one: --seconds have elapsed or the window
- * was closed. The last frame is the one that is read back. */
-int probe_last_frame(const probe_ctx *ctx);
+/* Whether this frame is the last one: --seconds have elapsed since the first
+ * frame, or the window was closed. The last frame is the one that is read
+ * back. Call it once at the start of every frame; the first call starts the
+ * --seconds clock, so a slow start-up (a first-run DLL scan, say) still gets
+ * the full render time on screen. */
+int probe_last_frame(probe_ctx *ctx);
 
 /* Counts a presented frame. */
 void probe_frame_presented(probe_ctx *ctx);
