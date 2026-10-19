@@ -1,0 +1,28 @@
+﻿{
+    "name":  "vulkaninfo",
+    "exe":  "C:\\Windows\\System32\\cmd.exe",
+    "arguments":  "/c C:\\win3d\\results\\vulkaninfo\\vulkaninfo.cmd",
+    "user":  "VMLABVM-0EUFV4U\\win3d",
+    "session_id":  1,
+    "pid":  3032,
+    "wow64":  false,
+    "started":  "2026-10-18T16:39:53.3321202-07:00",
+    "ended":  "2026-10-18T16:39:57.6671229-07:00",
+    "duration_s":  4.3,
+    "timed_out":  false,
+    "exit_code":  0,
+    "exit_code_hex":  "0x00000000",
+    "task_result":  0,
+    "probe_json":  null,
+    "probe_result":  null,
+    "adapter":  null,
+    "software":  null,
+    "readback_ok":  null,
+    "module_count":  0,
+    "graphics_modules":  [
+
+                         ],
+    "app_local_modules":  [
+
+                          ]
+}

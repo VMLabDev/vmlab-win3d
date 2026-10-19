@@ -86,3 +86,9 @@ then `e2e` (fresh win11 lab, install, evidence for every Done item), then
   patches are not sent upstream for now. We keep them as our own maintained
   patch series (and later as forks), rebased when we move pins. QEMU is the
   exception: its fix lives on the VMLabDev/qemu branch for upstreaming.
+- D5 (decided 2026-10-19): the user enables Resizable BAR in helios's firmware
+  (evening of 2026-10-19). Before the reboot the orchestrator stops cleanly
+  (merge finished workers, others commit WIP and destroy labs, release GPU
+  slots, write `.scratch/workers/RESUME.md`). After it: verify BAR1 is about
+  32 GiB on both RTX 5090s, rerun the NVIDIA acceptance, and raise the slot
+  limit to three VMs per card.

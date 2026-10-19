@@ -1,0 +1,1 @@
+5808 window=0x20172 title=[Freedoom: Phase 2] closed=True

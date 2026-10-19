@@ -1,0 +1,4 @@
+device Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU), driver 0x6801000
+vkCreateDevice 91698 us
+type 2 flags 0x06 heap 1 HOST_VISIBLE HOST_COHERENT
+FAIL docs/evidence/nvfb/src/guest-fbtest/fbguest.c:207 vkWaitForFences(dev, 1, &fence, VK_TRUE, 5000000000ull) = 2

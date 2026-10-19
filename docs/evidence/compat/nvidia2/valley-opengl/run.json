@@ -1,0 +1,39 @@
+﻿{
+    "name":  "valley-opengl",
+    "exe":  "C:\\apps\\valley\\bin\\Valley.exe",
+    "arguments":  "-project_name Valley -data_path ../ -engine_config ../data/valley_1.0.cfg -system_script valley/unigine.cpp -video_app opengl -video_multisample 0 -video_fullscreen 0 -video_mode 3 -extern_define ,RELEASE,LANGUAGE_EN,QUALITY_MEDIUM,TESSELLATION_NORMAL -extern_plugin ,GPUMonitor",
+    "user":  "VMLABVM-R6FVTAC\\win3d",
+    "session_id":  1,
+    "pid":  7640,
+    "wow64":  true,
+    "started":  "2026-10-18T10:00:20.4236593-07:00",
+    "ended":  "2026-10-18T10:00:37.5532917-07:00",
+    "duration_s":  17.1,
+    "timed_out":  false,
+    "exit_code":  -1073740791,
+    "exit_code_hex":  "0xC0000409",
+    "task_result":  3221226505,
+    "probe_json":  null,
+    "probe_result":  null,
+    "adapter":  null,
+    "software":  null,
+    "readback_ok":  null,
+    "module_count":  66,
+    "graphics_modules":  [
+                             "C:\\WINDOWS\\SysWOW64\\opengl32.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\GLU32.dll [syswow64] 10.0.26100.1 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\viogpu_wgl.dll [syswow64] ",
+                             "C:\\WINDOWS\\SysWOW64\\vulkan-1.dll [syswow64] 1.4.363.0",
+                             "C:\\WINDOWS\\SysWOW64\\dxgi.dll [syswow64] 10.0.26100.9444 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\libvulkan_virtio.dll [syswow64] ",
+                             "C:\\WINDOWS\\SysWOW64\\d3d11.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll [syswow64] ",
+                             "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)"
+                         ],
+    "app_local_modules":  [
+                              "C:\\apps\\valley\\bin\\Unigine_x86.dll",
+                              "C:\\apps\\valley\\bin\\MSVCR100.dll",
+                              "C:\\apps\\valley\\bin\\GPUMonitor_x86.dll"
+                          ]
+}

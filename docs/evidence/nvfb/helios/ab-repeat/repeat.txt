@@ -1,0 +1,18 @@
+mainonly-nv1-x64-d3d12-1 (): pass fps 43.54 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+mainonly-nv1-x64-d3d12-2 (): pass fps 45.62 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+mainonly-nv1 x64-d3d12: 0 of 2 failed ()
+bf4d948-nv2-x64-d3d12-1 (): pass fps 45.72 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+bf4d948-nv2-x64-d3d12-2 (): pass fps 44.16 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+bf4d948-nv2 x64-d3d12: 0 of 2 failed ()
+mainonly-nv1-x86-d3d12-1 (): pass fps 41.12 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+mainonly-nv1-x86-d3d12-2 (): pass fps 42.12 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+mainonly-nv1 x86-d3d12: 0 of 2 failed ()
+bf4d948-nv2-x86-d3d12-1 (): pass fps 44.73 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+bf4d948-nv2-x86-d3d12-2 (): pass fps 46.29 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+bf4d948-nv2 x86-d3d12: 0 of 2 failed ()
+mainonly-nv1-x64-opengl-1 (): pass fps 59.14 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+mainonly-nv1-x64-opengl-2 (): pass fps 59.43 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+mainonly-nv1 x64-opengl: 0 of 2 failed ()
+bf4d948-nv2-x64-opengl-1 (): pass fps 59.11 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+bf4d948-nv2-x64-opengl-2 (): pass fps 60.84 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+bf4d948-nv2 x64-opengl: 0 of 2 failed ()

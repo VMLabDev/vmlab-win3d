@@ -1,0 +1,91 @@
+# helios 2026-10-19T03:14:44+10:00
+$ readelf -n out/host/qemu/bin/qemu-system-x86_64
+
+Displaying notes found in: .note.gnu.build-id
+  Owner                Data size 	Description
+  GNU                  0x00000014	NT_GNU_BUILD_ID (unique build ID bitstring)
+    Build ID: 046177b94d7953ba26a5d5117ddc9c711351127b
+
+Displaying notes found in: .note.gnu.property
+  Owner                Data size 	Description
+  GNU                  0x00000010	NT_GNU_PROPERTY_TYPE_0
+      Properties: x86 ISA needed: x86-64-baseline, x86-64-v2
+
+Displaying notes found in: .note.ABI-tag
+  Owner                Data size 	Description
+  GNU                  0x00000010	NT_GNU_ABI_TAG (ABI version tag)
+    OS: Linux, ABI: 6.1.0
+$ readelf -n v0.1.0-alpha qemu-11.1.1-vmlab-egl-0.1.0-alpha-x86_64-linux.tar.zst bin/qemu-system-x86_64
+
+Displaying notes found in: .note.gnu.build-id
+  Owner                Data size 	Description
+  GNU                  0x00000014	NT_GNU_BUILD_ID (unique build ID bitstring)
+    Build ID: 925026b76d2526677964492151560f1d6aa0d8fc
+
+Displaying notes found in: .note.gnu.property
+  Owner                Data size 	Description
+  GNU                  0x00000030	NT_GNU_PROPERTY_TYPE_0
+      Properties: x86 ISA needed: x86-64-baseline, x86-64-v2, x86-64-v3, x86-64-v4
+	x86 feature used: x86, x87, XMM, YMM, ZMM, XSAVE, MASK
+	x86 ISA used: x86-64-baseline, x86-64-v2, x86-64-v3, x86-64-v4
+
+Displaying notes found in: .note.ABI-tag
+  Owner                Data size 	Description
+  GNU                  0x00000010	NT_GNU_ABI_TAG (ABI version tag)
+    OS: Linux, ABI: 6.1.0
+$ sha256sum (release asset)
+7ddfd3fd2a2c6ea29daec6f530ac70342b028d4524abe9dd257cd04ac407fa5a  qemu-11.1.1-vmlab-egl-0.1.0-alpha-x86_64-linux.tar.zst
+$ readelf -n /usr/lib/Scrt1.o (glibc 2.44+r24+g16be1518495f-1, CachyOS)
+
+Displaying notes found in: .note.gnu.property
+  Owner                Data size 	Description
+  GNU                  0x00000040	NT_GNU_PROPERTY_TYPE_0
+      Properties: x86 feature: IBT, SHSTK
+	x86 ISA needed: x86-64-baseline, x86-64-v2, x86-64-v3, x86-64-v4
+	x86 feature used: x86
+	x86 ISA used: x86-64-baseline
+
+Displaying notes found in: .note.ABI-tag
+  Owner                Data size 	Description
+  GNU                  0x00000010	NT_GNU_ABI_TAG (ABI version tag)
+    OS: Linux, ABI: 6.1.0
+$ /lib64/ld-linux-x86-64.so.2 --help | tail -4
+Subdirectories of glibc-hwcaps directories, in priority order:
+  x86-64-v4 (supported, searched)
+  x86-64-v3 (supported, searched)
+  x86-64-v2 (supported, searched)
+$ install.sh --check (staged)
+ldd: every shared library the binary needs is present and new enough
+ISA: the binary needs x86-64-v2; this CPU supports up to x86-64-v4
+run: QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+$ out/host/qemu/BUILDINFO
+qemu:           QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+source:         https://github.com/VMLabDev/qemu branch vmlab/egl-headless-external-dmabuf
+commit:         d8a6048aae11c5e26168e173a7c1b1a4335d6a23
+base:           a19f59a72d (upstream)
+series:         d8a6048aae ui/sdl2: show external-only dma-buf scanouts
+series:         f95d311446 ui/gtk: show external-only dma-buf scanouts
+series:         40d3c41a0a ui/egl-headless: show external-only dma-buf scanouts
+series:         dd46c88676 ui/egl-helpers: let an egl_fb wrap an external texture
+series:         674931d277 ui/shader: add a texture blit program for external textures
+series:         acb3659eea ui/egl-helpers: import external-only dma-bufs as external textures
+build host:     CachyOS, x86_64, built 2026-10-18
+compiler:       cc (GCC) 16.2.1 20260810
+compiler flags: -march=x86-64-v2 -mtune=generic (link: -z x86-64-v2)
+needs ISA:      x86-64-baseline, x86-64-v2
+glibc:          2.44
+needs GLIBC:    GLIBC_2.43
+lib glib-2.0:   2.88.3
+lib pixman-1:   0.46.4
+lib epoxy:      1.5.10
+lib gbm:        26.2.2-arch3.2
+lib virglrenderer: 1.3.0
+lib libdrm:     2.4.134
+lib slirp:      4.9.4
+lib zlib:       1.3.1.zlib-ng
+lib libzstd:    1.5.7
+lib libpng:     1.6.58
+lib libjpeg:    3.2.0
+lib gnutls:     3.8.13
+lib libudev:    261
+NEEDED:         libcapstone.so.5 libgnutls.so.30 libpng16.so.16 libpixman-1.so.0 libz.so.1 libjpeg.so.8 libsasl2.so.3 libepoxy.so.0 libsnappy.so.1 liblzo2.so.2 libnuma.so.1 libkeyutils.so.1 libgio-2.0.so.0 libgobject-2.0.so.0 libglib-2.0.so.0 librdmacm.so.1 libibverbs.so.1 libzstd.so.1 libslirp.so.0 libvdeplug.so.3 libxdp.so.1 libbpf.so.1 libdw.so.1 libcbor.so.0.14 libudev.so.1 libusb-1.0.so.0 libdaxctl.so.1 libseccomp.so.2 libfdt.so.1 libncursesw.so.6 libgmodule-2.0.so.0 libgbm.so.1 libbrlapi.so.0.8 libvirglrenderer.so.1 librutabaga_gfx_ffi.so libcacard.so.0 libusbredirparser.so.1 libpam.so.0 libfuse3.so.4 libiscsi.so.11 libaio.so.1 liburing.so.2 libcurl.so.4 libnfs.so.16.2.0 libssh.so.4 libbz2.so.1.0 libasound.so.2 libpulse.so.0 libjack.so.0 libsndio.so.7 libpipewire-0.3.so.0 libm.so.6 libc.so.6 

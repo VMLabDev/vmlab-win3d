@@ -99,6 +99,16 @@ def parse_d3d12(component, lines):
     return [row(component, name, ref, commit, "", url) for (name, url, ref, commit), _ in lines]
 
 
+def parse_d3d12_samples(component, lines):
+    """name url ref commit-or-sha256, "-" for an empty field."""
+    out = []
+    for (name, url, ref, pin), _ in lines:
+        url, ref, pin = ("" if v == "-" else v for v in (url, ref, pin))
+        commit, sha = (pin, "") if HEX40.match(pin) else ("", pin)
+        out.append(row(component, name, ref, commit, sha, url))
+    return out
+
+
 def parse_mesa(component, lines, comments):
     """src name version-or-commit sha256 url."""
     out = []
@@ -175,6 +185,8 @@ def read_pins(component, path=None):
             rows = parse_kind_lines(component, lines)
         elif component == "d3d12":
             rows = parse_d3d12(component, lines)
+        elif component == "d3d12-samples":
+            rows = parse_d3d12_samples(component, lines)
         elif component == "mesa":
             rows = parse_mesa(component, lines, comments)
         elif component == "vulkan-sdk":
@@ -235,7 +247,7 @@ def explaining_doc(path):
     key = path.relative_to(REPO / "patches").as_posix()
     header = path.read_text(errors="replace").split("\ndiff --git", 1)[0]
     m = re.search(r"\bdocs/[\w./-]+\.md\b", header)
-    doc = m.group(0) if m else DOC_OVERRIDE.get(key) or DOC_DEFAULT.get(path.parent.relative_to(REPO / "patches").as_posix())
+    doc = DOC_OVERRIDE.get(key) or (m.group(0) if m else None) or DOC_DEFAULT.get(path.parent.relative_to(REPO / "patches").as_posix())
     if not doc:
         sys.exit(f"patches/{key}: no docs/*.md in its header and no DOC_DEFAULT for its directory")
     if not (REPO / doc).is_file():

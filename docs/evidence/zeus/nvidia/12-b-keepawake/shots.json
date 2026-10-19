@@ -1,0 +1,112 @@
+{
+  "x64-d3d9_probe": {
+    "frames": 12,
+    "frames_with_window": 9,
+    "visible": true,
+    "animating": true,
+    "png": "console-x64-d3d9_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "30d814e8"
+    }
+  },
+  "x86-d3d9_probe": {
+    "frames": 12,
+    "frames_with_window": 9,
+    "visible": true,
+    "animating": true,
+    "png": "console-x86-d3d9_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "7517b5cf"
+    }
+  },
+  "x64-d3d11_probe": {
+    "frames": 12,
+    "frames_with_window": 9,
+    "visible": true,
+    "animating": true,
+    "png": "console-x64-d3d11_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "fc070966"
+    }
+  },
+  "x86-d3d11_probe": {
+    "frames": 12,
+    "frames_with_window": 9,
+    "visible": true,
+    "animating": true,
+    "png": "console-x86-d3d11_probe.png",
+    "window": {
+      "client_x": 48,
+      "client_y": 71,
+      "markers": [
+        "red",
+        "blue",
+        "green"
+      ],
+      "crc": "8f448c55"
+    }
+  },
+  "x64-d3d12_probe": {
+    "frames": 8,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x86-d3d12_probe": {
+    "frames": 8,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x64-opengl_probe": {
+    "frames": 154,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x86-opengl_probe": {
+    "frames": 154,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x64-vulkan_probe": {
+    "frames": 5,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  },
+  "x86-vulkan_probe": {
+    "frames": 5,
+    "frames_with_window": 0,
+    "visible": false,
+    "animating": false,
+    "png": null
+  }
+}

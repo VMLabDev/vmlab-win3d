@@ -1,0 +1,35 @@
+# Upstream pins for build/d3d12-samples. One per line:
+#   name  url  ref  commit-or-sha256
+# Git sources are fetched by commit. Archives carry their sha256 and are
+# checked before use.
+
+# The samples, built unmodified from this commit.
+samples       https://github.com/microsoft/DirectX-Graphics-Samples  master  e5975f9b0744fc5096dd593ed72bf8f5c004164f
+
+# xwin fetches the MSVC CRT and the Windows SDK from Microsoft's Visual Studio
+# package manifest (VS 17.14.42, build 17.14.37806.7). The manifest is pinned
+# by URL and by the sha256 of the bytes that URL serves (the hash in the URL
+# path is Microsoft's own and differs), and xwin checks every package it
+# downloads against the sha256 the manifest lists.
+xwin          https://github.com/Jake-Shadle/xwin/releases/download/0.10.0/xwin-0.10.0-x86_64-unknown-linux-musl.tar.gz  0.10.0  d870eb4b2f390878af6da1ccd3cf321d22fcb72720984853b4be732ae597fc88
+vsman         https://download.visualstudio.microsoft.com/download/pr/c95450be-0a45-4779-b142-33f567ccfd6e/a871a5ff41acebbe5037455fd6f51fcd4907b47d8f3c9860871ea0b222a2fd45/VisualStudio.vsman  17.14.37806.7  99dda859c4ae3c446eb25620d1a6237bb135d95d14d55cd1d30a15340bb39d80
+crt-version   -  14.44.17.14  -
+sdk-version   -  10.0.26100  -
+# sha256 over the splatted /winsysroot tree (path, type and content of every
+# entry, see tree_hash in container-build.sh). A mismatch fails the build.
+winsysroot    -  -  6fa919063f99d4a9631b1cd4af63bae2fec84d53732d0288d0b89b4523bb493f
+
+# The samples' own NuGet dependencies (packages.config). D3D12 supplies the
+# Agility SDK headers and d3dx12; its D3D12Core.dll is NOT deployed, so the
+# samples run on the system d3d12.dll. WinPixEventRuntime supplies pix3.h;
+# release builds define no USE_PIX, so nothing links against it.
+nuget-d3d12   https://api.nuget.org/v3-flatcontainer/microsoft.direct3d.d3d12/1.618.3/microsoft.direct3d.d3d12.1.618.3.nupkg  1.618.3  799981b3569eae3a08468891fd4a0b027907b262a75a5cc3f48d621ee68a21db
+nuget-pix     https://api.nuget.org/v3-flatcontainer/winpixeventruntime/1.0.240308001/winpixeventruntime.1.0.240308001.nupkg  1.0.240308001  726acc93d6968e2146261a1e415521747d50ad69894c2b42b5d0d4c29fd66ec4
+
+# DXC for Linux, the release closest to the samples' Microsoft.Direct3D.DXC
+# 1.8.2505.32 NuGet package (Windows-only). It includes libdxil.so, so the
+# DXIL is validated and signed as on Windows.
+dxc           https://github.com/microsoft/DirectXShaderCompiler/releases/download/v1.8.2505.1/linux_dxc_2025_07_14.x86_64.tar.gz  v1.8.2505.1  f2213da1fc99dc8778c8823078e16ba97c7f80f86a1d4520ab1adf4b462bc48c
+
+# Toolchain: clang 23.1.3 and lld-link from the shared image (build/toolchain,
+# llvm-mingw 20261006), driven as clang-cl for the MSVC ABI.

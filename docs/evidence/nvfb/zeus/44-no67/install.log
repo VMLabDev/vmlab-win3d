@@ -1,0 +1,28 @@
+[11:00:25] waiting for the guest agent
+[11:00:26] copying no67 to C:\vmlab-win3d
+pushed 29 file(s), 102430317 bytes to win:C:/vmlab-win3d
+[11:00:29] running C:\vmlab-win3d\Install.cmd
+2026-10-18T18:00:30.400-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
+2026-10-18T18:00:32.940-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T18:00:35.585-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
+2026-10-18T18:00:35.778-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T18:00:35.788-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-18T18:00:35.791-07:00 [Install]   Signature matches Public Key
+2026-10-18T18:00:35.792-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T18:00:35.794-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T18:00:35.828-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T18:00:35.830-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-18T18:00:35.832-07:00 [Install]   Signature matches Public Key
+2026-10-18T18:00:35.834-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T18:00:35.836-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T18:00:35.895-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-18T18:00:35.900-07:00 [Install]   The operation completed successfully.
+2026-10-18T18:00:36.185-07:00 [Install] test signing is set but not active in this boot
+2026-10-18T18:00:36.735-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T18:00:36.787-07:00 [Install] rebooting; step Driver resumes after the restart
+[11:00:37] Install.cmd exited 0
+[11:00:38] state: RebootPending|Driver|
+[11:01:29] state: Installing|Runtime|
+[11:01:45] state: RebootPending|Verify|
+[11:02:36] state: Installed||
+[11:02:36] done: Installed

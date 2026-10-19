@@ -1,0 +1,117 @@
+---- d3d11_index2 run-repro.sh start
+2026-10-18 15:46:31.549 [warning pid=3732 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=9 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 15:46:31.786 [warning pid=3732 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 15:46:32.178 [warning pid=3732 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 15:46:34.018 [warning pid=3656 process=d3d11_index2.exe] yttrium: shader_compile_nir skipped stage=tcs id=4 reason=unsupported_tgsi_output_read inst=94 opcode=MOV slot=0 part=src file=OUT(3) index=6 token_hash=0x59752cc41a669546 inputs=6 outputs=9 indirect_files=0x80 dim_indirect_files=0x4
+2026-10-18 15:46:34.018 [warning pid=3656 process=d3d11_index2.exe] yttrium: shader_no_nir stage=tcs id=4 ir=0 token_hash=0x59752cc41a669546 state=000002b9c6a78b18; native shader unavailable
+2026-10-18 15:46:34.019 [warning pid=3656 process=d3d11_index2.exe] yttrium: shader_state_create failed owner=yttrium stage=tcs id=4 reason=nir_unavailable token_hash=0x59752cc41a669546
+2026-10-18 15:46:34.019 [warning pid=3656 process=d3d11_index2.exe] yttrium: d3d10umd hull shader state creation failed
+2026-10-18 15:46:34.019 [error pid=3656 process=d3d11_index2.exe] d3d10umd: pfnSetErrorCb hr=0x80004005 caller=InitD3D11TessellationShader:3168 device=000002b9c6a5ad50
+2026-10-18 15:46:35.097 [warning pid=3656 process=d3d11_index2.exe] yttrium: shader_compile_nir skipped stage=tcs id=4 reason=unsupported_tgsi_output_read inst=96 opcode=MOV slot=0 part=src file=OUT(3) index=6 token_hash=0xcf43c4ca81f42005 inputs=6 outputs=9 indirect_files=0x80 dim_indirect_files=0x4
+2026-10-18 15:46:35.097 [warning pid=3656 process=d3d11_index2.exe] yttrium: shader_no_nir stage=tcs id=4 ir=0 token_hash=0xcf43c4ca81f42005 state=000002b9c8eb50d8; native shader unavailable
+2026-10-18 15:46:35.097 [warning pid=3656 process=d3d11_index2.exe] yttrium: shader_state_create failed owner=yttrium stage=tcs id=4 reason=nir_unavailable token_hash=0xcf43c4ca81f42005
+2026-10-18 15:46:35.097 [warning pid=3656 process=d3d11_index2.exe] yttrium: d3d10umd hull shader state creation failed
+2026-10-18 15:46:35.098 [error pid=3656 process=d3d11_index2.exe] d3d10umd: pfnSetErrorCb hr=0x80004005 caller=InitD3D11TessellationShader:3168 device=000002b9c6a58d40
+2026-10-18 15:46:36.721 [warning pid=3656 process=d3d11_index2.exe] yttrium: WARNING: unsupported behavior owner=d3d10umd function=dcl_tcs_tess_factor_index_range file=..\src\src\gallium\frontends\d3d10umd\ShaderTGSI.c line=1010 expression=true
+2026-10-18 15:46:36.721 [warning pid=3656 process=d3d11_index2.exe] yttrium: shader creation failed owner=d3d10umd stage=vs reason=tgsi_translation_failed shader=000002b9c8eea348
+2026-10-18 15:46:36.721 [error pid=3656 process=d3d11_index2.exe] d3d10umd: pfnSetErrorCb hr=0x80004005 caller=CreateVertexShader:1896 device=000002b9c68efc80
+2026-10-18 15:46:37.717 [warning pid=3656 process=d3d11_index2.exe] yttrium: WARNING: unsupported behavior owner=d3d10umd function=dcl_tcs_tess_factor_index_range file=..\src\src\gallium\frontends\d3d10umd\ShaderTGSI.c line=1010 expression=true
+2026-10-18 15:46:37.717 [warning pid=3656 process=d3d11_index2.exe] yttrium: d3d10umd hull shader translation failed
+2026-10-18 15:46:37.717 [error pid=3656 process=d3d11_index2.exe] d3d10umd: pfnSetErrorCb hr=0x80070057 caller=InitD3D11TessellationShader:3156 device=000002b9c68efc80
+2026-10-18 15:46:38.640 [warning pid=3656 process=d3d11_index2.exe] yttrium: WARNING: unsupported behavior owner=d3d10umd function=dcl_tcs_tess_factor_index_range file=..\src\src\gallium\frontends\d3d10umd\ShaderTGSI.c line=1010 expression=true
+2026-10-18 15:46:38.640 [warning pid=3656 process=d3d11_index2.exe] yttrium: d3d10umd domain shader translation failed
+2026-10-18 15:46:38.640 [warning pid=3656 process=d3d11_index2.exe] yttrium: tessellation shader bind failed owner=d3d10umd hs=000002b9c68dd008 ds=000002b9c8e18548 hs_state=000002b9c8ee9500 ds_state=0000000000000000 action=SetError
+2026-10-18 15:46:38.640 [error pid=3656 process=d3d11_index2.exe] d3d10umd: pfnSetErrorCb hr=0x80004005 caller=BindD3D11TessellationStates:3245 device=000002b9c68efc80
+2026-10-18 15:46:43.668 [warning pid=3656 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=1 iterations=69432 host_fence_status=1 feedback_after_host_query=1 label=pipe resource flush
+2026-10-18 15:46:43.668 [warning pid=3656 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=pipe resource flush result=2 timeout_ns=5000000000
+2026-10-18 15:46:43.668 [warning pid=3656 process=d3d11_index2.exe] yttrium: resource flush wait failed owner=yttrium_resource reason=Venus batch wait failed resource=000002b9c8e1a040 res_id=371
+2026-10-18 15:46:48.682 [warning pid=3656 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69391 host_fence_status=1 feedback_after_host_query=1 label=pipe resource flush
+2026-10-18 15:46:48.682 [warning pid=3656 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=pipe resource flush result=2 timeout_ns=5000000000
+2026-10-18 15:46:48.682 [warning pid=3656 process=d3d11_index2.exe] yttrium: resource flush wait failed owner=yttrium_resource reason=Venus batch wait failed resource=000002b9c6a7a5c0 res_id=13
+2026-10-18 15:46:53.698 [warning pid=3656 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=1 iterations=69295 host_fence_status=1 feedback_after_host_query=1 label=D3D device destroy flush
+2026-10-18 15:46:53.698 [warning pid=3656 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=D3D device destroy flush result=2 timeout_ns=5000000000
+2026-10-18 15:46:58.714 [warning pid=3656 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69135 host_fence_status=1 feedback_after_host_query=1 label=D3D device destroy flush
+2026-10-18 15:46:58.714 [warning pid=3656 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=D3D device destroy flush result=2 timeout_ns=5000000000
+2026-10-18 15:47:03.730 [warning pid=3656 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=1 iterations=69198 host_fence_status=1 feedback_after_host_query=1 label=D3D device destroy flush
+2026-10-18 15:47:03.730 [warning pid=3656 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=D3D device destroy flush result=2 timeout_ns=5000000000
+2026-10-18 15:47:03.730 [warning pid=3656 process=d3d11_index2.exe] yttrium: Venus flush failed
+2026-10-18 15:47:08.745 [warning pid=3656 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=1 iterations=69191 host_fence_status=1 feedback_after_host_query=1 label=context destroy flush
+2026-10-18 15:47:08.745 [warning pid=3656 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=context destroy flush result=2 timeout_ns=5000000000
+2026-10-18 15:47:13.762 [warning pid=3656 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69232 host_fence_status=1 feedback_after_host_query=1 label=context destroy flush
+2026-10-18 15:47:13.762 [warning pid=3656 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=context destroy flush result=2 timeout_ns=5000000000
+2026-10-18 15:47:18.776 [warning pid=3656 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=1 iterations=69243 host_fence_status=1 feedback_after_host_query=1 label=context destroy flush
+2026-10-18 15:47:18.777 [warning pid=3656 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=context destroy flush result=2 timeout_ns=5000000000
+2026-10-18 15:47:18.777 [warning pid=3656 process=d3d11_index2.exe] yttrium: context destroy failed to drain Venus batches before releasing context resources
+2026-10-18 15:47:23.793 [warning pid=3656 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=1 iterations=69242 host_fence_status=1 feedback_after_host_query=1 label=batch queue destroy
+2026-10-18 15:47:23.793 [warning pid=3656 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=batch queue destroy result=2 timeout_ns=5000000000
+2026-10-18 15:47:28.808 [warning pid=3656 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69157 host_fence_status=1 feedback_after_host_query=1 label=batch queue destroy
+2026-10-18 15:47:28.808 [warning pid=3656 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=batch queue destroy result=2 timeout_ns=5000000000
+2026-10-18 15:47:33.823 [warning pid=3656 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=1 iterations=69346 host_fence_status=1 feedback_after_host_query=1 label=batch queue destroy
+2026-10-18 15:47:33.823 [warning pid=3656 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=batch queue destroy result=2 timeout_ns=5000000000
+2026-10-18 15:47:34.672 [warning pid=3656 process=d3d11_index2.exe] yttrium: WARNING: unsupported behavior owner=d3d10umd function=dcl_tcs_tess_factor_index_range file=..\src\src\gallium\frontends\d3d10umd\ShaderTGSI.c line=1010 expression=true
+2026-10-18 15:47:34.672 [warning pid=3656 process=d3d11_index2.exe] yttrium: shader creation failed owner=d3d10umd stage=gs reason=tgsi_translation_failed shader=000002b9c6b4e908
+2026-10-18 15:47:34.672 [error pid=3656 process=d3d11_index2.exe] d3d10umd: pfnSetErrorCb hr=0x80004005 caller=CreateGeometryShader:2061 device=000002b9c68efc80
+2026-10-18 15:47:35.528 [warning pid=3656 process=d3d11_index2.exe] yttrium: WARNING: unsupported behavior owner=d3d10umd function=dcl_tcs_tess_factor_index_range file=..\src\src\gallium\frontends\d3d10umd\ShaderTGSI.c line=1010 expression=true
+2026-10-18 15:47:35.529 [warning pid=3656 process=d3d11_index2.exe] yttrium: d3d10umd pixel shader translation failed shader=000002b9c69b2e08; CreatePixelShader failing
+2026-10-18 15:47:35.529 [error pid=3656 process=d3d11_index2.exe] d3d10umd: pfnSetErrorCb hr=0x80004005 caller=CreatePixelShader:2590 device=000002b9c6a575d0
+2026-10-18 15:47:40.078 [warning pid=5412 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=9 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 15:47:40.199 [warning pid=5412 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 15:47:40.545 [warning pid=5412 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 15:48:01.672 [warning pid=5028 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=9 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 15:48:01.836 [warning pid=5028 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 15:48:02.208 [warning pid=5028 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 15:48:24.176 [warning pid=3928 process=d3d11_index2.exe] yttrium: shader_compile_nir skipped stage=tcs id=4 reason=unsupported_tgsi_output_read inst=94 opcode=MOV slot=0 part=src file=OUT(3) index=6 token_hash=0x59752cc41a669546 inputs=6 outputs=9 indirect_files=0x80 dim_indirect_files=0x4
+2026-10-18 15:48:24.177 [warning pid=3928 process=d3d11_index2.exe] yttrium: shader_no_nir stage=tcs id=4 ir=0 token_hash=0x59752cc41a669546 state=00fbdccc; native shader unavailable
+2026-10-18 15:48:24.177 [warning pid=3928 process=d3d11_index2.exe] yttrium: shader_state_create failed owner=yttrium stage=tcs id=4 reason=nir_unavailable token_hash=0x59752cc41a669546
+2026-10-18 15:48:24.177 [warning pid=3928 process=d3d11_index2.exe] yttrium: d3d10umd hull shader state creation failed
+2026-10-18 15:48:24.177 [error pid=3928 process=d3d11_index2.exe] d3d10umd: pfnSetErrorCb hr=0x80004005 caller=InitD3D11TessellationShader:3168 device=00fe5660
+2026-10-18 15:48:25.411 [warning pid=3928 process=d3d11_index2.exe] yttrium: shader_compile_nir skipped stage=tcs id=4 reason=unsupported_tgsi_output_read inst=96 opcode=MOV slot=0 part=src file=OUT(3) index=6 token_hash=0xcf43c4ca81f42005 inputs=6 outputs=9 indirect_files=0x80 dim_indirect_files=0x4
+2026-10-18 15:48:25.412 [warning pid=3928 process=d3d11_index2.exe] yttrium: shader_no_nir stage=tcs id=4 ir=0 token_hash=0xcf43c4ca81f42005 state=04e400cc; native shader unavailable
+2026-10-18 15:48:25.412 [warning pid=3928 process=d3d11_index2.exe] yttrium: shader_state_create failed owner=yttrium stage=tcs id=4 reason=nir_unavailable token_hash=0xcf43c4ca81f42005
+2026-10-18 15:48:25.412 [warning pid=3928 process=d3d11_index2.exe] yttrium: d3d10umd hull shader state creation failed
+2026-10-18 15:48:25.412 [error pid=3928 process=d3d11_index2.exe] d3d10umd: pfnSetErrorCb hr=0x80004005 caller=InitD3D11TessellationShader:3168 device=00fe5660
+2026-10-18 15:48:27.841 [warning pid=3928 process=d3d11_index2.exe] yttrium: WARNING: unsupported behavior owner=d3d10umd function=dcl_tcs_tess_factor_index_range file=..\src\src\gallium\frontends\d3d10umd\ShaderTGSI.c line=1010 expression=true
+2026-10-18 15:48:27.841 [warning pid=3928 process=d3d11_index2.exe] yttrium: shader creation failed owner=d3d10umd stage=vs reason=tgsi_translation_failed shader=02bed404
+2026-10-18 15:48:27.841 [error pid=3928 process=d3d11_index2.exe] d3d10umd: pfnSetErrorCb hr=0x80004005 caller=CreateVertexShader:1896 device=04d83238
+2026-10-18 15:48:29.062 [warning pid=3928 process=d3d11_index2.exe] yttrium: WARNING: unsupported behavior owner=d3d10umd function=dcl_tcs_tess_factor_index_range file=..\src\src\gallium\frontends\d3d10umd\ShaderTGSI.c line=1010 expression=true
+2026-10-18 15:48:29.062 [warning pid=3928 process=d3d11_index2.exe] yttrium: d3d10umd hull shader translation failed
+2026-10-18 15:48:29.062 [error pid=3928 process=d3d11_index2.exe] d3d10umd: pfnSetErrorCb hr=0x80070057 caller=InitD3D11TessellationShader:3156 device=00fe5660
+2026-10-18 15:48:30.102 [warning pid=3928 process=d3d11_index2.exe] yttrium: WARNING: unsupported behavior owner=d3d10umd function=dcl_tcs_tess_factor_index_range file=..\src\src\gallium\frontends\d3d10umd\ShaderTGSI.c line=1010 expression=true
+2026-10-18 15:48:30.102 [warning pid=3928 process=d3d11_index2.exe] yttrium: d3d10umd domain shader translation failed
+2026-10-18 15:48:30.102 [warning pid=3928 process=d3d11_index2.exe] yttrium: tessellation shader bind failed owner=d3d10umd hs=04dc6a04 ds=00feec04 hs_state=04d7ac70 ds_state=00000000 action=SetError
+2026-10-18 15:48:30.102 [error pid=3928 process=d3d11_index2.exe] d3d10umd: pfnSetErrorCb hr=0x80004005 caller=BindD3D11TessellationStates:3245 device=04d83238
+2026-10-18 15:48:35.120 [warning pid=3928 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=1 iterations=69200 host_fence_status=1 feedback_after_host_query=1 label=pipe resource flush
+2026-10-18 15:48:35.120 [warning pid=3928 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=pipe resource flush result=2 timeout_ns=5000000000
+2026-10-18 15:48:35.121 [warning pid=3928 process=d3d11_index2.exe] yttrium: resource flush wait failed owner=yttrium_resource reason=Venus batch wait failed resource=00f6ebd8 res_id=565
+2026-10-18 15:48:40.136 [warning pid=3928 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69323 host_fence_status=1 feedback_after_host_query=1 label=pipe resource flush
+2026-10-18 15:48:40.136 [warning pid=3928 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=pipe resource flush result=2 timeout_ns=5000000000
+2026-10-18 15:48:40.137 [warning pid=3928 process=d3d11_index2.exe] yttrium: resource flush wait failed owner=yttrium_resource reason=Venus batch wait failed resource=00fe8ac8 res_id=13
+2026-10-18 15:48:45.151 [warning pid=3928 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=1 iterations=69240 host_fence_status=1 feedback_after_host_query=1 label=D3D device destroy flush
+2026-10-18 15:48:45.151 [warning pid=3928 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=D3D device destroy flush result=2 timeout_ns=5000000000
+2026-10-18 15:48:50.169 [warning pid=3928 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=68957 host_fence_status=1 feedback_after_host_query=1 label=D3D device destroy flush
+2026-10-18 15:48:50.169 [warning pid=3928 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=D3D device destroy flush result=2 timeout_ns=5000000000
+2026-10-18 15:48:55.183 [warning pid=3928 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=1 iterations=69009 host_fence_status=1 feedback_after_host_query=1 label=D3D device destroy flush
+2026-10-18 15:48:55.183 [warning pid=3928 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=D3D device destroy flush result=2 timeout_ns=5000000000
+2026-10-18 15:48:55.183 [warning pid=3928 process=d3d11_index2.exe] yttrium: Venus flush failed
+2026-10-18 15:49:00.198 [warning pid=3928 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=1 iterations=69220 host_fence_status=1 feedback_after_host_query=1 label=context destroy flush
+2026-10-18 15:49:00.198 [warning pid=3928 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=context destroy flush result=2 timeout_ns=5000000000
+2026-10-18 15:49:05.213 [warning pid=3928 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69079 host_fence_status=1 feedback_after_host_query=1 label=context destroy flush
+2026-10-18 15:49:05.213 [warning pid=3928 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=context destroy flush result=2 timeout_ns=5000000000
+2026-10-18 15:49:10.230 [warning pid=3928 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=1 iterations=69094 host_fence_status=1 feedback_after_host_query=1 label=context destroy flush
+2026-10-18 15:49:10.230 [warning pid=3928 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=context destroy flush result=2 timeout_ns=5000000000
+2026-10-18 15:49:10.231 [warning pid=3928 process=d3d11_index2.exe] yttrium: context destroy failed to drain Venus batches before releasing context resources
+2026-10-18 15:49:15.245 [warning pid=3928 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=1 iterations=69176 host_fence_status=1 feedback_after_host_query=1 label=batch queue destroy
+2026-10-18 15:49:15.245 [warning pid=3928 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=batch queue destroy result=2 timeout_ns=5000000000
+2026-10-18 15:49:20.262 [warning pid=3928 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69271 host_fence_status=1 feedback_after_host_query=1 label=batch queue destroy
+2026-10-18 15:49:20.262 [warning pid=3928 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=batch queue destroy result=2 timeout_ns=5000000000
+2026-10-18 15:49:25.276 [warning pid=3928 process=d3d11_index2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=1 iterations=69325 host_fence_status=1 feedback_after_host_query=1 label=batch queue destroy
+2026-10-18 15:49:25.276 [warning pid=3928 process=d3d11_index2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=batch queue destroy result=2 timeout_ns=5000000000
+2026-10-18 15:49:26.339 [warning pid=3928 process=d3d11_index2.exe] yttrium: WARNING: unsupported behavior owner=d3d10umd function=dcl_tcs_tess_factor_index_range file=..\src\src\gallium\frontends\d3d10umd\ShaderTGSI.c line=1010 expression=true
+2026-10-18 15:49:26.339 [warning pid=3928 process=d3d11_index2.exe] yttrium: shader creation failed owner=d3d10umd stage=gs reason=tgsi_translation_failed shader=00f6e1c4
+2026-10-18 15:49:26.340 [error pid=3928 process=d3d11_index2.exe] d3d10umd: pfnSetErrorCb hr=0x80004005 caller=CreateGeometryShader:2061 device=04e52850
+2026-10-18 15:49:27.334 [warning pid=3928 process=d3d11_index2.exe] yttrium: WARNING: unsupported behavior owner=d3d10umd function=dcl_tcs_tess_factor_index_range file=..\src\src\gallium\frontends\d3d10umd\ShaderTGSI.c line=1010 expression=true
+2026-10-18 15:49:27.334 [warning pid=3928 process=d3d11_index2.exe] yttrium: d3d10umd pixel shader translation failed shader=04e6f704; CreatePixelShader failing
+2026-10-18 15:49:27.334 [error pid=3928 process=d3d11_index2.exe] d3d10umd: pfnSetErrorCb hr=0x80004005 caller=CreatePixelShader:2590 device=04d83238
+2026-10-18 15:49:32.407 [warning pid=2444 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=9 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 15:49:32.564 [warning pid=2444 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it
+2026-10-18 15:49:32.966 [warning pid=2444 process=WindowsTerminal.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=0x8 usage=0x80017; creating the image without it

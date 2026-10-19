@@ -1,0 +1,40 @@
+     79 [warning pid=1820 process=Valley.exe] yttrium: ordered worker direct upload backing create failed owner=yttrium_resource reason=venus_uniform_buffer_create_failed resource=bb153908 size=0x400000
+     40 [warning pid=1820 process=Valley.exe] d3d9ddi: draw failed owner=d3d9umd reason=backend_native_draw_failed action=return_E_FAIL
+      7 [warning pid=1820 process=Valley.exe] yttrium: ordered worker direct upload backing create failed owner=yttrium_resource reason=venus_uniform_buffer_create_failed resource=bb1514e8 size=0x400000
+      6 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=6ea2ab90 owns_data=0 data_cap=0x400000 map=9b6d8000
+      5 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb9eee08 owns_data=1 data_cap=0x56000 map=00000000
+      5 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb9c0070 owns_data=0 data_cap=0x400000 map=cee5f000
+      5 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb2ddc88 owns_data=0 data_cap=0x400000 map=bbebd000
+      5 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb2c5830 owns_data=0 data_cap=0x400000 map=c034d000
+      5 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb2c0ff0 owns_data=0 data_cap=0x400000 map=c0b5d000
+      5 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=951a2978 owns_data=0 data_cap=0x400000 map=a887d000
+      5 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=94c5c4d8 owns_data=0 data_cap=0x400000 map=8407a000
+      5 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=94c5b2c8 owns_data=0 data_cap=0x400000 map=858a3000
+      5 [warning pid=1820 process=Valley.exe] yttrium: DIAG create res=bb9eee08 target=2 fmt=173 512x512x1 levels=10 array=1 bind=0x8 usage=4 size=0x56000 owns_data=1 data_cap=0x56000 map=00000000 map_blob=0 hAlloc=0x0 venus_init=0 venus_image=0 buffer_backed=0
+      5 [warning pid=1820 process=Valley.exe] yttrium: DIAG create res=bb9c0070 target=0 fmt=81 4194304x1x1 levels=1 array=1 bind=0x70 usage=3 size=0x400000 owns_data=0 data_cap=0x400000 map=cee5f000 map_blob=1 hAlloc=0x40020640 venus_init=1 venus_image=0 buffer_backed=1
+      5 [warning pid=1820 process=Valley.exe] yttrium: DIAG create res=bb2ddc88 target=0 fmt=81 4194304x1x1 levels=1 array=1 bind=0x70 usage=3 size=0x400000 owns_data=0 data_cap=0x400000 map=bbebd000 map_blob=1 hAlloc=0x4001d700 venus_init=1 venus_image=0 buffer_backed=1
+      5 [warning pid=1820 process=Valley.exe] yttrium: DIAG create res=951a2978 target=0 fmt=81 4194304x1x1 levels=1 array=1 bind=0x70 usage=3 size=0x400000 owns_data=0 data_cap=0x400000 map=a887d000 map_blob=1 hAlloc=0x4001a140 venus_init=1 venus_image=0 buffer_backed=1
+      5 [warning pid=1820 process=Valley.exe] yttrium: DIAG create res=94c5c4d8 target=0 fmt=81 4194304x1x1 levels=1 array=1 bind=0x70 usage=3 size=0x400000 owns_data=0 data_cap=0x400000 map=8407a000 map_blob=1 hAlloc=0xc000f800 venus_init=1 venus_image=0 buffer_backed=1
+      5 [warning pid=1820 process=Valley.exe] yttrium: DIAG create res=94c5b2c8 target=0 fmt=81 4194304x1x1 levels=1 array=1 bind=0x70 usage=3 size=0x400000 owns_data=0 data_cap=0x400000 map=858a3000 map_blob=1 hAlloc=0x8000b240 venus_init=1 venus_image=0 buffer_backed=1
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb9e8ab0 owns_data=0 data_cap=0x400000 map=d7f7f000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb9d60a8 owns_data=0 data_cap=0x400000 map=e551f000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb9ce238 owns_data=0 data_cap=0x400000 map=dbfff000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb9cd028 owns_data=0 data_cap=0x400000 map=d470a000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb9c99f8 owns_data=0 data_cap=0x400000 map=d6f5f000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb9c1b88 owns_data=0 data_cap=0x400000 map=cbdff000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb534ad8 owns_data=0 data_cap=0x400000 map=c844f000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb51b7c0 owns_data=0 data_cap=0x400000 map=d6f5f000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb514b60 owns_data=0 data_cap=0x400000 map=d776f000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb513950 owns_data=0 data_cap=0x400000 map=cb5ef000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb50f110 owns_data=0 data_cap=0x400000 map=d470d000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb2dc170 owns_data=0 data_cap=0x400000 map=c885d000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb2d9448 owns_data=0 data_cap=0x400000 map=b016d000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb2c4620 owns_data=0 data_cap=0x400000 map=cb5ef000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb2bf4d8 owns_data=0 data_cap=0x400000 map=c7c3d000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb2b3730 owns_data=0 data_cap=0x400000 map=c640d000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb1da198 owns_data=0 data_cap=0x400000 map=b664d000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=bb155420 owns_data=0 data_cap=0x400000 map=e551f000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=9519cf28 owns_data=0 data_cap=0x400000 map=b097d000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=951998f8 owns_data=0 data_cap=0x400000 map=b664d000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=9517d568 owns_data=0 data_cap=0x400000 map=b45fd000
+      4 [warning pid=1820 process=Valley.exe] yttrium: DIAG destroy res=951756f8 owns_data=0 data_cap=0x400000 map=b4e0d000

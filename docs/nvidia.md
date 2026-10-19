@@ -401,6 +401,11 @@ To check what a VM got:
   lists `<prefix>/libexec/virgl_render_server --socket-fd N` for the VM,
   not `/usr/lib/virgl_render_server`.
 
+Helios's host config has given `Nvidia1` and `Nvidia2` this `qemu_env`
+line since 2026-10-19 (backup `config.wcl.bak-hostvirgl-20261019-113229`);
+a fresh `Nvidia2` VM then ran the server
+(`docs/evidence/hostvirgl/deploy/`).
+
 `vmlab status -v` (0.28.0-alpha) names the `host_gpu` and `qemu_binary` but
 not `qemu_env`; a vmlab request to show it was drafted.
 

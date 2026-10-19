@@ -1,0 +1,14 @@
+virgl_render_server[4091055]: vkr: failed to look up object 25 of type 8
+virgl_render_server[4091055]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[4091055]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[4091271]: vkr: mem is not exportable
+virtio_gpu_virgl_process_cmd: ctrl 0x10c, error 0x1200
+virgl_render_server[4092260]: vkr: failed to look up object 25 of type 8
+virgl_render_server[4092260]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[4092260]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[4093014]: vkr: failed to look up object 25 of type 8
+virgl_render_server[4093014]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[4093014]: vkr: ring_submit_cmd: vn_dispatch_command failed
+virgl_render_server[4094505]: vkr: failed to look up object 25 of type 8
+virgl_render_server[4094505]: vkr: vkBindImageMemory resulted in CS error
+virgl_render_server[4094505]: vkr: ring_submit_cmd: vn_dispatch_command failed

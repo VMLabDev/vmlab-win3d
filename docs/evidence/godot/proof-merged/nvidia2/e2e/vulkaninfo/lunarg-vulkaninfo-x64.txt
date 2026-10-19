@@ -1,0 +1,45 @@
+WARNING: [Loader Message] Code 0 : windows_read_data_files_in_registry: Registry lookup failed to get layer manifest files.
+==========
+VULKANINFO
+==========
+
+Vulkan Instance Version: 1.4.363
+
+
+Instance Extensions: count = 16
+-------------------------------
+VK_EXT_debug_report                    : extension revision 10
+VK_EXT_debug_utils                     : extension revision 2
+VK_EXT_surface_maintenance1            : extension revision 1
+VK_EXT_swapchain_colorspace            : extension revision 5
+VK_KHR_device_group_creation           : extension revision 1
+VK_KHR_external_fence_capabilities     : extension revision 1
+VK_KHR_external_memory_capabilities    : extension revision 1
+VK_KHR_external_semaphore_capabilities : extension revision 1
+VK_KHR_get_physical_device_properties2 : extension revision 2
+VK_KHR_get_surface_capabilities2       : extension revision 1
+VK_KHR_portability_enumeration         : extension revision 1
+VK_KHR_surface                         : extension revision 25
+VK_KHR_surface_maintenance1            : extension revision 1
+VK_KHR_surface_protected_capabilities  : extension revision 1
+VK_KHR_win32_surface                   : extension revision 6
+VK_LUNARG_direct_driver_loading        : extension revision 1
+
+Instance Layers:
+----------------
+
+Devices:
+========
+GPU0:
+	apiVersion         = 1.4.334
+	driverVersion      = 26.1.0
+	vendorID           = 0x10de
+	deviceID           = 0x2b85
+	deviceType         = PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
+	deviceName         = Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+	driverID           = DRIVER_ID_MESA_VENUS
+	driverName         = venus
+	driverInfo         = Mesa 26.1.0
+	conformanceVersion = 1.4.0.0
+	deviceUUID         = 6324eec1-a3fb-ab4d-cb86-cc045cf90da2
+	driverUUID         = 33adbfe5-afaa-6b18-edd5-9e4445431471

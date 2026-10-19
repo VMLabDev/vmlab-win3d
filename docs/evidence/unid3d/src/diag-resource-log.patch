@@ -1,0 +1,32 @@
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_resource.c b/src/gallium/winsys/yttrium/gdi/yttrium_resource.c
+index e5fe977..34b482d 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_resource.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_resource.c
+@@ -1828,6 +1828,16 @@ yttrium_resource_create(struct pipe_screen *pscreen,
+        (res->replacement_storage || yttrium_buffer_storage_attach(res)))
+       threaded_resource(&res->base)->is_shared = false;
+ 
++   if (yttrium_gdi_debug_get_bool_option("D3D10UMD_YTTRIUM_RESOURCE_DIAG", false))
++      YTTRIUM_WARN("yttrium: DIAG create res=%p target=%u fmt=%u %ux%ux%u levels=%u array=%u bind=0x%x usage=%u size=0x%llx owns_data=%u data_cap=0x%llx map=%p map_blob=%u hAlloc=0x%lx venus_init=%u venus_image=%u buffer_backed=%u\n",
++                   (void *)res, templ->target, templ->format, templ->width0,
++                   templ->height0, templ->depth0, templ->last_level + 1,
++                   templ->array_size, templ->bind, templ->usage,
++                   (unsigned long long)res->size, res->owns_data,
++                   (unsigned long long)res->data_capacity, res->map,
++                   res->map_is_blob, (unsigned long)res->hAllocation,
++                   res->venus.initialized, res->venus.image != VK_NULL_HANDLE,
++                   res->venus.buffer_backed);
+    return &res->base;
+ }
+ 
+@@ -1859,6 +1869,10 @@ yttrium_resource_destroy(struct pipe_screen *pscreen,
+ 
+    yttrium_trace_resource_destroy_state(
+       YTTRIUM_TRACE_RESOURCE_DESTROY_BEGIN, 0, res);
++   if (yttrium_gdi_debug_get_bool_option("D3D10UMD_YTTRIUM_RESOURCE_DIAG", false))
++      YTTRIUM_WARN("yttrium: DIAG destroy res=%p owns_data=%u data_cap=0x%llx map=%p\n",
++                   (void *)res, res->owns_data,
++                   (unsigned long long)res->data_capacity, res->map);
+ 
+    YTTRIUM_LOG("yttrium: resource_destroy begin resource=%p hAllocation=0x%lx hResource=%p res_id=%u mem_id=0x%llx display=%u primary=%u classic=%u owns=%u size=0x%llx stride=%u venus=(init=%u buffer=%u image_id=%llu buffer_id=%llu memory_id=%llu)\n",
+                 (void *)res,

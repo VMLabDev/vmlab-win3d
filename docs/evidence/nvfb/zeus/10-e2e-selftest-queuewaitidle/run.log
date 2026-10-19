@@ -1,0 +1,182 @@
+
+[05:25:12] == vmlab-win3d e2e: windows-11, commit 52c2cbf
+date: 2026-10-19T05:25:12+10:00
+commit: 52c2cbf842b5fd42e14d5db19c862980b9337c40
+worktree changes: 0
+template: x86_64/windows-11@26100.1742.5
+kernel: 7.2.4-3-cachyos
+qemu (PATH): QEMU emulator version 11.1.1
+qemu (Nvidia1 qemu_binary): /home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64, QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+packages: qemu-full 11.1.1-2 virglrenderer 1.3.0-2.1 mesa 3:26.2.2-2 nvidia-utils 615.71.09-1 
+vmlab: vmlab 0.28.0-alpha
+venus gpu: host_gpu Nvidia1, /dev/dri/renderD128 0000:01:00.0 VGA compatible controller: NVIDIA Corporation AD107M [GeForce RTX 4060 Max-Q / Mobile] (rev a1)
+
+[05:25:14] == 1 build
+[05:25:14] reused (out/package built at 52c2cbf842b5fd42e14d5db19c862980b9337c40; no change to build installer probes patches scripts/build.sh since)
+
+[05:25:14] == 2 fresh lab win3d-nvfb-nvidia1 from x86_64/windows-11@26100.1742.5
+ok: lab "win3d-nvfb-nvidia1" — 1 vm(s), 0 container(s), 0 segment(s)
+first-boot: provisioning win...
+first-boot: agent busy (win: no vmlab-agent answered on the agent channel — the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: specialize complete; clearing marker
+first-boot: settling staged AppX (LKG) before first logon
+first-boot: appx: removed MicrosoftWindows.Client.AIX_1000.26100.29.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.AccountsService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.IrisService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.Search_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed NcsiUwpApp_1000.25128.1000.0_neutral_neutral_8wekyb3d8bbwe
+removed MdOdrMcpFilterPackage_1.0.0.0_neutral__cw5n1h2txyewy
+first-boot: rebooting once to settle shell reconciliation
+first-boot: win ready
+lab "win3d-nvfb-nvidia1" is up
+
+[05:27:08] == 3 guest scripts, probes and the baseline
+pushed 7 file(s), 42217 bytes to win:C:/win3d/guest
+pushed 1 file(s), 2321 bytes to win:C:/win3d/e2e
+pushed 5 file(s), 174592 bytes to win:C:/win3d/probes/x64
+pushed 5 file(s), 153088 bytes to win:C:/win3d/probes/x86
+pushed 2800056 bytes to win:C:/win3d/lunarg/x64/vulkaninfo.exe
+pushed 2403256 bytes to win:C:/win3d/lunarg/x86/vulkaninfo.exe
+[05:27:15] baseline: Red Hat VirtIO GPU DOD controller (problem 0)
+
+[05:27:15] == 3b test desktop (autologon user win3d)
+[05:27:17] oobe: done after 0 s
+[05:28:21] autologon before-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-557SO2T AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-557SO2T\win3d 
+
+[05:28:21] == 4 install: scripts/install-into-vm.sh /home/wil/win3d-nvfb/e2e/.scratch/e2e/windows-11-nvidia1/lab win
+[05:28:21] waiting for the guest agent
+[05:28:21] copying vmlab-win3d-0.1.1 to C:\vmlab-win3d
+pushed 29 file(s), 102413413 bytes to win:C:/vmlab-win3d
+[05:28:24] running C:\vmlab-win3d\Install.cmd
+2026-10-18T19:28:22.094-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
+2026-10-18T19:28:24.329-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T19:28:27.310-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
+2026-10-18T19:28:27.481-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T19:28:27.489-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-18T19:28:27.492-07:00 [Install]   Signature matches Public Key
+2026-10-18T19:28:27.494-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T19:28:27.496-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T19:28:27.525-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T19:28:27.527-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-18T19:28:27.529-07:00 [Install]   Signature matches Public Key
+2026-10-18T19:28:27.529-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T19:28:27.531-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T19:28:27.589-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-18T19:28:27.591-07:00 [Install]   The operation completed successfully.
+2026-10-18T19:28:27.855-07:00 [Install] test signing is set but not active in this boot
+2026-10-18T19:28:28.341-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T19:28:28.381-07:00 [Install] rebooting; step Driver resumes after the restart
+[05:28:31] Install.cmd exited 0
+[05:28:32] state: RebootPending|Driver|
+[05:29:22] state: RebootPending|Verify|
+[05:30:14] state: Installed||
+[05:30:14] done: Installed
+[05:30:19] autologon after-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-557SO2T AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-557SO2T\win3d 
+
+[05:30:19] == 5 interactive-session tests
+[05:30:20] desktop: True 51
+[05:30:36] desktop: True 67
+[05:30:52] desktop: True 83
+[05:31:08] desktop: True 99
+[05:31:24] desktop: True 115
+[05:31:40] desktop: True 131
+
+[05:31:42] == 5a vulkaninfo --summary
+    "exit_code":  -1073740791,
+    "exit_code_hex":  "0xC0000409",
+exit -1073740791 
+exit -1073740791 
+
+[05:32:24] == 5b probes
+[05:32:24] probe x64-d3d9_probe
+[05:32:50]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+[05:32:50] probe x86-d3d9_probe
+[05:33:15]   Run-Probe exit 0
+  console: 9/12 frames show the probe window; animating=True
+[05:33:15] probe x64-d3d11_probe
+[05:33:40]   Run-Probe exit 0
+  console: 10/12 frames show the probe window; animating=True
+[05:33:40] probe x86-d3d11_probe
+[05:34:06]   Run-Probe exit 0
+  console: 10/12 frames show the probe window; animating=True
+[05:34:06] probe x64-d3d12_probe
+[05:34:18]   Run-Probe exit 9
+  console: 0/6 frames show the probe window; animating=False
+[05:34:18] probe x86-d3d12_probe
+[05:34:33]   Run-Probe exit 9
+  console: 0/7 frames show the probe window; animating=False
+[05:34:33] probe x64-opengl_probe
+[05:34:48]   Run-Probe exit 9
+  console: 0/7 frames show the probe window; animating=False
+[05:34:48] probe x86-opengl_probe
+[05:35:03]   Run-Probe exit 9
+  console: 0/7 frames show the probe window; animating=False
+[05:35:03] probe x64-vulkan_probe
+[05:35:15]   Run-Probe exit 9
+  console: 0/6 frames show the probe window; animating=False
+[05:35:15] probe x86-vulkan_probe
+[05:35:28]   Run-Probe exit 9
+  console: 0/6 frames show the probe window; animating=False
+
+[05:35:28] == 5c dxdiag
++ ... -Report $file $deadline)) { throw "dxdiag wrote no report to $file" }
++                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (dxdiag wrote no...diag\dxdiag.txt:String) [], RuntimeException
+    + FullyQualifiedErrorId : dxdiag wrote no report to C:\win3d\results\dxdiag\dxdiag.txt
+ 
+
+[05:40:31] == 6 collect evidence
+pulled 31021 bytes to /home/wil/win3d-nvfb/e2e/.scratch/e2e/windows-11-nvidia1/results.zip
+
+[05:40:33] == 7 teardown
+[05:40:33] --keep: win3d-nvfb-nvidia1 left running; destroy with (cd /home/wil/win3d-nvfb/e2e/.scratch/e2e/windows-11-nvidia1/lab && vmlab destroy)
+
+[05:40:33] == result (ok)
+Item  Result Check
+------------------------------------------------------------------------------
+1     pass   scripts/build.sh builds the package
+             reused; exit 0
+2     pass   documented install command (scripts/install-into-vm.sh)
+             exit 0; Installed
+2+    pass   display device on our driver, problem code 0
+             Hardsoft VirtIO GPU 3D controller
+2     FAIL   vulkaninfo --summary (x64) lists the Venus device
+             no Venus device: no device
+2+    FAIL   vulkaninfo --summary (x86) lists the Venus device
+             no Venus device: no device
+2+    FAIL   vulkaninfo --summary (x64) lists exactly one Venus device
+             0 Venus: none
+2+    FAIL   LunarG vulkaninfo 1.4.363 (x64, pinned) lists Venus through the installed loader
+             no Venus device
+2+    FAIL   LunarG vulkaninfo 1.4.363 (x86, pinned) lists Venus through the installed loader
+             no Venus device
+2     pass   Direct3D 9 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 45.52 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 9 (x86) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 44.8 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 11 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 59.05 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 11 (x86) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 59.01 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     FAIL   Direct3D 12 (x64) renders on the GPU and shows on the console
+             no result; probe window not found in any console capture
+2     FAIL   Direct3D 12 (x86) renders on the GPU and shows on the console
+             no result; probe window not found in any console capture
+2     FAIL   OpenGL (x64) renders on the GPU and shows on the console
+             no result; probe window not found in any console capture
+2     FAIL   OpenGL (x86) renders on the GPU and shows on the console
+             no result; probe window not found in any console capture
+2+    FAIL   Vulkan (x64) renders on the GPU and shows on the console
+             no result; probe window not found in any console capture
+2+    FAIL   Vulkan (x86) renders on the GPU and shows on the console
+             no result; probe window not found in any console capture
+2     FAIL   dxdiag reports hardware acceleration on our driver
+             hardware_acceleration=None, card None, D3D None, DDraw None, None
+------------------------------------------------------------------------------
+FAIL: 6 of 12 Done checks pass ('+' rows are extra and do not count)

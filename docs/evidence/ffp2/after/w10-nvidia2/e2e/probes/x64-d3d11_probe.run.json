@@ -1,0 +1,33 @@
+﻿{
+    "name":  "x64-d3d11_probe",
+    "exe":  "C:\\win3d\\probes\\x64\\d3d11_probe.exe",
+    "arguments":  "--seconds 20 --out C:\\win3d\\results\\probes\\x64-d3d11_probe.json",
+    "user":  "VMLABVM-0EUFV4U\\win3d",
+    "session_id":  1,
+    "pid":  8128,
+    "wow64":  false,
+    "started":  "2026-10-18T16:40:50.8498046-07:00",
+    "ended":  "2026-10-18T16:41:12.3940013-07:00",
+    "duration_s":  21.5,
+    "timed_out":  false,
+    "exit_code":  0,
+    "exit_code_hex":  "0x00000000",
+    "task_result":  0,
+    "probe_json":  "C:\\win3d\\results\\probes\\x64-d3d11_probe.json",
+    "probe_result":  "pass",
+    "adapter":  "Hardsoft VirtIO GPU 3D controller",
+    "software":  false,
+    "readback_ok":  true,
+    "module_count":  39,
+    "graphics_modules":  [
+                             "C:\\Windows\\SYSTEM32\\d3d11.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
+                             "C:\\Windows\\SYSTEM32\\dxgi.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
+                             "C:\\Windows\\system32\\viogpu_d3d10.dll [system32] ",
+                             "C:\\Windows\\SYSTEM32\\dxcore.dll [system32] 10.0.19041.5794 (WinBuild.160101.0800)",
+                             "C:\\Windows\\SYSTEM32\\dwmapi.dll [system32] 10.0.19041.1 (WinBuild.160101.0800)",
+                             "C:\\Windows\\SYSTEM32\\d3dcompiler_47.dll [system32] 10.0.19041.3636 (WinBuild.160101.0800)"
+                         ],
+    "app_local_modules":  [
+
+                          ]
+}

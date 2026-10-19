@@ -1,0 +1,165 @@
+Subject: [PATCH] d3d9: L6V5U5 and X8L8V8U8 bump maps for BUMPENVMAPLUMINANCE
+
+The D3D9 UMD offered V8U8 and Q8W8V8U8 bump maps but not the two formats
+with luminance, L6V5U5 and X8L8V8U8, so CheckDeviceFormat refused them and
+CreateTexture failed with D3DERR_NOTAVAILABLE. Fixed-function
+D3DTOP_BUMPENVMAPLUMINANCE (and texbeml in ps_1_x) needs one of them; the
+reference rasterizer supports both.
+
+Vulkan has no format with signed U and V and unsigned L. Both formats are
+now stored as R8G8B8A8_SNORM, which samples as (U, V, L, 1) like D3D9 does:
+D3D9TextureSubdata, which every CPU-to-GPU texture upload goes through,
+converts the texels (U and V keep their signed value, scaled to 8 bits;
+L goes into the positive half of blue; alpha is 1, and the view swizzles
+alpha to 1). The formats are offered for 2D, cube and volume textures and
+as bump maps, not as render targets. A lock that maps a GPU texture of
+these formats directly (dynamic textures in D3DPOOL_DEFAULT) still sees the
+converted layout.
+
+Evidence: docs/ffp2.md, docs/evidence/ffp2/ (src/d3d9_ffp2.cpp, bm_lum_*,
+bm_x8l8v8u8, bm_stage1_lum).
+Origin: vmlab-win3d ffp2 worker.
+---
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Adapter.cpp b/src/gallium/frontends/d3d10umd/D3D9Adapter.cpp
+index 76ee0eb..52ce2f7 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Adapter.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9Adapter.cpp
+@@ -61,6 +61,11 @@ static const FORMATOP g_format_ops[] = {
+    { D3D9_FMT_A32B32G32R32F, 0x00ca601f, d3d9_ms_types, 0, 0 },
+    { D3D9_FMT_V8U8, 0x0083401f, d3d9_ms_types, 0, 0 },
+    { D3D9_FMT_Q8W8V8U8, 0x0083401f, d3d9_ms_types, 0, 0 },
++   /* Bump maps with luminance, for BUMPENVMAPLUMINANCE. Vulkan has no
++    * mixed signed/unsigned formats; the UMD converts them to R8G8B8A8_SNORM
++    * on upload (D3D9TextureSubdata). */
++   { D3D9_FMT_L6V5U5, 0x00834007, 0, 0, 0 },
++   { D3D9_FMT_X8L8V8U8, 0x00834007, 0, 0, 0 },
+    { D3D9_FMT_V16U16, 0x0083401f, d3d9_ms_types, 0, 0 },
+    { D3D9_FMT_Q16W16V16U16, 0x0083401f, d3d9_ms_types, 0, 0 },
+    { D3D9_FMT_L8, 0x00c2401f, d3d9_ms_types, 0, 0 },
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Draw.cpp b/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
+index 78927fd..17ca89c 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9Draw.cpp
+@@ -2404,6 +2404,9 @@ D3D9CreateTextureBinding(D3D9Device *device, UINT stage,
+       view.swizzle_b = PIPE_SWIZZLE_1;
+       view.swizzle_a = PIPE_SWIZZLE_1;
+    }
++   if (texture->format == D3D9_FMT_L6V5U5 ||
++       texture->format == D3D9_FMT_X8L8V8U8)
++      view.swizzle_a = PIPE_SWIZZLE_1;
+    if (texture->format == D3D9_FMT_V8U8 ||
+        texture->format == D3D9_FMT_V16U16) {
+       view.swizzle_b = PIPE_SWIZZLE_1;
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Private.h b/src/gallium/frontends/d3d10umd/D3D9Private.h
+index a116e9a..04c1131 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Private.h
++++ b/src/gallium/frontends/d3d10umd/D3D9Private.h
+@@ -297,6 +297,8 @@ static constexpr D3DDDIFORMAT D3D9_FMT_R32F = (D3DDDIFORMAT)114;
+ static constexpr D3DDDIFORMAT D3D9_FMT_G32R32F = (D3DDDIFORMAT)115;
+ static constexpr D3DDDIFORMAT D3D9_FMT_A32B32G32R32F = (D3DDDIFORMAT)116;
+ static constexpr D3DDDIFORMAT D3D9_FMT_V8U8 = (D3DDDIFORMAT)60;
++static constexpr D3DDDIFORMAT D3D9_FMT_L6V5U5 = (D3DDDIFORMAT)61;
++static constexpr D3DDDIFORMAT D3D9_FMT_X8L8V8U8 = (D3DDDIFORMAT)62;
+ static constexpr D3DDDIFORMAT D3D9_FMT_Q8W8V8U8 = (D3DDDIFORMAT)63;
+ static constexpr D3DDDIFORMAT D3D9_FMT_V16U16 = (D3DDDIFORMAT)64;
+ static constexpr D3DDDIFORMAT D3D9_FMT_DXT1 = D3D9FourCC('D', 'X', 'T', '1');
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Resource.cpp b/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
+index 7149bb1..1f7be76 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
+@@ -130,6 +130,7 @@ D3D9FormatBytesPerPixel(D3DDDIFORMAT format)
+    case D3D9_FMT_L16:
+    case D3D9_FMT_R16F:
+    case D3D9_FMT_V8U8:
++   case D3D9_FMT_L6V5U5:
+       return 2;
+    case D3D9_FMT_R8:
+    case D3DDDIFMT_A8:
+@@ -248,6 +249,8 @@ D3D9FormatToPipe(D3DDDIFORMAT format)
+    case D3D9_FMT_V8U8:
+       return PIPE_FORMAT_R8G8_SNORM;
+    case D3D9_FMT_Q8W8V8U8:
++   case D3D9_FMT_L6V5U5:
++   case D3D9_FMT_X8L8V8U8:
+       return PIPE_FORMAT_R8G8B8A8_SNORM;
+    case D3D9_FMT_V16U16:
+       return PIPE_FORMAT_R16G16_SNORM;
+@@ -907,6 +910,61 @@ D3D9PipeBoxFromD3DBox(const D3DDDIBOX *src, struct pipe_box *box)
+    box->depth = src->Back - src->Front;
+ }
+ 
++/* L6V5U5 and X8L8V8U8 are stored as R8G8B8A8_SNORM (D3D9FormatToPipe):
++ * U and V keep their signed values, scaled to 8 bits, and the unsigned
++ * luminance goes into the positive half of blue. Returns a tight buffer of
++ * width x rows x depth texels, or NULL for other formats. */
++static bool
++D3D9FormatIsConvertedBump(D3DDDIFORMAT format)
++{
++   return format == D3D9_FMT_L6V5U5 || format == D3D9_FMT_X8L8V8U8;
++}
++
++static int8_t
++D3D9Snorm5To8(unsigned v)
++{
++   int s = (int)(v & 31u);
++   if (s >= 16)
++      s -= 32;
++   if (s < -15)
++      s = -15;
++   return (int8_t)((s * 127 + (s < 0 ? -7 : 7)) / 15);
++}
++
++static uint8_t *
++D3D9ConvertBumpTexels(D3DDDIFORMAT format, const void *data, unsigned stride,
++                      uintptr_t layer_stride, UINT width, UINT rows,
++                      UINT depth)
++{
++   if (!D3D9FormatIsConvertedBump(format))
++      return NULL;
++   uint8_t *out = (uint8_t *)malloc((size_t)width * 4 * rows * depth);
++   if (!out)
++      return NULL;
++   uint8_t *dst = out;
++   for (UINT z = 0; z < depth; ++z) {
++      for (UINT y = 0; y < rows; ++y) {
++         const uint8_t *src = (const uint8_t *)data + (size_t)z * layer_stride +
++                              (size_t)y * stride;
++         for (UINT x = 0; x < width; ++x, dst += 4) {
++            if (format == D3D9_FMT_X8L8V8U8) {
++               const uint8_t *t = src + x * 4;
++               dst[0] = t[0] == 0x80 ? 0x81 : t[0];
++               dst[1] = t[1] == 0x80 ? 0x81 : t[1];
++               dst[2] = (uint8_t)((t[2] * 127 + 127) / 255);
++            } else {
++               const unsigned t = src[x * 2] | (unsigned)src[x * 2 + 1] << 8;
++               dst[0] = (uint8_t)D3D9Snorm5To8(t);
++               dst[1] = (uint8_t)D3D9Snorm5To8(t >> 5);
++               dst[2] = (uint8_t)((((t >> 10) & 63u) * 127 + 31) / 63);
++            }
++            dst[3] = 127;
++         }
++      }
++   }
++   return out;
++}
++
+ static bool
+ D3D9TextureSubdata(D3D9Device *device, D3D9Resource *resource,
+                    UINT subresource_index, unsigned usage,
+@@ -933,7 +991,15 @@ D3D9TextureSubdata(D3D9Device *device, D3D9Resource *resource,
+    uintptr_t upload_layer_stride = layer_stride;
+    uint8_t *tight = NULL;
+ 
+-   if (stride != row_bytes || layer_stride != tight_layer_stride) {
++   if (D3D9FormatIsConvertedBump(resource->format)) {
++      tight = D3D9ConvertBumpTexels(resource->format, data, stride,
++                                    layer_stride, box->width, rows, depth);
++      if (!tight)
++         return false;
++      upload_data = tight;
++      upload_stride = box->width * 4;
++      upload_layer_stride = (uintptr_t)upload_stride * rows;
++   } else if (stride != row_bytes || layer_stride != tight_layer_stride) {
+       if (depth > SIZE_MAX / tight_layer_stride)
+          return false;
+       tight = (uint8_t *)malloc((size_t)tight_layer_stride * depth);

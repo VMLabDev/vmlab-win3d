@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "probe": "opengl",
+  "api": "OpenGL",
+  "arch": "x86",
+  "result": "pass",
+  "exit_code": 0,
+  "exe": "C:\\win3d\\probes\\x86\\opengl_probe.exe",
+  "pid": 2992,
+  "session_id": 1,
+  "os_version": "10.0.26100",
+  "finished_utc": "2026-10-18T23:43:15Z",
+  "args": {"seconds": 8, "warp": false, "width": 1024, "height": 640},
+  "adapter": {
+    "name": "zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU) (NVIDIA_PROPRIETARY))",
+    "vendor": "Mesa",
+    "software": false
+  },
+  "device": {
+    "pixel_format": 39,
+    "pfd_generic_format": false,
+    "pfd_generic_accelerated": false,
+    "context": "wglCreateContext (compatibility)",
+    "gl_renderer": "zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU) (NVIDIA_PROPRIETARY))",
+    "gl_vendor": "Mesa",
+    "gl_version": "4.6 (Compatibility Profile) Mesa 26.1.0",
+    "gl_shading_language_version": "4.60",
+    "icd_modules": ["C:\\WINDOWS\\System32\\viogpu_wgl.dll"],
+    "icd_loaded": true,
+    "wgl_arb_create_context": true,
+    "swap_interval_1": true
+  },
+  "frames_presented": 1,
+  "elapsed_seconds": 8.353,
+  "avg_fps": 0.12,
+  "window_closed_early": false,
+  "readback": {
+    "ok": true,
+    "tolerance": 2,
+    "pixels": [
+      {"name": "red_top_left", "x": 48, "y": 48, "expected": [255, 0, 0], "actual": [255, 0, 0], "match": true},
+      {"name": "blue_top_right", "x": 976, "y": 48, "expected": [0, 0, 255], "actual": [0, 0, 255], "match": true},
+      {"name": "green_bottom_left", "x": 48, "y": 592, "expected": [0, 255, 0], "actual": [0, 255, 0], "match": true}
+    ]
+  },
+  "errors": []
+}
+

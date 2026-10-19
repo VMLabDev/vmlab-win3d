@@ -1,0 +1,1 @@
+5012 window=0xA0266 title=[Freedoom: Phase 2 - Crispy Doom 7.2.0] closed=True

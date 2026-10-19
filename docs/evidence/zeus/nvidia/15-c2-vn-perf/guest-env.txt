@@ -1,0 +1,1 @@
+VN_PERF=no_fence_feedback,no_semaphore_feedback,no_event_feedback,no_query_feedback

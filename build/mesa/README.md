@@ -74,14 +74,20 @@ The series has two parts, and the patches apply in name order:
   mixed-case header symlinks that `prepare-build.py` creates, so they are
   build output, not source. The diff was then split by topic. Each patch has
   a header that says what it fixes and which prior-art finding it comes from.
-- **0012 to 0017, 0020 to 0027, 0030, 0035 and 0040 to 0042** are this repository's own fixes, found by
-  the acceptance and host runs. Each header names the document with the
-  evidence. The series skips 0018, 0019, 0026 to 0029 and 0031 to 0039.
+- **0012 to 0017, 0020 to 0027, 0030 to 0032, 0035, 0040 to 0044, 0060, 0065 to 0067, 0070, 0075, 0080, 0085 to 0086 and 0090** are this repository's own fixes, found by
 
-0005 to 0010 and every patch from 0012 to 0026 change `viogpu_d3d10.dll`, the
-D3D9/D3D10/D3D11 UMD (the `d3d10umd` frontend and the Yttrium winsys). 0001
-to 0003 are build and utility fixes that every DLL shares, 0004 and 0027 are in WGL,
-and 0011 is in the Venus ICD.
+0005 to 0010, every patch from 0012 to 0026 and 0030 to 0032 change
+`viogpu_d3d10.dll`, the D3D9/D3D10/D3D11 UMD (the `d3d10umd` frontend and the
+Yttrium winsys). 0032 also changes Gallium's `tgsi_to_nir`, in a branch that
+only a TGSI tessellation control shader reaches, which only the UMD makes.
+(WGL).
+0001 to 0003 are build and utility fixes that every DLL shares, 0004 and 0027
+0001 to 0003 are build and utility fixes that every DLL shares, 0004, 0027
+0075 is in Mesa's Win32 WSI, which the Venus ICD `libvulkan_virtio.dll` links.
+and 0080 are in WGL, 0011 and 0070 are in the Venus ICD, and 0086 is in Zink
+are in WGL, 0011 and 0070 are in the Venus ICD, and 0086 is in Zink (WGL).
+are in WGL, 0011, 0065 to 0067 and 0070 are in the Venus ICD, and 0086 is in Zink (WGL).
+are in WGL, 0011, 0070 and 0085 are in the Venus ICD, and 0086 is in Zink (WGL).
 
 ### From the prior art
 
@@ -118,10 +124,24 @@ and 0011 is in the Venus ICD.
 | 0026 d3d9-ddraw-present-sources-in-host-cached-memory | DirectDraw off-screen surfaces that are Blt sources to the primary use host-cached memory, so the KMD's CPU present copy does not read them uncached (13 to 34 windowed Blts per second on AMD CPUs) | [`docs/present.md`](../../docs/present.md) |
 | 0027 wgl-present-windows-opaque | WGL windows present opaque: Kopper's swapchain no longer asks for premultiplied alpha, so the compositor ignores the alpha an application leaves in its back buffer (Blender's window was translucent on Windows 10) | [`docs/present.md`](../../docs/present.md) |
 | 0030 d3d10umd-domain-shader-indexed-patch-constants | Domain shaders read patch constants with a register index (`dcl_indexrange vpc`; the device was removed at the first draw) | [`docs/ds.md`](../../docs/ds.md) |
+| 0031 d3d10umd-output-index-ranges-in-every-stage | Vertex, domain, geometry and pixel shaders and a hull shader's control-point phase may write outputs with a register index (`dcl_indexrange o1.xyzw 4`, `mov o[r0.x + 1]`; the translation failed and the device was removed) | [`docs/shaders2.md`](../../docs/shaders2.md) |
+| 0032 d3d10umd-hull-shader-join-phases-read-fork-phase-outputs | Hull shader join phases read the patch constants and tessellation factors their fork phases wrote, with an immediate or a register index (any join phase that read `vpcN` had no NIR, so the device was removed; `vpc1.x` read factor 0) | [`docs/shaders2.md`](../../docs/shaders2.md) |
 | 0035 d3d9-hardware-colour-key-and-mirror-blits | DirectDraw source colour-key and mirror blits are drawn on the GPU, matching the emulation layer pixel for pixel, and the HAL reports `DDCKEYCAPS_SRCBLT` and the mirror FX caps (DirectDraw emulated them on the CPU through Lock) | [`docs/ddraw.md`](../../docs/ddraw.md) |
 | 0040 d3d9-swvp-processed-vertices-keep-declaration-vs | Fixed-function draws with software vertex processing keep their colours and texture coordinates (every one rendered black) | [`docs/ffp.md`](../../docs/ffp.md) |
 | 0041 d3d9-fixed-function-fog | Table fog under a perspective projection uses W (from `UpdateWInfo`), vertex fog is clamped per pixel, and pre-transformed vertices get their fog factor from FOG or the specular alpha | [`docs/ffp.md`](../../docs/ffp.md) |
 | 0042 d3d9-fixed-function-points | Points wider than one pixel keep their colours and texture coordinates, get sprite coordinates only with `POINTSPRITEENABLE`, keep their size under perspective, and honour `PSIZE` in `XYZRHW` vertices | [`docs/ffp.md`](../../docs/ffp.md) |
+| 0043 d3d9-bump-luminance-formats | `L6V5U5` and `X8L8V8U8` bump maps exist (stored as `R8G8B8A8_SNORM`, converted on upload), so `BUMPENVMAPLUMINANCE` works; `CreateTexture` failed with `D3DERR_NOTAVAILABLE` | [`docs/ffp2.md`](../../docs/ffp2.md) |
+| 0044 d3d9-indexed-vertex-blend-palette | `MaxVertexBlendMatrixIndex` is 8, the runtime's matrix palette for indexed vertex blending with hardware vertex processing, instead of 0 | [`docs/ffp2.md`](../../docs/ffp2.md) |
+| 0060 d3d10umd-trim-residency-set-leaves-the-context-alone | `TrimResidencySet` no longer flushes the threaded context. The runtime calls it on DXCore's trim-notification thread, and the flush ran a batch outside the context's owner thread; dwm died with a double free (`0xc0000374`) while it recovered a lost device on NVIDIA | [`docs/dwmheap.md`](../../docs/dwmheap.md) |
+| 0065 venus-feedback-buffers-in-host-cached-memory | Venus's fence, semaphore, event and query feedback buffers use a `HOST_COHERENT` and `HOST_CACHED` memory type when there is one. On the RTX 4060 Laptop host the guest never saw the GPU's writes to the uncached type, so every Vulkan, D3D12 and OpenGL client hung on its first fence | [`docs/nvfb.md`](../../docs/nvfb.md) |
+| 0066 venus-disable-feedback-when-writes-do-not-arrive | At device creation, one fence feedback write is checked; if it does not reach the guest, feedback is disabled for that device instead of hanging its waits | [`docs/nvfb.md`](../../docs/nvfb.md) |
+| 0067 venus-back-uncached-host-memory-with-cached-when-gpu-writes-do-not-arrive | The device-creation check also tests each uncached `HOST_COHERENT` type that has a cached counterpart; where the host GPU's writes do not arrive (the RTX 4060 Laptop host), allocations of that type are backed by the cached type (Zink's stream buffers there made about one OpenGL readback in three black) | [`docs/nvfb.md`](../../docs/nvfb.md) |
+| 0070 venus-hide-host-access-to-small-bar-heap | The Venus ICD reports a device-local, host-visible type on a heap less than half the largest device-local heap as device-local only, so Vulkan, DXVK, vkd3d-proton and Zink keep host-visible memory out of the host card's BAR1 (246 MiB without resizable BAR, shared by every VM on the card; "can't alloc VA space for mapping") | [`docs/nvva.md`](../../docs/nvva.md) |
+| 0075 wsi-win32-blit-shared-swapchain-when-linear-cannot-render | Vulkan swapchains render into an OPTIMAL image that the present copies into the LINEAR shared image, when the device's `linearTilingFeatures` lack what the swapchain usage needs (NVIDIA has no linear colour attachment; Godot's first frame raised Xid 69, ErrorCode 0x13d) | [`docs/godot.md`](../../docs/godot.md) |
+| 0080 wgl-pin-opengl32-so-pixel-formats-set-through-gdi-last | The WGL ICD pins `opengl32.dll`, so a pixel format set through GDI before the program loaded `opengl32.dll` is still known to it (GZDoom's `wglCreateContext` failed with `ERROR_INVALID_PIXEL_FORMAT`: "Unable to create an OpenGL render context") | [`docs/gzdoom.md`](../../docs/gzdoom.md) |
+| 0085 venus-allocate-from-small-device-local-heap-synchronously | The Venus ICD allocates from a device-local heap smaller than the largest one (the RTX 5090's 246 MiB BAR window) synchronously, so a host out-of-memory reaches the driver's fallback instead of failing the whole context (Unigine OpenGL crashed on NVIDIA) | [`docs/unigl.md`](../../docs/unigl.md) |
+| 0086 zink-keep-buffers-mappable-without-visible-vram | Zink keeps directly mapped buffers in host-visible memory when the device has no device-local, host-visible type (needed with 0070; Unigine Heaven and Valley crashed). Written by the unigl worker; carried unchanged | [`docs/nvva.md`](../../docs/nvva.md) |
+| 0090 yttrium-d3d9-depth-bias-without-float-representation | D3D9 depth bias works on devices without `VK_EXT_depth_bias_control`'s float representation (NVIDIA): it is converted to integer units for the depth format and requested exact. Before, every pipeline with a D3D9 depth bias failed and its draws were skipped | [`docs/unid3d.md`](../../docs/unid3d.md) |
 
 0021 has no mail header. `scripts/pins-table.py` carries its one-line
 description.
@@ -154,6 +174,10 @@ Which patches have run in a guest, and where:
 | Zeus Intel and the helios AMD regression, Windows 11 | 0001 to 0014, 0020, 0021 | `docs/zeus.md` |
 | nvtex proof, Windows 11, `Nvidia1` and `AMD1` (e2e, probes, SDK samples) | 0001 to 0017, 0020 to 0025 | `docs/nvtex.md` |
 | ffp proof, Windows 11, `Nvidia2` and `AMD1` (e2e, probes, `d3d9_ffp`, `Text3D`) | 0001 to 0017, 0020 to 0025, 0030, 0040 to 0042 | `docs/ffp.md` |
+| ffp2 proof, Windows 11 on `Nvidia2` and `AMD1`, Windows 10 on `Nvidia2` (e2e, `d3d9_ffp2`, `d3d9_ffp`) | 0001 to 0017, 0020 to 0027, 0030, 0035, 0040 to 0044 | `docs/ffp2.md` |
+| unigl proof, Windows 11 on `Nvidia1` and `AMD1` (e2e, Unigine Heaven and Valley OpenGL) | 0001 to 0017, 0020 to 0027, 0030, 0035, 0040 to 0044, 0070, 0085, 0086 | `docs/unigl.md` |
+| unid3d proof, Windows 11 on `AMD1`, `Nvidia1` and `Nvidia2` (e2e, `d3d9_depthbias`, Unigine D3D9 and D3D11) | 0001 to 0017, 0020 to 0027, 0030 to 0032, 0035, 0040 to 0044, 0090 | `docs/unid3d.md` |
+| gzdoom proof, Windows 11 on `AMD1` and `Nvidia1` (e2e, `gzgl`, GZDoom OpenGL and Vulkan) | 0001 to 0017, 0020 to 0027, 0030 to 0032, 0035, 0040 to 0044, 0080; the `Nvidia1` runs add 0070 and 0086, the last e2e on each GPU adds 0070, 0086 and 0090 | `docs/gzdoom.md` |
 
 The nvtex proof run (2026-10-18) has the full series, 0001 to 0025, built by
 `scripts/build.sh` at commit `e428846`. Before it, no recorded run had 0015

@@ -1,0 +1,28 @@
+# ssh zeus (i7-13700H, CachyOS v3 repos), 2026-10-19T03:14:44+10:00; tarball staged from out/host/qemu (tar-new) and from v0.1.0-alpha's binary (tar-old)
+== new --check
+ldd: every shared library the binary needs is present and new enough
+ISA: the binary needs x86-64-v2; this CPU supports up to x86-64-v3
+run: QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+rc=0
+== new install
+ldd: every shared library the binary needs is present and new enough
+ISA: the binary needs x86-64-v2; this CPU supports up to x86-64-v3
+run: QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+rc=0
+QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+Copyright (c) 2003-2026 Fabrice Bellard and the QEMU Project developers
+rc=0
+{"QMP": {"version": {"qemu": {"micro": 50, "minor": 1, "major": 11}, "package": "vmlab d8a6048aae11"}, "capabilities": ["oob"]}}
+{"return": {}}
+{"timestamp": {"seconds": 1792343670, "microseconds": 456185}, "event": "SHUTDOWN", "data": {"guest": false, "reason": "host-qmp-quit"}}
+== old --check
+ldd: every shared library the binary needs is present and new enough
+rc=1
+error: this CPU cannot run the QEMU in this tarball.
+The binary needs x86-64 ISA level x86-64-v4; this CPU supports up to x86-64-v3
+(/lib64/ld-linux-x86-64.so.2 --help lists the levels). Rebuild QEMU on this host with
+patches/host/build-qemu.sh from https://github.com/VMLabDev/vmlab-win3d (docs/release.md).
+total 89244
+drwxr-xr-x 1 wil wil       36 Oct 19 01:07 .
+drwxr-xr-x 1 wil wil       16 Oct 19 01:07 ..
+-rwxr-xr-x 1 wil wil 91385768 Oct 19 01:07 qemu-system-x86_64

@@ -1,0 +1,13 @@
+[06:43:14] waiting for the guest agent
+[06:43:16] copying bundle-patched to C:\vmlab-win3d
+pushed 29 file(s), 102413421 bytes to win:C:/vmlab-win3d
+[06:43:22] running C:\vmlab-win3d\Install.cmd
+2026-10-18T13:43:22.353-07:00 [Install] Install from C:\vmlab-win3d (state: Installed)
+2026-10-18T13:43:27.343-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T13:43:36.071-07:00 [Install] driver oem15.inf already installed on PCI\VEN_1AF4&DEV_1050&SUBSYS_11001AF4&REV_01\3&11583659&0&20
+2026-10-18T13:43:39.322-07:00 [Install] registered startup task vmlab-win3d-repair (-Mode Repair)
+2026-10-18T13:43:39.358-07:00 [Install] nothing changed; no reboot needed
+2026-10-18T13:43:55.784-07:00 [Install] installed: oem15.inf 100.6.101.58100, problem code 0
+[06:43:59] Install.cmd exited 0
+[06:44:06] state: Installed||
+[06:44:06] done: Installed

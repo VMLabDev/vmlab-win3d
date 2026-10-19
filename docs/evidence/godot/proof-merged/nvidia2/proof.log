@@ -1,0 +1,362 @@
+acquired Nvidia2 slot 2 for godot
+
+[10:04:44] == compat sweep on Nvidia2, commit 4d826df
+date: 2026-10-19T10:04:44+10:00
+commit: 4d826dff6f54c59cb682f2418767671de250662c
+bundle: /home/wil/dev/vmlab-win3d-wt/godot/out/package/vmlab-win3d-0.1.1 (0.1.1 4d826dff6f54c59cb682f2418767671de250662c)
+host_gpu: Nvidia2
+kernel: 7.2.3-1-cachyos
+packages: qemu-full 11.1.1-1 virglrenderer 1.3.0-2.1 mesa 3:26.2.2-2 vulkan-radeon 3:26.2.2-2 nvidia-utils 610.57.04-1 
+vmlab: vmlab 0.28.0-alpha
+
+[10:04:44] == fresh lab win3d-godot-nvidia2 on Nvidia2
+[10:04:44] destroying the previous win3d-godot-nvidia2
+lab "win3d-godot-nvidia2" destroyed
+first-boot: provisioning win...
+first-boot: agent busy (win: no vmlab-agent answered on the agent channel — the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: agent busy (win: the guest's vmlab-agent answered earlier but does not now — the guest may be rebooting or shutting down; retry once it is back); still waiting
+first-boot: specialize complete; clearing marker
+first-boot: settling staged AppX (LKG) before first logon
+first-boot: appx: removed MicrosoftWindows.Client.AIX_1000.26100.29.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.AccountsService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.IrisService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.Search_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed NcsiUwpApp_1000.25128.1000.0_neutral_neutral_8wekyb3d8bbwe
+removed MdOdrMcpFilterPackage_1.0.0.0_neutral__cw5n1h2txyewy
+first-boot: rebooting once to settle shell reconciliation
+first-boot: win ready
+lab "win3d-godot-nvidia2" is up
+pushed 7 file(s), 42217 bytes to win:C:/win3d/guest
+[10:09:03] activation: 
+
+[10:09:03] == test desktop (autologon user win3d)
+
+[10:14:34] == install vmlab-win3d-0.1.1
+[10:16:19] state: RebootPending|Verify|
+[10:17:40] state: Installed||
+[10:17:40] done: Installed
+
+[10:18:48] == stage the applications
+unigine-heaven-4.0 setup exit 0
+C:\apps\heaven\bin
+C:\apps\heaven\data
+C:\apps\heaven\documentation
+C:\apps\heaven\heaven.bat
+C:\apps\heaven\heaven.ico
+C:\apps\heaven\unigine.url
+C:\apps\heaven\unins000.dat
+C:\apps\heaven\unins000.exe
+C:\apps\heaven\bin\App3DSurround_x86.dll
+C:\apps\heaven\bin\App3DVision_x86.dll
+C:\apps\heaven\bin\AppStereo_x86.dll
+C:\apps\heaven\bin\AppSurround_x86.dll
+C:\apps\heaven\bin\AppWall_x86.dll
+C:\apps\heaven\bin\browser_x86.exe
+C:\apps\heaven\bin\d3dcompiler_42.dll
+C:\apps\heaven\bin\d3dx11_42.dll
+C:\apps\heaven\bin\d3dx9_42.dll
+C:\apps\heaven\bin\GPUMonitor_x86.dll
+C:\apps\heaven\bin\Heaven.exe
+C:\apps\heaven\bin\msvcp100.dll
+C:\apps\heaven\bin\msvcr100.dll
+C:\apps\heaven\bin\openal32.dll
+C:\apps\heaven\bin\QtCoreUnigine_x864.dll
+C:\apps\heaven\bin\QtGuiUnigine_x864.dll
+C:\apps\heaven\bin\QtNetworkUnigine_x864.dll
+C:\apps\heaven\bin\QtWebKitUnigine_x864.dll
+C:\apps\heaven\bin\QtXmlUnigine_x864.dll
+C:\apps\heaven\bin\Unigine_x86.dll
+C:\apps\heaven\bin\X3DAudio1_7.dll
+C:\apps\heaven\bin\XAudio2_7.dll
+C:\apps\heaven\data\launcher
+C:\apps\heaven\data\core.ung
+C:\apps\heaven\data\heaven-version
+C:\apps\heaven\data\heaven.ung
+C:\apps\heaven\data\heaven_4.0.cfg
+C:\apps\heaven\documentation\User_Manual.pdf
+unigine-valley-1.0 setup exit 0
+C:\apps\valley\bin
+C:\apps\valley\data
+C:\apps\valley\documentation
+C:\apps\valley\icon.ico
+C:\apps\valley\unins000.dat
+C:\apps\valley\unins000.exe
+C:\apps\valley\unins000.msg
+C:\apps\valley\valley.bat
+C:\apps\valley\bin\App3DSurround_x86.dll
+C:\apps\valley\bin\App3DVision_x86.dll
+C:\apps\valley\bin\AppStereo_x86.dll
+C:\apps\valley\bin\AppSurround_x86.dll
+C:\apps\valley\bin\AppWall_x86.dll
+C:\apps\valley\bin\browser_x86.exe
+C:\apps\valley\bin\d3dcompiler_42.dll
+C:\apps\valley\bin\d3dx11_42.dll
+C:\apps\valley\bin\d3dx9_42.dll
+C:\apps\valley\bin\GPUMonitor_x86.dll
+C:\apps\valley\bin\msvcp100.dll
+C:\apps\valley\bin\msvcr100.dll
+C:\apps\valley\bin\openal32.dll
+C:\apps\valley\bin\QtCoreUnigine_x864.dll
+C:\apps\valley\bin\QtGuiUnigine_x864.dll
+C:\apps\valley\bin\QtNetworkUnigine_x864.dll
+C:\apps\valley\bin\QtWebKitUnigine_x864.dll
+C:\apps\valley\bin\QtXmlUnigine_x864.dll
+C:\apps\valley\bin\Unigine_x86.dll
+C:\apps\valley\bin\Valley.exe
+C:\apps\valley\bin\X3DAudio1_7.dll
+C:\apps\valley\bin\XAudio2_7.dll
+C:\apps\valley\data\launcher
+C:\apps\valley\data\valley
+C:\apps\valley\data\core.ung
+C:\apps\valley\data\valley-version
+C:\apps\valley\data\valley.ung
+C:\apps\valley\data\valley_1.0.cfg
+C:\apps\valley\documentation\License.pdf
+C:\apps\valley\documentation\User_Manual.pdf
+unpacked gzdoom-4.14.2
+unpacked crispy-doom-7.2.0
+unpacked freedoom-0.13.0
+unpacked godot-4.7.2
+unpacked godot-demo-particles
+ERROR: Condition "res != ((HRESULT)0x00000000)" is true. Returning: String()
+   at: get_system_dir (platform/windows/os_windows.cpp:2502)
+ERROR: Condition "res != ((HRESULT)0x00000000)" is true. Returning: String()
+   at: get_system_dir (platform/windows/os_windows.cpp:2502)
+ERROR: Condition "res != ((HRESULT)0x00000000)" is true. Returning: String()
+   at: get_system_dir (platform/windows/os_windows.cpp:2502)
+ERROR: Condition "res != ((HRESULT)0x00000000)" is true. Returning: String()
+   at: get_system_dir (platform/windows/os_windows.cpp:2502)
+godot --import exit 0
+[   0% ] [90m[1mloading_editor_layout[22m | Started Loading editor (5 steps)[39m[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Loading editor layout...[39m[0m
+[  16% ] [90m[1mloading_editor_layout[22m | Loading docks...[39m[0m
+[92m[ DONE ][39m [1mloading_editor_layout[22m
+[0m
+crispy
+freedoom
+godot
+gzdoom
+heaven
+valley
+
+[10:21:07] == run godot-d3d12: C:\apps\godot\Godot_v4.7.2-stable_win64.exe --path C:\apps\godot\particles --resolution 1280x720 --print-fps --log-file C:\apps\godot\godot-d3d12.log --rendering-driver d3d12
+[10:24:10]   close at 173 s: 3020 window=0x20282 title=[3D Particles (DEBUG)] closed=True
+[10:24:16]   Run-Probe exit 0 (189 s)
+[10:24:18]   exit: clean
+
+[10:24:19] == run godot-vulkan: C:\apps\godot\Godot_v4.7.2-stable_win64.exe --path C:\apps\godot\particles --resolution 1280x720 --print-fps --log-file C:\apps\godot\godot-vulkan.log --rendering-driver vulkan
+[10:27:19]   close at 171 s: 6588 window=0x501BA title=[3D Particles (DEBUG)] closed=True
+[10:27:24]   Run-Probe exit 0 (185 s)
+[10:27:26]   exit: clean
+
+[10:27:28] == run godot-opengl: C:\apps\godot\Godot_v4.7.2-stable_win64.exe --path C:\apps\godot\particles --resolution 1280x720 --print-fps --log-file C:\apps\godot\godot-opengl.log --rendering-method gl_compatibility --rendering-driver opengl3
+[10:30:29]   close at 172 s: 6132 window=0x502D6 title=[3D Particles (DEBUG)] closed=True
+[10:30:34]   Run-Probe exit 0 (186 s)
+[10:30:36]   exit: clean
+godot-d3d12                  clean                    fps=51.8 average over 115 s (Godot --print-fps)
+godot-opengl                 clean                    fps=55.9 average over 159 s (Godot --print-fps)
+godot-vulkan                 clean                    fps=59.9 average over 158 s (Godot --print-fps)
+lab "win3d-godot-nvidia2" destroyed
+compat exit 0
+released /home/wil/dev/vmlab-win3d/.scratch/gpu-slots/Nvidia2/2
+acquired Nvidia2 slot 2 for godot
+
+[10:30:39] == vmlab-win3d e2e: windows-11, commit 4d826df
+date: 2026-10-19T10:30:39+10:00
+commit: 4d826dff6f54c59cb682f2418767671de250662c
+worktree changes: 1
+template: x86_64/windows-11@26100.1742.5
+kernel: 7.2.3-1-cachyos
+qemu (PATH): QEMU emulator version 11.1.1
+qemu (Nvidia2 qemu_binary): /home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64, QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+packages: qemu-full 11.1.1-1 virglrenderer 1.3.0-2.1 mesa 3:26.2.2-2 vulkan-radeon 3:26.2.2-2 nvidia-utils 610.57.04-1 
+vmlab: vmlab 0.28.0-alpha
+venus gpu: host_gpu Nvidia2, /dev/dri/renderD130 0000:05:00.0 VGA compatible controller: NVIDIA Corporation GB202 [GeForce RTX 5090] (rev a1)
+
+[10:30:39] == 1 build
+[10:30:39] reused (out/package built at 4d826dff6f54c59cb682f2418767671de250662c; no change to build installer probes patches scripts/build.sh since)
+
+[10:30:39] == 2 fresh lab win3d-godot-e2e-nvidia2 from x86_64/windows-11@26100.1742.5
+ok: lab "win3d-godot-e2e-nvidia2" — 1 vm(s), 0 container(s), 0 segment(s)
+first-boot: provisioning win...
+first-boot: specialize complete; clearing marker
+first-boot: settling staged AppX (LKG) before first logon
+first-boot: appx: removed MicrosoftWindows.Client.AIX_1000.26100.29.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.AccountsService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.IrisService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.Search_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed NcsiUwpApp_1000.25128.1000.0_neutral_neutral_8wekyb3d8bbwe
+removed MdOdrMcpFilterPackage_1.0.0.0_neutral__cw5n1h2txyewy
+first-boot: installing first-logon XAML registration hook (sysprep-as-SYSTEM workaround)
+first-boot: xaml: hook installed for: MicrosoftWindows.Client.CBS_cw5n1h2txyewy, Microsoft.UI.Xaml.CBS_8wekyb3d8bbwe, MicrosoftWindows.Client.Core_cw5n1h2txyewy
+first-boot: rebooting once to settle shell reconciliation
+first-boot: holding ready until the guest settles (early first logons break the 24H2 shell)
+first-boot: guest settled (uptime 315s)
+first-boot: win ready
+lab "win3d-godot-e2e-nvidia2" is up
+
+[10:41:43] == 3 guest scripts, probes and the baseline
+pushed 7 file(s), 42217 bytes to win:C:/win3d/guest
+pushed 1 file(s), 2321 bytes to win:C:/win3d/e2e
+pushed 5 file(s), 174592 bytes to win:C:/win3d/probes/x64
+pushed 5 file(s), 153088 bytes to win:C:/win3d/probes/x86
+pushed 2800056 bytes to win:C:/win3d/lunarg/x64/vulkaninfo.exe
+pushed 2403256 bytes to win:C:/win3d/lunarg/x86/vulkaninfo.exe
+[10:41:49] baseline: Red Hat VirtIO GPU DOD controller (problem 0)
+
+[10:41:49] == 3b test desktop (autologon user win3d)
+[10:41:52] oobe: done after 0 s
+[10:42:54] autologon before-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-5Q3LPVM AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-5Q3LPVM\win3d 
+
+[10:42:54] == 4 install: scripts/install-into-vm.sh /home/wil/dev/vmlab-win3d-wt/godot/.scratch/e2e/windows-11-nvidia2/lab win
+[10:42:54] waiting for the guest agent
+[10:42:55] copying vmlab-win3d-0.1.1 to C:\vmlab-win3d
+pushed 29 file(s), 102424173 bytes to win:C:/vmlab-win3d
+[10:42:58] running C:\vmlab-win3d\Install.cmd
+2026-10-18T17:42:58.279-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
+2026-10-18T17:43:01.522-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T17:43:04.367-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
+2026-10-18T17:43:04.664-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T17:43:04.677-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-18T17:43:04.679-07:00 [Install]   Signature matches Public Key
+2026-10-18T17:43:04.686-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T17:43:04.690-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T17:43:04.744-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T17:43:04.748-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-18T17:43:04.751-07:00 [Install]   Signature matches Public Key
+2026-10-18T17:43:04.755-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T17:43:04.757-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T17:43:04.832-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-18T17:43:04.837-07:00 [Install]   The operation completed successfully.
+2026-10-18T17:43:05.297-07:00 [Install] test signing is set but not active in this boot
+2026-10-18T17:43:05.818-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T17:43:05.882-07:00 [Install] rebooting; step Driver resumes after the restart
+[10:43:07] Install.cmd exited 0
+[10:43:09] state: RebootPending|Driver|
+[10:44:20] state: Installing|Driver|
+[10:44:37] state: RebootPending|Verify|
+[10:45:52] state: Installed||
+[10:45:52] done: Installed
+[10:45:58] autologon after-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-5Q3LPVM AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-5Q3LPVM\win3d 
+
+[10:45:58] == 5 interactive-session tests
+[10:45:59] desktop: True 59
+[10:46:16] desktop: True 75
+[10:46:32] desktop: True 91
+[10:46:48] desktop: True 108
+[10:47:05] desktop: True 124
+
+[10:47:07] == 5a vulkaninfo --summary
+    "exit_code":  0,
+    "exit_code_hex":  "0x00000000",
+	deviceType         = PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
+	deviceName         = Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+	driverName         = venus
+exit 0 
+	deviceType         = PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
+	deviceName         = Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+	driverName         = venus
+exit 0 
+	deviceType         = PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
+	deviceName         = Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+	driverName         = venus
+	deviceType         = PHYSICAL_DEVICE_TYPE_DISCRETE_GPU
+	deviceName         = Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+	driverName         = venus
+
+[10:48:02] == 5b probes
+[10:48:02] probe x64-d3d9_probe
+[10:48:51]   Run-Probe exit 0
+  console: 8/23 frames show the probe window; animating=True
+[10:48:51] probe x86-d3d9_probe
+[10:49:30]   Run-Probe exit 0
+  console: 7/18 frames show the probe window; animating=True
+[10:49:30] probe x64-d3d11_probe
+[10:49:59]   Run-Probe exit 0
+  console: 9/14 frames show the probe window; animating=True
+[10:49:59] probe x86-d3d11_probe
+[10:50:37]   Run-Probe exit 0
+  console: 9/18 frames show the probe window; animating=True
+[10:50:37] probe x64-d3d12_probe
+[10:51:04]   Run-Probe exit 0
+  console: 8/13 frames show the probe window; animating=True
+[10:51:04] probe x86-d3d12_probe
+[10:51:31]   Run-Probe exit 0
+  console: 7/13 frames show the probe window; animating=True
+[10:51:31] probe x64-opengl_probe
+[10:51:57]   Run-Probe exit 0
+  console: 8/12 frames show the probe window; animating=True
+[10:51:58] probe x86-opengl_probe
+[10:52:24]   Run-Probe exit 0
+  console: 8/12 frames show the probe window; animating=True
+[10:52:24] probe x64-vulkan_probe
+[10:52:57]   Run-Probe exit 0
+  console: 14/16 frames show the probe window; animating=True
+[10:52:57] probe x86-vulkan_probe
+[10:53:29]   Run-Probe exit 0
+  console: 15/15 frames show the probe window; animating=False
+
+[10:53:29] == 5c dxdiag
+                        "D3D Status":  "Enabled",
+                        "AGP Status":  "Enabled"
+                    }
+                ]
+}
+
+[10:54:03] == 6 collect evidence
+pulled 52594 bytes to /home/wil/dev/vmlab-win3d-wt/godot/.scratch/e2e/windows-11-nvidia2/results.zip
+
+[10:54:07] == 7 teardown
+lab "win3d-godot-e2e-nvidia2" destroyed
+
+[10:54:09] == result (ok)
+Item  Result Check
+------------------------------------------------------------------------------
+1     pass   scripts/build.sh builds the package
+             reused; exit 0
+2     pass   documented install command (scripts/install-into-vm.sh)
+             exit 0; Installed
+2+    pass   display device on our driver, problem code 0
+             Hardsoft VirtIO GPU 3D controller
+2     pass   vulkaninfo --summary (x64) lists the Venus device
+             Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+2+    pass   vulkaninfo --summary (x86) lists the Venus device
+             Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+2+    pass   vulkaninfo --summary (x64) lists exactly one Venus device
+             1 Venus: Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+2+    pass   LunarG vulkaninfo 1.4.363 (x64, pinned) lists Venus through the installed loader
+             Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+2+    pass   LunarG vulkaninfo 1.4.363 (x86, pinned) lists Venus through the installed loader
+             Virtio-GPU Venus (NVIDIA GeForce RTX 5090)
+2     pass   Direct3D 9 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 32.6 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 9 (x86) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 29.86 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 11 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 56.99 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 11 (x86) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 55.49 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 12 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 46.62 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 12 (x86) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 45.35 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   OpenGL (x64) renders on the GPU and shows on the console
+             zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY)), 51.98 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   OpenGL (x86) renders on the GPU and shows on the console
+             zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY)), 47.07 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating
+2+    pass   Vulkan (x64) renders on the GPU and shows on the console
+             Virtio-GPU Venus (NVIDIA GeForce RTX 5090), 24.88 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating
+2+    pass   Vulkan (x86) renders on the GPU and shows on the console
+             Virtio-GPU Venus (NVIDIA GeForce RTX 5090), 0.66 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found
+2     pass   dxdiag reports hardware acceleration on our driver
+             hardware_acceleration=True, card 'Hardsoft VirtIO GPU 3D controller', D3D Enabled, DDraw Enabled, WDDM 2.0
+2+    pass   dxdiag: Direct3D acceleration on our full WDDM device
+             D3D Status Enabled, Full Device (POST), WDDM 2.0
+------------------------------------------------------------------------------
+PASS: 12 of 12 Done checks pass ('+' rows are extra and do not count)
+e2e exit 0
+released /home/wil/dev/vmlab-win3d/.scratch/gpu-slots/Nvidia2/2

@@ -1,0 +1,21 @@
+-- AppCrash_gzdoom.exe_51ed7fa17c1a2d9e12c15b2fe2a2d6c247fdc73b_ceb0bd52_76994704-5fc3-4958-8f1a-257dd31e2a09 2026-10-18T10:18:46.5778326-07:00
+EventType=BEX64
+Sig[0].Name=Application Name
+Sig[0].Value=gzdoom.exe
+Sig[1].Name=Application Version
+Sig[1].Value=4.14.2.0
+Sig[2].Name=Application Timestamp
+Sig[2].Value=6814f959
+Sig[3].Name=Fault Module Name
+Sig[3].Value=ucrtbase.dll
+Sig[4].Name=Fault Module Version
+Sig[4].Value=10.0.26100.9444
+Sig[5].Name=Fault Module Timestamp
+Sig[5].Value=2bbefd73
+Sig[6].Name=Exception Offset
+Sig[6].Value=00000000000a527e
+Sig[7].Name=Exception Code
+Sig[7].Value=c0000409
+Sig[8].Name=Exception Data
+Sig[8].Value=0000000000000007
+AppPath=C:\apps\gzdoom\gzdoom.exe

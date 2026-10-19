@@ -1,0 +1,65 @@
+{
+  "godot-d3d12": {
+    "exit": "clean",
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 181.6,
+    "session_id": 1,
+    "app_local_graphics": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\D3D12.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\vmlab-win3d\\vkd3dcore.dll [system_subdir] ",
+      "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\Windows\\System32\\Windows.Graphics.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\vulkan-1.dll [system32] 1.4.363.0",
+      "C:\\WINDOWS\\system32\\libvulkan_virtio.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\vmlab-win3d\\dxgi-vulkan.dll [system_subdir] 10.0.17763.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] "
+    ],
+    "fps": "52.6 average over 159 s (Godot --print-fps)"
+  },
+  "godot-opengl": {
+    "exit": "clean",
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 181,
+    "session_id": 1,
+    "app_local_graphics": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\opengl32.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\GLU32.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_wgl.dll [system32] ",
+      "C:\\WINDOWS\\SYSTEM32\\vulkan-1.dll [system32] 1.4.363.0",
+      "C:\\WINDOWS\\system32\\libvulkan_virtio.dll [system32] ",
+      "C:\\WINDOWS\\system32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] ",
+      "C:\\Windows\\System32\\Windows.Graphics.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)"
+    ],
+    "fps": "62.8 average over 157 s (Godot --print-fps)"
+  },
+  "godot-vulkan": {
+    "exit": "clean",
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 178.5,
+    "session_id": 1,
+    "app_local_graphics": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SYSTEM32\\vulkan-1.dll [system32] 1.4.363.0",
+      "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\libvulkan_virtio.dll [system32] ",
+      "C:\\Windows\\System32\\Windows.Graphics.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] "
+    ],
+    "fps": "60.0 average over 163 s (Godot --print-fps)"
+  }
+}

@@ -1,0 +1,8 @@
+2026-10-19T02:57:12+10:00 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+2026-10-19T02:57:13+10:00 helios kernel: NVRM: nvAssertOkFailedNoLog: Assertion failed: Out of memory [NV_ERR_NO_MEMORY] (0x00000051) returned from pReuseMappingDb->pMapCb(pReuseMappingDb->pGlobalCtx, pAllocCtx, range, cachingFlags, &token, _reusemappingdbAddMappingCallback) @ mapping_reuse.c:274
+2026-10-19T02:57:13+10:00 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+2026-10-19T03:04:13+10:00 helios kernel: NVRM: Xid (PCI:0000:05:00): 69, pid=3048572, name=vkr-ring-70, Class Error: channel 0x00000052, Class 0000ce97, Offset 0000026c, Data 00000006, ErrorCode 0000013d
+2026-10-19T03:05:10+10:00 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+2026-10-19T03:05:10+10:00 helios kernel: NVRM: nvAssertOkFailedNoLog: Assertion failed: Out of memory [NV_ERR_NO_MEMORY] (0x00000051) returned from pReuseMappingDb->pMapCb(pReuseMappingDb->pGlobalCtx, pAllocCtx, range, cachingFlags, &token, _reusemappingdbAddMappingCallback) @ mapping_reuse.c:274
+2026-10-19T03:05:10+10:00 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.
+2026-10-19T03:05:10+10:00 helios kernel: NVRM: dmaAllocMapping_GM107: can't alloc VA space for mapping.

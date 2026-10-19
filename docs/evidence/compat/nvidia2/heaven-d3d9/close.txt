@@ -1,0 +1,1 @@
+10084 window=0x4005C title=[Unigine Heaven Benchmark 4.0 Basic (Direct3D9)] closed=True

@@ -1,0 +1,55 @@
+Subject: [PATCH] wgl: pin opengl32.dll so pixel formats set through GDI last
+
+opengl32.dll keeps its own record of each window's pixel format. When a
+process calls ChoosePixelFormat, DescribePixelFormat or SetPixelFormat
+before it has loaded opengl32.dll itself, GDI loads opengl32.dll for that
+one call, opengl32.dll loads the ICD and calls DrvValidateVersion, and GDI
+frees opengl32.dll again afterwards. The pixel format SetPixelFormat
+recorded is lost with it. When the process loads opengl32.dll later,
+GetPixelFormat returns 0 and wglCreateContext fails with
+ERROR_INVALID_PIXEL_FORMAT (2000) before it calls the ICD.
+
+GZDoom does exactly this. It loads opengl32.dll with LoadLibrary only after
+it has set the pixel format of its hidden dummy window, so it could not
+create its first context and stopped with "Unable to create an OpenGL
+render context. Insufficient driver support for context creation".
+
+An ICD that imports opengl32.dll keeps it loaded; this one does not.
+DrvValidateVersion now pins opengl32.dll the first time it is called, so
+opengl32.dll and its pixel-format records stay for the life of the process.
+
+Evidence: docs/gzdoom.md, docs/evidence/gzdoom/ (src/gzgl.c).
+Origin: vmlab-win3d gzdoom worker.
+---
+diff --git a/src/gallium/frontends/wgl/stw_device.c b/src/gallium/frontends/wgl/stw_device.c
+index 24fd03d..dbb98c3 100644
+--- a/src/gallium/frontends/wgl/stw_device.c
++++ b/src/gallium/frontends/wgl/stw_device.c
+@@ -299,5 +299,27 @@ DrvValidateVersion(ULONG ulVersion)
+     * ignore it.
+     */
+    (void)ulVersion;
++
++   /* opengl32.dll keeps its own record of each window's pixel format. When
++    * a process calls ChoosePixelFormat, DescribePixelFormat or
++    * SetPixelFormat before it has loaded opengl32.dll itself, GDI loads
++    * opengl32.dll for that one call (which loads this ICD and calls
++    * DrvValidateVersion) and frees it again afterwards. The pixel format
++    * SetPixelFormat recorded goes with it, so when the process loads
++    * opengl32.dll later, GetPixelFormat returns 0 and wglCreateContext
++    * fails with ERROR_INVALID_PIXEL_FORMAT before it reaches the ICD.
++    * GZDoom loads opengl32.dll with LoadLibrary only after setting its
++    * window's pixel format, and could not create a context.
++    *
++    * An ICD that imports opengl32.dll keeps it loaded; this one does not.
++    * Pin it the first time it loads us, so its state lives as long as the
++    * process.
++    */
++   static bool pinned;
++   if (!pinned) {
++      HMODULE opengl32;
++      pinned = GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_PIN, "opengl32.dll", &opengl32);
++   }
++
+    return true;
+ }

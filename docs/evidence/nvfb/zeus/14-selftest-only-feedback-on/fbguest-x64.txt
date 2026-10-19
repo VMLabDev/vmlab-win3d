@@ -1,0 +1,21 @@
+device Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU), driver 0x6801000
+vkCreateDevice median 93168 us (min 78031, max 135380, 11 runs)
+type 2 flags 0x06 heap 1 HOST_VISIBLE HOST_COHERENT
+  primed round 1: read 0x0
+  primed round 2: read 0x0
+  primed round 3: read 0x0
+  primed  misses 184/200 (visible after invalidate 0, after 50 ms spin 0, never 184), 50065 us per round
+  flushed round 1: read 0x0
+  flushed round 2: read 0x0
+  flushed round 4: read 0x0
+  flushed misses 91/200 (visible after invalidate 0, after 50 ms spin 40, never 51), 20278 us per round
+  clflush misses 0/200 (visible after invalidate 0, after 50 ms spin 0, never 0), 1015 us per round
+type 3 flags 0x0e heap 1 HOST_VISIBLE HOST_COHERENT HOST_CACHED
+  primed  misses 0/200 (visible after invalidate 0, after 50 ms spin 0, never 0), 703 us per round
+  flushed misses 0/200 (visible after invalidate 0, after 50 ms spin 0, never 0), 219 us per round
+  clflush misses 0/200 (visible after invalidate 0, after 50 ms spin 0, never 0), 791 us per round
+type 4 flags 0x07 heap 0 DEVICE_LOCAL HOST_VISIBLE HOST_COHERENT
+  primed  misses 0/200 (visible after invalidate 0, after 50 ms spin 0, never 0), 455 us per round
+  flushed misses 0/200 (visible after invalidate 0, after 50 ms spin 0, never 0), 293 us per round
+  clflush misses 0/200 (visible after invalidate 0, after 50 ms spin 0, never 0), 578 us per round
+RESULT FAIL

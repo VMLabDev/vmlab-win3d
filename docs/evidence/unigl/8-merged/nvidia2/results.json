@@ -1,0 +1,44 @@
+{
+  "heaven-opengl": {
+    "exit": "clean",
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 182.2,
+    "session_id": 1,
+    "app_local_graphics": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SysWOW64\\opengl32.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\GLU32.dll [syswow64] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\viogpu_wgl.dll [syswow64] ",
+      "C:\\WINDOWS\\SysWOW64\\vulkan-1.dll [syswow64] 1.4.363.0",
+      "C:\\WINDOWS\\SysWOW64\\dxgi.dll [syswow64] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\libvulkan_virtio.dll [syswow64] ",
+      "C:\\WINDOWS\\SysWOW64\\d3d11.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll [syswow64] ",
+      "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)"
+    ],
+    "fps": "52.7 mean of the on-screen counter in 7 of 30 frames (OCR)"
+  },
+  "valley-opengl": {
+    "exit": "clean",
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 182,
+    "session_id": 1,
+    "app_local_graphics": [],
+    "graphics_modules": [
+      "C:\\WINDOWS\\SysWOW64\\opengl32.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\GLU32.dll [syswow64] 10.0.26100.1 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\viogpu_wgl.dll [syswow64] ",
+      "C:\\WINDOWS\\SysWOW64\\vulkan-1.dll [syswow64] 1.4.363.0",
+      "C:\\WINDOWS\\SysWOW64\\dxgi.dll [syswow64] 10.0.26100.9444 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\libvulkan_virtio.dll [syswow64] ",
+      "C:\\WINDOWS\\SysWOW64\\d3d11.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+      "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll [syswow64] ",
+      "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)"
+    ],
+    "fps": "59.9 mean of the on-screen counter in 11 of 30 frames (OCR)"
+  }
+}

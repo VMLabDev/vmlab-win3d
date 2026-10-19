@@ -1,0 +1,1 @@
+7884 window=0x30302 title=[Freedoom: Phase 2] closed=True

@@ -1,0 +1,1 @@
+5500 window=0x20234 title=[Unigine Valley Benchmark 1.0 Basic (OpenGL)] closed=True

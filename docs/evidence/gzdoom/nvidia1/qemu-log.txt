@@ -1,0 +1,15 @@
+vmlab: env: VK_LOADER_DRIVERS_SELECT=*nvidia* VK_ADD_IMPLICIT_LAYER_PATH=/home/wil/.local/share/vmlab/vk-layer/0df9161736fcf95d VMLAB_VK_PCI_ADDRESS=0000:01:00.0
+virtio_gpu_virgl_process_cmd: ctrl 0x102, error 0x1203
+virtio_gpu_virgl_process_cmd: ctrl 0x102, error 0x1203
+virtio_gpu_virgl_process_cmd: ctrl 0x102, error 0x1203
+virgl_render_server[2379936]: vkr: destroying context 23 (yttrium) with a valid instance
+virgl_render_server[2367010]: vkr: destroying context 9 (yttrium) with a valid instance
+virgl_render_server[2367010]: vkr: destroying device with valid objects
+virgl_render_server[2452611]: vkr: destroying context 45 (yttrium) with a valid instance
+virgl_render_server[2452611]: vkr: destroying device with valid objects
+virgl_render_server[2425313]: vkr: destroying context 33 (yttrium) with a valid instance
+virgl_render_server[2425313]: vkr: destroying device with valid objects
+virgl_render_server[2425229]: vkr: destroying context 32 (yttrium) with a valid instance
+virgl_render_server[2425229]: vkr: destroying device with valid objects
+virgl_render_server[2424690]: vkr: destroying context 30 (yttrium) with a valid instance
+virgl_render_server[2424690]: vkr: destroying device with valid objects

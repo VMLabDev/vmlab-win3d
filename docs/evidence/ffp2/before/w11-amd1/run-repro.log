@@ -1,0 +1,8 @@
+d3d9_ffp2-x64-hw             exit 5  RESULT ran=49 failed_hr=5
+d3d9_ffp2-x86-hw             exit 5  RESULT ran=49 failed_hr=5
+d3d9_ffp2-x64-swvp           exit 5  RESULT ran=49 failed_hr=5
+d3d9_ffp2-x64-mixhw          exit 5  RESULT ran=49 failed_hr=5
+d3d9_ffp2-x64-mixsw          exit 5  RESULT ran=49 failed_hr=5
+d3d9_ffp-x64-mixhw           exit 0  RESULT ran=168 failed_hr=0
+d3d9_ffp-x64-mixsw           exit 0  RESULT ran=168 failed_hr=0
+BEFORE-DONE

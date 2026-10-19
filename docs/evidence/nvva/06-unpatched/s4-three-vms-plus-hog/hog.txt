@@ -1,0 +1,4 @@
+device NVIDIA GeForce RTX 5090 bus 05
+type 4 heap 2 size 246 MiB
+chunk 0: vkAllocateMemory -2
+holding 330 s

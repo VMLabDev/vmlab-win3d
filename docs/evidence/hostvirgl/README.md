@@ -121,6 +121,18 @@ screen through DXGI Desktop Duplication got `DXGI_ERROR_ACCESS_LOST` on
 every frame on this display stack, and slowed the GL loop enough that the
 window stayed magenta for most of the run. Neither is translucency.
 
+## `deploy/`: helios's host config
+
+`deploy.sh` (in the orchestrator's worker directory) backed up
+`~/.config/vmlab/config.wcl` to `config.wcl.bak-hostvirgl-20261019-113229`,
+added the `qemu_env` line to the `Nvidia1` and `Nvidia2` blocks, and ran
+`vmlab validate`. `config.wcl.txt` is the result. A fresh lab on `Nvidia2`
+under the user's own supervisor then started QEMU with
+`RENDER_SERVER_EXEC_PATH` on its `vmlab: env:` line and ran
+`~/.local/opt/virglrenderer-vmlab/libexec/virgl_render_server`
+(`fresh-vm-check.txt`). `vmlab status -v` names the host GPU and QEMU but
+not `qemu_env` (vmlab 0.28.0-alpha).
+
 ## Build and release asset
 
 `out/host/virglrenderer/BUILDINFO` of the server under test:

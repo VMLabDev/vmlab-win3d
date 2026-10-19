@@ -1,0 +1,1 @@
+7692 window=0x20296 title=[Unigine Heaven Benchmark 4.0 Basic (OpenGL)] closed=True

@@ -1,28 +1,28 @@
-[00:38:35] waiting for the guest agent
-[00:38:36] copying vmlab-win3d-0.1.1 to C:\vmlab-win3d
-pushed 29 file(s), 102406757 bytes to win:C:/vmlab-win3d
-[00:38:40] running C:\vmlab-win3d\Install.cmd
-2026-10-18T14:38:38.569-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
-2026-10-18T14:38:42.483-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
-2026-10-18T14:38:46.037-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
-2026-10-18T14:38:46.368-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
-2026-10-18T14:38:46.381-07:00 [Install]   Root "Trusted Root Certification Authorities"
-2026-10-18T14:38:46.388-07:00 [Install]   Signature matches Public Key
-2026-10-18T14:38:46.392-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
-2026-10-18T14:38:46.397-07:00 [Install]   CertUtil: -addstore command completed successfully.
-2026-10-18T14:38:46.449-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
-2026-10-18T14:38:46.454-07:00 [Install]   TrustedPublisher "Trusted Publishers"
-2026-10-18T14:38:46.458-07:00 [Install]   Signature matches Public Key
-2026-10-18T14:38:46.462-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
-2026-10-18T14:38:46.467-07:00 [Install]   CertUtil: -addstore command completed successfully.
-2026-10-18T14:38:46.557-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
-2026-10-18T14:38:46.561-07:00 [Install]   The operation completed successfully.
-2026-10-18T14:38:46.972-07:00 [Install] test signing is set but not active in this boot
-2026-10-18T14:38:47.964-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
-2026-10-18T14:38:48.043-07:00 [Install] rebooting; step Driver resumes after the restart
-[00:38:51] Install.cmd exited 0
-[00:38:53] state: RebootPending|Driver|
-[00:40:04] state: Installing|Driver|
-[00:40:21] state: RebootPending|Verify|
-[00:41:53] state: Installed||
-[00:41:53] done: Installed
+[07:51:00] waiting for the guest agent
+[07:51:01] copying vmlab-win3d-0.1.1 to C:\vmlab-win3d
+pushed 29 file(s), 102412909 bytes to win:C:/vmlab-win3d
+[07:51:04] running C:\vmlab-win3d\Install.cmd
+2026-10-18T21:51:02.399-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
+2026-10-18T21:51:05.689-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T21:51:08.846-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
+2026-10-18T21:51:09.148-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T21:51:09.165-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-18T21:51:09.170-07:00 [Install]   Signature matches Public Key
+2026-10-18T21:51:09.174-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T21:51:09.176-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T21:51:09.229-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T21:51:09.236-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-18T21:51:09.238-07:00 [Install]   Signature matches Public Key
+2026-10-18T21:51:09.242-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T21:51:09.247-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T21:51:09.336-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-18T21:51:09.340-07:00 [Install]   The operation completed successfully.
+2026-10-18T21:51:09.763-07:00 [Install] test signing is set but not active in this boot
+2026-10-18T21:51:10.440-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T21:51:10.521-07:00 [Install] rebooting; step Driver resumes after the restart
+[07:51:14] Install.cmd exited 0
+[07:51:15] state: RebootPending|Driver|
+[07:52:20] state: Installing|Runtime|
+[07:53:30] state: RebootPending|Verify|
+[07:53:47] state: Installed||
+[07:53:47] done: Installed

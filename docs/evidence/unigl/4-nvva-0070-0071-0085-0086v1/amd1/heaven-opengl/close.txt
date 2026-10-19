@@ -1,0 +1,1 @@
+7752 window=0x600BE title=[Unigine Heaven Benchmark 4.0 Basic (OpenGL)] closed=True

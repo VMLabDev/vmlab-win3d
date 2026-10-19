@@ -1,0 +1,1 @@
+6660 window=0x602DE title=[3D Particles (DEBUG)] closed=True

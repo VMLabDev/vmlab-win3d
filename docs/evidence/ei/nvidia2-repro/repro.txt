@@ -1,0 +1,13 @@
+== ei_repro gpu
+gpu: d3d12.dll is C:\WINDOWS\SYSTEM32\d3d12.dll
+PASS gpu: 16 cell centres, 64 UAV words checked
+== ei_repro warp
+warp: d3d12.dll is C:\ei\warp\d3d12.dll
+PASS warp: 16 cell centres, 64 UAV words checked
+== ei_repro compare
+PASS gpu: 16 cell centres, 64 UAV words checked
+PASS warp: 16 cell centres, 64 UAV words checked
+PASS gpu-vs-warp: 0 of 16384 pixels differ by more than 1/255 (gpu has 8788 non-clear pixels)
+PASS gpu-vs-warp: UAV contents identical
+RESULT PASS
+== exit 0 

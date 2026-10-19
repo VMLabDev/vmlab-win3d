@@ -1,0 +1,2 @@
+      2 [warning pid=4704 process=gzdoom.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=Nx8 usage=0x80017; creating the image without it
+      2 [warning pid=4704 process=gzdoom.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=Nx408 usage=0x80017; creating the image without it

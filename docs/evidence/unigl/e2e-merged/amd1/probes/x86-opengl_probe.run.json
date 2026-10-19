@@ -1,0 +1,37 @@
+﻿{
+    "name":  "x86-opengl_probe",
+    "exe":  "C:\\win3d\\probes\\x86\\opengl_probe.exe",
+    "arguments":  "--seconds 20 --out C:\\win3d\\results\\probes\\x86-opengl_probe.json",
+    "user":  "VMLABVM-2V7DQH1\\win3d",
+    "session_id":  1,
+    "pid":  960,
+    "wow64":  true,
+    "started":  "2026-10-18T16:15:17.7676656-07:00",
+    "ended":  "2026-10-18T16:15:49.5676808-07:00",
+    "duration_s":  31.8,
+    "timed_out":  false,
+    "exit_code":  0,
+    "exit_code_hex":  "0x00000000",
+    "task_result":  0,
+    "probe_json":  "C:\\win3d\\results\\probes\\x86-opengl_probe.json",
+    "probe_result":  "pass",
+    "adapter":  "zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV))",
+    "software":  false,
+    "readback_ok":  true,
+    "module_count":  46,
+    "graphics_modules":  [
+                             "C:\\WINDOWS\\SysWOW64\\OPENGL32.DLL [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\GLU32.dll [syswow64] 10.0.26100.1 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\dxcore.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\viogpu_wgl.dll [syswow64] ",
+                             "C:\\WINDOWS\\SysWOW64\\vulkan-1.dll [syswow64] 1.4.363.0",
+                             "C:\\WINDOWS\\SysWOW64\\dxgi.dll [syswow64] 10.0.26100.9444 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\libvulkan_virtio.dll [syswow64] ",
+                             "C:\\WINDOWS\\SysWOW64\\d3d11.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SysWOW64\\viogpu_d3d10.dll [syswow64] ",
+                             "C:\\WINDOWS\\SysWOW64\\dwmapi.dll [syswow64] 10.0.26100.9278 (WinBuild.160101.0800)"
+                         ],
+    "app_local_modules":  [
+
+                          ]
+}

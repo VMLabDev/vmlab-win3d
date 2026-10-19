@@ -1,0 +1,10 @@
+import <vmlab.wcl>
+
+// Does a NIC-only clone of the evaluation template activate by itself?
+lab "win3d-wu-lic" {
+  vm "win" {
+    template = "x86_64/windows-11@26100.1742.5"
+    agent_update = false
+    nic { nat = true }
+  }
+}

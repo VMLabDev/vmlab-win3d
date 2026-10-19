@@ -1,0 +1,4 @@
+rep-x64-d3d12-1 (): pass fps 14.22 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+rep-x64-d3d12-1 (): pass fps 13.98 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+rep-x86-d3d12-1 (): pass fps 21.74 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]
+rep-x64-vulkan-1 (): pass fps 45.13 readback True [[255, 0, 0], [0, 0, 255], [0, 255, 0]]

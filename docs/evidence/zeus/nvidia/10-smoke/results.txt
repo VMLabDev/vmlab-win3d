@@ -1,0 +1,43 @@
+Item  Result Check
+------------------------------------------------------------------------------
+1     pass   scripts/build.sh builds the package
+             staged; exit 0
+2     pass   documented install command (scripts/install-into-vm.sh)
+             exit 0; Installed
+2+    pass   display device on our driver, problem code 0
+             Hardsoft VirtIO GPU 3D controller
+2     pass   vulkaninfo --summary (x64) lists the Venus device
+             Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU)
+2+    pass   vulkaninfo --summary (x86) lists the Venus device
+             Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU)
+2+    pass   vulkaninfo --summary (x64) lists exactly one Venus device
+             1 Venus: Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU)
+2+    pass   LunarG vulkaninfo 1.4.363 (x64, pinned) lists Venus through the installed loader
+             Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU)
+2+    pass   LunarG vulkaninfo 1.4.363 (x86, pinned) lists Venus through the installed loader
+             Virtio-GPU Venus (NVIDIA GeForce RTX 4060 Laptop GPU)
+2     FAIL   Direct3D 9 (x64) renders on the GPU and shows on the console
+             no result; probe window not found in any console capture
+2     FAIL   Direct3D 9 (x86) renders on the GPU and shows on the console
+             no result; probe window not found in any console capture
+2     pass   Direct3D 11 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 58.94 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     FAIL   Direct3D 11 (x86) renders on the GPU and shows on the console
+             no result; probe window not found in any console capture
+2     FAIL   Direct3D 12 (x64) renders on the GPU and shows on the console
+             no result; probe window not found in any console capture
+2     FAIL   Direct3D 12 (x86) renders on the GPU and shows on the console
+             no result; probe window not found in any console capture
+2     FAIL   OpenGL (x64) renders on the GPU and shows on the console
+             no result; probe window not found in any console capture
+2     FAIL   OpenGL (x86) renders on the GPU and shows on the console
+             no result; probe window not found in any console capture
+2+    FAIL   Vulkan (x64) renders on the GPU and shows on the console
+             no result; probe window not found in any console capture
+2+    FAIL   Vulkan (x86) renders on the GPU and shows on the console
+             no result; probe window not found in any console capture
+2     FAIL   dxdiag reports hardware acceleration on our driver
+             hardware_acceleration=None, card None, D3D None, DDraw None, None
+------------------------------------------------------------------------------
+FAIL: 4 of 12 Done checks pass ('+' rows are extra and do not count)
+stage: ok

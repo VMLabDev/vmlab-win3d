@@ -19,12 +19,23 @@
 # D3D12, OpenGL and Vulkan probes (x64 and x86) with `vmlab vm screenshot`
 # console captures of each, and dxdiag. The evidence goes to
 # docs/evidence/zeus/<gpu>/ in the staging tree; tests/e2e/check.py judges it.
-# The lab is destroyed unless --keep.
+# The lab is destroyed unless --keep. WIN3D_GUEST_ENV="NAME=VALUE ..." sets
+# machine-wide environment variables in the guest before the install. WIN3D_SMOKE=1 runs only vulkaninfo and
+# the x64 D3D11 probe after the install (a short first test of a new GPU).
 #
-# --gpu nvidia runs vmlab through labs/zeus/vmlab-iso.sh: an isolated
-# supervisor whose PATH puts the patched QEMU (patches/host/build-qemu.sh, built
-# on Zeus in the staging tree) first. --gpu intel uses the user's supervisor
-# and the host QEMU, unless WIN3D_ISO=1 (then vmlab-iso.sh's WIN3D_* apply).
+# Both GPUs use the user's supervisor. On vmlab >= 0.26 the host config's
+# qemu_binary gives Nvidia1 the patched QEMU (patches/host/build-qemu.sh or
+# the release tarball, installed in ~/.local/opt/qemu-vmlab-egl). WIN3D_ISO=1
+# runs vmlab through labs/zeus/vmlab-iso.sh instead: an isolated supervisor
+# whose WIN3D_* variables pick the QEMU and render server (the 0.24 runs).
+#
+# For --gpu nvidia a monitor records the kernel's NVRM lines
+# (kernel-nvrm.txt) and every change of the GPU's runtime power state
+# (runtime-pm.txt) for the whole run. On an Xid 79 (the GPU fell off the
+# bus) it captures nvidia-smi and the power state (gpu-lost.txt) and stops
+# the run: nothing more touches the GPU. WIN3D_KEEPAWAKE=1 runs
+# labs/zeus/keepawake (built on the host if needed) on the GPU for the whole
+# run, so runtime power management never suspends it (keepawake.log).
 #
 # Exit status: 0 when every Done check passes, 1 otherwise, 2 on usage.
 set -uo pipefail
@@ -45,13 +56,13 @@ while [ $# -gt 0 ]; do
 done
 # PCI is for the host.txt record only; the lab names the GPU with host_gpu.
 case $GPU in
-    intel) PCI=0000:00:02.0 ;;
-    nvidia) PCI=0000:01:00.0 ;;
-    amd) PCI=0000:72:00.0 ;;  # helios' AMD iGPU: the regression run
+    intel) PCI=0000:00:02.0; HOST_GPU=Intel1 ;;
+    nvidia) PCI=0000:01:00.0; HOST_GPU=Nvidia1 ;;
+    amd) PCI=0000:72:00.0; HOST_GPU=AMD1 ;;  # helios' AMD iGPU: the regression run
     *) echo "--gpu intel|nvidia|amd" >&2; exit 2 ;;
 esac
-# nvidia (or WIN3D_ISO=1) goes through the isolated supervisor.
-if [ "$GPU" = nvidia ] || [ "${WIN3D_ISO:-0}" = 1 ]; then ISO=1; export VMLAB=$REPO/labs/zeus/vmlab-iso.sh
+# WIN3D_ISO=1 goes through the isolated supervisor.
+if [ "${WIN3D_ISO:-0}" = 1 ]; then ISO=1; export VMLAB=$REPO/labs/zeus/vmlab-iso.sh
 else ISO=0; export VMLAB=$HOME/.local/bin/vmlab; fi
 vmlab() { "$VMLAB" "$@"; }
 vmlab_state() { # the XDG_STATE_HOME the lab's supervisor uses
@@ -99,12 +110,19 @@ host_stack() {
         echo "staging: $(cat "$REPO/STAGED" 2>/dev/null)"
         echo "template: $TEMPLATE"
         echo "qemu: $(command -v qemu-system-x86_64) $(qemu-system-x86_64 --version | head -1)"
+        local qb; qb=$(awk -v g="$HOST_GPU" '$1 == "gpu" && $2 == "\""g"\"" { f = 1 } f && /qemu_binary/ { gsub(/[" ]/, "", $3); print $3; exit } f && /^}/ { f = 0 }' "$HOME/.config/vmlab/config.wcl" 2>/dev/null)
+        [ -n "$qb" ] && echo "qemu_binary ($HOST_GPU): $qb $("$qb" --version | head -1)"
         [ "$ISO" = 1 ] && echo "isolated supervisor: qemu $("$VMLAB" --which-qemu); render server ${WIN3D_RENDER_SERVER:-host}; extra env ${WIN3D_QEMU_ENV:-none}"
         echo "packages: $(pacman -Q qemu-full qemu-base virglrenderer mesa vulkan-intel vulkan-radeon nvidia-utils 2>/dev/null | tr '\n' ' ')"
         echo "vmlab: $(vmlab --version)"
         local rn; rn=$(basename "$(ls -d /sys/bus/pci/devices/$PCI/drm/renderD* 2>/dev/null | head -1)")
         echo "venus gpu: /dev/dri/$rn $PCI $(lspci -s "$PCI" 2>/dev/null | cut -d' ' -f2-)"
-        [ "$GPU" = nvidia ] && nvidia-smi --query-gpu=name,driver_version --format=csv,noheader
+        if [ "$GPU" = nvidia ]; then
+            nvidia-smi --query-gpu=name,driver_version --format=csv,noheader
+            echo "runtime pm: control $(cat /sys/bus/pci/devices/$PCI/power/control), status $(cat /sys/bus/pci/devices/$PCI/power/runtime_status); $(grep -h 'Runtime D3 status' /proc/driver/nvidia/gpus/$PCI/power | tr -s ' '); $(grep -h DynamicPowerManagement: /proc/driver/nvidia/params)"
+            echo "keepawake: ${WIN3D_KEEPAWAKE:-0}"
+            echo "guest env: ${WIN3D_GUEST_ENV:-none}"
+        fi
     } | tee "$EV/host.txt"
 }
 
@@ -167,6 +185,12 @@ prepare_guest() {
     gfile 300 'C:\win3d\guest\Set-TestDesktop.ps1' -Reboot >"$EV/test-desktop.txt" 2>&1 || true
     sleep 60; wait_agent || return 1
     autologon before-install
+    # WIN3D_GUEST_ENV="NAME=VALUE ...": machine-wide guest environment variables,
+    # set before the install, whose reboots make every process see them.
+    local kv
+    for kv in ${WIN3D_GUEST_ENV:-}; do
+        gps "[Environment]::SetEnvironmentVariable('${kv%%=*}', '${kv#*=}', 'Machine'); '${kv%%=*}=' + [Environment]::GetEnvironmentVariable('${kv%%=*}', 'Machine')" 60 | tee -a "$EV/guest-env.txt"
+    done
 }
 
 autologon() { # autologon NAME: record the Winlogon autologon values (not the password)
@@ -219,7 +243,7 @@ fetch_pin() { # fetch_pin NAME: download a tests/e2e/PINS entry into the cache, 
     read -r _ sha url < <(grep "^$name " "$HERE/PINS") || return 1
     f=$REPO/.scratch/e2e/cache/$(basename "$url")
     mkdir -p "$(dirname "$f")"
-    [ -f "$f" ] || curl -sSfLo "$f.part" "$url" && { [ -f "$f" ] || mv "$f.part" "$f"; } || return 1
+    [ -f "$f" ] || { curl -sSfLo "$f.part.$$" "$url" && mv "$f.part.$$" "$f"; } || return 1
     echo "$sha  $f" | sha256sum -c --quiet - >&2 || { note "sha256 mismatch for $name"; return 1; }
     echo "$f"
 }
@@ -283,6 +307,11 @@ tests() {
     gfile 600 'C:\win3d\e2e\Invoke-Vulkaninfo.ps1' >"$WORK/raw/vulkaninfo.out" 2>&1 || true
     grep -E 'deviceName|deviceType|driverName|exit' "$WORK/raw/vulkaninfo.out" || true
 
+    if [ "${WIN3D_SMOKE:-0}" = 1 ]; then
+        say "5b smoke: the x64 D3D11 probe only (WIN3D_SMOKE=1)"
+        probe x64 d3d11
+        return 0
+    fi
     say "5b probes"
     for api in d3d9 d3d11 d3d12 opengl vulkan; do
         for arch in x64 x86; do probe "$arch" "$api"; done
@@ -346,10 +375,81 @@ teardown() {
     find "$WORK/shots" -name '*.png' -delete
 }
 
+gpu_monitor() { # NVIDIA: kernel NVRM lines and runtime power state for the whole run
+    local pm=/sys/bus/pci/devices/$PCI/power/runtime_status
+    journalctl -k -f -n 0 -o short-iso --no-pager 2>&1 | grep --line-buffered -E 'NVRM|Xid|nvidia' >"$EV/kernel-nvrm.txt" &
+    MON_PIDS="$!"
+    (
+        last=
+        while :; do
+            cur=$(cat "$pm" 2>&1)
+            [ "$cur" = "$last" ] || { echo "$(date -Is) $cur"; last=$cur; }
+            if [ -z "${lost:-}" ] && grep -q 'Xid.*: 79,' "$EV/kernel-nvrm.txt" 2>/dev/null; then
+                lost=1
+                {
+                    echo "## $(date -Is) Xid 79 seen; the run stops"
+                    echo "## kernel"; journalctl -k -b --no-pager -o short-iso | grep -E 'NVRM|Xid' | tail -100
+                    echo "## nvidia-smi"; nvidia-smi 2>&1
+                    echo "## power"; grep -H . /sys/bus/pci/devices/$PCI/power/{control,runtime_status} 2>&1
+                    cat /proc/driver/nvidia/gpus/$PCI/power 2>&1
+                } >"$EV/gpu-lost.txt"
+                # The trap runs once the foreground command returns: end the
+                # guest commands it may be waiting on (one VM at a time on Zeus).
+                kill -TERM "$MAIN_PID" 2>/dev/null
+                pkill -TERM -u "$(id -u)" -f "$VMLAB exec" 2>/dev/null
+            fi
+            sleep 1
+        done
+    ) >"$EV/runtime-pm.txt" 2>&1 &
+    MON_PIDS="$MON_PIDS $!"
+}
+
+keepawake_start() {
+    local ka=$REPO/labs/zeus/keepawake
+    [ -x "$ka/keepawake" ] || "$ka/build.sh" || return 1
+    "$ka/keepawake" --pci "$PCI" >"$EV/keepawake.log" 2>&1 &
+    KA_PID=$!
+    sleep 2
+    kill -0 "$KA_PID" 2>/dev/null || { cat "$EV/keepawake.log"; return 1; }
+    note "keepawake pid $KA_PID: $(head -1 "$EV/keepawake.log")"
+}
+
+stop_helpers() {
+    if [ -n "${KA_PID:-}" ]; then # it may hang in glFinish on a lost GPU
+        kill -TERM "$KA_PID" 2>/dev/null
+        for _ in 1 2 3 4 5 6 7 8 9 10; do kill -0 "$KA_PID" 2>/dev/null || break; sleep 1; done
+        kill -KILL "$KA_PID" 2>/dev/null
+    fi
+    # shellcheck disable=SC2086
+    [ -n "${MON_PIDS:-}" ] && kill $MON_PIDS 2>/dev/null
+    pkill -f "journalctl -k -f -n 0 -o short-iso" 2>/dev/null
+    KA_PID= MON_PIDS=
+}
+
+gpu_lost() { # TERM from gpu_monitor: stop at once, keep the evidence, touch nothing
+    trap - TERM
+    say "GPU fell off the bus (Xid 79): stopping"
+    STAGE="gpu fell off the bus"
+    KEEP=0 teardown
+    stop_helpers
+    coredumpctl list --no-pager --since "-2h" 2>&1 | tail -5 >"$EV/coredumps.txt"
+    python3 "$HERE/check.py" "$EV"
+    echo "stage: $STAGE" >>"$EV/results.txt"
+    cp "$WORK/run.log" "$EV/run.log"
+    exit 1
+}
+
 say "vmlab-win3d on zeus: $GPU, $TEMPLATE"
 host_stack
 STAGE=ok
-if ! build; then STAGE="build failed"
+MAIN_PID=$$
+if [ "$GPU" = nvidia ]; then
+    trap gpu_lost TERM
+    gpu_monitor
+    if [ "${WIN3D_KEEPAWAKE:-0}" = 1 ]; then keepawake_start || STAGE="keepawake failed"; fi
+fi
+if [ "$STAGE" != ok ]; then :
+elif ! build; then STAGE="build failed"
 elif ! lab_up; then STAGE="lab bring-up failed"
 else
     if ! prepare_guest; then STAGE="guest preparation failed"
@@ -358,6 +458,7 @@ else
     fi
 fi
 teardown
+stop_helpers
 say "result ($STAGE)"
 python3 "$HERE/check.py" "$EV"; rc=$?
 echo "stage: $STAGE" >>"$EV/results.txt"

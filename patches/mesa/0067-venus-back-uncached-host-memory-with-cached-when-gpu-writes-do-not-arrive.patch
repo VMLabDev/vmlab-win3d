@@ -1,0 +1,487 @@
+Subject: [PATCH] venus: back uncached host memory with cached memory when GPU writes do not arrive
+
+0065 moved Venus's own feedback buffers to host-cached memory, but an
+application can still put a CPU-read buffer in an uncached HOST_COHERENT
+type. On the RTX 4060 Laptop host (Intel CPU) the guest never sees the host
+GPU's writes to NVIDIA's uncached system-memory type: it keeps reading a
+stale cache line.
+
+0066's device-creation check now also tests each uncached HOST_COHERENT
+type that has a host-cached counterpart (same heap, a superset of its
+flags): a 4 KiB buffer in that type, written and read by the CPU, then
+filled by the GPU in the same submission as the fence feedback check. A
+stale read needs the CPU's line to still be cached when the GPU writes, and
+other work can evict it, so the check no longer blocks on the fence: it
+polls the fence and reads the test words on every iteration, which keeps
+their lines cached. If a fill is not visible after the fence and 2 ms
+(0066 allowed 20 ms), the device backs every later allocation of that type
+with the cached type, unless the memory is exported, or dedicated to a
+resource whose memory type bits exclude it. Both types are HOST_COHERENT,
+so the application's mapping semantics are unchanged; the GPU then
+accesses the memory coherently with the CPU caches.
+
+On a host where the writes arrive nothing changes. The check adds one
+buffer, one 4 KiB allocation and its mapping to device creation, in the
+same submission and fence wait as 0066.
+
+Evidence: docs/nvfb.md, docs/evidence/nvfb/.
+Origin: vmlab-win3d nvfb worker.
+---
+diff --git a/src/virtio/vulkan/vn_device.c b/src/virtio/vulkan/vn_device.c
+index 4e03ae1..d9e85d1 100644
+--- a/src/virtio/vulkan/vn_device.c
++++ b/src/virtio/vulkan/vn_device.c
+@@ -535,6 +535,9 @@ vn_device_init(struct vn_device *dev,
+       goto out_destroy_device;
+    }
+ 
++   for (uint32_t i = 0; i < VK_MAX_MEMORY_TYPES; i++)
++      dev->mem_type_remap[i] = i;
++
+    result = vn_device_feedback_pool_init(dev);
+    if (result != VK_SUCCESS)
+       goto out_queue_family_fini;
+diff --git a/src/virtio/vulkan/vn_device.h b/src/virtio/vulkan/vn_device.h
+index 765702f..90bd8db 100644
+--- a/src/virtio/vulkan/vn_device.h
++++ b/src/virtio/vulkan/vn_device.h
+@@ -53,6 +53,14 @@ struct vn_device {
+     */
+    bool feedback_disabled;
+ 
++   /* Memory type the device allocates for each memory type the application
++    * asks for. Identity, except for an uncached host-visible type whose
++    * host GPU writes did not reach the guest (vn_feedback_self_test): that
++    * type is backed by the host-cached type with the same heap and a
++    * superset of its flags.
++    */
++   uint8_t mem_type_remap[VK_MAX_MEMORY_TYPES];
++
+    simple_mtx_t mutex;
+    struct list_head chains;
+ };
+diff --git a/src/virtio/vulkan/vn_device_memory.c b/src/virtio/vulkan/vn_device_memory.c
+index 5487eb2..d2c0c37 100644
+--- a/src/virtio/vulkan/vn_device_memory.c
++++ b/src/virtio/vulkan/vn_device_memory.c
+@@ -417,6 +417,35 @@ vn_device_memory_alloc(struct vn_device *dev,
+    const VkMemoryType *mem_type = &dev->physical_device->memory_properties
+                                       .memoryTypes[mem_vk->memory_type_index];
+ 
++   /* Back an uncached host-visible type whose host GPU writes do not reach
++    * the guest with its cached counterpart (vn_feedback_self_test), unless
++    * the memory is exported or dedicated to a resource that cannot use it.
++    */
++   VkMemoryAllocateInfo remapped_info;
++   const uint32_t remap = dev->mem_type_remap[mem_vk->memory_type_index];
++   if (remap != mem_vk->memory_type_index && !mem_vk->export_handle_types) {
++      const VkMemoryDedicatedAllocateInfo *dedicated =
++         vk_find_struct_const(alloc_info->pNext, MEMORY_DEDICATED_ALLOCATE_INFO);
++      uint32_t type_bits = ~0u;
++      if (dedicated && dedicated->buffer != VK_NULL_HANDLE) {
++         type_bits = vn_buffer_from_handle(dedicated->buffer)
++                        ->requirements.memory.memoryRequirements.memoryTypeBits;
++      } else if (dedicated && dedicated->image != VK_NULL_HANDLE) {
++         const struct vn_image *img = vn_image_from_handle(dedicated->image);
++         type_bits = img->deferred_info
++                        ? 0
++                        : img->requirements[0]
++                             .memory.memoryRequirements.memoryTypeBits;
++      }
++      if (type_bits & (1u << remap)) {
++         remapped_info = *alloc_info;
++         remapped_info.memoryTypeIndex = remap;
++         alloc_info = &remapped_info;
++         mem_vk->memory_type_index = remap;
++         mem_type = &dev->physical_device->memory_properties.memoryTypes[remap];
++      }
++   }
++
+    const bool has_guest_vram = dev->renderer->info.has_guest_vram;
+    const bool host_visible =
+       mem_type->propertyFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+diff --git a/src/virtio/vulkan/vn_feedback.c b/src/virtio/vulkan/vn_feedback.c
+index b9fb710..b7d326f 100644
+--- a/src/virtio/vulkan/vn_feedback.c
++++ b/src/virtio/vulkan/vn_feedback.c
+@@ -7,6 +7,7 @@
+ 
+ #include "venus-protocol/vn_protocol_driver_queue.h"
+ 
++#include "vn_buffer.h"
+ #include "vn_command_buffer.h"
+ #include "vn_device.h"
+ #include "vn_physical_device.h"
+@@ -904,22 +905,170 @@ vn_feedback_cmd_pools_fini(struct vn_device *dev)
+    vk_free(alloc, dev->fb_cmd_pools);
+ }
+ 
+-/* Checks once per device that a feedback write by the host GPU reaches the
+- * guest: one fence feedback command, submitted and waited for through the
+- * renderer, must leave its slot signalled. A host whose GPU writes do not
+- * become visible in the guest's mapping of the feedback buffer would
+- * otherwise hang every fence and timeline semaphore wait (the guest keeps
+- * reading the status it wrote itself; docs/nvfb.md). On failure feedback is
+- * disabled for the device, which costs a renderer round trip per status
+- * check but stays correct. On a good host this is one submission and a
+- * fence wait at device creation.
++/* An uncached host-visible type whose host GPU writes are checked at device
++ * creation, and the cached type that backs it if they do not arrive.
++ */
++struct vn_host_write_check {
++   uint32_t type;
++   uint32_t cached_type;
++   VkBuffer buf;
++   VkDeviceMemory mem;
++   volatile uint32_t *ptr;
++   VkCommandBuffer cmd;
++};
++
++#define VN_HOST_WRITE_CHECK_VALUE 0x6e766662u /* "nvfb" */
++
++static uint32_t
++vn_find_cached_superset_type(const VkPhysicalDeviceMemoryProperties *props,
++                             uint32_t type)
++{
++   const VkMemoryPropertyFlags want =
++      props->memoryTypes[type].propertyFlags |
++      VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
++   for (uint32_t i = 0; i < props->memoryTypeCount; i++) {
++      if (props->memoryTypes[i].heapIndex == props->memoryTypes[type].heapIndex &&
++          (props->memoryTypes[i].propertyFlags & want) == want &&
++          !(props->memoryTypes[i].propertyFlags &
++            VK_MEMORY_PROPERTY_PROTECTED_BIT))
++         return i;
++   }
++   return UINT32_MAX;
++}
++
++/* Sets up a 4 KiB buffer in an uncached HOST_COHERENT type and a command
++ * buffer that fills its first word on the GPU. The CPU writes and reads
++ * the word first, as an application that maps the memory would.
++ */
++static bool
++vn_host_write_check_init(struct vn_device *dev,
++                         VkCommandPool pool_handle,
++                         struct vn_host_write_check *check)
++{
++   VkDevice dev_handle = vn_device_to_handle(dev);
++
++   const VkBufferCreateInfo buf_info = {
++      .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
++      .size = 4096,
++      .usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT,
++      .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
++   };
++   if (vn_CreateBuffer(dev_handle, &buf_info, NULL, &check->buf) !=
++       VK_SUCCESS)
++      return false;
++
++   const struct vn_buffer *buf = vn_buffer_from_handle(check->buf);
++   const VkMemoryRequirements *reqs =
++      &buf->requirements.memory.memoryRequirements;
++   const uint32_t both = (1u << check->type) | (1u << check->cached_type);
++   if ((reqs->memoryTypeBits & both) != both)
++      goto fail_buf;
++
++   const VkMemoryAllocateInfo alloc_info = {
++      .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
++      .allocationSize = reqs->size,
++      .memoryTypeIndex = check->type,
++   };
++   if (vn_AllocateMemory(dev_handle, &alloc_info, NULL, &check->mem) !=
++       VK_SUCCESS)
++      goto fail_buf;
++   const VkBindBufferMemoryInfo bind_info = {
++      .sType = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO,
++      .buffer = check->buf,
++      .memory = check->mem,
++   };
++   void *ptr;
++   const VkMemoryMapInfo map_info = {
++      .sType = VK_STRUCTURE_TYPE_MEMORY_MAP_INFO,
++      .memory = check->mem,
++      .size = VK_WHOLE_SIZE,
++   };
++   if (vn_BindBufferMemory2(dev_handle, 1, &bind_info) != VK_SUCCESS ||
++       vn_MapMemory2(dev_handle, &map_info, &ptr) != VK_SUCCESS)
++      goto fail_mem;
++   check->ptr = ptr;
++   *check->ptr = 0;
++   (void)*check->ptr;
++
++   const VkCommandBufferAllocateInfo cmd_info = {
++      .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
++      .commandPool = pool_handle,
++      .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
++      .commandBufferCount = 1,
++   };
++   if (vn_AllocateCommandBuffers(dev_handle, &cmd_info, &check->cmd) !=
++       VK_SUCCESS)
++      goto fail_map;
++   const VkCommandBufferBeginInfo begin_info = {
++      .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
++   };
++   if (vn_BeginCommandBuffer(check->cmd, &begin_info) != VK_SUCCESS)
++      goto fail_cmd;
++   vn_CmdFillBuffer(check->cmd, check->buf, 0, 4, VN_HOST_WRITE_CHECK_VALUE);
++   vn_feedback_cmd_record_flush_barrier(check->cmd, check->buf, 0, 4);
++   if (vn_EndCommandBuffer(check->cmd) != VK_SUCCESS)
++      goto fail_cmd;
++
++   return true;
++
++fail_cmd:
++   vn_FreeCommandBuffers(dev_handle, pool_handle, 1, &check->cmd);
++fail_map:
++   vn_UnmapMemory2(dev_handle, &(VkMemoryUnmapInfo){
++                                  .sType = VK_STRUCTURE_TYPE_MEMORY_UNMAP_INFO,
++                                  .memory = check->mem,
++                               });
++fail_mem:
++   vn_FreeMemory(dev_handle, check->mem, NULL);
++fail_buf:
++   vn_DestroyBuffer(dev_handle, check->buf, NULL);
++   return false;
++}
++
++static void
++vn_host_write_check_fini(struct vn_device *dev,
++                         VkCommandPool pool_handle,
++                         struct vn_host_write_check *check)
++{
++   VkDevice dev_handle = vn_device_to_handle(dev);
++
++   vn_FreeCommandBuffers(dev_handle, pool_handle, 1, &check->cmd);
++   vn_UnmapMemory2(dev_handle, &(VkMemoryUnmapInfo){
++                                  .sType = VK_STRUCTURE_TYPE_MEMORY_UNMAP_INFO,
++                                  .memory = check->mem,
++                               });
++   vn_FreeMemory(dev_handle, check->mem, NULL);
++   vn_DestroyBuffer(dev_handle, check->buf, NULL);
++}
++
++/* Checks once per device that writes by the host GPU reach the guest:
++ *
++ * - One fence feedback command must leave its slot signalled. A host whose
++ *   GPU writes do not become visible in the guest's mapping of the
++ *   feedback buffer would otherwise hang every fence and timeline
++ *   semaphore wait (the guest keeps reading the status it wrote itself;
++ *   docs/nvfb.md). On failure feedback is disabled for the device, which
++ *   costs a renderer round trip per status check but stays correct.
++ * - A fill of a buffer in each uncached HOST_COHERENT type that has a
++ *   host-cached counterpart (same heap, superset of flags) must be visible.
++ *   On the RTX 4060 Laptop host it is not, so a readback through that
++ *   type reads stale data. On failure, the device backs allocations of
++ *   that type with the cached type (vn_device_memory_alloc).
++ *
++ * The commands go in one submission, with a fence that has no feedback of
++ * its own (the renderer refuses the blocking vkQueueWaitIdle).
+  */
+ void
+ vn_feedback_self_test(struct vn_device *dev)
+ {
+    VkDevice dev_handle = vn_device_to_handle(dev);
++   const VkPhysicalDeviceMemoryProperties *mem_props =
++      &dev->physical_device->memory_properties;
++
++   for (uint32_t i = 0; i < VK_MAX_MEMORY_TYPES; i++)
++      dev->mem_type_remap[i] = i;
+ 
+-   if (VN_PERF(NO_FENCE_FEEDBACK) || !dev->fb_cmd_pools)
++   if (!dev->fb_cmd_pools)
+       return;
+ 
+    struct vn_queue *queue = NULL;
+@@ -939,70 +1088,143 @@ vn_feedback_self_test(struct vn_device *dev)
+    }
+    if (!queue)
+       return;
++   struct vn_feedback_cmd_pool *fb_cmd_pool = &dev->fb_cmd_pools[pool_index];
++
++   VkCommandBuffer cmd_handles[1 + VK_MAX_MEMORY_TYPES];
++   uint32_t cmd_count = 0;
++
++   struct vn_feedback_slot *slot = NULL;
++   if (!VN_PERF(NO_FENCE_FEEDBACK)) {
++      slot = vn_feedback_pool_alloc(&dev->feedback_pool,
++                                    VN_FEEDBACK_TYPE_FENCE);
++      if (slot) {
++         vn_feedback_set_status(slot, VK_NOT_READY);
++         if (vn_feedback_cmd_alloc(dev_handle, fb_cmd_pool, slot, NULL,
++                                   &cmd_handles[cmd_count]) == VK_SUCCESS) {
++            cmd_count++;
++         } else {
++            vn_feedback_pool_free(&dev->feedback_pool, slot);
++            slot = NULL;
++         }
++      }
++   }
+ 
+-   struct vn_feedback_slot *slot =
+-      vn_feedback_pool_alloc(&dev->feedback_pool, VN_FEEDBACK_TYPE_FENCE);
+-   if (!slot)
+-      return;
+-   vn_feedback_set_status(slot, VK_NOT_READY);
++   struct vn_host_write_check checks[VK_MAX_MEMORY_TYPES];
++   uint32_t check_count = 0;
++   simple_mtx_lock(&fb_cmd_pool->mutex);
++   for (uint32_t i = 0; i < mem_props->memoryTypeCount; i++) {
++      const VkMemoryPropertyFlags flags = mem_props->memoryTypes[i].propertyFlags;
++      if ((flags & (VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
++                    VK_MEMORY_PROPERTY_HOST_COHERENT_BIT |
++                    VK_MEMORY_PROPERTY_HOST_CACHED_BIT)) !=
++          (VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
++           VK_MEMORY_PROPERTY_HOST_COHERENT_BIT))
++         continue;
++      const uint32_t cached = vn_find_cached_superset_type(mem_props, i);
++      if (cached == UINT32_MAX)
++         continue;
++      struct vn_host_write_check *check = &checks[check_count];
++      check->type = i;
++      check->cached_type = cached;
++      if (vn_host_write_check_init(dev, fb_cmd_pool->pool_handle, check)) {
++         cmd_handles[cmd_count++] = check->cmd;
++         check_count++;
++      }
++   }
++   simple_mtx_unlock(&fb_cmd_pool->mutex);
+ 
+-   VkCommandBuffer cmd_handle;
+-   VkResult result = vn_feedback_cmd_alloc(
+-      dev_handle, &dev->fb_cmd_pools[pool_index], slot, NULL, &cmd_handle);
+-   if (result != VK_SUCCESS) {
+-      vn_feedback_pool_free(&dev->feedback_pool, slot);
++   if (!cmd_count)
+       return;
+-   }
+ 
+-   /* A fence without feedback, so that waiting on it asks the renderer.
+-    * The renderer refuses vkQueueWaitIdle (no blocking calls).
+-    */
+-   VkFence fence_handle;
++   /* A fence without feedback, so that waiting on it asks the renderer. */
++   VkFence fence_handle = VK_NULL_HANDLE;
+    const VkFenceCreateInfo fence_info = {
+       .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+    };
+    dev->feedback_disabled = true;
+-   result = vn_CreateFence(dev_handle, &fence_info, NULL, &fence_handle);
++   VkResult result =
++      vn_CreateFence(dev_handle, &fence_info, NULL, &fence_handle);
+    dev->feedback_disabled = false;
+-   if (result != VK_SUCCESS) {
+-      vn_feedback_cmd_free(dev_handle, &dev->fb_cmd_pools[pool_index],
+-                           cmd_handle);
+-      vn_feedback_pool_free(&dev->feedback_pool, slot);
+-      return;
+-   }
+ 
+-   VkQueue queue_handle = vn_queue_to_handle(queue);
+-   const VkSubmitInfo submit = {
+-      .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+-      .commandBufferCount = 1,
+-      .pCommandBuffers = &cmd_handle,
+-   };
+-   result = vn_call_vkQueueSubmit(dev->primary_ring, queue_handle, 1, &submit,
+-                                  fence_handle);
++   /* A stale read needs the line to be in the CPU cache when the GPU writes;
++    * other work can evict it first and hide the fault. So instead of a
++    * blocking wait, poll the fence and read the words on every iteration,
++    * which keeps their lines cached until the GPU has written them.
++    */
++   bool feedback_stale = false;
++   bool type_stale[VK_MAX_MEMORY_TYPES] = { 0 };
++   if (slot)
++      vn_feedback_set_status(slot, VK_NOT_READY);
++   for (uint32_t i = 0; i < check_count; i++) {
++      *checks[i].ptr = 0;
++      (void)*checks[i].ptr;
++   }
+    if (result == VK_SUCCESS) {
+-      result = vn_WaitForFences(dev_handle, 1, &fence_handle, VK_TRUE,
+-                                5ull * 1000 * 1000 * 1000);
++      const VkSubmitInfo submit = {
++         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
++         .commandBufferCount = cmd_count,
++         .pCommandBuffers = cmd_handles,
++      };
++      result = vn_call_vkQueueSubmit(dev->primary_ring,
++                                     vn_queue_to_handle(queue), 1, &submit,
++                                     fence_handle);
++   }
++   if (result == VK_SUCCESS) {
++      const int64_t deadline = os_time_get_nano() + 5ll * 1000 * 1000 * 1000;
++      do {
++         if (slot)
++            (void)vn_feedback_get_status(slot);
++         for (uint32_t i = 0; i < check_count; i++)
++            (void)*checks[i].ptr;
++         result = vn_GetFenceStatus(dev_handle, fence_handle);
++      } while (result == VK_NOT_READY && os_time_get_nano() < deadline);
+    }
+ 
+    if (result == VK_SUCCESS) {
+-      /* The renderer saw the command complete. Allow the write a little
+-       * time to land before giving up on it.
++      /* The renderer saw the commands complete. Allow the writes a moment
++       * to land before calling them stale.
+        */
+-      const int64_t end = os_time_get_nano() + 20 * 1000 * 1000;
+-      while (vn_feedback_get_status(slot) != VK_SUCCESS &&
+-             os_time_get_nano() < end)
+-         os_time_sleep(100);
+-
+-      if (vn_feedback_get_status(slot) != VK_SUCCESS) {
+-         vn_log(dev->instance,
+-                "feedback writes by the host GPU do not reach the guest; "
+-                "disabling fence, semaphore, event and query feedback");
+-         dev->feedback_disabled = true;
++      const int64_t end = os_time_get_nano() + 2 * 1000 * 1000;
++      for (;;) {
++         bool all = !slot || vn_feedback_get_status(slot) == VK_SUCCESS;
++         for (uint32_t i = 0; i < check_count; i++)
++            all = all && *checks[i].ptr == VN_HOST_WRITE_CHECK_VALUE;
++         if (all || os_time_get_nano() >= end)
++            break;
+       }
++
++      if (slot && vn_feedback_get_status(slot) != VK_SUCCESS)
++         feedback_stale = true;
++      for (uint32_t i = 0; i < check_count; i++) {
++         if (*checks[i].ptr != VN_HOST_WRITE_CHECK_VALUE)
++            type_stale[i] = true;
++      }
++   }
++
++   if (feedback_stale) {
++      vn_log(dev->instance,
++             "feedback writes by the host GPU do not reach the guest; "
++             "disabling fence, semaphore, event and query feedback");
++      dev->feedback_disabled = true;
++   }
++   for (uint32_t i = 0; i < check_count; i++) {
++      if (!type_stale[i])
++         continue;
++      vn_log(dev->instance,
++             "host GPU writes to memory type %u do not reach the guest; "
++             "backing it with memory type %u",
++             checks[i].type, checks[i].cached_type);
++      dev->mem_type_remap[checks[i].type] = checks[i].cached_type;
+    }
+ 
+-   vn_DestroyFence(dev_handle, fence_handle, NULL);
+-   vn_feedback_cmd_free(dev_handle, &dev->fb_cmd_pools[pool_index],
+-                        cmd_handle);
+-   vn_feedback_pool_free(&dev->feedback_pool, slot);
++   if (fence_handle != VK_NULL_HANDLE)
++      vn_DestroyFence(dev_handle, fence_handle, NULL);
++   simple_mtx_lock(&fb_cmd_pool->mutex);
++   for (uint32_t i = 0; i < check_count; i++)
++      vn_host_write_check_fini(dev, fb_cmd_pool->pool_handle, &checks[i]);
++   simple_mtx_unlock(&fb_cmd_pool->mutex);
++   if (slot) {
++      vn_feedback_cmd_free(dev_handle, fb_cmd_pool, cmd_handles[0]);
++      vn_feedback_pool_free(&dev->feedback_pool, slot);
++   }
+ }

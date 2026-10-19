@@ -1,0 +1,1 @@
+7660 window=0x80058 title=[Unigine Valley Benchmark 1.0 Basic (Direct3D11)] closed=True

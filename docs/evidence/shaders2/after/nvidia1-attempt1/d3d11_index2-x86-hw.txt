@@ -1,0 +1,2 @@
+d3d11_index2: driver type HARDWARE, 32-bit
+case vs-in: vertex shader reads input-assembler input a[idx] (dcl_indexrange v2.xyzw 4)

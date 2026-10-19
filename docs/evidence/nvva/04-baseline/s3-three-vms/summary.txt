@@ -1,0 +1,7 @@
+stage: s3-three-vms  labs: a b c  minutes: 5  host hog: 0 MiB (dma-buf mapped, so about twice that in BAR1)
+from 2026-10-19T06:19:07+10:00 to 2026-10-19T06:24:30+10:00
+a: runs 11, pass 11, not pass 0
+b: runs 11, pass 11, not pass 0
+c: runs 10, pass 10, not pass 0
+new 'can't alloc VA space' kernel lines: 0
+highest BAR1 used: 79 MiB of 256

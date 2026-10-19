@@ -1,0 +1,50 @@
+Subject: [PATCH] d3d10umd: TrimResidencySet leaves the pipe context alone
+
+TrimResidencySetWDDM2_0() flushed the device's threaded context. The D3D11
+runtime calls pfnTrimResidencySet from
+NDXGI::CDevice::TrimNotificationCallback, which DXCore runs on a WNF
+thread-pool thread (DxTrimWnfCallback) when the kernel sends a trim
+notification, and d3d11 takes its device locks there only for some
+devices. The flush therefore ran a queued threaded-context batch outside
+the thread that owns the context.
+
+On NVIDIA, in the first boot after the install, dwm.exe got a trim
+notification while it was recovering from a lost device. tc_flush ->
+_tc_sync -> tc_batch_execute ran the flush-label callback
+(yttrium_threaded_set_flush_label, which ends in FREE) for a record that
+had already been freed. The heap reported HEAP_FAILURE_SEGMENT_LFH_DOUBLE_FREE
+and dwm died with 0xc0000374.
+
+Trim is advisory. Live blob backing stays resident for its resource
+lifetime, and the owner thread's next Flush or Present submits any
+outstanding work, so the DDI now returns S_OK without touching the
+context.
+
+Evidence: docs/dwmheap.md, docs/evidence/dwmheap/.
+Origin: vmlab-win3d dwmheap worker.
+---
+--- a/src/gallium/frontends/d3d10umd/Device.cpp
++++ b/src/gallium/frontends/d3d10umd/Device.cpp
+@@ -1201,12 +1201,17 @@
+ static HRESULT APIENTRY
+ TrimResidencySetWDDM2_0(DXGI_DDI_ARG_TRIMRESIDENCYSET *args)
+ {
+-   D3D10DDI_HDEVICE device = {reinterpret_cast<void *>(args->hDevice)};
+-   struct pipe_context *pipe = CastPipeContext(device);
+-   /* Submit outstanding work so retired upload allocations can be released.
+-    * Live blob backing remains resident for its resource lifetime.
++   /* Trim is advisory, and it must not touch the pipe context.  The runtime
++    * calls it from DXCore's trim-notification callback, on a WNF thread-pool
++    * thread, and d3d11 takes its device locks there only for some devices.
++    * Flushing the threaded context from that thread ran a queued batch
++    * outside the thread that owns the context: in dwm, during a device-lost
++    * recovery, the batch's flush-label callback record was freed twice (an
++    * LFH double free) and dwm died with heap corruption (0xc0000374).  Live
++    * blob backing stays resident for its resource lifetime, and the owner
++    * thread's next Flush or Present submits outstanding work anyway.
+     */
+-   yttrium_gdi_flush_labeled(pipe, NULL, 0, "DXGI trim residency");
++   (void)args;
+    return S_OK;
+ }
+ 

@@ -1,0 +1,1 @@
+4768 window=0x301CE title=[3D Particles (DEBUG)] closed=True

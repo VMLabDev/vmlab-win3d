@@ -1,0 +1,21 @@
+-- AppCrash_Valley.exe_1638766aa5f791afc2b8be9b7ccc6eba653bfbe_a432d84d_c2b5ecb6-1eff-4517-bf23-4bdbb44122b3 2026-10-18T12:22:34.4300856-07:00
+EventType=BEX
+Sig[0].Name=Application Name
+Sig[0].Value=Valley.exe
+Sig[1].Name=Application Version
+Sig[1].Value=1.0.0.0
+Sig[2].Name=Application Timestamp
+Sig[2].Value=511cbdf2
+Sig[3].Name=Fault Module Name
+Sig[3].Value=ucrtbase.dll
+Sig[4].Name=Fault Module Version
+Sig[4].Value=10.0.26100.9444
+Sig[5].Name=Fault Module Timestamp
+Sig[5].Value=80cf5d8f
+Sig[6].Name=Exception Offset
+Sig[6].Value=0002da71
+Sig[7].Name=Exception Code
+Sig[7].Value=c0000409
+Sig[8].Name=Exception Data
+Sig[8].Value=00000007
+AppPath=C:\apps\valley\bin\Valley.exe

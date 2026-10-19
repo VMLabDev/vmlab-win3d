@@ -1,0 +1,74 @@
+Subject: [PATCH] d3d9: snapshot vertex-buffer writes only for NOOVERWRITE locks
+
+With the ordered context worker, every write lock of a vertex buffer
+copied the locked range into the stream uploader and kept a reference to
+that upload buffer in the subresource until the buffer was next locked,
+so that queued draws read the data as it was at Unlock. A reference holds
+the whole upload page (1 MiB or more, a mapped blob). Static vertex
+buffers are written once and never locked again, so each kept its page for
+its lifetime. Unigine Valley's D3D9 renderer, a 32-bit process, pinned
+hundreds of these pages: its address space reached 3.75 of 4 GiB within
+90 s, then allocations failed, Venus commands went out malformed
+("vkCmdBeginRenderPass resulted in CS error") and the program hung or
+crashed in Unigine_x86.dll (compat finding F6).
+
+Only an unsynchronized (D3DLOCK_NOOVERWRITE) write can reach the buffer
+while draws that read it are still queued. A plain lock is ordered by the
+threaded context, which waits for the queued draws before it maps the
+buffer, and a DISCARD lock is staged by it. Take the snapshot only for
+NOOVERWRITE locks.
+
+Evidence: docs/unid3d.md, docs/evidence/unid3d/.
+Origin: vmlab-win3d unid3d worker.
+---
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Private.h b/src/gallium/frontends/d3d10umd/D3D9Private.h
+index 04c1131..5a69260 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Private.h
++++ b/src/gallium/frontends/d3d10umd/D3D9Private.h
+@@ -151,6 +151,7 @@ struct D3D9SubResource
+    struct pipe_resource *readback_resource;
+    bool transfer_on_readback;
+    bool transfer_write;
++   bool transfer_unsynchronized;
+    struct pipe_box transfer_box;
+    void *transfer_map;
+    struct pipe_resource *worker_upload_buffer;
+diff --git a/src/gallium/frontends/d3d10umd/D3D9Resource.cpp b/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
+index 1f7be76..f4288a5 100644
+--- a/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
++++ b/src/gallium/frontends/d3d10umd/D3D9Resource.cpp
+@@ -3381,6 +3381,8 @@ D3D9Lock(HANDLE hDevice, D3DDDIARG_LOCK *data)
+       data->SlicePitch = 0;
+       if (sub->transfer) {
+          sub->transfer_write = (usage & PIPE_MAP_WRITE) != 0;
++         sub->transfer_unsynchronized =
++            (usage & PIPE_MAP_UNSYNCHRONIZED) != 0;
+          sub->transfer_box = box;
+          sub->transfer_map = map;
+       }
+@@ -3584,7 +3586,16 @@ D3D9Unlock(HANDLE hDevice, const D3DDDIARG_UNLOCK *data)
+        resource->pipe_resource->target == PIPE_BUFFER) {
+       if (!device->pipe->buffer_unmap)
+          return E_NOTIMPL;
+-      if (sub->transfer_write && resource->flags.VertexBuffer &&
++      /* Only a NOOVERWRITE (unsynchronized) write can reach the buffer
++       * while draws that read it are still queued for the ordered worker,
++       * so only that needs a snapshot. Any other write lock is ordered by
++       * the threaded context: a plain map waits for the queued draws and
++       * a DISCARD map stages the data. A snapshot holds its whole upload
++       * page until the buffer is locked again, so taking one for every
++       * write lock pinned hundreds of pages of static vertex buffers and
++       * ran 32-bit processes out of address space (docs/unid3d.md). */
++      if (sub->transfer_write && sub->transfer_unsynchronized &&
++          resource->flags.VertexBuffer &&
+           D3D9OrderedContextWorkerEnabled())
+          worker_upload_ok = D3D9CaptureWorkerBufferUpload(device, sub);
+       device->pipe->buffer_unmap(device->pipe, sub->transfer);
+@@ -3600,6 +3611,7 @@ D3D9Unlock(HANDLE hDevice, const D3DDDIARG_UNLOCK *data)
+    if (sub->transfer_write)
+       D3D9MarkAutogenMipmapsDirty(resource, subresource_index);
+    sub->transfer_write = false;
++   sub->transfer_unsynchronized = false;
+    memset(&sub->transfer_box, 0, sizeof(sub->transfer_box));
+    sub->cpu_dirty = false;
+    D3D9Tracef("Unlock pipe resource=%p sub=%u\n",

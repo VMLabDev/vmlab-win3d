@@ -1,0 +1,98 @@
+diff --git a/src/virtio/vulkan/vn_device_memory.c b/src/virtio/vulkan/vn_device_memory.c
+index a479b46..5af960f 100644
+--- a/src/virtio/vulkan/vn_device_memory.c
++++ b/src/virtio/vulkan/vn_device_memory.c
+@@ -26,6 +26,35 @@
+ #include "vn_renderer.h"
+ #include "vn_renderer_util.h"
+ 
++#include <stdarg.h>
++#include <stdio.h>
++#if defined(_WIN32)
++#include <windows.h>
++#endif
++static void
++vn_unigl_log(const char *fmt, ...)
++{
++   FILE *f = fopen("C:\\ProgramData\\Yttrium\\venus-unigl.log", "a");
++   if (!f)
++      return;
++#if defined(_WIN32)
++   SYSTEMTIME st;
++   GetLocalTime(&st);
++   char exe[MAX_PATH] = "";
++   GetModuleFileNameA(NULL, exe, sizeof(exe));
++   const char *base = strrchr(exe, '\\');
++   fprintf(f, "%02u:%02u:%02u.%03u pid=%lu %s ", st.wHour, st.wMinute,
++           st.wSecond, st.wMilliseconds, GetCurrentProcessId(),
++           base ? base + 1 : exe);
++#endif
++   va_list ap;
++   va_start(ap, fmt);
++   vfprintf(f, fmt, ap);
++   va_end(ap);
++   fputc('\n', f);
++   fclose(f);
++}
++
+ /* device memory commands */
+ 
+ /* Whether the memory type is in a small device-local heap: one smaller than
+@@ -63,10 +92,14 @@ vn_device_memory_alloc_simple(struct vn_device *dev,
+ {
+    VkDevice dev_handle = vn_device_to_handle(dev);
+    VkDeviceMemory mem_handle = vn_device_memory_to_handle(mem);
+-   if (VN_PERF(NO_ASYNC_MEM_ALLOC) ||
+-       vn_device_memory_type_in_small_heap(dev, alloc_info->memoryTypeIndex)) {
+-      return vn_call_vkAllocateMemory(dev->primary_ring, dev_handle,
++   if (true) {
++      VkResult r = vn_call_vkAllocateMemory(dev->primary_ring, dev_handle,
+                                       alloc_info, NULL, &mem_handle);
++      vn_unigl_log("host vkAllocateMemory id=%llu type=%u size=%llu result=%d small=%d",
++                   (unsigned long long)mem->base.id, alloc_info->memoryTypeIndex,
++                   (unsigned long long)alloc_info->allocationSize, r,
++                   vn_device_memory_type_in_small_heap(dev, alloc_info->memoryTypeIndex));
++      return r;
+    }
+ 
+    struct vn_ring_submit_command ring_submit;
+@@ -615,6 +648,13 @@ vn_AllocateMemory(VkDevice device,
+ 
+    vn_device_memory_emit_report(dev, mem, /* is_alloc */ true, result);
+ 
++   vn_unigl_log("vn_AllocateMemory id=%llu type=%u flags=0x%x size=%llu export=0x%x import=0x%x guest_vram=%d result=%d",
++                (unsigned long long)mem->base.id, pAllocateInfo->memoryTypeIndex,
++                dev->physical_device->memory_properties.memoryTypes[pAllocateInfo->memoryTypeIndex].propertyFlags,
++                (unsigned long long)pAllocateInfo->allocationSize,
++                mem->base.vk.export_handle_types, mem->base.vk.import_handle_type,
++                dev->renderer->info.has_guest_vram, result);
++
+    if (result != VK_SUCCESS) {
+       vk_device_memory_destroy(&dev->base.vk, pAllocator, &mem->base.vk);
+       return vn_error(dev->instance, result);
+@@ -636,6 +676,7 @@ vn_FreeMemory(VkDevice device,
+       return;
+ 
+    vn_device_memory_emit_report(dev, mem, /* is_alloc */ false, VK_SUCCESS);
++   vn_unigl_log("vn_FreeMemory id=%llu", (unsigned long long)mem->base.id);
+ 
+ #if defined(HAVE_YTTRIUM)
+    if (mem->export_nt_handle)
+@@ -692,6 +733,8 @@ vn_MapMemory2(VkDevice device,
+     */
+    if (need_bo) {
+       result = vn_device_memory_bo_init(dev, mem);
++      vn_unigl_log("map bo_init id=%llu size=%llu result=%d", (unsigned long long)mem->base.id,
++                   (unsigned long long)mem_vk->size, result);
+       if (result != VK_SUCCESS)
+          return vn_error(dev->instance, result);
+    }
+@@ -715,6 +758,8 @@ vn_MapMemory2(VkDevice device,
+          mem->bo_roundtrip_seqno_valid = true;
+       }
+ 
++      vn_unigl_log("map FAILED id=%llu size=%llu", (unsigned long long)mem->base.id,
++                   (unsigned long long)mem_vk->size);
+       return vn_error(dev->instance, VK_ERROR_MEMORY_MAP_FAILED);
+    }
+ 

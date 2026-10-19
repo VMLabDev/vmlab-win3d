@@ -1,0 +1,8 @@
+# Same instrumentation with the first 0086 added: allocations and maps of Heaven and Valley
+# lines: 3669; failed allocations or maps: 0
+#        2 Heaven.exe	type=0 flags=0x0 
+#      171 Heaven.exe	type=1 flags=0x1 
+#      104 Heaven.exe	type=2 flags=0x6 
+#        2 Valley.exe	type=0 flags=0x0 
+#      159 Valley.exe	type=1 flags=0x1 
+#      732 Valley.exe	type=2 flags=0x6 

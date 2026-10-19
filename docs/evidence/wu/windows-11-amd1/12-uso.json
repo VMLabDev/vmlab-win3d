@@ -1,0 +1,45 @@
+{
+    "label":  "uso",
+    "runs":  [
+                 {
+                     "command":  "UsoClient StartScan",
+                     "exit":  "0x00000000"
+                 },
+                 {
+                     "command":  "UsoClient StartInteractiveScan",
+                     "exit":  "0x00000000"
+                 },
+                 {
+                     "command":  "UsoClient StartDownload",
+                     "exit":  "0x80070057"
+                 },
+                 {
+                     "command":  "UsoClient StartInstall",
+                     "exit":  "0x80070057"
+                 },
+                 {
+                     "command":  "UsoClient NoSuchVerb",
+                     "exit":  "0x80070057"
+                 }
+             ],
+    "events":  [
+                   "2026-10-18T12:43:23.9732565-07:00 26 Windows Update successfully found 2 updates.",
+                   "2026-10-18T12:43:55.6428449-07:00 26 Windows Update successfully found 2 updates."
+               ],
+    "bound":  {
+                  "inf":  "oem7.inf",
+                  "original":  "viogpu3d.inf",
+                  "provider":  "Hardsoft Swed.",
+                  "date":  "2026-09-27",
+                  "version":  "100.6.101.58100",
+                  "rank":  "00E00000",
+                  "matching_id":  "pci\\ven_1af4\u0026dev_1050\u0026subsys_11001af4\u0026rev_01",
+                  "problem_code":  0
+              },
+    "policy":  {
+                   "restrictions":  {
+                                        "DenyInstanceIDs":  1
+                                    },
+                   "deny_instance_ids":  "1=PCI\\VEN_1AF4\u0026DEV_1050\u0026SUBSYS_11001AF4\u0026REV_01\\3\u002611583659\u00260\u002620"
+               }
+}

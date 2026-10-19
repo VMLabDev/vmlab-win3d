@@ -1,0 +1,1 @@
+4704 window=0x2033A title=[Freedoom: Phase 2] closed=True
