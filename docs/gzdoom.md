@@ -112,7 +112,8 @@ Three packages were used, all built by `scripts/build.sh` from this branch.
 "Base" is `main` at `5781598` plus `0080` (manifest commit `4d879bb`).
 "Merged" adds `main` at `b74ea3c`, which brought `nvva`'s `0070` and `0086`
 (manifest commit `d0c6c3e`). "Head" adds `main` at `1c3ce87`, which brought
-`0090` (D3D9 only; manifest commit `85858fe`). None of them has `nvva`'s
+`0090` (D3D9 only; manifest commits `85858fe` and `672bbf6`, the same
+sources). None of them has `nvva`'s
 dropped `0071`.
 
 | What | Where |
@@ -125,6 +126,7 @@ dropped `0071`.
 | The same on `Nvidia1`, merged package: both clean, no Xid. The counter reads 35 fps, but the Start menu was open over the window in every frame, so the OCR found no counter. The render-server log of the run has no CS error | `nvidia1/` (`results.json`, `qemu-log.txt`, `host-nvrm.txt`) |
 | `tests/e2e/run.sh --template windows-11` on `AMD1`, base package: 12 of 12 | `e2e-amd1/` (`results.txt`) |
 | `tests/e2e/run.sh --template windows-11` on `Nvidia1`, merged package: 12 of 12 | `e2e-nvidia1/` (`results.txt`) |
+| `tests/e2e/run.sh --template windows-11` on `Nvidia1`, head package: 12 of 12 | `e2e-nvidia1-head/` (`results.txt`) |
 | `tests/e2e/run.sh --template windows-11` on `AMD1`, head package: 12 of 12. An earlier run of the merged package on `AMD1` had 11 of 12: the x86 D3D12 probe passed its read-back but its window was in none of the 21 console frames, the first-run stall worker `x86d3d12` is investigating. It was not kept | `e2e-amd1-head/` (`results.txt`) |
 
 `tests/apps/compat/run.sh` now takes `COMPAT_LAB` and `COMPAT_EV` from the
