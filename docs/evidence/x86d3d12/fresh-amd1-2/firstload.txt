@@ -1,0 +1,26 @@
+date 2026-10-18T17:07:04.5173448-07:00
+defender MAPSReporting=2 SubmitSamplesConsent=1 CloudBlockLevel=0 CloudExtendedTimeout=0 DisableRealtimeMonitoring=False
+64 1      11.7 C:\WINDOWS\System32\d3d12.dll
+64 1       1.7 C:\WINDOWS\System32\vmlab-win3d\vkd3dcore.dll
+64 1       1.2 C:\WINDOWS\System32\vmlab-win3d\dxgi-vulkan.dll
+64 1       0.7 C:\WINDOWS\System32\vulkan-1.dll
+64 1       0.5 C:\WINDOWS\System32\libvulkan_virtio.dll
+64 1       0.4 C:\win3d\probes\x64\d3d12_probe.exe
+64 2       0.3 C:\WINDOWS\System32\d3d12.dll
+64 2       0.6 C:\WINDOWS\System32\vmlab-win3d\vkd3dcore.dll
+64 2       0.4 C:\WINDOWS\System32\vmlab-win3d\dxgi-vulkan.dll
+64 2       0.3 C:\WINDOWS\System32\vulkan-1.dll
+64 2       0.4 C:\WINDOWS\System32\libvulkan_virtio.dll
+64 2       0.4 C:\win3d\probes\x64\d3d12_probe.exe
+32 1      14.4 C:\WINDOWS\SysWOW64\d3d12.dll
+32 1       2.2 C:\WINDOWS\SysWOW64\vmlab-win3d\vkd3dcore.dll
+32 1       1.7 C:\WINDOWS\SysWOW64\vmlab-win3d\dxgi-vulkan.dll
+32 1       0.5 C:\WINDOWS\SysWOW64\vulkan-1.dll
+32 1       0.9 C:\WINDOWS\SysWOW64\libvulkan_virtio.dll
+32 1       0.5 C:\win3d\probes\x86\d3d12_probe.exe
+32 2       0.3 C:\WINDOWS\SysWOW64\d3d12.dll
+32 2       0.4 C:\WINDOWS\SysWOW64\vmlab-win3d\vkd3dcore.dll
+32 2       0.3 C:\WINDOWS\SysWOW64\vmlab-win3d\dxgi-vulkan.dll
+32 2       0.3 C:\WINDOWS\SysWOW64\vulkan-1.dll
+32 2       0.4 C:\WINDOWS\SysWOW64\libvulkan_virtio.dll
+32 2       2.2 C:\win3d\probes\x86\d3d12_probe.exe

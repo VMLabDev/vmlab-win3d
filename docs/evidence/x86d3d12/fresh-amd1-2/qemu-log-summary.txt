@@ -1,0 +1,23 @@
+      2 virtio_gpu_virgl_process_cmd: ctrl 0x102, error 0x1203
+      1 virgl_render_server[2577178]: vkr: destroying device with valid objects
+      1 virgl_render_server[2577178]: vkr: destroying context 51 (yttrium) with a valid instance
+      1 virgl_render_server[2538509]: vkr: destroying device with valid objects
+      1 virgl_render_server[2538509]: vkr: destroying context 26 (yttrium) with a valid instance
+      1 virgl_render_server[2521249]: vkr: destroying device with valid objects
+      1 virgl_render_server[2521249]: vkr: destroying context 22 (yttrium) with a valid instance
+      1 virgl_render_server[2521010]: vkr: destroying device with valid objects
+      1 virgl_render_server[2521010]: vkr: destroying context 20 (yttrium) with a valid instance
+      1 virgl_render_server[2520991]: vkr: destroying device with valid objects
+      1 virgl_render_server[2520991]: vkr: destroying context 19 (yttrium) with a valid instance
+      1 virgl_render_server[1463740]: vkr: destroying device with valid objects
+      1 virgl_render_server[1463740]: vkr: destroying context 69 (yttrium) with a valid instance
+      1 virgl_render_server[1441766]: vkr: destroying device with valid objects
+      1 virgl_render_server[1441766]: vkr: destroying context 56 (yttrium) with a valid instance
+      1 virgl_render_server[1391799]: vkr: destroying device with valid objects
+      1 virgl_render_server[1391799]: vkr: destroying context 22 (yttrium) with a valid instance
+      1 virgl_render_server[1388210]: vkr: destroying device with valid objects
+      1 virgl_render_server[1388210]: vkr: destroying context 17 (yttrium) with a valid instance
+      1 virgl_render_server[1384856]: vkr: destroying device with valid objects
+      1 virgl_render_server[1384856]: vkr: destroying context 11 (yttrium) with a valid instance
+      1 virgl_render_server[1377925]: vkr: destroying device with valid objects
+      1 virgl_render_server[1377925]: vkr: destroying context 5 (yttrium) with a valid instance

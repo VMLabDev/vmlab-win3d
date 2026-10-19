@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "probe": "vulkan",
+  "api": "Vulkan",
+  "arch": "x64",
+  "result": "pass",
+  "exit_code": 0,
+  "exe": "C:\\win3d\\probes\\x64\\vulkan_probe.exe",
+  "pid": 7996,
+  "session_id": 1,
+  "os_version": "10.0.26100",
+  "finished_utc": "2026-10-18T23:44:16Z",
+  "args": {"seconds": 20, "warp": false, "width": 1024, "height": 640},
+  "adapter": {
+    "name": "Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))",
+    "vendor": "AMD",
+    "vendor_id": "0x1002",
+    "device_id": "0x13c0",
+    "driver_version_raw": 109056000,
+    "software": false
+  },
+  "device": {
+    "loader": "C:\\WINDOWS\\SYSTEM32\\vulkan-1.dll",
+    "instance_version": "1.4.363",
+    "physical_device_count": 1,
+    "physical_devices": ["Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (integrated_gpu, vendor 0x1002, device 0x13c0, API 1.4.334)"],
+    "device_type": "integrated_gpu",
+    "device_api_version": "1.4.334",
+    "driver_name": "venus",
+    "driver_info": "Mesa 26.1.0",
+    "driver_id": 22,
+    "swapchain_format": "B8G8R8A8_UNORM",
+    "swapchain_images": 2
+  },
+  "frames_presented": 1198,
+  "elapsed_seconds": 20.030,
+  "avg_fps": 59.81,
+  "window_closed_early": false,
+  "readback": {
+    "ok": true,
+    "tolerance": 2,
+    "pixels": [
+      {"name": "red_top_left", "x": 48, "y": 48, "expected": [255, 0, 0], "actual": [255, 0, 0], "match": true},
+      {"name": "blue_top_right", "x": 976, "y": 48, "expected": [0, 0, 255], "actual": [0, 0, 255], "match": true},
+      {"name": "green_bottom_left", "x": 48, "y": 592, "expected": [0, 255, 0], "actual": [0, 255, 0], "match": true}
+    ]
+  },
+  "errors": []
+}

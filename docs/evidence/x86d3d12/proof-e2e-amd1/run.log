@@ -1,0 +1,195 @@
+
+[10:50:24] == vmlab-win3d e2e: windows-11, commit a573717
+date: 2026-10-19T10:50:24+10:00
+commit: a573717dc99d8b1361444c00d53a3e8bc98c0ff0
+worktree changes: 3
+template: x86_64/windows-11@26100.1742.5
+kernel: 7.2.3-1-cachyos
+qemu (PATH): QEMU emulator version 11.1.1
+packages: qemu-full 11.1.1-1 virglrenderer 1.3.0-2.1 mesa 3:26.2.2-2 vulkan-radeon 3:26.2.2-2 nvidia-utils 610.57.04-1 
+vmlab: vmlab 0.28.0-alpha
+venus gpu: host_gpu AMD1, /dev/dri/renderD129 0000:72:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI] Granite Ridge [Radeon Graphics] (rev c1)
+
+[10:50:24] == 1 build
+[10:50:24] reused (out/package built at a573717dc99d8b1361444c00d53a3e8bc98c0ff0; no change to build installer probes patches scripts/build.sh since)
+
+[10:50:24] == 2 fresh lab win3d-x86d3d12-amd1 from x86_64/windows-11@26100.1742.5
+[10:50:24] destroying the previous win3d-x86d3d12-amd1
+lab "win3d-x86d3d12-amd1" destroyed
+ok: lab "win3d-x86d3d12-amd1" — 1 vm(s), 0 container(s), 0 segment(s)
+first-boot: provisioning win...
+first-boot: specialize complete; clearing marker
+first-boot: settling staged AppX (LKG) before first logon
+first-boot: appx: removed MicrosoftWindows.Client.AIX_1000.26100.29.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.AccountsService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.IrisService_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed MicrosoftWindows.LKG.Search_1000.26100.1742.0_x64__cw5n1h2txyewy
+removed NcsiUwpApp_1000.25128.1000.0_neutral_neutral_8wekyb3d8bbwe
+removed MdOdrMcpFilterPackage_1.0.0.0_neutral__cw5n1h2txyewy
+first-boot: installing first-logon XAML registration hook (sysprep-as-SYSTEM workaround)
+first-boot: xaml: hook installed for: MicrosoftWindows.Client.CBS_cw5n1h2txyewy, Microsoft.UI.Xaml.CBS_8wekyb3d8bbwe, MicrosoftWindows.Client.Core_cw5n1h2txyewy
+first-boot: rebooting once to settle shell reconciliation
+first-boot: holding ready until the guest settles (early first logons break the 24H2 shell)
+first-boot: guest settled (uptime 308s)
+first-boot: win ready
+lab "win3d-x86d3d12-amd1" is up
+
+[11:00:09] == 3 guest scripts, probes and the baseline
+pushed 7 file(s), 42217 bytes to win:C:/win3d/guest
+pushed 1 file(s), 2321 bytes to win:C:/win3d/e2e
+pushed 5 file(s), 176128 bytes to win:C:/win3d/probes/x64
+pushed 5 file(s), 153600 bytes to win:C:/win3d/probes/x86
+pushed 2800056 bytes to win:C:/win3d/lunarg/x64/vulkaninfo.exe
+pushed 2403256 bytes to win:C:/win3d/lunarg/x86/vulkaninfo.exe
+[11:00:15] baseline: Red Hat VirtIO GPU DOD controller (problem 0)
+
+[11:00:15] == 3b test desktop (autologon user win3d)
+[11:00:18] oobe: done after 0 s
+[11:01:19] autologon before-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-4JM8LFM AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-4JM8LFM\win3d 
+
+[11:01:19] == 4 install: scripts/install-into-vm.sh /home/wil/dev/vmlab-win3d-wt/x86d3d12/.scratch/e2e/windows-11/lab win
+[11:01:19] waiting for the guest agent
+[11:01:20] copying vmlab-win3d-0.1.1 to C:\vmlab-win3d
+pushed 29 file(s), 102422629 bytes to win:C:/vmlab-win3d
+[11:01:23] running C:\vmlab-win3d\Install.cmd
+2026-10-18T18:01:24.102-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
+2026-10-18T18:01:27.268-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T18:01:29.980-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem7.inf 100.101.104.28500
+2026-10-18T18:01:30.242-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T18:01:30.255-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-18T18:01:30.260-07:00 [Install]   Signature matches Public Key
+2026-10-18T18:01:30.262-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T18:01:30.266-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T18:01:30.308-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T18:01:30.310-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-18T18:01:30.312-07:00 [Install]   Signature matches Public Key
+2026-10-18T18:01:30.319-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T18:01:30.321-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T18:01:30.395-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-18T18:01:30.397-07:00 [Install]   The operation completed successfully.
+2026-10-18T18:01:30.786-07:00 [Install] test signing is set but not active in this boot
+2026-10-18T18:01:31.274-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T18:01:31.336-07:00 [Install] rebooting; step Driver resumes after the restart
+[11:01:32] Install.cmd exited 0
+[11:01:33] state: RebootPending|Driver|
+[11:02:28] state: Installing|Driver|
+[11:02:45] state: RebootPending|Verify|
+[11:03:55] state: Installed||
+[11:03:55] done: Installed
+[11:04:01] autologon after-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-4JM8LFM AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-4JM8LFM\win3d 
+
+[11:04:01] == 5 interactive-session tests
+[11:04:02] desktop: True 57
+[11:04:19] desktop: True 74
+[11:04:35] desktop: True 90
+[11:04:51] desktop: True 106
+[11:05:08] desktop: True 123
+
+[11:05:10] == 5a vulkaninfo --summary
+    "exit_code":  0,
+    "exit_code_hex":  "0x00000000",
+	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
+	deviceName         = Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+	driverName         = venus
+exit 0 
+	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
+	deviceName         = Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+	driverName         = venus
+exit 0 
+	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
+	deviceName         = Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+	driverName         = venus
+	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
+	deviceName         = Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+	driverName         = venus
+
+[11:05:44] == 5b probes
+[11:05:44] probe x64-d3d9_probe
+[11:06:11]   Run-Probe exit 0
+  console: 10/13 frames show the probe window; animating=True
+[11:06:11] probe x86-d3d9_probe
+[11:06:43]   Run-Probe exit 0
+  console: 9/15 frames show the probe window; animating=True
+[11:06:43] probe x64-d3d11_probe
+[11:07:10]   Run-Probe exit 0
+  console: 10/13 frames show the probe window; animating=True
+[11:07:10] probe x86-d3d11_probe
+[11:07:37]   Run-Probe exit 0
+  console: 10/13 frames show the probe window; animating=True
+[11:07:37] probe x64-d3d12_probe
+[11:08:14]   Run-Probe exit 0
+  console: 9/17 frames show the probe window; animating=True
+[11:08:14] probe x86-d3d12_probe
+[11:08:57]   Run-Probe exit 0
+  console: 10/20 frames show the probe window; animating=True
+[11:08:57] probe x64-opengl_probe
+[11:09:28]   Run-Probe exit 0
+  console: 9/15 frames show the probe window; animating=True
+[11:09:28] probe x86-opengl_probe
+[11:09:57]   Run-Probe exit 0
+  console: 10/14 frames show the probe window; animating=True
+[11:09:57] probe x64-vulkan_probe
+[11:10:24]   Run-Probe exit 0
+  console: 10/13 frames show the probe window; animating=True
+[11:10:24] probe x86-vulkan_probe
+[11:10:52]   Run-Probe exit 0
+  console: 10/13 frames show the probe window; animating=True
+
+[11:10:52] == 5c dxdiag
+                        "D3D Status":  "Enabled",
+                        "AGP Status":  "Enabled"
+                    }
+                ]
+}
+
+[11:11:16] == 6 collect evidence
+pulled 53076 bytes to /home/wil/dev/vmlab-win3d-wt/x86d3d12/.scratch/e2e/windows-11/results.zip
+
+[11:11:21] == 7 teardown
+[11:11:21] --keep: win3d-x86d3d12-amd1 left running; destroy with (cd /home/wil/dev/vmlab-win3d-wt/x86d3d12/.scratch/e2e/windows-11/lab && vmlab destroy)
+
+[11:11:21] == result (ok)
+Item  Result Check
+------------------------------------------------------------------------------
+1     pass   scripts/build.sh builds the package
+             reused; exit 0
+2     pass   documented install command (scripts/install-into-vm.sh)
+             exit 0; Installed
+2+    pass   display device on our driver, problem code 0
+             Hardsoft VirtIO GPU 3D controller
+2     pass   vulkaninfo --summary (x64) lists the Venus device
+             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+2+    pass   vulkaninfo --summary (x86) lists the Venus device
+             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+2+    pass   vulkaninfo --summary (x64) lists exactly one Venus device
+             1 Venus: Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+2+    pass   LunarG vulkaninfo 1.4.363 (x64, pinned) lists Venus through the installed loader
+             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+2+    pass   LunarG vulkaninfo 1.4.363 (x86, pinned) lists Venus through the installed loader
+             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
+2     pass   Direct3D 9 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 59.64 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 9 (x86) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 49.93 fps, readback ok, 5 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 11 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 59.83 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 11 (x86) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 59.81 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 12 (x64) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 45.25 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   Direct3D 12 (x86) renders on the GPU and shows on the console
+             Hardsoft VirtIO GPU 3D controller, 43.95 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   OpenGL (x64) renders on the GPU and shows on the console
+             zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 58.52 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   OpenGL (x86) renders on the GPU and shows on the console
+             zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 60.87 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating
+2+    pass   Vulkan (x64) renders on the GPU and shows on the console
+             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 59.35 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating
+2+    pass   Vulkan (x86) renders on the GPU and shows on the console
+             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 59.56 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating
+2     pass   dxdiag reports hardware acceleration on our driver
+             hardware_acceleration=True, card 'Hardsoft VirtIO GPU 3D controller', D3D Enabled, DDraw Enabled, WDDM 2.0
+2+    pass   dxdiag: Direct3D acceleration on our full WDDM device
+             D3D Status Enabled, Full Device (POST), WDDM 2.0
+------------------------------------------------------------------------------
+PASS: 12 of 12 Done checks pass ('+' rows are extra and do not count)
