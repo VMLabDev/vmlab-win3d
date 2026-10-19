@@ -1,0 +1,1 @@
+1040 window=0x200B6 title=[Unigine Heaven Benchmark 4.0 Basic (Direct3D11)] closed=True

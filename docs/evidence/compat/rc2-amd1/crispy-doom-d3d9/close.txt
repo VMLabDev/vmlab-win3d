@@ -1,0 +1,1 @@
+7960 window=0xD0168 title=[Freedoom: Phase 2 - Crispy Doom 7.2.0] closed=True

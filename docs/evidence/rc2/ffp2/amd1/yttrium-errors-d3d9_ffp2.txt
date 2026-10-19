@@ -1,0 +1,27 @@
+---- d3d9_ffp2 run-repro.sh start 1792380937
+2026-10-18 20:35:41.404 [warning pid=7784 process=d3d9_ffp2.exe] d3d9ddi: unsupported D3D9 tessellation state owner=d3d9-state reason=patch-tessellation-not-implemented fallback=ignore-unadvertised-state state=164 value=0x00000000
+2026-10-18 20:35:41.404 [warning pid=7784 process=d3d9_ffp2.exe] d3d9ddi: D3D9 runtime reserved render state owner=d3d9-state reason=unassigned-ddi-slot fallback=ignore-runtime-metadata state=196 value=0xffffffff
+2026-10-18 20:35:41.454 [warning pid=7784 process=d3d9_ffp2.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-18 20:35:56.915 [warning pid=8864 process=d3d9_ffp2.exe] d3d9ddi: unsupported D3D9 tessellation state owner=d3d9-state reason=patch-tessellation-not-implemented fallback=ignore-unadvertised-state state=164 value=0x00000000
+2026-10-18 20:35:56.917 [warning pid=8864 process=d3d9_ffp2.exe] d3d9ddi: D3D9 runtime reserved render state owner=d3d9-state reason=unassigned-ddi-slot fallback=ignore-runtime-metadata state=196 value=0xffffffff
+2026-10-18 20:35:56.934 [warning pid=8864 process=d3d9_ffp2.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-18 20:36:03.593 [warning pid=5348 process=d3d9_ffp2.exe] d3d9ddi: unsupported D3D9 tessellation state owner=d3d9-state reason=patch-tessellation-not-implemented fallback=ignore-unadvertised-state state=164 value=0x00000000
+2026-10-18 20:36:03.594 [warning pid=5348 process=d3d9_ffp2.exe] d3d9ddi: D3D9 runtime reserved render state owner=d3d9-state reason=unassigned-ddi-slot fallback=ignore-runtime-metadata state=196 value=0xffffffff
+2026-10-18 20:36:03.611 [warning pid=5348 process=d3d9_ffp2.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-18 20:36:10.031 [warning pid=1636 process=d3d9_ffp2.exe] d3d9ddi: unsupported D3D9 tessellation state owner=d3d9-state reason=patch-tessellation-not-implemented fallback=ignore-unadvertised-state state=164 value=0x00000000
+2026-10-18 20:36:10.032 [warning pid=1636 process=d3d9_ffp2.exe] d3d9ddi: D3D9 runtime reserved render state owner=d3d9-state reason=unassigned-ddi-slot fallback=ignore-runtime-metadata state=196 value=0xffffffff
+2026-10-18 20:36:10.048 [warning pid=1636 process=d3d9_ffp2.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-18 20:36:16.467 [warning pid=7244 process=d3d9_ffp2.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+2026-10-18 20:36:22.322 [warning pid=7244 process=d3d9_ffp2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69556 host_fence_status=1 feedback_after_host_query=1 label=pipe resource flush
+2026-10-18 20:36:22.322 [warning pid=7244 process=d3d9_ffp2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=pipe resource flush result=2 timeout_ns=5000000000
+2026-10-18 20:36:22.322 [warning pid=7244 process=d3d9_ffp2.exe] yttrium: resource flush wait failed owner=yttrium_resource reason=Venus batch wait failed resource=0000025887cc16d0 res_id=30067
+2026-10-18 20:36:27.338 [warning pid=7244 process=d3d9_ffp2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69658 host_fence_status=1 feedback_after_host_query=1 label=context destroy flush
+2026-10-18 20:36:27.338 [warning pid=7244 process=d3d9_ffp2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=context destroy flush result=2 timeout_ns=5000000000
+2026-10-18 20:36:32.354 [warning pid=7244 process=d3d9_ffp2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69662 host_fence_status=1 feedback_after_host_query=1 label=context destroy flush
+2026-10-18 20:36:32.354 [warning pid=7244 process=d3d9_ffp2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=context destroy flush result=2 timeout_ns=5000000000
+2026-10-18 20:36:32.354 [warning pid=7244 process=d3d9_ffp2.exe] yttrium: context destroy failed to drain Venus batches before releasing context resources
+2026-10-18 20:36:37.369 [warning pid=7244 process=d3d9_ffp2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69669 host_fence_status=1 feedback_after_host_query=1 label=batch queue destroy
+2026-10-18 20:36:37.369 [warning pid=7244 process=d3d9_ffp2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=batch queue destroy result=2 timeout_ns=5000000000
+2026-10-18 20:36:42.385 [warning pid=7244 process=d3d9_ffp2.exe] yttrium: FATAL: mapped batch-fence feedback timeout owner=venus2 wait_ms=5000 index=0 iterations=69641 host_fence_status=1 feedback_after_host_query=1 label=batch queue destroy
+2026-10-18 20:36:42.385 [warning pid=7244 process=d3d9_ffp2.exe] yttrium: Venus batch fence wait failed owner=venus2 path=mapped_feedback label=batch queue destroy result=2 timeout_ns=5000000000
+2026-10-18 20:37:25.132 [warning pid=2748 process=d3d9_ffp2.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete

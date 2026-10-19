@@ -2,13 +2,13 @@
     "name":  "d3d9-x64-ParallaxOcclusionMapping",
     "exe":  "C:\\apps\\DXSDK\\Samples\\C++\\Direct3D\\Bin\\x64\\ParallaxOcclusionMapping.exe",
     "arguments":  "-windowed",
-    "user":  "VMLABVM-DRET32C\\win3d",
+    "user":  "VMLABVM-15I9IAM\\win3d",
     "session_id":  1,
-    "pid":  5100,
+    "pid":  1944,
     "wow64":  false,
-    "started":  "2026-10-18T15:18:31.5261737-07:00",
-    "ended":  "2026-10-18T15:19:04.2462527-07:00",
-    "duration_s":  32.7,
+    "started":  "2026-10-18T20:28:45.4254269-07:00",
+    "ended":  "2026-10-18T20:29:17.5381842-07:00",
+    "duration_s":  32.1,
     "timed_out":  true,
     "exit_code":  null,
     "exit_code_hex":  null,
@@ -18,15 +18,14 @@
     "adapter":  null,
     "software":  null,
     "readback_ok":  null,
-    "module_count":  47,
+    "module_count":  46,
     "graphics_modules":  [
-                             "C:\\WINDOWS\\SYSTEM32\\d3dx10_43.dll [system32] 9.29.952.3111",
                              "C:\\WINDOWS\\SYSTEM32\\d3dx9_43.dll [system32] 9.29.952.3111",
+                             "C:\\WINDOWS\\SYSTEM32\\d3dx10_43.dll [system32] 9.29.952.3111",
                              "C:\\WINDOWS\\SYSTEM32\\d3d9.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
                              "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
                              "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
-                             "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] ",
-                             "C:\\WINDOWS\\SYSTEM32\\D3DREF9.DLL [system32] 6.0.5300.0 (vbl_wcp_gfx_dev_sdk.060125-2214)"
+                             "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] "
                          ],
     "app_local_modules":  [
 

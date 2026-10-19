@@ -1,0 +1,1 @@
+10220 window=0x80266 title=[Unigine Heaven Benchmark 4.0 Basic (OpenGL)] closed=True

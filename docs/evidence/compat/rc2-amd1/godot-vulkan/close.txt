@@ -1,0 +1,8 @@
+Get-Content : The process cannot access the file 'C:\ProgramData\win3d-close-3a07d2b3.txt' because it is being used by 
+another process.
+At C:\win3d\compat\Close-App.ps1:36 char:48
++ ... ) -lt $deadline -and -not (Get-Content -LiteralPath $out -Raw)) { Sta ...
++                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ReadError: (C:\ProgramData\win3d-close-3a07d2b3.txt:String) [Get-Content], IOException
+    + FullyQualifiedErrorId : GetContentReaderIOError,Microsoft.PowerShell.Commands.GetContentCommand
+ 

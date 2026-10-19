@@ -1,7 +1,7 @@
 
-[01:15:25] == vmlab-win3d e2e: windows-10, commit 0c0788c
-date: 2026-10-19T01:15:25+10:00
-commit: 0c0788ccbae9964f95a13702af90aacebdc8f52a
+[13:06:39] == vmlab-win3d e2e: windows-10, commit 66809ce
+date: 2026-10-19T13:06:39+10:00
+commit: 66809ce4ec3ff77158503fd64cd252c2c5d80e19
 worktree changes: 1
 template: x86_64/windows-10@19045.2006.8
 kernel: 7.2.3-1-cachyos
@@ -10,103 +10,71 @@ packages: qemu-full 11.1.1-1 virglrenderer 1.3.0-2.1 mesa 3:26.2.2-2 vulkan-rade
 vmlab: vmlab 0.28.0-alpha
 venus gpu: host_gpu AMD1, /dev/dri/renderD129 0000:72:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI] Granite Ridge [Radeon Graphics] (rev c1)
 
-[01:15:26] == 1 build
-[01:15:26] reused (out/package built at 0ee5ba149e10b7671aef8ab3db71f187c53d895c; no change to build installer probes patches scripts/build.sh since)
+[13:06:39] == 1 build
+[13:06:39] reused (out/package built at 0d3eb68b7780c21061b34c9768df08aa418497e4; no change to build installer probes patches scripts/build.sh since)
 
-[01:15:26] == 2 fresh lab win3d-rc-w10-amd1 from x86_64/windows-10@19045.2006.8
-ok: lab "win3d-rc-w10-amd1" — 1 vm(s), 0 container(s), 0 segment(s)
+[13:06:39] == 2 fresh lab win3d-rc2-w10-amd1 from x86_64/windows-10@19045.2006.8
+ok: lab "win3d-rc2-w10-amd1" — 1 vm(s), 0 container(s), 0 segment(s)
 first-boot: provisioning win...
 first-boot: specialize complete; clearing marker
 first-boot: settling staged AppX (LKG) before first logon
-first-boot: appx: settled 1527c705-839a-4832-9118-54d4Bd6a0c89_10.0.19041.4239_neutral_neutral_cw5n1h2txyewy
-settled c5e2524a-ea46-4f67-841f-6a9465d9d515_10.0.19041.4239_neutral_neutral_cw5n1h2txyewy
-settled E2A4F912-2574-4A75-9BB0-0D023378592B_10.0.19041.4239_neutral_neutral_cw5n1h2txyewy
-settled F46D4000-FD22-4DB4-AC8E-4E1DDDE828FE_10.0.19041.4239_neutral_neutral_cw5n1h2txyewy
-settled Microsoft.AccountsControl_10.0.19041.4239_neutral__cw5n1h2txyewy
-settled Microsoft.AsyncTextService_10.0.19041.4239_neutral__8wekyb3d8bbwe
-settled Microsoft.CredDialogHost_10.0.19041.4239_neutral__cw5n1h2txyewy
-settled Microsoft.ECApp_10.0.19041.4597_neutral__8wekyb3d8bbwe
-settled Microsoft.LockApp_10.0.19041.4239_neutral__cw5n1h2txyewy
-settled Microsoft.MicrosoftEdgeDevToolsClient_1000.19041.4239.0_neutral_neutral_8wekyb3d8bbwe
-settled Microsoft.Win32WebViewHost_10.0.19041.4239_neutral_neutral_cw5n1h2txyewy
-settled Microsoft.Windows.Apprep.ChxApp_1000.19041.4239.0_neutral_neutral_cw5n1h2txyewy
-settled Microsoft.Windows.AssignedAccessLockApp_1000.19041.4239.0_neutral_neutral_cw5n1h2txyewy
-settled Microsoft.Windows.CallingShellApp_1000.19041.4239.0_neutral_neutral_cw5n1h2txyewy
-settled Microsoft.Windows.CapturePicker_10.0.19041.4239_neutral__cw5n1h2txyewy
-settled Microsoft.Windows.NarratorQuickStart_10.0.19041.4239_neutral_neutral_8wekyb3d8bbwe
-settled Microsoft.Windows.ParentalControls_1000.19041.4239.0_neutral_neutral_cw5n1h2txyewy
-settled Microsoft.Windows.PeopleExperienceHost_10.0.19041.4239_neutral_neutral_cw5n1h2txyewy
-settled Microsoft.Windows.PinningConfirmationDialog_1000.19041.4239.0_neutral__cw5n1h2txyewy
-settled Microsoft.Windows.Search_1.14.18.19041_neutral_neutral_cw5n1h2txyewy
-settled Microsoft.Windows.SecHealthUI_10.0.19041.4239_neutral__cw5n1h2txyewy
-settled Microsoft.Windows.SecureAssessmentBrowser_10.0.19041.4239_neutral_neutral_cw5n1h2txyewy
-settled Microsoft.Windows.XGpuEjectDialog_10.0.19041.4239_neutral_neutral_cw5n1h2txyewy
-settled Microsoft.XboxGameCallableUI_1000.19041.4239.0_neutral_neutral_cw5n1h2txyewy
-settled NcsiUwpApp_1000.19041.4239.0_neutral_neutral_8wekyb3d8bbwe
-settled Windows.CBSPreview_10.0.19041.4239_neutral_neutral_cw5n1h2txyewy
-settled windows.immersivecontrolpanel_10.0.2.1000_neutral_neutral_cw5n1h2txyewy
-settled Windows.PrintDialog_6.2.1.0_neutral_neutral_cw5n1h2txyewy
-first-boot: installing first-logon XAML registration hook (sysprep-as-SYSTEM workaround)
-first-boot: xaml: hook installed for: MicrosoftWindows.Client.CBS_cw5n1h2txyewy
+first-boot: appx settle skipped (exec `powershell.exe -NoProfile -NonInteractive -Command $prov = (Get-AppxProvisionedPackage -Online).DisplayName; Get-AppxPackage -AllUsers | Where-Object { -not $_.IsFramework -and -not $_.IsResourcePackage -and $prov -notcontains $_.Name -and -not ($_.PackageUserInformation | Where-Object InstallState -eq 'Installed') } | ForEach-Object { $r = 'removed'; try { Remove-AppxPackage -Package $_.PackageFullName -AllUsers -ErrorAction Stop } catch { $r = 'settled' }; Write-Output ($r + ' ' + $_.PackageFullName) }` timed out after 120s)
 first-boot: rebooting once to settle shell reconciliation
-first-boot: agent still up after reboot request; forcing host restart
-first-boot: holding ready until the guest settles (early first logons break the 24H2 shell)
-first-boot: guest settled (uptime 308s)
 first-boot: win ready
-lab "win3d-rc-w10-amd1" is up
+lab "win3d-rc2-w10-amd1" is up
 
-[01:31:39] == 3 guest scripts, probes and the baseline
+[13:10:51] == 3 guest scripts, probes and the baseline
 pushed 7 file(s), 42217 bytes to win:C:/win3d/guest
 pushed 1 file(s), 2321 bytes to win:C:/win3d/e2e
-pushed 5 file(s), 174592 bytes to win:C:/win3d/probes/x64
-pushed 5 file(s), 153088 bytes to win:C:/win3d/probes/x86
+pushed 5 file(s), 176128 bytes to win:C:/win3d/probes/x64
+pushed 5 file(s), 153600 bytes to win:C:/win3d/probes/x86
 pushed 2800056 bytes to win:C:/win3d/lunarg/x64/vulkaninfo.exe
 pushed 2403256 bytes to win:C:/win3d/lunarg/x86/vulkaninfo.exe
-[01:31:44] baseline: Red Hat VirtIO GPU DOD controller (problem 0)
+[13:10:54] baseline: Red Hat VirtIO GPU DOD controller (problem 0)
 
-[01:31:44] == 3b test desktop (autologon user win3d)
-[01:31:46] oobe: done after 0 s
-[01:32:48] autologon before-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-AIUBH5O AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-AIUBH5O\win3d 
+[13:10:54] == 3b test desktop (autologon user win3d)
+[13:10:55] oobe: done after 0 s
+[13:11:56] autologon before-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-GKMSTFH AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-GKMSTFH\win3d 
 
-[01:32:48] == 4 install: scripts/install-into-vm.sh /home/wil/dev/vmlab-win3d-wt/rc/.scratch/e2e/windows-10/lab win
-[01:32:48] waiting for the guest agent
-[01:32:49] copying vmlab-win3d-0.1.1 to C:\vmlab-win3d
-pushed 29 file(s), 102406757 bytes to win:C:/vmlab-win3d
-[01:32:51] running C:\vmlab-win3d\Install.cmd
-2026-10-18T15:32:52.226-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
-2026-10-18T15:32:54.320-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
-2026-10-18T15:32:56.805-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem9.inf 100.101.104.28500
-2026-10-18T15:32:56.992-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
-2026-10-18T15:32:57.008-07:00 [Install]   Root "Trusted Root Certification Authorities"
-2026-10-18T15:32:57.008-07:00 [Install]   Signature matches Public Key
-2026-10-18T15:32:57.008-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
-2026-10-18T15:32:57.008-07:00 [Install]   CertUtil: -addstore command completed successfully.
-2026-10-18T15:32:57.039-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
-2026-10-18T15:32:57.039-07:00 [Install]   TrustedPublisher "Trusted Publishers"
-2026-10-18T15:32:57.039-07:00 [Install]   Signature matches Public Key
-2026-10-18T15:32:57.039-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
-2026-10-18T15:32:57.039-07:00 [Install]   CertUtil: -addstore command completed successfully.
-2026-10-18T15:32:57.086-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
-2026-10-18T15:32:57.102-07:00 [Install]   The operation completed successfully.
-2026-10-18T15:32:57.273-07:00 [Install] test signing is set but not active in this boot
-2026-10-18T15:32:57.805-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
-2026-10-18T15:32:57.867-07:00 [Install] rebooting; step Driver resumes after the restart
-[01:32:58] Install.cmd exited 0
-[01:32:59] state: RebootPending|Driver|
-[01:33:48] state: RebootPending|Verify|
-[01:34:38] state: Installed||
-[01:34:38] done: Installed
-[01:34:44] autologon after-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-AIUBH5O AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-AIUBH5O\win3d 
+[13:11:56] == 4 install: scripts/install-into-vm.sh /home/wil/dev/vmlab-win3d-wt/rc2/.scratch/e2e/windows-10/lab win
+[13:11:56] waiting for the guest agent
+[13:11:56] copying vmlab-win3d-0.1.1 to C:\vmlab-win3d
+pushed 29 file(s), 102444141 bytes to win:C:/vmlab-win3d
+[13:11:58] running C:\vmlab-win3d\Install.cmd
+2026-10-18T20:11:57.279-07:00 [Install] Install from C:\vmlab-win3d (state: NotInstalled)
+2026-10-18T20:11:58.873-07:00 [Install] staged bundle C:\vmlab-win3d -> C:\ProgramData\vmlab-win3d\bundle
+2026-10-18T20:12:00.607-07:00 [Install] baseline captured: testsigning=Absent hibernate=0 driver=oem9.inf 100.101.104.28500
+2026-10-18T20:12:00.748-07:00 [Install] certutil.exe -f -addstore Root C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T20:12:00.764-07:00 [Install]   Root "Trusted Root Certification Authorities"
+2026-10-18T20:12:00.764-07:00 [Install]   Signature matches Public Key
+2026-10-18T20:12:00.764-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T20:12:00.764-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T20:12:00.795-07:00 [Install] certutil.exe -f -addstore TrustedPublisher C:\ProgramData\vmlab-win3d\bundle\vmlab-win3d-test.cer -> 0
+2026-10-18T20:12:00.795-07:00 [Install]   TrustedPublisher "Trusted Publishers"
+2026-10-18T20:12:00.795-07:00 [Install]   Signature matches Public Key
+2026-10-18T20:12:00.795-07:00 [Install]   Certificate "vmlab-win3d Test Driver Signing" added to store.
+2026-10-18T20:12:00.810-07:00 [Install]   CertUtil: -addstore command completed successfully.
+2026-10-18T20:12:00.857-07:00 [Install] bcdedit.exe /set {current} testsigning on -> 0
+2026-10-18T20:12:00.857-07:00 [Install]   The operation completed successfully.
+2026-10-18T20:12:01.029-07:00 [Install] test signing is set but not active in this boot
+2026-10-18T20:12:01.373-07:00 [Install] registered startup task vmlab-win3d-resume (-Mode Resume)
+2026-10-18T20:12:01.420-07:00 [Install] rebooting; step Driver resumes after the restart
+[13:12:02] Install.cmd exited 0
+[13:12:02] state: RebootPending|Driver|
+[13:13:41] state: RebootPending|Verify|
+[13:15:04] state: Installed||
+[13:15:04] done: Installed
+[13:15:05] autologon after-install: AutoAdminLogon=1 DefaultUserName=win3d DefaultDomainName=VMLABVM-GKMSTFH AutoLogonCount= ForceAutoLogon= DefaultPassword set=True console user=VMLABVM-GKMSTFH\win3d 
 
-[01:34:44] == 5 interactive-session tests
-[01:34:45] desktop: True 48
-[01:35:01] desktop: True 64
-[01:35:17] desktop: True 81
-[01:35:34] desktop: True 97
-[01:35:50] desktop: True 113
-[01:36:06] desktop: True 129
+[13:15:05] == 5 interactive-session tests
+[13:15:06] desktop: True 55
+[13:15:21] desktop: True 70
+[13:15:37] desktop: True 86
+[13:15:52] desktop: True 101
+[13:16:07] desktop: True 116
+[13:16:22] desktop: True 132
 
-[01:36:08] == 5a vulkaninfo --summary
+[13:16:25] == 5a vulkaninfo --summary
     "exit_code":  0,
     "exit_code_hex":  "0x00000000",
 	deviceType         = PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU
@@ -124,51 +92,51 @@ exit 0
 	deviceName         = Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
 	driverName         = venus
 
-[01:36:13] == 5b probes
-[01:36:13] probe x64-d3d9_probe
-[01:36:38]   Run-Probe exit 0
-  console: 9/12 frames show the probe window; animating=True
-[01:36:38] probe x86-d3d9_probe
-[01:37:03]   Run-Probe exit 0
+[13:16:29] == 5b probes
+[13:16:29] probe x64-d3d9_probe
+[13:16:52]   Run-Probe exit 0
+  console: 10/11 frames show the probe window; animating=True
+[13:16:52] probe x86-d3d9_probe
+[13:17:14]   Run-Probe exit 0
+  console: 10/11 frames show the probe window; animating=True
+[13:17:15] probe x64-d3d11_probe
+[13:17:39]   Run-Probe exit 0
   console: 10/12 frames show the probe window; animating=True
-[01:37:03] probe x64-d3d11_probe
-[01:37:28]   Run-Probe exit 0
-  console: 9/12 frames show the probe window; animating=True
-[01:37:28] probe x86-d3d11_probe
-[01:37:53]   Run-Probe exit 0
+[13:17:40] probe x86-d3d11_probe
+[13:18:04]   Run-Probe exit 0
   console: 10/12 frames show the probe window; animating=True
-[01:37:54] probe x64-d3d12_probe
-[01:38:20]   Run-Probe exit 0
-  console: 8/12 frames show the probe window; animating=True
-[01:38:21] probe x86-d3d12_probe
-[01:38:50]   Run-Probe exit 0
-  console: 9/13 frames show the probe window; animating=True
-[01:38:50] probe x64-opengl_probe
-[01:39:15]   Run-Probe exit 0
-  console: 9/12 frames show the probe window; animating=True
-[01:39:15] probe x86-opengl_probe
-[01:39:40]   Run-Probe exit 0
-  console: 9/12 frames show the probe window; animating=True
-[01:39:40] probe x64-vulkan_probe
-[01:40:05]   Run-Probe exit 0
-  console: 10/12 frames show the probe window; animating=True
-[01:40:05] probe x86-vulkan_probe
-[01:40:30]   Run-Probe exit 0
-  console: 10/12 frames show the probe window; animating=True
+[13:18:05] probe x64-d3d12_probe
+[13:18:27]   Run-Probe exit 0
+  console: 10/11 frames show the probe window; animating=True
+[13:18:28] probe x86-d3d12_probe
+[13:18:50]   Run-Probe exit 0
+  console: 10/11 frames show the probe window; animating=True
+[13:18:50] probe x64-opengl_probe
+[13:19:13]   Run-Probe exit 0
+  console: 10/11 frames show the probe window; animating=True
+[13:19:13] probe x86-opengl_probe
+[13:19:36]   Run-Probe exit 0
+  console: 10/11 frames show the probe window; animating=True
+[13:19:36] probe x64-vulkan_probe
+[13:19:59]   Run-Probe exit 0
+  console: 10/11 frames show the probe window; animating=True
+[13:19:59] probe x86-vulkan_probe
+[13:20:22]   Run-Probe exit 0
+  console: 10/11 frames show the probe window; animating=True
 
-[01:40:31] == 5c dxdiag
+[13:20:22] == 5c dxdiag
                         "D3D Status":  "Enabled",
                         "AGP Status":  "Enabled"
                     }
                 ]
 }
 
-[01:40:43] == 6 collect evidence
-pulled 52921 bytes to /home/wil/dev/vmlab-win3d-wt/rc/.scratch/e2e/windows-10/results.zip
+[13:20:32] == 6 collect evidence
+pulled 53317 bytes to /home/wil/dev/vmlab-win3d-wt/rc2/.scratch/e2e/windows-10/results.zip
 
-[01:40:46] == 6b stretch: third-party applications
-[01:40:46] unpacking the DirectX SDK's samples, media, redistributable and developer runtime
-[01:40:55] copying the DirectX SDK and Blender into the guest
+[13:20:33] == 6b stretch: third-party applications
+[13:20:34] unpacking the DirectX SDK's samples, media, redistributable and developer runtime
+[13:20:36] copying the DirectX SDK and Blender into the guest
 pushed 800475102 bytes to win:C:/apps/dxsdk.zip
 pushed 383613057 bytes to win:C:/apps/blender.zip
 pushed 10277328 bytes to win:C:/apps/vcredist_x64.exe
@@ -177,7 +145,7 @@ blender-4.2.3-windows-x64
 DXSDK
 vcredist_x64.exe
 vcredist_x86.exe
-[01:41:20] installing the DirectX End-User Runtime from the SDK (DXSETUP /silent) and the VC++ 2010 runtime
+[13:20:48] installing the DirectX End-User Runtime from the SDK (DXSETUP /silent) and the VC++ 2010 runtime
 DXSETUP exit 0
 vcredist_x64 exit 0
 vcredist_x86 exit 0
@@ -189,32 +157,32 @@ System32\d3dx11_43.dll True
 System32\D3DCompiler_43.dll True
 SysWOW64\d3dx9_43.dll True
 SysWOW64\D3DCompiler_43.dll True
-[01:41:56] installing the SDK developer runtime (D3D11Ref.dll)
+[13:21:11] installing the SDK developer runtime (D3D11Ref.dll)
 System32\D3D11Ref.dll 8a93549fa4fdcb453409128d493b1f8e262d85a2e562ce78eb1b14ce715ac7ee
 SysWOW64\D3D11Ref.dll 6335bd1f8a137c6a6696878c67652d1c75551c858e589559dfafa15a5e54c8c3
-[01:41:58] app d3d9-x64-BasicHLSL: C:\apps\DXSDK\Samples\C++\Direct3D\Bin\x64\BasicHLSL.exe -windowed
-[01:42:38]   Run-Probe exit 124 (124 = still running at 30 s, then closed)
-[01:42:38] app d3d9-x86-BasicHLSL: C:\apps\DXSDK\Samples\C++\Direct3D\Bin\x86\BasicHLSL.exe -windowed
-[01:43:15]   Run-Probe exit 124 (124 = still running at 30 s, then closed)
-[01:43:15] app d3d9-x64-ParallaxOcclusionMapping: C:\apps\DXSDK\Samples\C++\Direct3D\Bin\x64\ParallaxOcclusionMapping.exe -windowed
-[01:43:51]   Run-Probe exit 124 (124 = still running at 30 s, then closed)
-[01:43:52] app d3d11-x64-BasicHLSL11: C:\apps\DXSDK\Samples\C++\Direct3D11\Bin\x64\BasicHLSL11.exe -windowed
-[01:44:28]   Run-Probe exit 124 (124 = still running at 30 s, then closed)
-[01:44:28] app d3d11-x64-SubD11: C:\apps\DXSDK\Samples\C++\Direct3D11\Bin\x64\SubD11.exe -windowed
-[01:45:13]   Run-Probe exit 124 (124 = still running at 40 s, then closed)
-[01:45:13] app opengl-x64-Blender: C:\apps\blender-4.2.3-windows-x64\blender.exe --factory-startup
-[01:46:49]   Run-Probe exit 124 (124 = still running at 90 s, then closed)
+[13:21:11] app d3d9-x64-BasicHLSL: C:\apps\DXSDK\Samples\C++\Direct3D\Bin\x64\BasicHLSL.exe -windowed
+[13:21:43]   Run-Probe exit 124 (124 = still running at 30 s, then closed)
+[13:21:43] app d3d9-x86-BasicHLSL: C:\apps\DXSDK\Samples\C++\Direct3D\Bin\x86\BasicHLSL.exe -windowed
+[13:22:15]   Run-Probe exit 124 (124 = still running at 30 s, then closed)
+[13:22:15] app d3d9-x64-ParallaxOcclusionMapping: C:\apps\DXSDK\Samples\C++\Direct3D\Bin\x64\ParallaxOcclusionMapping.exe -windowed
+[13:22:48]   Run-Probe exit 124 (124 = still running at 30 s, then closed)
+[13:22:48] app d3d11-x64-BasicHLSL11: C:\apps\DXSDK\Samples\C++\Direct3D11\Bin\x64\BasicHLSL11.exe -windowed
+[13:23:20]   Run-Probe exit 124 (124 = still running at 30 s, then closed)
+[13:23:20] app d3d11-x64-SubD11: C:\apps\DXSDK\Samples\C++\Direct3D11\Bin\x64\SubD11.exe -windowed
+[13:24:04]   Run-Probe exit 124 (124 = still running at 40 s, then closed)
+[13:24:05] app opengl-x64-Blender: C:\apps\blender-4.2.3-windows-x64\blender.exe --factory-startup
+[13:25:37]   Run-Probe exit 124 (124 = still running at 90 s, then closed)
 d3d11-x64-BasicHLSL11: exit None timed_out=True app_local=0 graphics=9
-d3d11-x64-SubD11: exit None timed_out=True app_local=0 graphics=9
+d3d11-x64-SubD11: exit None timed_out=True app_local=0 graphics=11
 d3d9-x64-BasicHLSL: exit None timed_out=True app_local=0 graphics=5
 d3d9-x64-ParallaxOcclusionMapping: exit None timed_out=True app_local=0 graphics=5
 d3d9-x86-BasicHLSL: exit None timed_out=True app_local=0 graphics=5
 opengl-x64-Blender: exit None timed_out=True app_local=4 graphics=10
 
-[01:46:50] == 7 teardown
-lab "win3d-rc-w10-amd1" destroyed
+[13:25:37] == 7 teardown
+lab "win3d-rc2-w10-amd1" destroyed
 
-[01:46:50] == result (ok)
+[13:25:38] == result (ok)
 Item  Result Check
 ------------------------------------------------------------------------------
 1     pass   scripts/build.sh builds the package
@@ -234,25 +202,25 @@ Item  Result Check
 2+    pass   LunarG vulkaninfo 1.4.363 (x86, pinned) lists Venus through the installed loader
              Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO))
 2     pass   Direct3D 9 (x64) renders on the GPU and shows on the console
-             Hardsoft VirtIO GPU 3D controller, 59.23 fps, readback ok, 4 graphics modules all in system paths, 0 app-local; console: window found, animating
+             Hardsoft VirtIO GPU 3D controller, 59.71 fps, readback ok, 4 graphics modules all in system paths, 0 app-local; console: window found, animating
 2     pass   Direct3D 9 (x86) renders on the GPU and shows on the console
-             Hardsoft VirtIO GPU 3D controller, 59.29 fps, readback ok, 4 graphics modules all in system paths, 0 app-local; console: window found, animating
+             Hardsoft VirtIO GPU 3D controller, 59.52 fps, readback ok, 4 graphics modules all in system paths, 0 app-local; console: window found, animating
 2     pass   Direct3D 11 (x64) renders on the GPU and shows on the console
-             Hardsoft VirtIO GPU 3D controller, 59.82 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating
+             Hardsoft VirtIO GPU 3D controller, 59.88 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating
 2     pass   Direct3D 11 (x86) renders on the GPU and shows on the console
-             Hardsoft VirtIO GPU 3D controller, 59.79 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating
+             Hardsoft VirtIO GPU 3D controller, 59.75 fps, readback ok, 6 graphics modules all in system paths, 0 app-local; console: window found, animating
 2     pass   Direct3D 12 (x64) renders on the GPU and shows on the console
-             Hardsoft VirtIO GPU 3D controller, 57.14 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating
+             Hardsoft VirtIO GPU 3D controller, 58.62 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating
 2     pass   Direct3D 12 (x86) renders on the GPU and shows on the console
-             Hardsoft VirtIO GPU 3D controller, 57.74 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating
+             Hardsoft VirtIO GPU 3D controller, 59.26 fps, readback ok, 11 graphics modules all in system paths, 0 app-local; console: window found, animating
 2     pass   OpenGL (x64) renders on the GPU and shows on the console
-             zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 67.01 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating
+             zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 67.57 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating
 2     pass   OpenGL (x86) renders on the GPU and shows on the console
-             zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 67.36 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating
+             zink Vulkan 1.4(Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)) (MESA_RADV)), 67.97 fps, readback ok, 10 graphics modules all in system paths, 0 app-local; console: window found, animating
 2+    pass   Vulkan (x64) renders on the GPU and shows on the console
-             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 59.74 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating
+             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 59.82 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating
 2+    pass   Vulkan (x86) renders on the GPU and shows on the console
-             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 59.79 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating
+             Virtio-GPU Venus (AMD Ryzen 9 9950X 16-Core Processor (RADV RAPHAEL_MENDOCINO)), 59.89 fps, readback ok, 7 graphics modules all in system paths, 0 app-local; console: window found, animating
 2     pass   dxdiag reports hardware acceleration on our driver
              hardware_acceleration=True, card 'Hardsoft VirtIO GPU 3D controller', D3D Enabled, DDraw Enabled, WDDM 2.0
 2+    pass   dxdiag: Direct3D acceleration on our full WDDM device

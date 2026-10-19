@@ -14,6 +14,12 @@ failure below is recorded in enough detail for a later worker to pick it up.
   **Xid 69** (ErrorCode `0x13d`) every time it starts.
 - Both GPUs: GZDoom cannot create an OpenGL context.
 
+The failures were then fixed one by one (each failure's status below). The
+whole sweep ran again on AMD1 with release candidate 0.1.1-alpha-rc2
+(package built at `0d3eb68`), and **all 12 runs pass**
+([rc2 on AMD1](#release-candidate-011-alpha-rc2-on-amd1)). It has not run
+again on NVIDIA yet.
+
 ## How to rerun it
 
 ```sh
@@ -136,13 +142,52 @@ full time, and exited cleanly on WM_CLOSE.
 
 By API:
 
-| API | AMD1 | Nvidia2 |
-| --- | --- | --- |
-| D3D11 | 2 of 2 pass; Heaven crashed in 1 of 2 runs | 2 of 2 pass |
-| D3D9 | 2 of 3 pass; Valley hangs | 1 of 3 pass; both Unigine runs fail (F5) |
-| OpenGL | 3 of 4 pass; GZDoom fails (F3) | 1 of 4 pass; only Godot |
-| Vulkan | 2 of 2 pass | 0 of 2 pass; Xid 69 (F1) and a crash (F2) |
-| D3D12 | 1 of 1 passes | 1 of 1 passes |
+| API | AMD1 | Nvidia2 | AMD1, rc2 |
+| --- | --- | --- | --- |
+| D3D11 | 2 of 2 pass; Heaven crashed in 1 of 2 runs | 2 of 2 pass | 2 of 2 pass |
+| D3D9 | 2 of 3 pass; Valley hangs | 1 of 3 pass; both Unigine runs fail (F5) | 3 of 3 pass |
+| OpenGL | 3 of 4 pass; GZDoom fails (F3) | 1 of 4 pass; only Godot | 4 of 4 pass |
+| Vulkan | 2 of 2 pass | 0 of 2 pass; Xid 69 (F1) and a crash (F2) | 2 of 2 pass |
+| D3D12 | 1 of 1 passes | 1 of 1 passes | 1 of 1 passes |
+| All | 10 of 12 | 5 of 12 | **12 of 12** |
+
+### Release candidate 0.1.1-alpha-rc2 on AMD1
+
+The same sweep, one pass, on 2026-10-19 with the rc2 package
+(`vmlab-win3d-0.1.1`, built by `scripts/release.sh 0.1.1-alpha-rc2` at
+`0d3eb68`; [`docs/evidence/rc2/`](evidence/rc2/README.md)), in its own lab
+(`win3d-rc2-compat-amd1`). The host and guest are the same as above
+(`rc2-amd1/host.txt`). The release candidate's DirectDraw and
+fixed-function runs used another AMD1 lab until 13:37, the first minute of
+the Heaven D3D11 run; every other run had AMD1 to itself.
+
+```sh
+COMPAT_LAB=win3d-rc2-compat-amd1 COMPAT_EV=$PWD/docs/evidence/compat/rc2-amd1 \
+  tests/apps/compat/run.sh --host-gpu AMD1
+```
+
+| Application | API | AMD1, first sweep | AMD1, rc2 | FPS, rc2 | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| Unigine Heaven 4.0 | D3D11 | Pass on the rerun; crashed once (F7) | Pass | 21.4 (OCR) | [rc2-amd1/heaven-d3d11](evidence/compat/rc2-amd1/heaven-d3d11/) |
+| Unigine Heaven 4.0 | D3D9 | Pass | Pass | 16.8 (OCR) | [rc2-amd1/heaven-d3d9](evidence/compat/rc2-amd1/heaven-d3d9/) |
+| Unigine Heaven 4.0 | OpenGL | Pass | Pass | 24.5 (OCR) | [rc2-amd1/heaven-opengl](evidence/compat/rc2-amd1/heaven-opengl/) |
+| Unigine Valley 1.0 | D3D11 | Pass | Pass | 24.4 (OCR) | [rc2-amd1/valley-d3d11](evidence/compat/rc2-amd1/valley-d3d11/) |
+| Unigine Valley 1.0 | D3D9 | **Hang** (F6) | **Pass**: renders to the end and exits cleanly | 13.5 (OCR) | [rc2-amd1/valley-d3d9](evidence/compat/rc2-amd1/valley-d3d9/) |
+| Unigine Valley 1.0 | OpenGL | Pass | Pass | 33.3 (OCR) | [rc2-amd1/valley-opengl](evidence/compat/rc2-amd1/valley-opengl/) |
+| Godot 4.7.2, 3D Particles demo | D3D12 | Pass | Pass | 60.0 | [rc2-amd1/godot-d3d12](evidence/compat/rc2-amd1/godot-d3d12/) |
+| Godot 4.7.2, 3D Particles demo | Vulkan | Pass | Pass | 60.0 | [rc2-amd1/godot-vulkan](evidence/compat/rc2-amd1/godot-vulkan/) |
+| Godot 4.7.2, 3D Particles demo | OpenGL 3.3 (Compatibility) | Pass | Pass | 66.2 | [rc2-amd1/godot-opengl](evidence/compat/rc2-amd1/godot-opengl/) |
+| GZDoom 4.14.2, Freedoom 2 | Vulkan | Pass | Pass | 35.0 (OCR) | [rc2-amd1/gzdoom-vulkan](evidence/compat/rc2-amd1/gzdoom-vulkan/) |
+| GZDoom 4.14.2, Freedoom 2 | OpenGL | **Fails to start** (F3) | **Pass**: renders its title loop and exits cleanly | 35.0 (OCR) | [rc2-amd1/gzdoom-opengl](evidence/compat/rc2-amd1/gzdoom-opengl/) |
+| Crispy Doom 7.2.0, Freedoom 2 | D3D9 (SDL renderer) | Pass; quit prompt | Pass; the same quit prompt | - | [rc2-amd1/crispy-doom-d3d9](evidence/compat/rc2-amd1/crispy-doom-d3d9/) |
+
+Every run except Crispy Doom exited with code 0 within 60 s of WM_CLOSE;
+Crispy Doom waits at its quit prompt, as before. No run loaded an
+app-local graphics module, wrote a Windows Error Reporting report, or
+logged a host kernel line, and the UMD logged no line for any of the
+programs. The Unigine frame rates are higher than in the first sweep (13 to
+33 against 13 to 21), but they are means of OCR samples, so they are not a
+measurement of the fixes.
 
 ## Failures
 
@@ -219,7 +264,8 @@ This happens on both GPUs.
   ([gzdoom.md](gzdoom.md)). GZDoom started its OpenGL renderer through GDI
   before it loaded `opengl32.dll`; GDI's temporary load of `opengl32.dll`
   lost the pixel format, and `wglCreateContext` failed. With 0080, GZDoom
-  OpenGL runs clean on AMD1 and Nvidia1 at 35 fps.
+  OpenGL runs clean on AMD1 and Nvidia1 at 35 fps. The rc2 sweep confirms
+  it on AMD1 (`rc2-amd1/gzdoom-opengl`).
 - **Repro:** `vid_preferbackend=0`.
 - **What happens:** GZDoom loads `viogpu_wgl.dll`, then stops with a fatal
   error dialog:
@@ -315,6 +361,8 @@ buffers ([unid3d.md](unid3d.md#f6-valley-d3d9-on-amd1) has the first
 diagnosis). With the fix, Valley D3D9 runs 10 minutes on `AMD1` and
 `Nvidia1` within 2.1 GiB and exits cleanly, and Heaven D3D9 exits cleanly
 on both. The `ORDERED_CONTEXT_WORKER=0` workaround is no longer needed.
+The rc2 sweep confirms it on AMD1: Valley D3D9 rendered to the end and
+exited cleanly (`rc2-amd1/valley-d3d9`).
 
 ### F7: Heaven D3D11 on AMD1 crashed once
 
@@ -334,7 +382,9 @@ times under PageHeap on AMD1 with no crash and no dump
 ([dwmheap.md](dwmheap.md#f7-heaven-d3d11)). The freed record is the same
 flush-label callback as in the dwm double free that 0060 fixes. Five clean
 runs are not proof: at the old rate of 2 in 5, five clean runs in a row
-would happen by chance about 8 % of the time.
+would happen by chance about 8 % of the time. The rc2 sweep's Heaven D3D11
+run, without PageHeap, was also clean (`rc2-amd1/heaven-d3d11`); one run
+adds little to that.
 
 ## Notes that are not failures
 
@@ -391,6 +441,9 @@ is still loading. The later frames render, so this is start-up, not a fault.
 - F4: Unigine OpenGL on NVIDIA: fixed by `patches/mesa/0070`, `0085` and `0086` ([unigl.md](unigl.md)).
 - F5: fixed (`patches/mesa/0090`).
 - F6: fixed (`patches/mesa/0091` and `0092`, [f6va.md](f6va.md)).
-- F7: the threaded-context use-after-free behind Heaven D3D11's heap corruption; most likely fixed by `patches/mesa/0060` (5 of 5 clean PageHeap runs, [dwmheap.md](dwmheap.md#f7-heaven-d3d11)).
+- F7: the threaded-context use-after-free behind Heaven D3D11's heap corruption; most likely fixed by `patches/mesa/0060` (5 of 5 clean PageHeap runs, [dwmheap.md](dwmheap.md#f7-heaven-d3d11), and a clean run in the rc2 sweep).
+- The whole sweep on NVIDIA with a package that has every fix: F1, F2, F4
+  and F5 were fixed and checked one by one, but the sweep itself has run
+  on NVIDIA only with the first package.
 - Not run: Windows 10, Nvidia1, x86 builds other than Unigine (which is
   32-bit only), and longer runs.

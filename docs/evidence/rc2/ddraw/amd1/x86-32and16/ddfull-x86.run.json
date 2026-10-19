@@ -1,0 +1,28 @@
+﻿{
+    "name":  "ddfull-x86",
+    "exe":  "C:\\win3d\\ddraw\\x86\\ddfull.exe",
+    "arguments":  "--modes 800x600x32,640x480x16 --frames 300 --check-every 1 --seconds 1 --out C:\\win3d\\results\\ddraw\\ddfull-x86.json",
+    "user":  "VMLABVM-15I9IAM\\win3d",
+    "session_id":  1,
+    "pid":  6036,
+    "wow64":  true,
+    "started":  "2026-10-18T20:33:16.0200049-07:00",
+    "ended":  "2026-10-18T20:33:31.1985517-07:00",
+    "duration_s":  15.2,
+    "timed_out":  false,
+    "exit_code":  0,
+    "exit_code_hex":  "0x00000000",
+    "task_result":  0,
+    "probe_json":  "C:\\win3d\\results\\ddraw\\ddfull-x86.json",
+    "probe_result":  "pass",
+    "adapter":  null,
+    "software":  null,
+    "readback_ok":  null,
+    "module_count":  0,
+    "graphics_modules":  [
+
+                         ],
+    "app_local_modules":  [
+
+                          ]
+}

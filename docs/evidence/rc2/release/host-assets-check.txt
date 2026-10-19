@@ -1,0 +1,28 @@
+# qemu-vmlab-egl-0.1.1-alpha-rc2: install.sh --check, then install into a scratch prefix and --version
+ldd: every shared library the binary needs is present and new enough
+ISA: the binary needs x86-64-v2; this CPU supports up to x86-64-v4
+run: QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+exit 0
+    address     = "0000:01:00.0"
+    qemu_binary = "<scratch>/prefix-qemu/bin/qemu-system-x86_64"
+  }
+
+Then check it with: vmlab validate
+exit 0
+QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+Copyright (c) 2003-2026 Fabrice Bellard and the QEMU Project developers
+
+# virglrenderer-vmlab-0.1.1-alpha-rc2: install.sh --check, then install into a scratch prefix
+host virglrenderer: 1.3.0
+ldd: every shared library the server needs is present and new enough
+ISA: the server needs x86-64-v2; this CPU supports up to x86-64-v4
+run: the server starts
+exit 0
+
+Add this line to every NVIDIA GPU block in ~/.config/vmlab/config.wcl
+(vmlab 0.26.0-alpha or later), next to its qemu_binary, then restart the
+VMs on that GPU:
+
+  qemu_env = { RENDER_SERVER_EXEC_PATH: "<scratch>/prefix-vr/libexec/virgl_render_server" }
+exit 0
+virgl_render_server

@@ -72,7 +72,7 @@ lab and destroys it afterwards.
 
 ## Install
 
-A release has two assets, built by `scripts/release.sh`
+A release has three assets, built by `scripts/release.sh`
 ([docs/release.md](docs/release.md)):
 
 - `vmlab-win3d-<version>-windows-x64.zip`, the signed guest package. Unzip
@@ -81,8 +81,11 @@ A release has two assets, built by `scripts/release.sh`
 - `qemu-vmlab-egl-<version>-x86_64-linux.tar.zst`, the patched QEMU
   that NVIDIA hosts need. Extract it, run `install.sh`, and paste the
   `qemu_binary` line it prints into the host config's GPU block.
+- `virglrenderer-vmlab-<version>-x86_64-linux.tar.zst`, the patched
+  render server that NVIDIA hosts need. Extract it, run `install.sh`, and
+  paste the `qemu_env` line it prints into the same GPU block.
 
-[docs/release.md](docs/release.md) covers both, and how to cut a release.
+[docs/release.md](docs/release.md) covers all three, and how to cut a release.
 To build from source instead, see [Quick start](#quick-start).
 
 ## Documentation

@@ -1,0 +1,1 @@
+3820 window=0xA02A4 title=[Unigine Valley Benchmark 1.0 Basic (OpenGL)] closed=True
