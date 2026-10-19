@@ -14,7 +14,7 @@ remains. Evidence is in `docs/evidence/nvfb/`. Investigated on 2026-10-19.
 | Cause | In the guest, the host GPU's writes to NVIDIA memory type 2 (`HOST_VISIBLE` and `HOST_COHERENT`, uncached system memory) are not visible to the guest CPU. The guest reads a stale line from the CPU cache, and the GPU's write never invalidates that line. Venus put its feedback buffer (fence, semaphore, event and query status) in that type. The host itself sees the same writes |
 | Owner | The guest Venus driver chose the memory type. The underlying behaviour belongs to the host platform, an Intel CPU host with this NVIDIA GPU. On helios (an AMD CPU) a guest on an RTX 5090 sees every GPU write in type 2 (`helios/nv1-fbguest-0b26b36/`), so 0067 changes nothing there |
 | Fix | `patches/mesa/0065`: Venus feedback buffers use a `HOST_COHERENT` and `HOST_CACHED` type (NVIDIA type 3), where the GPU's writes reach the guest. `patches/mesa/0066`: at device creation Venus checks that one fence feedback write lands, and disables feedback for that device if it does not. `patches/mesa/0067`: the same check tests the uncached type, and where the GPU's writes do not arrive, Venus backs that type with the cached one for every application (this also fixes the black OpenGL readback) |
-| Zeus Nvidia1, `tests/e2e/run.sh --template windows-11`, package defaults | With 0065 and 0066 (`6dabb22`): runs 1 and 3 **12 of 12**, run 2 **11 of 12**, a black OpenGL readback. With 0067 as well (`0b26b36`, `main` merged): ZEUSFINAL |
+| Zeus Nvidia1, `tests/e2e/run.sh --template windows-11`, package defaults | With 0065 and 0066 (`6dabb22`): runs 1 and 3 **12 of 12**, run 2 **11 of 12**, a black OpenGL readback. With 0067 as well and `main` merged: `0b26b36` 12 of 12, and the committed `bf4d948` **12 of 12 twice**. helios: AMD1 12 of 12 (`6dabb22`), RTX 5090 on Nvidia2 12 of 12 (`bf4d948`), Zeus Intel1 12 of 12 (`6dabb22`) |
 | Regressions | See [Proof](#proof) |
 
 ## The symptom
@@ -96,8 +96,9 @@ memory. Query feedback buffers go through the same function.
 `VK_NOT_READY`, and submits the fence feedback command (`vkCmdFillBuffer` of
 `VK_SUCCESS` with its barriers) on a queue that can feed back, with a fence
 that has no feedback of its own. It waits for that fence through the
-renderer and checks the slot, allowing the write 20 ms to land. If the
-write never lands, it logs "feedback writes by the host GPU do not reach
+renderer and checks the slot, allowing the write 20 ms to land (0067
+changes the wait to a poll and the allowance to 2 ms). If the write never
+lands, it logs "feedback writes by the host GPU do not reach
 the guest" and sets `dev->feedback_disabled`. Fences, timeline semaphores,
 events and queries created on that device then take the `VN_PERF`
 `no_*_feedback` paths. Each status check then costs a renderer round trip,
@@ -109,6 +110,10 @@ Venus context died: vulkaninfo crashed and 6 of 12 checks passed
 (`zeus/10-e2e-selftest-queuewaitidle/`, `qemu-log.txt`:
 `vkQueueWaitIdle resulted in CS error`). The patch waits on a fence
 instead.
+
+`patches/mesa/0067` extends the check to the uncached memory type and backs
+it with the cached type where the GPU's writes do not arrive; see
+[the black OpenGL readback](#the-black-opengl-readback).
 
 Nothing changes on the host. A host-side change would not ship anyway:
 the package uses the host's own virglrenderer (decision D3).
@@ -130,7 +135,7 @@ the package uses the host's own virglrenderer (decision D3).
 | helios Nvidia1, e2e, the same tree without 0065 to 0067 (`src/diag/build.sh mainonly -0065 -0066 -0067`) | `helios/ab-mainonly-nv1-e2e/` | **12 of 12** (D3D12 42.5 and 21.4 fps, OpenGL 8.4 and 9.3 fps, so the slow OpenGL is not ours) |
 | Both 5090 labs above, warm repeats back to back | `helios/ab-repeat/repeat.txt` | D3D12 x64 43.5 to 45.6 fps without 0065 to 0067, 44.2 to 45.7 with; x86 41.1 to 42.1 and 44.7 to 46.3; OpenGL 59.1 to 59.4 and 59.1 to 60.8. No difference |
 | Zeus Nvidia1, e2e run 1, `bf4d948` | `zeus/43-e2e-bf4d948-1/` | **12 of 12**. D3D12 51.5 and 45.5 fps, OpenGL 53.3 and 51.4 fps |
-| Zeus Nvidia1, e2e run 2, `bf4d948` | `zeus/45-e2e-bf4d948-2/` | RUN2 |
+| Zeus Nvidia1, e2e run 2, `bf4d948` | `zeus/45-e2e-bf4d948-2/` | **12 of 12**. D3D12 51.4 and 46.3 fps, OpenGL 58.1 and 57.2 fps |
 | Zeus Nvidia1, fresh lab, `main` without 0065 to 0067 | `zeus/42-mainonly/` | The original bug: fbguest's first fence wait times out, D3D12 fails 3 of 3 (`api_failure`), OpenGL hangs |
 | Zeus Nvidia1, fresh lab, merged `main` with 0065 + 0066, without 0067 | `zeus/44-no67/` | x64 OpenGL black readback **5 of 6**; with 0067, 0 of 24 (`zeus/41-memlog2/`) |
 
@@ -184,19 +189,21 @@ built by `src/diag/build.sh`; not in the package) logs every Venus
 So the readback buffer the CPU reads is in the cached type, and the GPU's
 copy into it is visible. The data the CPU writes for the GPU (vertices and
 constants, including the blit that `glReadPixels` uses to convert the back
-buffer into the staging texture) goes through type 2. The same coherence
-gap applies in that direction: the guest's write stays in a CPU cache line
-that the GPU's read does not snoop, so the GPU can read stale data. A blit
-drawn from stale vertices writes nothing, and the staging buffer stays
-zero. `ZINK_DEBUG=sync` adds barriers that change the timing so that the
-blit's few bytes are always still in the cache.
+buffer into the staging texture) goes through type 2. The explanation that fits is the same coherence gap
+in that direction: the guest's write stays in a CPU cache line that the
+GPU's read does not snoop, so the GPU reads stale data, and a blit drawn
+from stale vertices writes nothing, leaving the staging buffer zero. This
+direction was not measured on its own. What was measured is that backing
+type 2 with type 3 removes the fault (0 black readbacks in 24 runs, against
+5 of 6 without 0067, `zeus/44-no67/`). Why `ZINK_DEBUG=sync` made the
+fault happen every time is not established.
 
 **The fix.** `patches/mesa/0067` extends 0066's check to every uncached
 `HOST_COHERENT` type that has a cached counterpart: same heap, and a
 superset of the flags plus `HOST_CACHED` (NVIDIA type 2, counterpart type
 3). The check puts a 4 KiB buffer in that type, writes and reads its first
 word on the CPU, and has the GPU fill it in the same submission as the fence
-feedback check. If the fill is not visible after the fence and 20 ms, every
+feedback check. If the fill is not visible after the fence (and 2 ms), every
 later allocation of that type on the device is backed by the cached type.
 Exported memory and dedicated allocations whose resource cannot use the
 cached type are not remapped. Both types are `HOST_COHERENT`, so the
