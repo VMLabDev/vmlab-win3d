@@ -15,7 +15,7 @@ result depends on the host GPU. Four were tried:
 | Host GPU, driver | Host | Result | Needs | Evidence |
 | --- | --- | --- | --- | --- |
 | AMD Radeon iGPU (Granite Ridge), RADV, Mesa 26.2.2 | helios | **Full pass**: every Done check in `docs/brief.md` item 2, on `windows-11` and `windows-10`, and every stretch application renders, and the compatibility sweep passes 12 of 12 (package 0.1.1-alpha-rc2, vmlab 0.28.0-alpha) | A plain vmlab lab that names the AMD GPU (`host_gpu = "AMD1"`) | [`acceptance.md`](acceptance.md) |
-| NVIDIA RTX 5090, 610.57.04 | helios | **Full pass**, 12 of 12 Done checks, through `tests/e2e/run.sh` with package 0.1.1-alpha-rc1 and vmlab 0.28.0-alpha: `windows-11` and `windows-10` on `Nvidia1` and `windows-11` on `Nvidia2`; the guest lists exactly one Venus device, every stretch application renders, and the host logged no Xid. Depth draws into the back buffer need `patches/mesa/0022`, and mipmapped and R5G6B5 D3D9 textures need `0023` and `0025` (below). Applications that fill the 256 MiB BAR1 need `0070` and `0086`, and Vulkan applications with shading-rate state need `0075` (below) | `patches/mesa/0020`, `0022`, `0023` and `0025` (in the package) **and** the patched QEMU (the VMLabDev/qemu commit in `patches/host/PINS`) as the GPU's `qemu_binary` in the host config. Helios's host config gives both `Nvidia1` and `Nvidia2` one; without it the probes render but the console is black. The vmlab render server, selected with `qemu_env`, removes a 10 ms floor from every Venus fence ("Presentation pacing" below) | [`acceptance.md`](acceptance.md#nvidia-rtx-5090), [`nvidia.md`](nvidia.md) |
+| NVIDIA RTX 5090, 610.57.04 | helios | **Full pass**, 12 of 12 Done checks, through `tests/e2e/run.sh` with package 0.1.1-alpha-rc3 and vmlab 0.30.0-alpha, with Resizable BAR on (BAR1 32 GiB): `windows-11` and `windows-10` on `Nvidia1` and `windows-11` on `Nvidia2`; the guest lists exactly one Venus device, every stretch application renders (on `Nvidia2` Blender's kept capture caught its window before it had drawn, and a rerun rendered), and the host logged no Xid. The compatibility sweep passes 12 of 12 on `Nvidia2`, and three VMs on one card logged no `can't alloc VA space` line. rc1 passed the same checks with BAR1 at 256 MiB. Depth draws into the back buffer need `patches/mesa/0022`, and mipmapped and R5G6B5 D3D9 textures need `0023` and `0025` (below). Without Resizable BAR, applications that fill the 256 MiB BAR1 need `0070` and `0086`, and Vulkan applications with shading-rate state need `0075` (below) | `patches/mesa/0020`, `0022`, `0023` and `0025` (in the package) **and** the patched QEMU (the VMLabDev/qemu commit in `patches/host/PINS`) as the GPU's `qemu_binary` in the host config. Helios's host config gives both `Nvidia1` and `Nvidia2` one; without it the probes render but the console is black. The vmlab render server, selected with `qemu_env`, removes a 10 ms floor from every Venus fence ("Presentation pacing" below) | [`acceptance.md`](acceptance.md#nvidia-rtx-5090), [`nvidia.md`](nvidia.md) |
 | Intel Iris Xe (Raptor Lake-P), ANV, Mesa 26.2.2 | Zeus | **Full pass** on `windows-11`, 12 of 12 Done checks. Without `patches/mesa/0021`, dwm crash-loops and the console is black | `patches/mesa/0021` (in the package) | [`zeus.md`](zeus.md) |
 | NVIDIA RTX 4060 Max-Q (laptop), 615.71.09 | Zeus | **Full pass**, 12 of 12 twice (2026-10-19, `bf4d948` of branch `work/nvfb`, package defaults, the patched QEMU, vmlab 0.28). On this host the guest does not see the GPU's writes to uncached host-visible memory (type 2) and the GPU does not see the guest's; without the fixes every Vulkan, D3D12 and OpenGL client hung on its first fence (Venus feedback lived there), and with only the feedback fix about one OpenGL readback in three came back black (Zink's upload buffers live there). In a fresh lab the first D3D12 probe could present only one frame in its 20 seconds (not caused by the fixes, cause not investigated); the probes now count `--seconds` from their first frame ([`x86d3d12.md`](x86d3d12.md)) | `patches/mesa/0065` to `0067` (in the package) and the patched QEMU as `qemu_binary` | [`nvfb.md`](nvfb.md), [`zeus.md`](zeus.md#nvidia-rtx-4060) |
 
@@ -97,12 +97,21 @@ historical: `docs/nvidia.md` names the cause.
 > **Helios has Resizable BAR since 2026-10-19.** BAR1 on both RTX 5090s is now
 > 32 GiB (`nvidia-smi -q -d MEMORY`), and NVIDIA's Vulkan driver reports the
 > device-local, host-visible type on the 31.8 GiB VRAM heap itself, so
-> `0070` no longer hides it there. The two-VM limit below applies to NVIDIA
-> hosts without Resizable BAR (laptops, older boards); helios's workers now
-> run up to three VMs per card. The NVIDIA acceptance is rerun with ReBAR on
-> as release candidate 3.
+> `0070` no longer hides it there, and Venus guests use VRAM-mapped memory.
+> Release candidate rc3 ran three Windows VMs on `Nvidia2` at once from
+> 17:55 to 19:09 (an e2e run, the compatibility sweep and a probe loop),
+> and then for a 15-minute stage of three probe loops (116 runs, all
+> passed). BAR1 peaked at **764 MiB
+> of 32 GiB** (321 to 485 MiB in the probe-loop stage). The host logged
+> **no** `can't alloc VA space` line and no Xid, and no render server
+> logged a lost object ([rc3](evidence/rc3/README.md#rebar-load-check)).
+> Each QEMU had 1.2 to 1.7 GiB of dma-buf mapped, far more than the
+> 256 MiB aperture could hold for even one VM. With Resizable BAR there is
+> no BAR1 limit at three VMs per card; more were not tried. The two-VM limit
+> below applies to NVIDIA hosts without Resizable BAR (laptops, older
+> boards), where `0070` still hides the small BAR heap.
 
-Helios's RTX 5090s run with resizable BAR off, so each card has a 256 MiB
+Without Resizable BAR (helios until 2026-10-19), each RTX 5090 has a 256 MiB
 BAR1 aperture that every process and VM on the card shares. Venus guests
 fill it. Each Windows VM takes about 40 MiB at an idle desktop and 60 MiB
 while it renders, mostly for the Yttrium UMD's shared images. With three VMs
@@ -119,9 +128,10 @@ the BAR1 heap) with dma-buf export (`0x200`). So exportable swapchain
 images still come from BAR1. Alone on the card, the same run passed 12 of
 12 (`docs/evidence/hostvirgl/README.md`).
 
-Run at most two Windows VMs per RTX 5090, counting the host desktop on
-`Nvidia1` as part of the load, or turn on resizable BAR in the host's
-firmware. Integrated GPUs and resizable-BAR hosts are not affected. Cause,
+On such a host, run at most two Windows VMs per card, counting the host
+desktop as part of the load, or turn on resizable BAR in the host's
+firmware, as helios did. Integrated GPUs and resizable-BAR hosts are not
+affected. Cause,
 numbers and the dropped UMD change: [nvva.md](nvva.md).
 
 ### Requires vmlab 0.27.0-alpha or later
@@ -437,7 +447,7 @@ OpenGL and Vulkan, x64 and x86), two diagnostic probes (`probes/dxut-enum`,
   `ParallaxOcclusionMapping` (D3D9) render, textured on NVIDIA since
   `patches/mesa/0023`; `SubD11` and `BasicHLSL11`
   (D3D11) render after `patches/mesa/0015` to `0017`, with the window
-  caveat below. In the 0.1.1-alpha-rc1 acceptance runs they render on
+  caveat below. In the 0.1.1-alpha-rc1 and rc3 acceptance runs they render on
   `AMD1`, `Nvidia1` and `Nvidia2`;
 - Blender 4.2.3 (OpenGL 4.3) renders its UI and viewport on the same three
   GPUs.
@@ -448,8 +458,9 @@ OpenGL and Vulkan, x64 and x86), two diagnostic probes (`probes/dxut-enum`,
   AMD1 and 5 of 12 on Nvidia2. Each failure was then investigated in its
   own branch and rerun there. With the 0.1.1-alpha-rc2 package the whole
   sweep passed 12 of 12 on AMD1
-  ([compat.md](compat.md#release-candidate-011-alpha-rc2-on-amd1)); it has
-  not run again on NVIDIA:
+  ([compat.md](compat.md#release-candidate-011-alpha-rc2-on-amd1)), and
+  with the 0.1.1-alpha-rc3 package 12 of 12 on Nvidia2 with Resizable BAR
+  ([compat.md](compat.md#release-candidate-011-alpha-rc3-on-nvidia2)):
   - F1, Godot Vulkan on NVIDIA (host Xid 69, ErrorCode `0x13d`): fixed by
     `patches/mesa/0075` ([godot.md](godot.md)).
   - F2, GZDoom Vulkan on NVIDIA, and F4, Unigine OpenGL on NVIDIA: the
@@ -490,8 +501,13 @@ here since is the list above. Known application issues from the prior art:
 
 ### OpenGL on NVIDIA: buffers stay out of the small BAR heap
 
-The RTX 5090s on helios have no resizable BAR, so their CPU-visible VRAM is
-a 256 MiB BAR1 window that every VM on the card shares. Unigine Heaven and
+This applies to NVIDIA hosts without Resizable BAR. Helios's RTX 5090s
+had none until 2026-10-19. With Resizable BAR the host-visible VRAM heap is
+the whole 31.8 GiB, `0070` leaves it visible, and Heaven and Valley OpenGL
+pass on `Nvidia2` in the rc3 sweep
+([compat.md](compat.md#release-candidate-011-alpha-rc3-on-nvidia2)).
+Without it, the card's CPU-visible VRAM is a 256 MiB BAR1 window that
+every VM on the card shares. Unigine Heaven and
 Valley with OpenGL crashed on NVIDIA when that window ran out, or when Zink
 mapped a buffer it had moved out of the window (compat F4,
 [unigl.md](unigl.md)). With `patches/mesa/0070` (nvva), `0085` and `0086`,
@@ -620,7 +636,9 @@ were found. The first is fixed in part, the second is fixed:
   ([`dwmheap.md`](dwmheap.md)). The lost device itself remains: in a busy
   first boot on an RTX 5090, Venus contexts can go into a fatal state on the
   host (`failed to look up object N of type 8`), most likely the shared
-  256 MiB BAR1 running out ("Two Windows VMs per RTX 5090" above). The
+  256 MiB BAR1 running out ("Two Windows VMs per RTX 5090" above). With
+  Resizable BAR, six fresh guests booting at once (rc3) logged no such
+  line. The
   program whose context dies fails (the D3D12 probe's fence timed out). With
   the fix, dwm no longer dies in the trim path while it recovers; a lost
   device in dwm itself has not been seen in a fixed run yet.

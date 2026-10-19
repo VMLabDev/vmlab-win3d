@@ -1,0 +1,1 @@
+8672 window=0x202FA title=[Freedoom: Phase 2] closed=True

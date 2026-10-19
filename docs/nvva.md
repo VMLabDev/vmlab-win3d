@@ -10,6 +10,19 @@ numbers and records what is fixed and what is not. Investigated on
 QEMU from `patches/host/PINS` and virglrenderer 1.3.0. The evidence is in
 `docs/evidence/nvva/`.
 
+> **Since 2026-10-19 helios has Resizable BAR, and the limit on this page no
+> longer applies there.** BAR1 is 32 GiB on both RTX 5090s. NVIDIA's Vulkan
+> driver puts the device-local, host-visible type on the 31.8 GiB VRAM
+> heap, so `0070` leaves it visible and Venus guests use VRAM-mapped memory.
+> In release candidate rc3, three Windows VMs ran on `Nvidia2` at once: an
+> e2e run, the compatibility sweep and a probe loop, then 15 minutes of
+> three probe loops (116 of 116 passed). BAR1 peaked at 764 MiB, and the
+> host logged **no** `can't alloc VA space` line, no Xid and no
+> `failed to look up object` (the controlled stage: 321 to 485 MiB). Each QEMU had 1.2 to 1.7 GiB
+> of dma-buf mapped ([rc3](evidence/rc3/README.md#rebar-load-check)). The
+> rest of this page describes helios before the change, and NVIDIA hosts
+> without Resizable BAR.
+
 ## Result
 
 | Item | Result |
@@ -22,7 +35,7 @@ QEMU from `patches/host/PINS` and virglrenderer 1.3.0. The evidence is in
 | Safe VM count, no host change | **Two Windows VMs per RTX 5090.** Three VMs that only loop the probes already logged 62 errors in 5 minutes on `Nvidia2`, the card without the desktop, and the 02:02 to 03:05 bursts came with three VMs on each card. On `Nvidia1`, two VMs plus the desktop reached 141 MiB idle |
 | Fix in the package | `patches/mesa/0070` (Venus ICD) reports a device-local, host-visible type on a heap less than half the size of the largest device-local heap as device-local only. Vulkan, DXVK, vkd3d-proton and Zink then keep their host-visible memory in system memory. Zink needs `patches/mesa/0086` (written by the unigl worker, carried unchanged) to work without such a type. Resizable-BAR hosts and integrated GPUs (`AMD1`, Intel) are unchanged. This removes the Vulkan-API clients' share. It does **not** remove Yttrium's share, so the safe count stays two |
 | Not fixable in the guest (today) | Moving Yttrium's shared images to system memory (a draft, 0071, now dropped) broke dwm. NVIDIA cannot import a system-memory image dma-buf into another process, and dwm imports every window's surface ([0071](#why-0071-was-dropped)) |
-| Real fix | **Turn on resizable BAR in helios's firmware.** BAR1 then covers the whole 32 GiB of VRAM, as on Zeus's laptop (`docs/zeus.md`). This is a host firmware change. Decision D3 rules out host changes during this work, so it is a recommendation for the user |
+| Real fix | **Turn on resizable BAR in the host's firmware.** BAR1 then covers the whole 32 GiB of VRAM, as on Zeus's laptop (`docs/zeus.md`). The user did this on helios on 2026-10-19 (`docs/plan.md`, D5). Three VMs on one card then logged no line (rc3, above) |
 
 ## How it was found
 
@@ -120,7 +133,8 @@ images.
   (VRAM without host access) when nothing maps them on the CPU. That needs a
   per-resource decision in the winsys (which surfaces the guest maps) and a
   new round of e2e runs on every GPU. Until then, keep **two Windows VMs per
-  RTX 5090**, or turn on resizable BAR.
+  RTX 5090** on hosts without resizable BAR, or turn it on (helios has, and
+  runs three per card).
 - **Asynchronous allocation hides the refusal.** A refused
   `vkAllocateMemory` becomes a CS error at the next command and kills the
   context. The unigl worker's draft 0085 makes allocations from such a heap

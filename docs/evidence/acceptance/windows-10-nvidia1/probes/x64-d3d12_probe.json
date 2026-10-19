@@ -6,10 +6,10 @@
   "result": "pass",
   "exit_code": 0,
   "exe": "C:\\win3d\\probes\\x64\\d3d12_probe.exe",
-  "pid": 4844,
+  "pid": 7724,
   "session_id": 1,
   "os_version": "10.0.19045",
-  "finished_utc": "2026-10-18T22:28:56Z",
+  "finished_utc": "2026-10-19T08:52:02Z",
   "args": {"seconds": 20, "warp": false, "width": 1024, "height": 640},
   "adapter": {
     "name": "Hardsoft VirtIO GPU 3D controller",
@@ -29,9 +29,10 @@
     "highest_shader_model": "6.6",
     "swap_effect": "FLIP_DISCARD"
   },
-  "frames_presented": 1027,
-  "elapsed_seconds": 20.006,
-  "avg_fps": 51.34,
+  "frames_presented": 1047,
+  "elapsed_seconds": 21.772,
+  "avg_fps": 48.09,
+  "startup_seconds": 1.756,
   "window_closed_early": false,
   "readback": {
     "ok": true,

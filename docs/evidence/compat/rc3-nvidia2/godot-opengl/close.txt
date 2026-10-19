@@ -1,0 +1,1 @@
+6492 window=0xC0256 title=[3D Particles (DEBUG)] closed=True

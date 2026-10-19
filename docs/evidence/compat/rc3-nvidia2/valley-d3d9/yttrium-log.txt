@@ -1,0 +1,15 @@
+      1 [warning pid=224 process=Valley.exe] yttrium: WARNING: D3D9 render completion event is CPU-signaled, not GPU-complete
+      1 [warning pid=224 process=Valley.exe] yttrium: Venus renderer refuses feedback-loop usage for format=97 tiling=1 flags=Nx408 usage=0x80017; creating the image without it
+      1 [warning pid=224 process=Valley.exe] yttrium: Venus renderer refuses feedback-loop usage for format=4 tiling=1 flags=Nx8 usage=0x80017; creating the image without it
+      1 [warning pid=224 process=Valley.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=Nx8 usage=0x80017; creating the image without it
+      1 [warning pid=224 process=Valley.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=Nx428 usage=0x80017; creating the image without it
+      1 [warning pid=224 process=Valley.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=Nx418 usage=0x80017; creating the image without it
+      1 [warning pid=224 process=Valley.exe] yttrium: Venus renderer refuses feedback-loop usage for format=44 tiling=1 flags=Nx408 usage=0x80017; creating the image without it
+      1 [warning pid=224 process=Valley.exe] yttrium: Venus renderer refuses feedback-loop usage for format=1000340000 tiling=1 flags=Nx428 usage=0x80017; creating the image without it
+      1 [warning pid=224 process=Valley.exe] yttrium: Venus renderer refuses feedback-loop usage for format=1000340000 tiling=0 flags=Nx428 usage=0x80017; creating the image without it
+      1 [warning pid=224 process=Valley.exe] yttrium: software fallback native bind texture image unavailable; keeping temporary CPU storage resource=1252eaa8 target=3 format=304 bind=0x10000a extent=32x32x16 levels=1 array=1 depth_stencil=0 sampler=1 legacy_shape=1
+      1 [warning pid=224 process=Valley.exe] yttrium: software fallback native bind texture image unavailable; keeping temporary CPU storage resource=1252bd80 target=3 format=304 bind=0x10000a extent=16x16x16 levels=1 array=1 depth_stencil=0 sampler=1 legacy_shape=1
+      1 [warning pid=224 process=Valley.exe] d3d9ddi: unsupported D3D9 tessellation state owner=d3d9-state reason=patch-tessellation-not-implemented fallback=ignore-unadvertised-state state=164 value=0x00000000
+      1 [warning pid=224 process=Valley.exe] d3d9ddi: inactive D3D9 sampler border color owner=d3d9-state reason=custom-border-color-not-implemented compatibility=retain-metadata value=0xffffffff
+      1 [warning pid=224 process=Valley.exe] d3d9ddi: D3D9 runtime reserved render state owner=d3d9-state reason=unassigned-ddi-slot fallback=ignore-runtime-metadata state=196 value=0xffffffff
+      1 [warning pid=224 process=Valley.exe] d3d9ddi: approximated D3D9 texture address mode owner=d3d9-state reason=custom-border-or-mirror-clamp-not-enabled fallback=transparent-black-border-or-clamp-to-edge stage=0 state=13 mode=4

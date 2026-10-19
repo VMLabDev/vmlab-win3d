@@ -1,4 +1,4 @@
-lab "win3d-rc2-w11-amd1"
+lab "win3d-rc3-w11-amd1"
 
   NAME KIND      STATUS  IP         TEMPLATE/IMAGE
   win  vm        running 10.213.0.2 x86_64/windows-11@26100.1742.5

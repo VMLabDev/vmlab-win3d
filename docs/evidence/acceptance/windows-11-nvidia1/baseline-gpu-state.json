@@ -1,11 +1,11 @@
 {
-    "computer":  "VMLABVM-TN0BP2N",
+    "computer":  "VMLABVM-6OUA3V5",
     "os":  "Microsoft Windows 11 Enterprise Evaluation 10.0.26100",
-    "collected":  "2026-10-18T13:39:35.1872357-07:00",
+    "collected":  "2026-10-19T00:59:50.6705821-07:00",
     "display_devices":  [
                             {
                                 "name":  "Red Hat VirtIO GPU DOD controller",
-                                "instance_id":  "PCI\\VEN_1AF4\u0026DEV_1050\u0026SUBSYS_11001AF4\u0026REV_01\\3\u002611583659\u00260\u002618",
+                                "instance_id":  "PCI\\VEN_1AF4\u0026DEV_1050\u0026SUBSYS_11001AF4\u0026REV_01\\3\u002611583659\u00260\u002620",
                                 "status":  "OK",
                                 "present":  true,
                                 "problem_code":  0,
@@ -22,9 +22,9 @@
                                 "driver_provider":  "Red Hat, Inc.",
                                 "driver_date":  "07/08/2025 17:00:00",
                                 "driver_desc":  "Red Hat VirtIO GPU DOD controller",
-                                "driver_key":  "{4d36e968-e325-11ce-bfc1-08002be10318}\\0001",
+                                "driver_key":  "{4d36e968-e325-11ce-bfc1-08002be10318}\\0000",
                                 "service":  "VioGpuDod",
-                                "registry_path":  "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Class\\{4d36e968-e325-11ce-bfc1-08002be10318}\\0001",
+                                "registry_path":  "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Class\\{4d36e968-e325-11ce-bfc1-08002be10318}\\0000",
                                 "registry":  {
                                                  "DriverDesc":  "Red Hat VirtIO GPU DOD controller",
                                                  "ProviderName":  "Red Hat, Inc.",

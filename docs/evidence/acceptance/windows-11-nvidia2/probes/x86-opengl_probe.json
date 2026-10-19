@@ -6,10 +6,10 @@
   "result": "pass",
   "exit_code": 0,
   "exe": "C:\\win3d\\probes\\x86\\opengl_probe.exe",
-  "pid": 5572,
+  "pid": 5452,
   "session_id": 1,
   "os_version": "10.0.26100",
-  "finished_utc": "2026-10-19T04:58:45Z",
+  "finished_utc": "2026-10-19T08:21:03Z",
   "args": {"seconds": 20, "warp": false, "width": 1024, "height": 640},
   "adapter": {
     "name": "zink Vulkan 1.4(Virtio-GPU Venus (NVIDIA GeForce RTX 5090) (NVIDIA_PROPRIETARY))",
@@ -30,9 +30,10 @@
     "wgl_arb_create_context": true,
     "swap_interval_1": true
   },
-  "frames_presented": 1152,
-  "elapsed_seconds": 20.029,
-  "avg_fps": 57.52,
+  "frames_presented": 1296,
+  "elapsed_seconds": 29.057,
+  "avg_fps": 44.60,
+  "startup_seconds": 9.020,
   "window_closed_early": false,
   "readback": {
     "ok": true,

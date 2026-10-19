@@ -1,7 +1,7 @@
 {
   "x64-d3d9_probe": {
-    "frames": 13,
-    "frames_with_window": 8,
+    "frames": 24,
+    "frames_with_window": 9,
     "visible": true,
     "animating": true,
     "png": "console-x64-d3d9_probe.png",
@@ -13,12 +13,12 @@
         "blue",
         "green"
       ],
-      "crc": "8c065e38"
+      "crc": "5bb3c6aa"
     }
   },
   "x86-d3d9_probe": {
-    "frames": 12,
-    "frames_with_window": 9,
+    "frames": 32,
+    "frames_with_window": 10,
     "visible": true,
     "animating": true,
     "png": "console-x86-d3d9_probe.png",
@@ -30,12 +30,12 @@
         "blue",
         "green"
       ],
-      "crc": "b7900f08"
+      "crc": "b46a68b1"
     }
   },
   "x64-d3d11_probe": {
-    "frames": 12,
-    "frames_with_window": 9,
+    "frames": 24,
+    "frames_with_window": 10,
     "visible": true,
     "animating": true,
     "png": "console-x64-d3d11_probe.png",
@@ -47,12 +47,12 @@
         "blue",
         "green"
       ],
-      "crc": "5cc72fe2"
+      "crc": "4faa54b1"
     }
   },
   "x86-d3d11_probe": {
-    "frames": 12,
-    "frames_with_window": 9,
+    "frames": 25,
+    "frames_with_window": 10,
     "visible": true,
     "animating": true,
     "png": "console-x86-d3d11_probe.png",
@@ -64,12 +64,12 @@
         "blue",
         "green"
       ],
-      "crc": "6a627a5f"
+      "crc": "e9df90f0"
     }
   },
   "x64-d3d12_probe": {
-    "frames": 13,
-    "frames_with_window": 8,
+    "frames": 29,
+    "frames_with_window": 9,
     "visible": true,
     "animating": true,
     "png": "console-x64-d3d12_probe.png",
@@ -81,11 +81,11 @@
         "blue",
         "green"
       ],
-      "crc": "0ab016fc"
+      "crc": "16decd72"
     }
   },
   "x86-d3d12_probe": {
-    "frames": 13,
+    "frames": 49,
     "frames_with_window": 8,
     "visible": true,
     "animating": true,
@@ -98,12 +98,12 @@
         "blue",
         "green"
       ],
-      "crc": "e3d48bbf"
+      "crc": "f39b8ff1"
     }
   },
   "x64-opengl_probe": {
-    "frames": 13,
-    "frames_with_window": 8,
+    "frames": 29,
+    "frames_with_window": 10,
     "visible": true,
     "animating": true,
     "png": "console-x64-opengl_probe.png",
@@ -115,11 +115,11 @@
         "blue",
         "green"
       ],
-      "crc": "49d966e5"
+      "crc": "4e341413"
     }
   },
   "x86-opengl_probe": {
-    "frames": 13,
+    "frames": 25,
     "frames_with_window": 9,
     "visible": true,
     "animating": true,
@@ -132,12 +132,12 @@
         "blue",
         "green"
       ],
-      "crc": "4ef2d682"
+      "crc": "cd40117d"
     }
   },
   "x64-vulkan_probe": {
-    "frames": 13,
-    "frames_with_window": 8,
+    "frames": 24,
+    "frames_with_window": 9,
     "visible": true,
     "animating": true,
     "png": "console-x64-vulkan_probe.png",
@@ -149,11 +149,11 @@
         "blue",
         "green"
       ],
-      "crc": "56f2bff9"
+      "crc": "4da8fe43"
     }
   },
   "x86-vulkan_probe": {
-    "frames": 13,
+    "frames": 21,
     "frames_with_window": 9,
     "visible": true,
     "animating": true,
@@ -166,7 +166,7 @@
         "blue",
         "green"
       ],
-      "crc": "3288c67c"
+      "crc": "eeb696c1"
     }
   }
 }

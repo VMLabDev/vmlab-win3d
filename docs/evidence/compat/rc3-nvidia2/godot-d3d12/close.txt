@@ -1,0 +1,1 @@
+1696 window=0x140018 title=[3D Particles (DEBUG)] closed=True

@@ -1,0 +1,1 @@
+224 window=0xA0248 title=[Unigine Valley Benchmark 1.0 Basic (Direct3D9)] closed=True

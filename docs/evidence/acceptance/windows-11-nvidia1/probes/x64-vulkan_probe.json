@@ -6,10 +6,10 @@
   "result": "pass",
   "exit_code": 0,
   "exe": "C:\\win3d\\probes\\x64\\vulkan_probe.exe",
-  "pid": 2404,
+  "pid": 8224,
   "session_id": 1,
   "os_version": "10.0.26100",
-  "finished_utc": "2026-10-18T20:48:04Z",
+  "finished_utc": "2026-10-19T08:22:23Z",
   "args": {"seconds": 20, "warp": false, "width": 1024, "height": 640},
   "adapter": {
     "name": "Virtio-GPU Venus (NVIDIA GeForce RTX 5090)",
@@ -32,9 +32,10 @@
     "swapchain_format": "B8G8R8A8_UNORM",
     "swapchain_images": 2
   },
-  "frames_presented": 1156,
-  "elapsed_seconds": 20.026,
-  "avg_fps": 57.73,
+  "frames_presented": 1208,
+  "elapsed_seconds": 20.879,
+  "avg_fps": 57.86,
+  "startup_seconds": 0.849,
   "window_closed_early": false,
   "readback": {
     "ok": true,
