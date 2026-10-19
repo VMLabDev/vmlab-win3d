@@ -274,7 +274,7 @@ representation is missing.
 
 **Status:** fixed by `patches/mesa/0090` ([unid3d.md](unid3d.md#f5-d3d9-depth-bias-on-nvidia)).
 Heaven D3D9 now renders correctly on NVIDIA. Valley D3D9 and Heaven's exit
-still fail there, from F6's cause.
+failed there from F6's cause, which `0091` and `0092` fix.
 
 ### F6: Valley D3D9 on AMD1 hangs
 
@@ -285,10 +285,14 @@ still fail there, from F6's cause.
   `Run-Probe` kills it.
 - **UMD log:** no lines for the process.
 
-**Status:** cause found, not fixed ([unid3d.md](unid3d.md#f6-valley-d3d9-on-amd1)).
-Valley, a 32-bit process, runs out of address space through the UMD's
-ordered-context-worker upload path. `ORDERED_CONTEXT_WORKER=0` in
-`C:\ProgramData\Yttrium\yttrium.ini` works around it.
+**Status:** fixed by `patches/mesa/0091` and `0092` ([f6va.md](f6va.md)).
+Valley, a 32-bit process, ran out of address space through the UMD's
+ordered-context-worker upload path: the UMD copied the whole 4 MiB of each
+of Valley's vertex-buffer locks, about 100 a second, into mapped upload
+buffers ([unid3d.md](unid3d.md#f6-valley-d3d9-on-amd1) has the first
+diagnosis). With the fix, Valley D3D9 runs 10 minutes on `AMD1` and
+`Nvidia1` within 2.1 GiB and exits cleanly, and Heaven D3D9 exits cleanly
+on both. The `ORDERED_CONTEXT_WORKER=0` workaround is no longer needed.
 
 ### F7: Heaven D3D11 on AMD1 crashed once
 
@@ -357,7 +361,7 @@ is still loading. The later frames render, so this is start-up, not a fault.
   errors from native Vulkan and from Zink.
 - F3: GZDoom's OpenGL context.
 - F5: fixed (`patches/mesa/0090`).
-- F6: Valley D3D9 runs out of 32-bit address space ([unid3d.md](unid3d.md)).
+- F6: fixed (`patches/mesa/0091` and `0092`, [f6va.md](f6va.md)).
 - F7: the threaded-context use-after-free behind Heaven D3D11's heap corruption ([unid3d.md](unid3d.md)).
 - Not run: Windows 10, Nvidia1, x86 builds other than Unigine (which is
   32-bit only), and longer runs.

@@ -1,0 +1,33 @@
+t=30 va_used_mib=673 free_mib=3423 largest_free_mib=2034.6 regions_4m=1 mib_4m=4 private_mib=304 ws_mib=317 protect_0x4=1
+t=35 va_used_mib=948 free_mib=3148 largest_free_mib=2034.6 regions_4m=5 mib_4m=20 private_mib=548 ws_mib=609 protect_0x4=5
+t=41 va_used_mib=1136 free_mib=2960 largest_free_mib=2034.6 regions_4m=7 mib_4m=28 private_mib=680 ws_mib=757 protect_0x4=7
+t=46 va_used_mib=1229 free_mib=2867 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=749 ws_mib=809 protect_0x4=8
+t=51 va_used_mib=1303 free_mib=2793 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=793 ws_mib=851 protect_0x4=8
+t=56 va_used_mib=1310 free_mib=2786 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=807 ws_mib=857 protect_0x4=8
+t=61 va_used_mib=1304 free_mib=2792 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=809 ws_mib=848 protect_0x4=8
+t=66 va_used_mib=1348 free_mib=2748 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=837 ws_mib=865 protect_0x4=8
+t=71 va_used_mib=1401 free_mib=2695 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=871 ws_mib=893 protect_0x4=8
+t=76 va_used_mib=1414 free_mib=2682 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=883 ws_mib=893 protect_0x4=8
+t=81 va_used_mib=1387 free_mib=2709 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=881 ws_mib=880 protect_0x4=8
+t=86 va_used_mib=1418 free_mib=2678 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=883 ws_mib=869 protect_0x4=8
+t=91 va_used_mib=1443 free_mib=2653 largest_free_mib=2034.6 regions_4m=7 mib_4m=28 private_mib=910 ws_mib=890 protect_0x4=7
+t=96 va_used_mib=1498 free_mib=2598 largest_free_mib=2034.6 regions_4m=7 mib_4m=28 private_mib=938 ws_mib=919 protect_0x4=7
+t=101 va_used_mib=1558 free_mib=2538 largest_free_mib=2034.6 regions_4m=7 mib_4m=28 private_mib=991 ws_mib=971 protect_0x4=7
+t=106 va_used_mib=1602 free_mib=2494 largest_free_mib=2034.6 regions_4m=7 mib_4m=28 private_mib=1009 ws_mib=981 protect_0x4=7
+t=111 va_used_mib=1652 free_mib=2444 largest_free_mib=2034.6 regions_4m=7 mib_4m=28 private_mib=1041 ws_mib=1008 protect_0x4=7
+t=116 va_used_mib=1649 free_mib=2447 largest_free_mib=2034.6 regions_4m=7 mib_4m=28 private_mib=1043 ws_mib=1010 protect_0x4=7
+t=121 va_used_mib=1633 free_mib=2463 largest_free_mib=2034.6 regions_4m=7 mib_4m=28 private_mib=1041 ws_mib=1008 protect_0x4=7
+t=126 va_used_mib=1668 free_mib=2428 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=1052 ws_mib=1010 protect_0x4=8
+t=131 va_used_mib=1652 free_mib=2444 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=1056 ws_mib=1004 protect_0x4=8
+t=136 va_used_mib=1636 free_mib=2460 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=1047 ws_mib=987 protect_0x4=8
+t=141 va_used_mib=1646 free_mib=2450 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=1036 ws_mib=963 protect_0x4=8
+t=146 va_used_mib=1616 free_mib=2480 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=1007 ws_mib=935 protect_0x4=8
+t=151 va_used_mib=1603 free_mib=2493 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=974 ws_mib=903 protect_0x4=8
+t=157 va_used_mib=1603 free_mib=2493 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=966 ws_mib=895 protect_0x4=8
+t=162 va_used_mib=1626 free_mib=2470 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=977 ws_mib=901 protect_0x4=8
+t=167 va_used_mib=1612 free_mib=2484 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=975 ws_mib=711 protect_0x4=8
+t=172 va_used_mib=1626 free_mib=2470 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=975 ws_mib=714 protect_0x4=8
+t=177 va_used_mib=1631 free_mib=2465 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=979 ws_mib=714 protect_0x4=8
+t=182 va_used_mib=1446 free_mib=2650 largest_free_mib=2034.6 regions_4m=7 mib_4m=28 private_mib=891 ws_mib=701 protect_0x4=7
+t=187 va_used_mib=1287 free_mib=2809 largest_free_mib=2034.6 regions_4m=8 mib_4m=32 private_mib=536 ws_mib=399 protect_0x4=7 protect_0x404=1
+t=192 exited

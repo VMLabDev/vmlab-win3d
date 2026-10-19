@@ -1,0 +1,16 @@
+[warning pid=5152 process=Valley.exe] yttrium: upload stats created=1 created_mib=1 live=1 live_mib=1 peak_live_mib=1
+[warning pid=5152 process=Valley.exe] yttrium: upload stats created=7 created_mib=6 live=7 live_mib=6 peak_live_mib=6
+[warning pid=5152 process=Valley.exe] yttrium: upload stats created=174 created_mib=593 live=31 live_mib=32 peak_live_mib=266
+[warning pid=5152 process=Valley.exe] yttrium: upload stats created=662 created_mib=2415 live=85 live_mib=231 peak_live_mib=266
+[warning pid=5152 process=Valley.exe] yttrium: upload stats created=1606 created_mib=5927 live=82 live_mib=145 peak_live_mib=320
+[warning pid=5152 process=Valley.exe] yttrium: upload stats created=2952 created_mib=10937 live=78 live_mib=78 peak_live_mib=320
+[warning pid=5152 process=Valley.exe] yttrium: upload stats created=4328 created_mib=16068 live=90 live_mib=88 peak_live_mib=320
+[warning pid=5152 process=Valley.exe] yttrium: upload stats created=5864 created_mib=21783 live=123 live_mib=169 peak_live_mib=320
+[warning pid=5152 process=Valley.exe] yttrium: upload stats created=7325 created_mib=27180 live=142 live_mib=186 peak_live_mib=325
+[warning pid=5152 process=Valley.exe] yttrium: upload stats created=8909 created_mib=33122 live=151 live_mib=195 peak_live_mib=333
+[warning pid=5152 process=Valley.exe] yttrium: upload stats created=10354 created_mib=38619 live=210 live_mib=355 peak_live_mib=465
+[warning pid=5152 process=Valley.exe] yttrium: upload stats created=10919 created_mib=40766 live=241 live_mib=475 peak_live_mib=498
+[warning pid=5152 process=Valley.exe] yttrium: upload stats created=10950 created_mib=40874 live=195 live_mib=278 peak_live_mib=498
+[warning pid=5152 process=Valley.exe] yttrium: upload stats created=10952 created_mib=40875 live=195 live_mib=277 peak_live_mib=498
+[warning pid=5152 process=Valley.exe] yttrium: upload stats created=11044 created_mib=41164 live=193 live_mib=305 peak_live_mib=498
+[warning pid=2108 process=WindowsTerminal.exe] yttrium: upload stats created=1 created_mib=4 live=1 live_mib=4 peak_live_mib=4
