@@ -171,9 +171,11 @@ limits](known-limits.md#the-first-d3d12-launch-in-a-new-guest-waits-on-defenders
 [`x86d3d12.md`](x86d3d12.md) measured 2.2 to 7.2 s for x86 D3D12 in the
 same step. On windows-10 every probe started in under 0.5 s.
 
-The DirectDraw fullscreen and fixed-function suites ran in the kept
-windows-11 lab, and the compatibility sweep in its own lab
-([`docs/evidence/rc2/`](evidence/rc2/README.md), [`compat.md`](compat.md)).
+The DirectDraw fullscreen and both D3D9 fixed-function suites ran in the
+kept windows-11 lab with the results of rc1 or better, and the
+compatibility sweep, in its own lab, passed 12 of 12 on AMD1, up from 10
+of 12 ([`docs/evidence/rc2/`](evidence/rc2/README.md),
+[`compat.md`](compat.md#release-candidate-011-alpha-rc2-on-amd1)).
 
 ### Release candidate 0.1.1-alpha-rc1
 

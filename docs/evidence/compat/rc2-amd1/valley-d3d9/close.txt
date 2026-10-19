@@ -1,0 +1,1 @@
+10044 window=0x80262 title=[Unigine Valley Benchmark 1.0 Basic (Direct3D9)] closed=True

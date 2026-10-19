@@ -1,0 +1,1 @@
+5864 window=0xF00C0 title=[Freedoom: Phase 2] closed=True

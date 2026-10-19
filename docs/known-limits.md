@@ -14,7 +14,7 @@ result depends on the host GPU. Four were tried:
 
 | Host GPU, driver | Host | Result | Needs | Evidence |
 | --- | --- | --- | --- | --- |
-| AMD Radeon iGPU (Granite Ridge), RADV, Mesa 26.2.2 | helios | **Full pass**: every Done check in `docs/brief.md` item 2, on `windows-11` and `windows-10`, and every stretch application renders (package 0.1.1-alpha-rc1, vmlab 0.28.0-alpha) | A plain vmlab lab that names the AMD GPU (`host_gpu = "AMD1"`) | [`acceptance.md`](acceptance.md) |
+| AMD Radeon iGPU (Granite Ridge), RADV, Mesa 26.2.2 | helios | **Full pass**: every Done check in `docs/brief.md` item 2, on `windows-11` and `windows-10`, and every stretch application renders, and the compatibility sweep passes 12 of 12 (package 0.1.1-alpha-rc2, vmlab 0.28.0-alpha) | A plain vmlab lab that names the AMD GPU (`host_gpu = "AMD1"`) | [`acceptance.md`](acceptance.md) |
 | NVIDIA RTX 5090, 610.57.04 | helios | **Full pass**, 12 of 12 Done checks, through `tests/e2e/run.sh` with package 0.1.1-alpha-rc1 and vmlab 0.28.0-alpha: `windows-11` and `windows-10` on `Nvidia1` and `windows-11` on `Nvidia2`; the guest lists exactly one Venus device, every stretch application renders, and the host logged no Xid. Depth draws into the back buffer need `patches/mesa/0022`, and mipmapped and R5G6B5 D3D9 textures need `0023` and `0025` (below). Applications that fill the 256 MiB BAR1 need `0070` and `0086`, and Vulkan applications with shading-rate state need `0075` (below) | `patches/mesa/0020`, `0022`, `0023` and `0025` (in the package) **and** the patched QEMU (the VMLabDev/qemu commit in `patches/host/PINS`) as the GPU's `qemu_binary` in the host config. Helios's host config gives both `Nvidia1` and `Nvidia2` one; without it the probes render but the console is black. The vmlab render server, selected with `qemu_env`, removes a 10 ms floor from every Venus fence ("Presentation pacing" below) | [`acceptance.md`](acceptance.md#nvidia-rtx-5090), [`nvidia.md`](nvidia.md) |
 | Intel Iris Xe (Raptor Lake-P), ANV, Mesa 26.2.2 | Zeus | **Full pass** on `windows-11`, 12 of 12 Done checks. Without `patches/mesa/0021`, dwm crash-loops and the console is black | `patches/mesa/0021` (in the package) | [`zeus.md`](zeus.md) |
 | NVIDIA RTX 4060 Max-Q (laptop), 615.71.09 | Zeus | **Full pass**, 12 of 12 twice (2026-10-19, `bf4d948` of branch `work/nvfb`, package defaults, the patched QEMU, vmlab 0.28). On this host the guest does not see the GPU's writes to uncached host-visible memory (type 2) and the GPU does not see the guest's; without the fixes every Vulkan, D3D12 and OpenGL client hung on its first fence (Venus feedback lived there), and with only the feedback fix about one OpenGL readback in three came back black (Zink's upload buffers live there). In a fresh lab the first D3D12 probe could present only one frame in its 20 seconds (not caused by the fixes, cause not investigated); the probes now count `--seconds` from their first frame ([`x86d3d12.md`](x86d3d12.md)) | `patches/mesa/0065` to `0067` (in the package) and the patched QEMU as `qemu_binary` | [`nvfb.md`](nvfb.md), [`zeus.md`](zeus.md#nvidia-rtx-4060) |
@@ -396,7 +396,8 @@ Windows. See `build/kmd/README.md`.
 Windows 10 passes. On fresh labs from the local `windows-10` template
 (`x86_64/windows-10@19045.2006.8`), every Done check in `docs/brief.md`
 item 2 passed, 12 of 12, on `AMD1` and on `Nvidia1`, with package
-0.1.1-alpha-rc1, the same package as the Windows 11 runs
+0.1.1-alpha-rc1, the same package as the Windows 11 runs, and again on
+`AMD1` with 0.1.1-alpha-rc2
 (`docs/acceptance.md`; `docs/evidence/acceptance/windows-10/`,
 `docs/evidence/acceptance/windows-10-nvidia1/`). The DirectX SDK D3D9 and
 D3D11 samples and Blender rendered on both. The D3D9 fixed-function probes
@@ -437,7 +438,10 @@ OpenGL and Vulkan, x64 and x86), two diagnostic probes (`probes/dxut-enum`,
   (Vulkan, OpenGL) and Crispy Doom (D3D9), each for about 3 minutes on AMD1
   and Nvidia2. With the 0.1.1-alpha-rc1 package, 10 of 12 runs passed on
   AMD1 and 5 of 12 on Nvidia2. Each failure was then investigated in its
-  own branch and rerun there; the whole sweep has not been rerun:
+  own branch and rerun there. With the 0.1.1-alpha-rc2 package the whole
+  sweep passed 12 of 12 on AMD1
+  ([compat.md](compat.md#release-candidate-011-alpha-rc2-on-amd1)); it has
+  not run again on NVIDIA:
   - F1, Godot Vulkan on NVIDIA (host Xid 69, ErrorCode `0x13d`): fixed by
     `patches/mesa/0075` ([godot.md](godot.md)).
   - F2, GZDoom Vulkan on NVIDIA, and F4, Unigine OpenGL on NVIDIA: the

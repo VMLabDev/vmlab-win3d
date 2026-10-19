@@ -19,7 +19,7 @@ to 0067, 0070, 0075, 0080, 0085, 0086 and 0090 to 0092, and vkd3d-proton
 | DirectDraw fullscreen, x64 32 bpp and x86 16 bpp | Every pixel check matches. 32 bpp: 59 to 61 flips per second. x86 16 bpp: 40 to 52, up from 34 to 43 in rc1 |
 | D3D9 fixed function (`d3d9_ffp`) | 166 of 168 with hardware vertex processing (x64 and x86), 168 of 168 with software vertex processing: the same as rc1 |
 | D3D9 fixed function, second suite (`d3d9_ffp2`) | 48 of 49 with hardware vertex processing (x64, x86, mixed), 49 of 49 with software; the same as the ffp2 worker's AMD1 result |
-| Compatibility sweep, AMD1 | See [`compat.md`](../../compat.md) and "Compatibility sweep" below |
+| Compatibility sweep, AMD1 (`tests/apps/compat/run.sh`) | **12 of 12** pass, up from 10 of 12: Valley D3D9 (F6) and GZDoom OpenGL (F3) now pass |
 
 The tables per run, and the stretch applications, are in
 [`docs/acceptance.md`](../../acceptance.md).
@@ -94,8 +94,8 @@ OOBE was done before the autologon setup in both (`test-desktop.txt`,
 `run-ddraw-ffp.sh <lab> amd1` ran `docs/evidence/ddraw/run-guest.sh` four
 times in the kept windows-11 lab, with `ddfull` from
 `docs/evidence/ddraw/src/build.sh`, then both fixed-function suites. The
-compatibility sweep's lab was running on AMD1 at the same time. Flips per
-second:
+compatibility sweep's lab was booting and installing on AMD1 at the same
+time. Flips per second:
 
 | Run | AMD1 rc2 | AMD1 rc1 |
 | --- | --- | --- |
@@ -139,7 +139,14 @@ script exits 1 because of these known comparisons.
 
 ## Compatibility sweep
 
-COMPAT-PLACEHOLDER
+`tests/apps/compat/run.sh --host-gpu AMD1` in its own lab,
+`win3d-rc2-compat-amd1`, with the evidence in
+`docs/evidence/compat/rc2-amd1/` (the first sweep's `amd1/` is kept).
+**12 of 12 runs pass**, against 10 of 12 in the first sweep: Valley D3D9
+(F6, fixed by Mesa 0091 and 0092) renders to the end and exits cleanly,
+and GZDoom OpenGL (F3, fixed by 0080) starts and renders. Heaven D3D11
+(F7) ran clean. No run wrote a WER report or a host kernel line. The table
+is in [`compat.md`](../../compat.md#release-candidate-011-alpha-rc2-on-amd1).
 
 ## Reproduce
 

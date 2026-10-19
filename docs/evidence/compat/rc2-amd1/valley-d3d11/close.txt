@@ -1,0 +1,1 @@
+7508 window=0x400B0 title=[Unigine Valley Benchmark 1.0 Basic (Direct3D11)] closed=True
