@@ -97,7 +97,14 @@ on a card, BAR1 runs out: the host kernel logs `NVRM: dmaAllocMapping_GM107:
 can't alloc VA space for mapping`, and guest Venus contexts die (dwm or
 applications report ring timeouts, often in `vkGetImageSubresourceLayout`).
 `patches/mesa/0070` (with `0086`) keeps Vulkan, DXVK, vkd3d-proton and Zink
-memory out of BAR1, but not the UMD's images.
+memory out of BAR1, but not the UMD's images. With `0070` and `0086` (package from
+`b74ea3c`), a `windows-11` e2e run on a shared `Nvidia2` still lost the
+D3D11 x86 and D3D12 x64 probes: the render server logged
+`vkAllocateMemory failed: ret -2` for 2,621,440 bytes, a 1024×640
+swapchain image, on memory type 4 (device-local, host-visible, coherent:
+the BAR1 heap) with dma-buf export (`0x200`). So exportable swapchain
+images still come from BAR1. Alone on the card, the same run passed 12 of
+12 (`docs/evidence/hostvirgl/README.md`).
 
 Run at most two Windows VMs per RTX 5090, counting the host desktop on
 `Nvidia1` as part of the load, or turn on resizable BAR in the host's
@@ -344,9 +351,12 @@ whatever the window size, with the CPU idle. The cause is on the host
 exportable, and NVIDIA 610.57.04 wakes `vkWaitForFences` on such fences up to
 about 10 ms late. Every guest DMA buffer therefore completes at least 10 ms
 after submission, and a D3D9 Present waits for two of them. A one-line
-virglrenderer patch removes the delay (ring fences 10.2 ms to 1.2 ms, the
-D3D9 probe 37 to 47 fps on a shared GPU), but it is not deployed: helios
-runs the stock render server (decision D3). Presentation only has
+virglrenderer patch removes the delay (ring fences 10.2 ms to 1.2 ms). The
+vmlab render server carries it, and an NVIDIA GPU's host config block
+selects it with `qemu_env` ([`nvidia.md`](nvidia.md#the-patched-render-server-on-the-gpus-profile));
+with it the D3D9 repro runs vblank-paced at about 55 per second on
+`Nvidia1`, against 22 with the stock server in the same lab. A host
+without it keeps the 10 ms floor. Presentation only has
 to make a game watchable on the console (`docs/brief.md`); deeper
 frame-pacing work is out of scope.
 

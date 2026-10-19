@@ -224,14 +224,15 @@ evidence for each row, is in
 `patches/host/` is **not part of the guest package**. `scripts/build.sh`
 does not build it, and the installer does not use it. It holds patches to
 two host components and the scripts that build them into `out/host/`, for
-labs that select them explicitly. Nothing is installed on the host
-(decision D3). Its pins are the `host` rows of the pin table below.
+labs that select them explicitly. Neither replaces a system package
+(decision D3): each installs under `~/.local/opt`, and the host config's
+GPU blocks name it. Its pins are the `host` rows of the pin table below.
 
 | Path | What it is for |
 | --- | --- |
 | `patches/host/build-qemu.sh`, `patches/host/bump-qemu.sh` and the `qemu` pin in `patches/host/PINS` | The vmlab QEMU: QEMU 11.1.1 plus the series on the [VMLabDev/qemu](https://github.com/VMLabDev/qemu/tree/vmlab/egl-headless-external-dmabuf) branch `vmlab/egl-headless-external-dmabuf`, at the pinned commit. Its egl-headless display shows LINEAR scanout dma-bufs that the host's EGL imports as external only. NVIDIA needs it for a visible console; AMD and Intel do not. The build is native against the host's libraries, not in Docker. On vmlab 0.26 or later the host config names it as the NVIDIA GPU's `qemu_binary` ([`nvidia.md`](nvidia.md)); the Zeus runs, on 0.24, used an isolated supervisor (`labs/zeus/vmlab-iso.sh`) |
-| `patches/host/virglrenderer/0001` and `patches/host/build-virglrenderer.sh` | A diagnostic render server: stock virglrenderer 1.3.0 that also logs failed image creation with its create-info. It is selected with `RENDER_SERVER_EXEC_PATH` and used only to investigate a failure ([`nvidia.md`](nvidia.md), [`zeus.md`](zeus.md)) |
-| `patches/host/virglrenderer/workaround/0002` | The host-side workaround for the NVIDIA feedback-loop fault, kept as documentation. `patches/mesa/0020` replaced it; `build-virglrenderer.sh` applies it only with `WITH_WORKAROUND=1` |
+| `patches/host/virglrenderer/0001`, `0002` and `patches/host/build-virglrenderer.sh` | The vmlab render server: virglrenderer 1.3.0's `virgl_render_server` with 0002, which creates vkr's queue-sync fences without SYNC_FD export and so removes a 10 ms floor from every Venus fence on NVIDIA ([`n5.md`](n5.md)), and 0001, which logs failed image creation with its create-info. NVIDIA GPU profiles select it with `qemu_env = { RENDER_SERVER_EXEC_PATH: ... }` ([`nvidia.md`](nvidia.md)); the build is native, x86-64-v2, like QEMU's |
+| `patches/host/virglrenderer/workaround/0003` | The host-side workaround for the NVIDIA feedback-loop fault, kept as documentation. `patches/mesa/0020` replaced it; `build-virglrenderer.sh` applies it only with `WITH_WORKAROUND=1` |
 
 ### Build-only inputs
 
@@ -297,7 +298,8 @@ Dockerfiles pin their Debian packages by version.
 | [`vulkan-sdk`](../build/vulkan-sdk/PINS) | Vulkan-Loader | `vulkan-sdk-1.4.363.0` | `fa218055ff4948b159f31d43f800c808a13d51df` | `941eff558fc74f248745fb7df367640cf89a8457f216dae498a74ae14b6ba6f7` | https://github.com/KhronosGroup/Vulkan-Loader/archive/refs/tags/vulkan-sdk-1.4.363.0.tar.gz |
 | [`vulkan-sdk`](../build/vulkan-sdk/PINS) | Vulkan-Tools | `vulkan-sdk-1.4.363.0` | `6fe2055cf2fa921d52a4c6a31528cfc279a6977f` | `6cbeb83294434e636a0c78760f1a6dfe3e50c1bab0cffa154603ce73e70508f1` | https://github.com/KhronosGroup/Vulkan-Tools/archive/refs/tags/vulkan-sdk-1.4.363.0.tar.gz |
 | [`host`](../patches/host/PINS) | virglrenderer | `1.3.0` | — | `065bc56e89e6f631f96101cd62eba0748e48eb888b434edc86e89d05395e76f3` | https://gitlab.freedesktop.org/virgl/virglrenderer/-/archive/1.3.0/virglrenderer-1.3.0.tar.gz |
-| [`host`](../patches/host/PINS) | build-image | — | `sha256:3c64b538588416593f69a1aebd2f2ec0f2541b29159f32556fa7def2167147a0` | — | docker.io/library/archlinux |
+| [`host`](../patches/host/PINS) | meson | `1.12.1` | — | `930bc7542cbd9f57009e182fd014eba48cf1a0180a7b9006d2d32d8f168d8b02` | https://files.pythonhosted.org/packages/57/99/36cd25f9598eef70db97577440a70a360af505f6f01c2338a18d1556079c/meson-1.12.1-py3-none-any.whl |
+| [`host`](../patches/host/PINS) | pyyaml | `6.0.3` | — | `d76623373421df22fb4cf8817020cbb7ef15c725b9d5e45f17e189bfc384190f` | https://files.pythonhosted.org/packages/05/8e/961c0007c59b8dd7729d542c61a4d537767a59645b82a0b521206e1e25c2/pyyaml-6.0.3.tar.gz |
 | [`host`](../patches/host/PINS) | qemu | `branch vmlab/egl-headless-external-dmabuf` | `d8a6048aae11c5e26168e173a7c1b1a4335d6a23` | — | https://github.com/VMLabDev/qemu |
 <!-- END generated pins table -->
 
@@ -317,9 +319,10 @@ committed.
 | --- | --- | --- | --- | --- |
 | dxil-spirv | 0 | — | None; see [`patches/dxil-spirv/`](../patches/dxil-spirv/) | — |
 | dxvk | 1 | [`0001`](../patches/dxvk/0001-dxgi-Keep-the-swap-chain-description-when-a-resize-fails.patch) | dxgi: Keep the swap-chain description when a resize fails. | [`build/d3d12/README.md`](../build/d3d12/README.md) |
-| host/virglrenderer | 1 | [`0001`](../patches/host/virglrenderer/0001-vkr-log-image-creation.patch) | vkr: log failed image creation and memory allocation, with the create-info (diagnostic render server) | [`docs/nvidia.md`](nvidia.md) |
+| host/virglrenderer | 2 | [`0001`](../patches/host/virglrenderer/0001-vkr-log-image-creation.patch) | vkr: log failed image creation and memory allocation, with the create-info (diagnostic render server) | [`docs/nvidia.md`](nvidia.md) |
+| | | [`0002`](../patches/host/virglrenderer/0002-vkr-do-not-create-queue-sync-fences-exportable.patch) | vkr: do not create queue-sync fences exportable | [`docs/n5.md`](n5.md) |
 | host/virglrenderer/diagnostic | 1 | [`0040`](../patches/host/virglrenderer/diagnostic/0040-vkr-trace-venus-commands-and-sync-submit.patch) | vkr: record the Venus command stream and wait on every submission (diagnostics) | [`docs/godot.md`](godot.md) |
-| host/virglrenderer/workaround | 1 | [`0002`](../patches/host/virglrenderer/workaround/0002-vkr-drop-unsupported-feedback-loop-usage.patch) | vkr: retry vkCreateImage and the image-format queries without feedback-loop usage (superseded by mesa/0020; built only with WITH_WORKAROUND=1) | [`docs/nvidia.md`](nvidia.md) |
+| host/virglrenderer/workaround | 1 | [`0003`](../patches/host/virglrenderer/workaround/0003-vkr-drop-unsupported-feedback-loop-usage.patch) | vkr: retry vkCreateImage and the image-format queries without feedback-loop usage (superseded by mesa/0020; built only with WITH_WORKAROUND=1) | [`docs/nvidia.md`](nvidia.md) |
 | kmd | 2 | [`0001`](../patches/kmd/0001-kmd-r10-copy.patch) | Convert R10G10B10A2 sources to 8-bit RGBA or BGRA in the KMD's CPU present blit (the prior art's r10 KMD) | [`build/kmd/README.md`](../build/kmd/README.md) |
 | | | [`0002`](../patches/kmd/0002-kmd-cache-gdi-shadow-and-staging-surfaces.patch) | viogpu3d: map GDI shadow and staging surfaces cached | [`docs/present.md`](present.md) |
 | mesa | 44 | [`0001`](../patches/mesa/0001-build-winddk-includes-and-x86-atomics.patch) | build: add the WDK include path and drop x86-unsafe 64-bit Interlocked calls | [`build/mesa/README.md`](../build/mesa/README.md) |

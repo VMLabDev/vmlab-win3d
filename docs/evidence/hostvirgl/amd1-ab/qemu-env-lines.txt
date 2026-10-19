@@ -1,0 +1,4 @@
+vmlab: env: VK_LOADER_DRIVERS_SELECT=*radeon* VK_ADD_IMPLICIT_LAYER_PATH=/home/wil/.local/share/vmlab/vk-layer/0df9161736fcf95d VMLAB_VK_PCI_ADDRESS=0000:72:00.0
+vmlab: env: VK_LOADER_DRIVERS_SELECT=*radeon* VK_ADD_IMPLICIT_LAYER_PATH=/home/wil/.local/share/vmlab/vk-layer/0df9161736fcf95d VMLAB_VK_PCI_ADDRESS=0000:72:00.0
+vmlab: env: VK_LOADER_DRIVERS_SELECT=*radeon* VK_ADD_IMPLICIT_LAYER_PATH=/home/wil/.local/share/vmlab/vk-layer/0df9161736fcf95d VMLAB_VK_PCI_ADDRESS=0000:72:00.0 RENDER_SERVER_EXEC_PATH=/home/wil/.local/opt/virglrenderer-vmlab/libexec/virgl_render_server
+vmlab: env: VK_LOADER_DRIVERS_SELECT=*radeon* VK_ADD_IMPLICIT_LAYER_PATH=/home/wil/.local/share/vmlab/vk-layer/0df9161736fcf95d VMLAB_VK_PCI_ADDRESS=0000:72:00.0

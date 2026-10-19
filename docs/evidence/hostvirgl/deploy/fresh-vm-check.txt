@@ -1,0 +1,12 @@
+# fresh lab win3d-hostvirgl-deploycheck on Nvidia2, user's supervisor
+vmlab: env: VK_LOADER_DRIVERS_SELECT=*nvidia* VK_ADD_IMPLICIT_LAYER_PATH=/home/wil/.local/share/vmlab/vk-layer/0df9161736fcf95d VMLAB_VK_PCI_ADDRESS=0000:05:00.0 RENDER_SERVER_EXEC_PATH=/home/wil/.local/opt/virglrenderer-vmlab/libexec/virgl_render_server
+
+# pgrep -af virgl_render_server (this VM)
+3435834 /home/wil/.local/opt/virglrenderer-vmlab/libexec/virgl_render_server --socket-fd 150
+
+# vmlab status -v
+lab "win3d-hostvirgl-deploycheck"
+
+  NAME KIND      STATUS  IP TEMPLATE/IMAGE
+  win  vm        booting -  x86_64/windows-11@26100.1742.5
+      state=running ready=no cached=yes arch=x86_64 cpus=4 memory=8GiB agent=f1e4515 host_gpu=Nvidia2 qemu=/home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64
