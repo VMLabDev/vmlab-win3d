@@ -407,7 +407,7 @@ a fresh `Nvidia2` VM then ran the server
 (`docs/evidence/hostvirgl/deploy/`).
 
 `vmlab status -v` up to 0.30.0-alpha names the `host_gpu` and `qemu_binary`
-but not `qemu_env`. vmlab `main` at `df5014f` (the coming 0.31.0-alpha) adds
+but not `qemu_env`. vmlab main at commit df5014f (the coming 0.31.0-alpha) adds
 `env=NAME=value,...` after `qemu=`, and `vmlab status --json` carries the same
 pairs as `qemu_env` on each machine.
 
