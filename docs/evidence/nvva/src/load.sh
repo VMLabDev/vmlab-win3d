@@ -7,7 +7,8 @@
 #   load.sh destroy <name>
 #
 # Labs live in .scratch/labs/<name>/ in this worktree (from
-# labs/probe/vmlab.wcl, with NAT so the evaluation template keeps running).
+# labs/probe/vmlab.wcl, whose NAT NIC lets the evaluation template activate;
+# setup runs slmgr /ato so wlms.exe does not shut the guest down an hour in).
 # `load` runs the ten probes (D3D9, D3D11, D3D12, OpenGL, Vulkan; x64 and
 # x86) one after another through tests/guest/Run-Probe.ps1 in the
 # autologon desktop session and writes one line per run to <outdir>/runs.txt:
@@ -32,12 +33,19 @@ setup)
     sed -e "s/lab \"win3d-host-probe\"/lab \"win3d-nvva-$name\"/" \
         -e "s/vm \"win11\"/vm \"win\"/" \
         -e "s/host_gpu = \"AMD1\"/host_gpu = \"$gpu\"/" \
-        -e "s|^    secure_boot = false|    secure_boot = false\n    agent_update = false\n    nic { nat = true }|" \
+        -e "s|^    secure_boot = false|    secure_boot = false\n    agent_update = false|" \
         "$REPO/labs/probe/vmlab.wcl" >"$d/vmlab.wcl"
     grep -q "host_gpu = \"$gpu\"" "$d/vmlab.wcl" || { echo "lab file lacks host_gpu $gpu" >&2; exit 1; }
     (cd "$d" && vmlab up) || exit 1
     wait_agent "$name" || exit 1
     for i in 1 2 3 4 5; do gps "$name" 'New-Item -ItemType Directory -Force C:\win3d\results | Out-Null' 60 >/dev/null && break; sleep 20; done
+    # The templates are evaluation editions; unactivated, wlms.exe shuts the
+    # guest down about an hour after boot. The probe lab's NAT NIC lets it
+    # activate, but a fresh clone does not do it by itself soon enough
+    # (docs/known-limits.md), so ask before the install starts the clock.
+    slmgr='cscript.exe //nologo C:\Windows\System32\slmgr.vbs'
+    (cd "$d" && vmlab exec --timeout 300 win -- cmd.exe /c "$slmgr /ato & $slmgr /xpr") 2>&1 | tr -d '\r' >"$d/activation.txt"
+    grep -q 'activated successfully\|permanently activated' "$d/activation.txt" && say "activated" || say "WARNING: Windows did not activate; see $d/activation.txt"
     (cd "$d" && vmlab cp "$REPO/tests/guest" "win:C:/win3d/guest" && vmlab cp "$REPO/out/probes/x64" "win:C:/win3d/probes/x64" && vmlab cp "$REPO/out/probes/x86" "win:C:/win3d/probes/x86") || exit 1
     (cd "$d" && vmlab exec --timeout 1200 win -- powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File 'C:\win3d\guest\Set-TestDesktop.ps1' -Reboot) | tr -d '\r' | tail -5
     sleep 60; wait_agent "$name" || exit 1
