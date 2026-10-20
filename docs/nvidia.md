@@ -406,8 +406,10 @@ line since 2026-10-19 (backup `config.wcl.bak-hostvirgl-20261019-113229`);
 a fresh `Nvidia2` VM then ran the server
 (`docs/evidence/hostvirgl/deploy/`).
 
-`vmlab status -v` (0.28.0-alpha) names the `host_gpu` and `qemu_binary` but
-not `qemu_env`; a vmlab request to show it was drafted.
+`vmlab status -v` up to 0.30.0-alpha names the `host_gpu` and `qemu_binary`
+but not `qemu_env`. vmlab `main` at `df5014f` (the coming 0.31.0-alpha) adds
+`env=NAME=value,...` after `qemu=`, and `vmlab status --json` carries the same
+pairs as `qemu_env` on each machine.
 
 `AMD1` does not use it. RADV wakes exportable and plain fences alike
 ([`n5.md`](n5.md#cause)), and the A/B in
