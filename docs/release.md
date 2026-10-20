@@ -174,6 +174,24 @@ Paste this into the 0.1.0-alpha release notes:
 > releases' tarballs are built for x86-64-v2, and their `install.sh --check`
 > also checks the ISA level and runs `--version`.
 
+### QEMU asset rebuilt in 0.1.1-alpha
+
+The QEMU tarball is linked against the build host's shared libraries, so
+a library update on the target host can stop it from starting. On
+2026-10-21 Arch's libnfs moved from 6.0.2 to 7.0.2 and removed
+`libnfs.so.16.2.0`, which the first 0.1.1-alpha QEMU tarball
+(sha256 `ce4d24e4…5b75`) needed. Its `install.sh --check` and the binary
+both failed with `libnfs.so.16.2.0: cannot open shared object file`.
+
+The asset was rebuilt from the same pinned commit with
+`patches/host/build-qemu.sh` against the updated libraries. It was packaged
+the way `scripts/release.sh` packages it, with the release's commit
+(`d6682d0`) and timestamp. Then it was uploaded over the old asset
+together with a regenerated `RELEASE-NOTES.md` and `SHA256SUMS`. The new
+tarball's sha256 is `80584d92…6fb6`. The driver zip and the render-server
+tarball are byte-identical to the originals. A host still on libnfs 6 needs
+the old binary or a local `build-qemu.sh` build.
+
 ## Install the driver package
 
 You need a Windows 10 or 11 x64 guest with Secure Boot off and a virtio-gpu
