@@ -30,9 +30,11 @@ From nothing, with no manual step:
    `labs/probe/vmlab.wcl` shape for vmlab 0.25: `secure_boot = false` and
    `gpu { mode = "vulkan" host_gpu = "AMD1" }`, the AMD iGPU as the host
    config names it (`docs/host.md`). Without `host_gpu`, the lab would take
-   the host's default GPU, which on helios is an RTX 5090. It also
-   sets `agent_update = false`, because the templates' agent cannot be
-   updated in place and a late agent restart broke one windows-10 run.
+   the host's default GPU, which on helios is an RTX 5090. `vmlab up`
+   replaces the templates' guest agent with the installed vmlab's. Before
+   vmlab 0.31.0-alpha the lab set `agent_update = false`, because a late
+   agent restart dropped the agent channel in one windows-10 run; 0.31 holds
+   the channel while the agent is replaced.
    `qemu-argv-env.txt` keeps the QEMU command line and environment that vmlab
    logged, and, on vmlab 0.27, each distinct `vmlab-pci-filter:` line with
    its count. `status-v.txt` and `status-v-end.txt` keep the host GPU vmlab
