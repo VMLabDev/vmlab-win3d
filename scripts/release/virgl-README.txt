@@ -19,26 +19,41 @@ patches/host/virglrenderer/ in the vmlab-win3d repository:
 
 @PATCHES@
 
-Only the render server (libexec/virgl_render_server) is included. QEMU
-keeps using the host's own libvirglrenderer, which starts the server named
-by RENDER_SERVER_EXEC_PATH instead of /usr/lib/virgl_render_server. The two
-talk over a private protocol, so the host's virglrenderer must be the same
-version, @VIRGL_VERSION@.
+Only the render server (libexec/virgl_render_server) is included. The vmlab
+QEMU (the other tarball, qemu-vmlab-egl) bundles the libvirglrenderer of
+the same build in its lib/, and that library forks the server named by
+RENDER_SERVER_EXEC_PATH. The two talk over a protocol private to a
+virglrenderer version, and since both are this build's @VIRGL_VERSION@, the
+host's own virglrenderer version does not matter. Use this server only with
+that QEMU: a stock QEMU with another virglrenderer version cannot pair with it.
 
 Which hosts it suits
 --------------------
-The server links the host's libdrm, gbm, expat and glibc; none are bundled.
-It loads the host's Vulkan loader at run time. It was built on
-@BUILD_HOST@, for the x86-64-v2 CPU baseline, against:
+Any x86-64 Linux with glibc 2.36 or newer and libgbm: Debian 12 and later,
+Ubuntu 24.04 and later, Fedora 37 and later, RHEL 10, Arch Linux and
+CachyOS, openSUSE Tumbleweed. Ubuntu 22.04 (glibc 2.35) and RHEL 9 (2.34)
+are below the floor; install.sh refuses them.
+
+The server was built in a Debian 12 container (@BUILD_HOST@), for the
+x86-64-v2 CPU baseline:
 
 @BUILDINFO@
 
-It runs on hosts with virglrenderer @VIRGL_VERSION@ and those libraries at
-the same or newer versions, which in practice means a current Arch Linux or
-CachyOS. install.sh checks all of this before it installs anything. On any
-other host, build it with patches/host/build-virglrenderer.sh from the
-vmlab-win3d repository, which builds the same source against the host's
-own libraries.
+From the host it needs only libgbm.so.1 (Debian and Ubuntu: libgbm1;
+Fedora: mesa-libgbm; Arch: mesa; openSUSE: libgbm1) and glibc, and at run
+time it dlopens the host's Vulkan loader (libvulkan.so.1) and, through it,
+the host GPU's Vulkan driver. Those must be the host's own.
+
+install.sh checks all of this before it installs anything: the host's glibc
+against the floor, ldd, the CPU's ISA level against the server's, and that
+the server starts. To check a host without installing:
+
+  ./install.sh --check
+
+On a host below the floor, build the server there with
+patches/host/build-virglrenderer.sh --install from the vmlab-win3d
+repository (it builds in the same Debian 12 container; Docker, no root),
+or set WIN3D_ALLOW_OLDER_GLIBC=1 to try the binary anyway (unsupported).
 
 Install and use with vmlab
 --------------------------

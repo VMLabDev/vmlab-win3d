@@ -5,11 +5,13 @@
 #   scripts/release.sh <version>          for example 0.1.0-alpha
 #
 # Refuses a dirty tree. Runs scripts/build.sh (every component, then the
-# signed package), patches/host/build-qemu.sh (the QEMU commit pinned in
-# patches/host/PINS) and patches/host/build-virglrenderer.sh (the render
-# server), then writes out/release/<version>/:
+# signed package), patches/host/build-virglrenderer.sh (the render server and
+# the libvirglrenderer the QEMU bundles, in the Debian 12 container of
+# patches/host/Dockerfile) and patches/host/build-qemu.sh (the QEMU commit
+# pinned in patches/host/PINS, in the same container), then writes
+# out/release/<version>/:
 #   vmlab-win3d-<version>-windows-x64.zip                  guest package + README.txt
-#   qemu-vmlab-egl-<version>-x86_64-linux.tar.zst          vmlab QEMU + install.sh
+#   qemu-vmlab-egl-<version>-x86_64-linux.tar.zst          vmlab QEMU (bin/, lib/) + install.sh
 #   virglrenderer-vmlab-<version>-x86_64-linux.tar.zst     vmlab render server + install.sh
 #   RELEASE-NOTES.md
 #   SHA256SUMS
@@ -75,10 +77,11 @@ fi
 
 stage "build the package (scripts/build.sh)"
 scripts/build.sh
-stage "build QEMU (patches/host/build-qemu.sh)"
-patches/host/build-qemu.sh
+# The render server first: build-qemu.sh bundles its libvirglrenderer.
 stage "build the render server (patches/host/build-virglrenderer.sh)"
 WITH_WORKAROUND=0 patches/host/build-virglrenderer.sh
+stage "build QEMU (patches/host/build-qemu.sh)"
+patches/host/build-qemu.sh
 clean_or_die "after the build (a build script wrote into the tree)"
 
 OUT=$REPO/out/release/$VERSION
@@ -103,12 +106,14 @@ stage "QEMU tarball"
 QNAME=qemu-vmlab-egl-$VERSION
 Q=$STAGE/$QNAME
 TARBALL=$OUT/$QNAME-x86_64-linux.tar.zst
-mkdir -p "$Q/bin"
+mkdir -p "$Q/bin" "$Q/lib"
 cp out/host/qemu/bin/qemu-system-x86_64 "$Q/bin/"
+# The bundled virglrenderer, which RUNPATH=$ORIGIN/../lib makes the binary load.
+cp out/host/qemu/lib/libvirglrenderer.so.1 "$Q/lib/"
 cp out/host/qemu/BUILDINFO "$Q/"
 cp -r out/host/qemu/licenses "$Q/"
 cp "$HERE/qemu-install.sh" "$Q/install.sh"
-chmod 755 "$Q/install.sh" "$Q/bin/qemu-system-x86_64"
+chmod 755 "$Q/install.sh" "$Q/bin/qemu-system-x86_64" "$Q/lib/libvirglrenderer.so.1"
 binfo() { sed -n "s/^$1: *//p" out/host/qemu/BUILDINFO; }
 [ "$(binfo commit)" = "$QEMU_COMMIT" ] || { echo "error: out/host/qemu is commit $(binfo commit), PINS says $QEMU_COMMIT" >&2; exit 1; }
 python3 "$HERE/assemble.py" fill "$HERE/qemu-README.txt" "$Q/README.txt" \
@@ -117,7 +122,7 @@ python3 "$HERE/assemble.py" fill "$HERE/qemu-README.txt" "$Q/README.txt" \
     QEMU_VERSION="$(binfo qemu | awk '{ print $4 }')" QEMU_BASE="$(binfo base | awk '{ print $1 }')" \
     QEMU_SERIES="$(binfo series | sed 's/^/  /')" \
     BUILD_HOST="$(binfo 'build host')" \
-    BUILDINFO="$(grep -E '^(compiler|glibc|needs GLIBC|lib )' out/host/qemu/BUILDINFO | sed 's/^/  /')"
+    BUILDINFO="$(grep -E '^(build image|compiler|needs ISA|glibc|needs GLIBC|lib |RUNPATH|NEEDED)' out/host/qemu/BUILDINFO | sed 's/^/  /')"
 find "$Q" -exec touch -h -d "@$EPOCH" {} +
 tar --sort=name --mtime="@$EPOCH" --owner=0 --group=0 --numeric-owner --format=gnu \
     -C "$STAGE" -cf - "$QNAME" | zstd -19 -T0 -q -o "$TARBALL"
@@ -141,7 +146,7 @@ python3 "$HERE/assemble.py" fill "$HERE/virgl-README.txt" "$V/README.txt" \
     VIRGL_VERSION="$VIRGL_VERSION" VIRGL_URL="$VIRGL_URL" VIRGL_SHA="$VIRGL_SHA" \
     PATCHES="$(sed -n 's/^patch: *\([^ ]*\).*/  \1/p' "$VB/BUILDINFO")" \
     BUILD_HOST="$(sed -n 's/^build host: *//p' "$VB/BUILDINFO")" \
-    BUILDINFO="$(grep -E '^(compiler|needs ISA|glibc|needs GLIBC|lib )' "$VB/BUILDINFO" | sed 's/^/  /')"
+    BUILDINFO="$(grep -E '^(build image|compiler|needs ISA|glibc|needs GLIBC|lib |NEEDED)' "$VB/BUILDINFO" | sed 's/^/  /')"
 find "$V" -exec touch -h -d "@$EPOCH" {} +
 tar --sort=name --mtime="@$EPOCH" --owner=0 --group=0 --numeric-owner --format=gnu \
     -C "$STAGE" -cf - "$VNAME" | zstd -19 -T0 -q -o "$VTARBALL"
