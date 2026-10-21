@@ -22,9 +22,12 @@ On the host:
   RTX 4060 failed outright
   ([known limits](known-limits.md#host-gpu-support)).
 - **For an NVIDIA GPU, a patched QEMU named as `qemu_binary` on that GPU's
-  host config block.** Stock QEMU 11.1.1 shows a black console for a Venus
-  guest on NVIDIA. `docs/nvidia.md`, "Host setup", says how to build it
-  (`patches/host/build-qemu.sh`) and where to point.
+  host config block, and the vmlab render server as its `qemu_env`.** Stock
+  QEMU 11.1.1 shows a black console for a Venus guest on NVIDIA. The release
+  tarballs (`docs/release.md`, "Install the QEMU for NVIDIA hosts") run on
+  any x86-64 distribution with glibc 2.36 or newer; their `install.sh --check`
+  says whether this host is one. `docs/nvidia.md`, "Host setup", says how
+  to build them instead (`patches/host/build-qemu.sh`) and where to point.
 - That GPU declared by name in the host config,
   `~/.config/vmlab/config.wcl`. Find its address with
   `lspci -D | grep -Ei 'vga|3d|display'`, or from

@@ -24,6 +24,13 @@ Helios's host config gives `Nvidia1` a `qemu_binary`. The path below is the
 current one: since 2026-10-18 it is the version-free
 `~/.local/opt/qemu-vmlab-egl`, built from QEMU master plus our series
 (`patches/host/PINS`); before that it was `~/.local/opt/qemu-11.1.1-vmlab-egl`.
+Since 2026-10-21 the release tarball that installs there is built in a
+Debian 12 container with a minimal feature set and bundles its
+virglrenderer, so the same tarball runs on any distribution with glibc 2.36
+or newer, not only on hosts with helios's library versions
+(`docs/release.md`, "Supported hosts of the host assets";
+`docs/evidence/portable/`). It is paired with the render server through
+`qemu_env` on the same block.
 
 ```wcl
 gpu "Nvidia1" {

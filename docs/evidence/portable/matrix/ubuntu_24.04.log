@@ -1,0 +1,43 @@
+# ubuntu:24.04 = ubuntu@sha256:68ee22004a9109b44973313b02ff7b1de250f1de0f5ecb628d73f579aaff33ac
+# tarballs: qemu-vmlab-egl-0.1.1-alpha-portable1-x86_64-linux.tar.zst cbb7808f5d6449dd..., virglrenderer-vmlab-0.1.1-alpha-portable1-x86_64-linux.tar.zst 03e8523e4bea6044...
+# 2026-10-21T11:52:22+10:00 on helios, 7.2.10-1-cachyos
+## Ubuntu 24.04.5 LTS  glibc 2.39
+## packages: apt-get update -qq && apt-get install -y -qq --no-install-recommends zstd libpixman-1-0 libepoxy0 libgbm1 zlib1g libzstd1 libusb-1.0-0 && (apt-get install -y -qq --no-install-recommends libglib2.0-0t64 || apt-get install -y -qq --no-install-recommends libglib2.0-0)
+## installed runtime libraries:
+   libglib-2.0.so.0     /usr/lib/x86_64-linux-gnu/libglib-2.0.so.0.8000.0
+   libpixman-1.so.0     /usr/lib/x86_64-linux-gnu/libpixman-1.so.0.42.2
+   libepoxy.so.0        /usr/lib/x86_64-linux-gnu/libepoxy.so.0.0.0
+   libgbm.so.1          /usr/lib/x86_64-linux-gnu/libgbm.so.1.0.0
+   libz.so.1            /usr/lib/x86_64-linux-gnu/libz.so.1.3
+   libzstd.so.1         /usr/lib/x86_64-linux-gnu/libzstd.so.1.5.5
+   libusb-1.0.so.0      /usr/lib/x86_64-linux-gnu/libusb-1.0.so.0.4.0
+## qemu install.sh --check
+   glibc: 2.39 (the binary needs 2.36 or newer)
+   ldd: every shared library the binary needs is present and new enough
+   bundled: libvirglrenderer.so.1 => /tmp/x/qemu-vmlab-egl-0.1.1-alpha-portable1/bin/../lib/libvirglrenderer.so.1
+   ISA: the binary needs x86-64-v2; this CPU supports up to x86-64-v4
+   run: QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+   exit 0
+## virgl install.sh --check
+   glibc: 2.39 (the server needs 2.36 or newer)
+   host virglrenderer: none found (not used: the vmlab QEMU bundles its own 1.3.0, which this server pairs with)
+   ldd: every shared library the server needs is present and new enough
+   ISA: the server needs x86-64-v2; this CPU supports up to x86-64-v4
+   run: the server starts
+   exit 0
+## install into /tmp/prefix
+   /tmp/qi.log:installed: /tmp/prefix/qemu/bin/qemu-system-x86_64 and /tmp/prefix/qemu/lib/libvirglrenderer.so.1
+   /tmp/vi.log:installed /tmp/prefix/virgl/libexec/virgl_render_server
+## --version
+   QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+## bundled library after the install
+   	libvirglrenderer.so.1 => /tmp/prefix/qemu/bin/../lib/libvirglrenderer.so.1 (0x00007ff8932ec000)
+## QMP: -machine q35 -accel tcg -display none -nodefaults -S -qmp stdio (-L /roms)
+   {"QMP": {"version": {"qemu": {"micro": 50, "minor": 1, "major": 11}, "package": "vmlab d8a6048aae11"}, "capabilities": ["oob"]}}
+   {"return": {}}
+   {"timestamp": {"seconds": 1792547567, "microseconds": 38967}, "event": "SHUTDOWN", "data": {"guest": false, "reason": "host-qmp-quit"}}
+   {"return": {}}
+## render server from /tmp/prefix (what install.sh --check runs)
+   virgl_render_server[817]: no valid client fd specified
+RESULT PASS
+# container exit 0

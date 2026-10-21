@@ -1,0 +1,8 @@
+lab "win3d-portable-e2e"
+
+  NAME KIND      STATUS  IP         TEMPLATE/IMAGE
+  win  vm        running 10.213.0.2 x86_64/windows-11@26100.1742.6
+      state=running ready=yes cached=yes diverged=yes variant=standard arch=x86_64 cpus=4 memory=8GiB agent=04f68fd host_gpu=Nvidia1 qemu=/home/wil/dev/vmlab-win3d-wt/portable/.scratch/prefix/qemu-vmlab-egl/bin/qemu-system-x86_64 env=RENDER_SERVER_EXEC_PATH=/home/wil/dev/vmlab-win3d-wt/portable/.scratch/prefix/virglrenderer-vmlab/libexec/virgl_render_server,VK_ADD_IMPLICIT_LAYER_PATH=/home/wil/.local/share/vmlab/vk-layer/d38df51178e6c76f,VK_LOADER_DRIVERS_SELECT=*nvidia*,VMLAB_VK_PCI_ADDRESS=0000:01:00.0
+
+  SEGMENT SUBNET             GATEWAY         NAT/DHCP DROPPED    PEER
+  nat     10.213.0.0/24      10.213.0.1      on/on    0          -
