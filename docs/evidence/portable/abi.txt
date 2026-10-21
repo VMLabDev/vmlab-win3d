@@ -1,0 +1,147 @@
+# ABI of the two host assets (staged from the same out/host/ build the release uses)
+# 2026-10-21T11:45:41+10:00 on helios; tool versions: GNU readelf (GNU Binutils) 2.47
+# Tarballs: qemu-vmlab-egl-0.1.1-alpha-portable0-x86_64-linux.tar.zst
+virglrenderer-vmlab-0.1.1-alpha-portable0-x86_64-linux.tar.zst
+
+== qemu-vmlab-egl-0.1.1-alpha-portable0/bin/qemu-system-x86_64
+-- file
+ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=74d49c44c66578c31ecf0972f1308917b4a673d4, for GNU/Linux 3.2.0, with debug_info, not stripped
+-- highest GLIBC_ version needed (objdump -T | grep -o GLIBC_ | sort -V | tail -1)
+GLIBC_2.34
+-- all GLIBC_ versions referenced
+GLIBC_2.2.5 GLIBC_2.3 GLIBC_2.3.2 GLIBC_2.3.4 GLIBC_2.4 GLIBC_2.7 GLIBC_2.9 GLIBC_2.10 GLIBC_2.11 GLIBC_2.14 GLIBC_2.15 GLIBC_2.17 GLIBC_2.25 GLIBC_2.27 GLIBC_2.28 GLIBC_2.29 GLIBC_2.30 GLIBC_2.32 GLIBC_2.33 GLIBC_2.34 
+-- other symbol versions needed (readelf -V, Version needs)
+0x0010:   Name: ZLIB_1.2.0  Flags: none  Version: 22
+0x0020: Version: 1  File: libm.so.6  Cnt: 2
+0x0050: Version: 1  File: libc.so.6  Cnt: 19
+-- NEEDED (objdump -p)
+   libpixman-1.so.0
+   libz.so.1
+   libepoxy.so.0
+   libzstd.so.1
+   libusb-1.0.so.0
+   libgbm.so.1
+   libvirglrenderer.so.1
+   libglib-2.0.so.0
+   libm.so.6
+   libc.so.6
+-- RUNPATH / RPATH (readelf -d)
+0x000000000000001d (RUNPATH)            Library runpath: [$ORIGIN/../lib]
+-- .note.gnu.property (readelf -n)
+Properties: x86 ISA needed: x86-64-baseline, x86-64-v2
+
+== qemu-vmlab-egl-0.1.1-alpha-portable0/lib/libvirglrenderer.so.1
+-- file
+ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, BuildID[sha1]=d56a46b45ecdd949ddee813db791361b3caef5ba, not stripped
+-- highest GLIBC_ version needed (objdump -T | grep -o GLIBC_ | sort -V | tail -1)
+GLIBC_2.34
+-- all GLIBC_ versions referenced
+GLIBC_2.2.5 GLIBC_2.3 GLIBC_2.3.2 GLIBC_2.7 GLIBC_2.14 GLIBC_2.16 GLIBC_2.17 GLIBC_2.27 GLIBC_2.28 GLIBC_2.29 GLIBC_2.32 GLIBC_2.33 GLIBC_2.34 
+-- other symbol versions needed (readelf -V, Version needs)
+0x0030: Version: 1  File: libc.so.6  Cnt: 12
+-- NEEDED (objdump -p)
+   libm.so.6
+   libepoxy.so.0
+   libdrm.so.2
+   libgbm.so.1
+   libc.so.6
+-- RUNPATH / RPATH (readelf -d)
+-- .note.gnu.property (readelf -n)
+Properties: x86 ISA needed: x86-64-v2
+
+== virglrenderer-vmlab-0.1.1-alpha-portable0/libexec/virgl_render_server
+-- file
+ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=e11d766837ec347dd7cdabd7e10a41a939404cea, for GNU/Linux 3.2.0, not stripped
+-- highest GLIBC_ version needed (objdump -T | grep -o GLIBC_ | sort -V | tail -1)
+GLIBC_2.34
+-- all GLIBC_ versions referenced
+GLIBC_2.2.5 GLIBC_2.3 GLIBC_2.3.2 GLIBC_2.7 GLIBC_2.14 GLIBC_2.17 GLIBC_2.27 GLIBC_2.28 GLIBC_2.33 GLIBC_2.34 
+-- other symbol versions needed (readelf -V, Version needs)
+-- NEEDED (objdump -p)
+   libgbm.so.1
+   libc.so.6
+-- RUNPATH / RPATH (readelf -d)
+0x000000000000001d (RUNPATH)            Library runpath: [$ORIGIN/../src]
+-- .note.gnu.property (readelf -n)
+Properties: x86 ISA needed: x86-64-baseline, x86-64-v2
+
+== ldd of bin/qemu-system-x86_64 on helios (CachyOS, glibc 2.44)
+   linux-vdso.so.1 (0x00007f1cd4949000)
+   libpixman-1.so.0 => /usr/lib/libpixman-1.so.0 (0x00007f1cd477a000)
+   libz.so.1 => /usr/lib/libz.so.1 (0x00007f1cd2bc4000)
+   libepoxy.so.0 => /usr/lib/libepoxy.so.0 (0x00007f1cd2aa3000)
+   libzstd.so.1 => /usr/lib/libzstd.so.1 (0x00007f1cd2942000)
+   libusb-1.0.so.0 => /usr/lib/libusb-1.0.so.0 (0x00007f1cd291f000)
+   libgbm.so.1 => /usr/lib/libgbm.so.1 (0x00007f1cd4772000)
+   libvirglrenderer.so.1 => /home/wil/dev/vmlab-win3d-wt/portable/.scratch/stage/x/qemu-vmlab-egl-0.1.1-alpha-portable0/bin/../lib/libvirglrenderer.so.1 (0x00007f1cd2600000)
+   libglib-2.0.so.0 => /usr/lib/libglib-2.0.so.0 (0x00007f1cd2476000)
+   libm.so.6 => /usr/lib/libm.so.6 (0x00007f1cd2816000)
+   libc.so.6 => /usr/lib/libc.so.6 (0x00007f1cd2200000)
+   /lib64/ld-linux-x86-64.so.2 => /usr/lib64/ld-linux-x86-64.so.2 (0x00007f1cd494b000)
+   libudev.so.1 => /usr/lib/libudev.so.1 (0x00007f1cd21b0000)
+   libdrm.so.2 => /usr/lib/libdrm.so.2 (0x00007f1cd245d000)
+   libexpat.so.1 => /usr/lib/libexpat.so.1 (0x00007f1cd2178000)
+   libgcc_s.so.1 => /usr/lib/libgcc_s.so.1 (0x00007f1cd2143000)
+   libpcre2-8.so.0 => /usr/lib/libpcre2-8.so.0 (0x00007f1cd2070000)
+
+== ldd of libexec/virgl_render_server on helios
+   linux-vdso.so.1 (0x00007f3137ca7000)
+   libgbm.so.1 => /usr/lib/libgbm.so.1 (0x00007f3137ad5000)
+   libc.so.6 => /usr/lib/libc.so.6 (0x00007f3137800000)
+   libdrm.so.2 => /usr/lib/libdrm.so.2 (0x00007f3137abc000)
+   libexpat.so.1 => /usr/lib/libexpat.so.1 (0x00007f3137a84000)
+   libm.so.6 => /usr/lib/libm.so.6 (0x00007f31376f7000)
+   libgcc_s.so.1 => /usr/lib/libgcc_s.so.1 (0x00007f3137a4d000)
+   /lib64/ld-linux-x86-64.so.2 => /usr/lib64/ld-linux-x86-64.so.2 (0x00007f3137ca9000)
+
+== BUILDINFO of the QEMU asset
+qemu:           QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+source:         https://github.com/VMLabDev/qemu branch vmlab/egl-headless-external-dmabuf
+commit:         d8a6048aae11c5e26168e173a7c1b1a4335d6a23
+base:           a19f59a72d (upstream)
+series:         d8a6048aae ui/sdl2: show external-only dma-buf scanouts
+series:         f95d311446 ui/gtk: show external-only dma-buf scanouts
+series:         40d3c41a0a ui/egl-headless: show external-only dma-buf scanouts
+series:         dd46c88676 ui/egl-helpers: let an egl_fb wrap an external texture
+series:         674931d277 ui/shader: add a texture blit program for external textures
+series:         acb3659eea ui/egl-helpers: import external-only dma-bufs as external textures
+build host:     Debian GNU/Linux 12 (bookworm) container, x86_64, built 2026-10-21
+build image:    vmlab-win3d/host-build:279b44dc1474 (sha256:8589ba8f91e066335737fdb0b8c8e8467e8156eaa6e02f6eb1ea65aa5f065f08), base debian@sha256:2c037a04925515fdd6ea85ea14a682d0e79931f5e9f5d07b6dbfc6ba12f9e858
+compiler:       cc (Debian 12.2.0-14+deb12u1) 12.2.0
+compiler flags: -march=x86-64-v2 -mtune=generic (link: -z x86-64-v2)
+configure:      --without-default-features and the --enable switches in patches/host/build-qemu.sh (docs/evidence/portable/features.md)
+needs ISA:      x86-64-baseline, x86-64-v2
+glibc:          2.36 (Debian 2.36-9+deb12u14)
+needs GLIBC:    GLIBC_2.34
+lib glib-2.0:   2.74.6 (Debian 2.74.6-2+deb12u9)
+lib pixman-1:   0.42.2 (Debian 0.42.2-1)
+lib epoxy:      1.5.10 (Debian 1.5.10-1)
+lib gbm:        22.3.6 (Debian 22.3.6-1+deb12u2)
+lib zlib:       1.2.13 (Debian 1:1.2.13.dfsg-1)
+lib libzstd:    1.5.4 (Debian 1.5.4+dfsg2-5)
+lib libusb-1.0: 1.0.26 (Debian 2:1.0.26-1)
+lib virglrenderer: 1.3.0 (bundled: lib/libvirglrenderer.so.1 from out/host/virglrenderer, 0001-vkr-log-image-creation.patch 0002-vkr-do-not-create-queue-sync-fences-exportable.patch )
+RUNPATH:        $ORIGIN/../lib
+NEEDED:         libpixman-1.so.0 libz.so.1 libepoxy.so.0 libzstd.so.1 libusb-1.0.so.0 libgbm.so.1 libvirglrenderer.so.1 libglib-2.0.so.0 libm.so.6 libc.so.6 
+
+== BUILDINFO of the render server asset
+component:      virgl_render_server (vmlab render server) and libvirglrenderer.so.1 (bundled by the vmlab QEMU)
+virglrenderer:  12 (bookworm) https://gitlab.freedesktop.org/virgl/virglrenderer/-/archive/1.3.0/virglrenderer-1.3.0.tar.gz
+sha256:         065bc56e89e6f631f96101cd62eba0748e48eb888b434edc86e89d05395e76f3
+patch:          0001-vkr-log-image-creation.patch 1391a6b58249e2b7
+patch:          0002-vkr-do-not-create-queue-sync-fences-exportable.patch 3b6aa0716822559b
+build host:     Debian GNU/Linux 12 (bookworm) container, x86_64, built 2026-10-21
+build image:    vmlab-win3d/host-build:0eef9ce9b82c (sha256:a2dc6bdf329a5c03a7f9776d730b8c01c901dacd6d8af4bf152e0cb2b61329be), base debian@sha256:2c037a04925515fdd6ea85ea14a682d0e79931f5e9f5d07b6dbfc6ba12f9e858
+compiler:       cc (Debian 12.2.0-14+deb12u1) 12.2.0
+compiler flags: -march=x86-64-v2 -mtune=generic (link: -z x86-64-v2)
+needs ISA:      x86-64-baseline, x86-64-v2
+meson:          1.12.1, PyYAML 6.0.3
+glibc:          2.36 (Debian 2.36-9+deb12u14)
+needs GLIBC:    GLIBC_2.34 (server), GLIBC_2.34 (library)
+lib libdrm:       2.4.114 (Debian 2.4.114-1+b1)
+lib libgbm:       22.3.6 (Debian 22.3.6-1+deb12u2)
+lib libepoxy:     1.5.10 (Debian 1.5.10-1)
+lib libvulkan:    1.3.239 (Debian 1.3.239.0-1)
+NEEDED server:  libgbm.so.1 libc.so.6 
+NEEDED library: libm.so.6 libepoxy.so.0 libdrm.so.2 libgbm.so.1 libc.so.6 
+protocol:       render-server protocol of virglrenderer 12 (bookworm); the vmlab QEMU bundles this library, so the pair always matches

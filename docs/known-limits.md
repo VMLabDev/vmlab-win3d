@@ -268,14 +268,27 @@ Evidence: `docs/host.md` Q6, `docs/evidence/host/q6-shutdown-crashes.txt`,
 `docs/evidence/qemu-master/stock-qemu-shutdown-cores.txt`, and for the fix
 `docs/evidence/qemu-master/cycles-amd1/cycles.log`.
 
-### The QEMU tarball suits current Arch-based hosts, and 0.1.0-alpha's needs AVX-512
+### The host assets need glibc 2.36; 0.1.0-alpha's QEMU needs AVX-512
 
-The vmlab QEMU tarball links the target host's shared libraries, built
-against helios's: it needs a current Arch Linux or CachyOS with glibc 2.43
-or later and every library in its `BUILDINFO` at the same version or
-newer. The CPU needs x86-64-v2. `install.sh --check` checks the libraries,
-the CPU's ISA level and `--version`. On other distributions, build QEMU on
-the host with `patches/host/build-qemu.sh`.
+Since `work/portable` (2026-10-21) the QEMU and render-server tarballs are
+built in a Debian 12 container with a minimal QEMU feature set, so they run
+on any x86-64 distribution with glibc 2.36 or newer and seven common
+runtime libraries: Debian 12, Ubuntu 24.04, Fedora 37, RHEL 10, Arch and
+CachyOS, openSUSE Tumbleweed, and later. Ubuntu 22.04 (glibc 2.35) and
+RHEL 9 (2.34) are below the floor, and `install.sh --check` refuses them
+with the reason; build the assets on such a host with
+`patches/host/build-qemu.sh` and `patches/host/build-virglrenderer.sh`
+(Docker, no root), or try the binary with `WIN3D_ALLOW_OLDER_GLIBC=1`,
+unsupported. The QEMU tarball bundles its own virglrenderer 1.3.0
+(`lib/libvirglrenderer.so.1`) and must be paired with the render-server
+tarball through `qemu_env`; the host's own virglrenderer is not used
+([`release.md`](release.md#supported-hosts-of-the-host-assets),
+`docs/evidence/portable/`).
+
+Before that, both tarballs linked helios's libraries and needed a current
+Arch Linux or CachyOS with glibc 2.43 (0.1.1-alpha's QEMU) or 2.38 (its
+render server); an Arch libnfs update on 2026-10-21 stopped the first
+0.1.1-alpha QEMU from starting ([`release.md`](release.md#qemu-asset-rebuilt-in-011-alpha)).
 
 0.1.0-alpha's tarball (`qemu-11.1.1-vmlab-egl-0.1.0-alpha-...`) is marked
 `x86 ISA needed: x86-64-v4`, so it does not start on a CPU without
