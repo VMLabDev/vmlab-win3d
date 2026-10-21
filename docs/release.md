@@ -40,8 +40,8 @@ second is for the person who installs one.
   release's certificate trusts the next one's. On helios it is
   `/home/wil/dev/vmlab-win3d/.signing/`.
 - A clean checkout of the commit to release. `installer/VERSION` gives the
-  package version; the release version must start with it (`0.1.1-alpha`
-  for `0.1.1`).
+  package version; the release version must start with it (`0.1.2-alpha`
+  for `0.1.2`).
 - The QEMU commit to ship, pinned on the `qemu` line of
   `patches/host/PINS`. To move it to the tip of the fork branch, run
   `patches/host/bump-qemu.sh`, which rewrites the pin and prints the commits
@@ -58,7 +58,7 @@ builds ends up in the assets:
 git clone <repository> vmlab-win3d-release
 cd vmlab-win3d-release
 git checkout <commit or tag>
-WIN3D_SIGNING_DIR=/home/wil/dev/vmlab-win3d/.signing scripts/release.sh 0.1.1-alpha
+WIN3D_SIGNING_DIR=/home/wil/dev/vmlab-win3d/.signing scripts/release.sh 0.1.2-alpha
 ```
 
 The script does the following, and stops at the first failure:

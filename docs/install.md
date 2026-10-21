@@ -117,8 +117,8 @@ the last two steps.
 The output is in `out/package/`:
 
 ```
-vmlab-win3d-0.1.1/            the bundle
-vmlab-win3d-0.1.1.zip         the same bundle, zipped
+vmlab-win3d-0.1.2/            the bundle
+vmlab-win3d-0.1.2.zip         the same bundle, zipped
 SHA256SUMS
 ```
 
