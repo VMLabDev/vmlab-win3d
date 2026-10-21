@@ -1,0 +1,9 @@
+date: 2026-10-21T12:27:55+10:00
+commit: 45ec46ca73a5d64b8e0cd956fe7748da2d0c0e17
+worktree changes: 0
+template: x86_64/windows-10@19045.2006.9
+kernel: 7.2.10-1-cachyos
+qemu (PATH): QEMU emulator version 11.1.2
+packages: qemu-full 11.1.2-1 virglrenderer 1.3.0-2.1 mesa 3:26.2.4-1 vulkan-radeon 3:26.2.4-1 nvidia-utils 615.78.08-2 
+vmlab: vmlab 0.31.0-alpha
+venus gpu: host_gpu AMD1, /dev/dri/renderD130 0000:72:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI] Granite Ridge [Radeon 610M] (rev c1)

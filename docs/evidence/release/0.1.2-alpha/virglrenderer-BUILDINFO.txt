@@ -1,0 +1,20 @@
+component:      virgl_render_server (vmlab render server) and libvirglrenderer.so.1 (bundled by the vmlab QEMU)
+virglrenderer:  1.3.0 https://gitlab.freedesktop.org/virgl/virglrenderer/-/archive/1.3.0/virglrenderer-1.3.0.tar.gz
+sha256:         065bc56e89e6f631f96101cd62eba0748e48eb888b434edc86e89d05395e76f3
+patch:          0001-vkr-log-image-creation.patch 1391a6b58249e2b7
+patch:          0002-vkr-do-not-create-queue-sync-fences-exportable.patch 3b6aa0716822559b
+build host:     Debian GNU/Linux 12 (bookworm) container, x86_64, built 2026-10-21
+build image:    vmlab-win3d/host-build:279b44dc1474 (sha256:8589ba8f91e066335737fdb0b8c8e8467e8156eaa6e02f6eb1ea65aa5f065f08), base debian@sha256:2c037a04925515fdd6ea85ea14a682d0e79931f5e9f5d07b6dbfc6ba12f9e858
+compiler:       cc (Debian 12.2.0-14+deb12u1) 12.2.0
+compiler flags: -march=x86-64-v2 -mtune=generic (link: -z x86-64-v2)
+needs ISA:      x86-64-baseline, x86-64-v2
+meson:          1.12.1, PyYAML 6.0.3
+glibc:          2.36 (Debian 2.36-9+deb12u14)
+needs GLIBC:    GLIBC_2.34 (server), GLIBC_2.34 (library)
+lib libdrm:       2.4.114 (Debian 2.4.114-1+b1)
+lib libgbm:       22.3.6 (Debian 22.3.6-1+deb12u2)
+lib libepoxy:     1.5.10 (Debian 1.5.10-1)
+lib libvulkan:    1.3.239 (Debian 1.3.239.0-1)
+NEEDED server:  libgbm.so.1 libc.so.6 
+NEEDED library: libm.so.6 libepoxy.so.0 libdrm.so.2 libgbm.so.1 libc.so.6 
+protocol:       render-server protocol of virglrenderer 1.3.0; the vmlab QEMU bundles this library, so the pair always matches

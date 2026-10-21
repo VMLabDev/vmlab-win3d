@@ -2,13 +2,13 @@
     "name":  "x64-d3d11_probe",
     "exe":  "C:\\win3d\\probes\\x64\\d3d11_probe.exe",
     "arguments":  "--seconds 20 --out C:\\win3d\\results\\probes\\x64-d3d11_probe.json",
-    "user":  "VMLABVM-6OUA3V5\\win3d",
+    "user":  "VMLABVM-AKO5GL8\\win3d",
     "session_id":  1,
-    "pid":  8920,
+    "pid":  4472,
     "wow64":  false,
-    "started":  "2026-10-19T01:14:46.8856243-07:00",
-    "ended":  "2026-10-19T01:15:34.0831616-07:00",
-    "duration_s":  47.2,
+    "started":  "2026-10-20T19:38:42.4522846-07:00",
+    "ended":  "2026-10-20T19:39:05.4448716-07:00",
+    "duration_s":  23,
     "timed_out":  false,
     "exit_code":  0,
     "exit_code_hex":  "0x00000000",
@@ -18,14 +18,14 @@
     "adapter":  "Hardsoft VirtIO GPU 3D controller",
     "software":  false,
     "readback_ok":  true,
-    "module_count":  40,
+    "module_count":  35,
     "graphics_modules":  [
-                             "C:\\WINDOWS\\SYSTEM32\\d3d11.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
-                             "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9444 (WinBuild.160101.0800)",
-                             "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9278 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\d3d11.dll [system32] 10.0.26100.9711 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\dxgi.dll [system32] 10.0.26100.9711 (WinBuild.160101.0800)",
+                             "C:\\WINDOWS\\SYSTEM32\\dxcore.dll [system32] 10.0.26100.9549 (WinBuild.160101.0800)",
                              "C:\\WINDOWS\\system32\\viogpu_d3d10.dll [system32] ",
                              "C:\\WINDOWS\\SYSTEM32\\dwmapi.dll [system32] 10.0.26100.1 (WinBuild.160101.0800)",
-                             "C:\\WINDOWS\\SYSTEM32\\d3dcompiler_47.dll [system32] 10.0.26100.9457 (WinBuild.160101.0800)"
+                             "C:\\WINDOWS\\SYSTEM32\\d3dcompiler_47.dll [system32] 10.0.26100.9711 (WinBuild.160101.0800)"
                          ],
     "app_local_modules":  [
 

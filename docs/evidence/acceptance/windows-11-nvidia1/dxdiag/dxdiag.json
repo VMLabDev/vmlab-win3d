@@ -1,14 +1,14 @@
 ﻿{
     "report":  "C:\\win3d\\results\\dxdiag\\dxdiag.txt",
     "system":  {
-                   "Time of this report":  "10/19/2026, 01:23:28",
+                   "Time of this report":  "10/20/2026, 19:42:22",
                    "Operating System":  "Windows 11 Enterprise Evaluation 64-bit (10.0, Build 26100) (26100.ge_release.240331-1435)",
                    "System Manufacturer":  "QEMU",
                    "System Model":  "Standard PC (Q35 + ICH9, 2009)",
                    "Processor":  "AMD Ryzen 9 9950X 16-Core Processor             (4 CPUs), ~4.3GHz",
                    "Memory":  "8192MB RAM",
                    "DirectX Version":  "DirectX 12",
-                   "DxDiag Version":  "10.00.26100.9278 64bit Unicode"
+                   "DxDiag Version":  "10.00.26100.9549 64bit Unicode"
                },
     "summary":  {
                     "card_name":  "Hardsoft VirtIO GPU 3D controller",

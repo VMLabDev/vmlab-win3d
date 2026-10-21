@@ -1,7 +1,7 @@
 {
-    "computer":  "VMLABVM-6OUA3V5",
+    "computer":  "VMLABVM-AKO5GL8",
     "os":  "Microsoft Windows 11 Enterprise Evaluation 10.0.26100",
-    "collected":  "2026-10-19T01:09:48.0060932-07:00",
+    "collected":  "2026-10-20T19:36:08.8742921-07:00",
     "display_devices":  [
                             {
                                 "name":  "Hardsoft VirtIO GPU 3D controller",
@@ -90,9 +90,9 @@
     "system_dlls":  [
                         {
                             "path":  "C:\\WINDOWS\\system32\\d3d9.dll",
-                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "version":  "10.0.26100.9549 (WinBuild.160101.0800)",
                             "company":  "Microsoft Corporation",
-                            "sha256":  "87E157E78536C66FC413ED202296E39053CC9E14DC8D8381F8A3D18F444A4C0D"
+                            "sha256":  "9C2343D50AB0E219D6526BE5C419B2C5DC62E88C30444C936927001E3BDC89E6"
                         },
                         {
                             "path":  "C:\\WINDOWS\\system32\\d3d10.dll",
@@ -108,9 +108,9 @@
                         },
                         {
                             "path":  "C:\\WINDOWS\\system32\\d3d11.dll",
-                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "version":  "10.0.26100.9711 (WinBuild.160101.0800)",
                             "company":  "Microsoft Corporation",
-                            "sha256":  "AE2777002F5A0FF543B5B9BEC5124746559FD01D6C7C0C216D3194632F084502"
+                            "sha256":  "C9AEE071495039E820CD0BE0AFDEB927B9AD32EDC1D0DAE460B6D64064B524F6"
                         },
                         {
                             "path":  "C:\\WINDOWS\\system32\\d3d12.dll",
@@ -120,15 +120,15 @@
                         },
                         {
                             "path":  "C:\\WINDOWS\\system32\\D3D12Core.dll",
-                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "version":  "10.0.26100.9549 (WinBuild.160101.0800)",
                             "company":  "Microsoft Corporation",
-                            "sha256":  "70710DE807F188A85A3F5AD3A729A41BFA7A92B7621CEEAF38059F5640399267"
+                            "sha256":  "C146301FDA4B73517A6ED591E498FB1E227AE0FA32F65C59C267E15B8A7C7227"
                         },
                         {
                             "path":  "C:\\WINDOWS\\system32\\dxgi.dll",
-                            "version":  "10.0.26100.9444 (WinBuild.160101.0800)",
+                            "version":  "10.0.26100.9711 (WinBuild.160101.0800)",
                             "company":  "Microsoft Corporation",
-                            "sha256":  "B12AEBF0F077D6C1394B50E2EECDD5E16072C9A0C871F30887B5D170CBF2EAAE"
+                            "sha256":  "4225E13F27A4F3A4A4738E64A57FA0949D8589F317FC6F8EC194B3A4D394A528"
                         },
                         {
                             "path":  "C:\\WINDOWS\\system32\\opengl32.dll",
@@ -144,15 +144,15 @@
                         },
                         {
                             "path":  "C:\\WINDOWS\\system32\\d3dcompiler_47.dll",
-                            "version":  "10.0.26100.9457 (WinBuild.160101.0800)",
+                            "version":  "10.0.26100.9711 (WinBuild.160101.0800)",
                             "company":  "Microsoft Corporation",
-                            "sha256":  "2E3526354DBCD9CF013F7B741C549DF2170FE6AF607628442216A21E7D584883"
+                            "sha256":  "0F89C19165FD83A05E39BEA601A06007E6A8814D55E2ADF913902926231F843E"
                         },
                         {
                             "path":  "C:\\WINDOWS\\SysWOW64\\d3d9.dll",
-                            "version":  "10.0.26100.8972 (WinBuild.160101.0800)",
+                            "version":  "10.0.26100.9549 (WinBuild.160101.0800)",
                             "company":  "Microsoft Corporation",
-                            "sha256":  "F4757445D75D619BC5695294EE5CA6BFA0AD8763C6604A8E884739F605A6DF28"
+                            "sha256":  "FD72E021C128A98A5D688EB9ACC07E3EB1948CA6B630B9FA5F328898E78C7DBC"
                         },
                         {
                             "path":  "C:\\WINDOWS\\SysWOW64\\d3d10.dll",
@@ -168,9 +168,9 @@
                         },
                         {
                             "path":  "C:\\WINDOWS\\SysWOW64\\d3d11.dll",
-                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "version":  "10.0.26100.9711 (WinBuild.160101.0800)",
                             "company":  "Microsoft Corporation",
-                            "sha256":  "24D1B3A7C832EA3DC1883371AFECF666650BF8A20E64D8CBD0A77E89039EDF98"
+                            "sha256":  "F49E744DCA37B09FF28C45837AC8A22DC9143CC6977DC85A0606810F1CA730F2"
                         },
                         {
                             "path":  "C:\\WINDOWS\\SysWOW64\\d3d12.dll",
@@ -180,21 +180,21 @@
                         },
                         {
                             "path":  "C:\\WINDOWS\\SysWOW64\\D3D12Core.dll",
-                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "version":  "10.0.26100.9549 (WinBuild.160101.0800)",
                             "company":  "Microsoft Corporation",
-                            "sha256":  "6463E2309D1A6F1CC8D7739FF7502AD1668217BFB2F2D74FC55D20C1B63421F0"
+                            "sha256":  "B2EC68787CB5BD7376D194F326195B33846D7F11E2C715FE85A0562843ED6E5E"
                         },
                         {
                             "path":  "C:\\WINDOWS\\SysWOW64\\dxgi.dll",
-                            "version":  "10.0.26100.9444 (WinBuild.160101.0800)",
+                            "version":  "10.0.26100.9711 (WinBuild.160101.0800)",
                             "company":  "Microsoft Corporation",
-                            "sha256":  "2E4A6E4B43F31EFFAAE8EEC1BC43D9398A4302F0CBFDFACA67EA2CBA3C24A0D6"
+                            "sha256":  "99763CAF8BA0B501C3BB6E4C2AF3A7658CC99E3C7EBC5D50A777D12C90EF6645"
                         },
                         {
                             "path":  "C:\\WINDOWS\\SysWOW64\\opengl32.dll",
-                            "version":  "10.0.26100.9278 (WinBuild.160101.0800)",
+                            "version":  "10.0.26100.9549 (WinBuild.160101.0800)",
                             "company":  "Microsoft Corporation",
-                            "sha256":  "A03F6C001C4CAE7361CF744A1F1E05567AA431D27FAE048281E13E3356487978"
+                            "sha256":  "21402D46679663F4E62A739CF3ACD228CEABF07E28B3C31EF292E77EF0DEEF01"
                         },
                         {
                             "path":  "C:\\WINDOWS\\SysWOW64\\vulkan-1.dll",

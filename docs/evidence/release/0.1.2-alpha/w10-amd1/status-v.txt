@@ -1,0 +1,8 @@
+lab "win3d-012-amd1"
+
+  NAME KIND      STATUS  IP         TEMPLATE/IMAGE
+  win  vm        running 10.213.0.2 x86_64/windows-10@19045.2006.9
+      state=running ready=yes cached=yes variant=standard arch=x86_64 cpus=4 memory=8GiB agent=04f68fd host_gpu=AMD1 env=VK_ADD_IMPLICIT_LAYER_PATH=/home/wil/.local/share/vmlab/vk-layer/d38df51178e6c76f,VK_LOADER_DRIVERS_SELECT=*radeon*,VMLAB_VK_PCI_ADDRESS=0000:72:00.0
+
+  SEGMENT SUBNET             GATEWAY         NAT/DHCP DROPPED    PEER
+  nat     10.213.0.0/24      10.213.0.1      on/on    0          -
