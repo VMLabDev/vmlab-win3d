@@ -1,0 +1,28 @@
+# Zeus (item 4): unmet, Zeus was not reachable non-interactively
+# 2026-10-21T12:07:25+10:00 from helios
+
+## ssh -o BatchMode=yes -o ConnectTimeout=10 zeus true   (ssh config: user wil, hostname zeus = Tailscale 100.92.112.100)
+  # Tailscale SSH requires an additional check.
+  # To authenticate, visit: https://login.tailscale.com/a/l18296d6b33b82d
+  rc=124
+  (rc 124: the command hung on Tailscale SSH's check-mode prompt until the 20 s timeout; it asks for a browser login,
+   which a non-interactive session cannot do. Tried three times between 11:20 and 12:00, same result.)
+
+## tailscale status | grep zeus
+  100.92.112.100   zeus                wiltaylor@  linux    active; direct 10.3.0.182:41641, tx 487644 rx 523596  
+  (Zeus is online; only the Tailscale SSH check blocks.)
+
+## ssh -o BatchMode=yes wil@10.3.0.182 (Zeus's LAN address, plain OpenSSH)
+  wil@10.3.0.182: Permission denied (publickey).
+  (helios's keys are not authorised on Zeus's own sshd; only Tailscale SSH is set up.)
+
+## what to run on Zeus once a session is possible (the brief's item 4), from out/release/0.1.1-alpha-portable1 of the clone:
+  mkdir -p ~/win3d-portable && cd ~/win3d-portable
+  tar --zstd -xf qemu-vmlab-egl-0.1.1-alpha-portable1-x86_64-linux.tar.zst
+  tar --zstd -xf virglrenderer-vmlab-0.1.1-alpha-portable1-x86_64-linux.tar.zst
+  qemu-vmlab-egl-0.1.1-alpha-portable1/install.sh --check
+  virglrenderer-vmlab-0.1.1-alpha-portable1/install.sh --check
+  qemu-vmlab-egl-0.1.1-alpha-portable1/bin/qemu-system-x86_64 --version
+  cd ~ && rm -rf ~/win3d-portable
+  # expected: Zeus is CachyOS (glibc >= 2.36) on an x86-64-v3 CPU, so both checks pass as on archlinux:latest in matrix.md
+  # (the binaries are marked x86-64-v2; the matrix ran on helios's v4 CPU, and Zeus's v3 is above v2).

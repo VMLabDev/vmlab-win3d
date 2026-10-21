@@ -1,0 +1,6 @@
+# Host kernel log during the e2e run (journalctl -k --since 2026-10-21T11:52:12+10:00), filtered for NVRM and Xid
+# 2026-10-21T12:07:09+10:00
+lines matching Xid:  0
+lines matching NVRM: 0
+
+## every kernel line in the window that is not a docker/veth/bridge line:
