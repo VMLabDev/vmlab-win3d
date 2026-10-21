@@ -281,12 +281,12 @@ shared `ui/shader.c` and `ui/egl-helpers.c` so GTK and SDL can use them:
   (`host-tests/qemu-egl-debug-reboot-excerpt.txt`).
 
 `patches/host/build-qemu.sh` fetches exactly the pinned commit and builds
-it, natively rather than in Docker. `patches/host/bump-qemu.sh` moves the pin
-to the branch tip and prints the commits between; builds never follow the
-branch by themselves. QEMU
-links glib, epoxy, gbm and virglrenderer, and a current Arch container is
-already newer than the frozen host (glib 2.90 against 2.88). The build only
-reads the host's libraries and installs nothing.
+it in a Debian 12 container, with only the QEMU features vmlab uses.
+`patches/host/bump-qemu.sh` moves the pin to the branch tip and prints the
+commits between; builds never follow the branch by themselves. The binary
+needs glibc 2.36 or newer and about ten common host libraries, and it
+bundles virglrenderer 1.3.0 ([`release.md`](release.md#supported-hosts-of-the-host-assets)).
+The build installs nothing.
 
 ## Host setup (vmlab 0.27.0-alpha or later)
 
@@ -340,12 +340,13 @@ pins (`--version` prints `QEMU emulator version 11.1.50 (vmlab <commit>)`):
 - The release asset `qemu-vmlab-egl-<version>-x86_64-linux.tar.zst`
   ([`release.md`](release.md)). Its `install.sh` checks the host's libraries
   with `ldd`, installs into `~/.local/opt/qemu-vmlab-egl` (or a given
-  prefix) and prints the `qemu_binary` line. It suits hosts with the same
-  libraries as the build host (Arch or CachyOS).
-- `patches/host/build-qemu.sh` builds the pinned fork commit against this
-  host's libraries and writes `out/host/qemu/bin/qemu-system-x86_64`. Point
-  `qemu_binary` at its absolute path, or copy the `out/host/qemu/` tree
-  somewhere stable first.
+  prefix) and prints the `qemu_binary` line. It runs on hosts with glibc
+  2.36 or newer: Debian 12+, Ubuntu 24.04+, Fedora 37+, RHEL 10, Arch,
+  CachyOS and openSUSE Tumbleweed.
+- `patches/host/build-qemu.sh` builds the pinned fork commit in the same
+  Debian 12 container and writes `out/host/qemu/`. Copy that tree somewhere
+  stable and point `qemu_binary` at its `bin/qemu-system-x86_64`, which
+  finds the bundled virglrenderer in `lib/` beside it.
 
 helios used `/home/wil/.local/opt/qemu-11.1.1-vmlab-egl/` for the 11.1.1
 builds, the name 0.1.0-alpha's `install.sh` chose; later builds default to
@@ -389,9 +390,9 @@ To get it, either:
 - install the release asset `virglrenderer-vmlab-<version>-x86_64-linux.tar.zst`
   ([`release.md`](release.md#install-the-render-server-for-nvidia-hosts)),
   whose `install.sh` checks the host and prints the `qemu_env` line; or
-- run `patches/host/build-virglrenderer.sh --install`, which builds it
-  natively for the x86-64-v2 baseline against this host's libraries and
-  installs it into `~/.local/opt/virglrenderer-vmlab`.
+- run `patches/host/build-virglrenderer.sh --install`, which builds it in
+  the Debian 12 container for the x86-64-v2 baseline and installs it into
+  `~/.local/opt/virglrenderer-vmlab`.
 
 To check what a VM got:
 
