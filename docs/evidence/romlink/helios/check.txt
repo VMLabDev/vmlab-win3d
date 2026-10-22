@@ -1,0 +1,6 @@
+glibc: 2.44 (the binary needs 2.36 or newer)
+ldd: every shared library the binary needs is present and new enough
+bundled: libvirglrenderer.so.1 => /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/repack/qemu-vmlab-egl-0.1.2-alpha/bin/../lib/libvirglrenderer.so.1
+ISA: the binary needs x86-64-v2; this CPU supports up to x86-64-v4
+firmware: /usr/share/qemu/bios-256k.bin (the host's QEMU package; <prefix>/share/qemu links there)
+run: QEMU emulator version 11.1.50 (vmlab d8a6048aae11)

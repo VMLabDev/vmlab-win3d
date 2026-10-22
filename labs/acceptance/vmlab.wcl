@@ -10,7 +10,7 @@ lab "win3d-e2e-windows-11" {
     template = "x86_64/windows-11@26100.1742.5"
     // The package is test-signed (decision 0001); Secure Boot must be off.
     secure_boot = false
-    // AMD1 is the host config's AMD iGPU (0000:72:00.0, RADV, renderD129).
+    // AMD1 is the host config's AMD iGPU (0000:72:00.0, RADV).
     // run.sh --host-gpu Nvidia1 or Nvidia2 picks an RTX 5090, which needs
     // qemu_binary on its host GPU profile (docs/nvidia.md).
     // The templates are Windows evaluation editions. They activate online,

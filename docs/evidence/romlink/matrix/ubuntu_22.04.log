@@ -1,0 +1,42 @@
+# ubuntu:22.04 = ubuntu@sha256:0a9887931b0e38af2e3487ed39e29436b0535c4f3f52e57745baaf79d1898956
+# tarballs: qemu-vmlab-egl-0.1.2-alpha-x86_64-linux.tar.zst 6187f69861e51ff3..., virglrenderer-vmlab-0.1.2-alpha-x86_64-linux.tar.zst 03b1051cbfdbde34...
+# 2026-10-22T15:31:44+10:00 on helios, 7.2.10-1-cachyos; /usr/share/qemu of the host mounted read-only at /usr/share/qemu
+## Ubuntu 22.04.5 LTS  glibc 2.35
+## packages: apt-get update -qq && apt-get install -y -qq --no-install-recommends zstd libpixman-1-0 libepoxy0 libgbm1 zlib1g libzstd1 libusb-1.0-0 && (apt-get install -y -qq --no-install-recommends libglib2.0-0t64 || apt-get install -y -qq --no-install-recommends libglib2.0-0)
+## installed runtime libraries:
+   libglib-2.0.so.0     /usr/lib/x86_64-linux-gnu/libglib-2.0.so.0.7200.4
+   libpixman-1.so.0     /usr/lib/x86_64-linux-gnu/libpixman-1.so.0.40.0
+   libepoxy.so.0        /usr/lib/x86_64-linux-gnu/libepoxy.so.0.0.0
+   libgbm.so.1          /usr/lib/x86_64-linux-gnu/libgbm.so.1.0.0
+   libz.so.1            /usr/lib/x86_64-linux-gnu/libz.so.1.2.11
+   libzstd.so.1         /usr/lib/x86_64-linux-gnu/libzstd.so.1.4.8
+   libusb-1.0.so.0      /usr/lib/x86_64-linux-gnu/libusb-1.0.so.0.3.0
+## the distribution's QEMU package, in its index (apt-cache show qemu-system-x86 | grep -E '^(Package|Version|Depends):' | head -3; apt-cache show qemu-system-data | grep -E '^(Package|Version):' | head -2):
+   Package: qemu-system-x86
+   Version: 1:6.2+dfsg-2ubuntu6.31
+   Depends: libaio1 (>= 0.3.93), libc6 (>= 2.34), libfdt1 (>= 1.6.1), libfuse3-3 (>= 3.2.3), libgcc-s1 (>= 4.7), libglib2.0-0 (>= 2.67.3), libgnutls30 (>= 3.7.2), libibverbs1 (>= 28), libjpeg8 (>= 8c), libnettle8, libnuma1 (>= 2.0.11), libpixman-1-0 (>= 0.19.6), libpmem1 (>= 1.4), libpng16-16 (>= 1.6.2-1), librdmacm1 (>= 1.0.15), libsasl2-2 (>= 2.1.27+dfsg2), libseccomp2 (>= 2.1.0), libslirp0 (>= 4.0.0), libudev1 (>= 183), liburing2 (>= 2.0), libzstd1 (>= 1.4.0), zlib1g (>= 1:1.2.0), qemu-system-common (= 1:6.2+dfsg-2ubuntu6.31), qemu-system-data (>> 1:6.2+dfsg-2ubuntu6.31~), seabios, ipxe-qemu, ipxe-qemu-256k-compat-efi-roms
+   Package: qemu-system-data
+   Version: 1:6.2+dfsg-2ubuntu6.31
+## /usr/share/qemu in this container: /usr/share/qemu/bios-256k.bin (the host's, mounted read-only)
+## qemu install.sh --check
+   error: this host's glibc is 2.35; this QEMU needs glibc 2.36 or newer.
+   It was built on Debian 12 (glibc 2.36) and runs on Debian 12, Ubuntu 24.04,
+   Fedora 37, RHEL 10, Arch Linux, CachyOS and later. Ubuntu 22.04 and RHEL 9 are
+   below the floor. Build QEMU for this host with patches/host/build-qemu.sh from
+   https://github.com/VMLabDev/vmlab-win3d (docs/release.md), or set WIN3D_ALLOW_OLDER_GLIBC=1 to try anyway
+   (the binary's symbols need GLIBC_2.34; unsupported).
+   exit 1
+## virgl install.sh --check
+   error: this host's glibc is 2.35; this server needs glibc 2.36 or newer.
+   It was built on Debian 12 (glibc 2.36) and runs on Debian 12, Ubuntu 24.04,
+   Fedora 37, RHEL 10, Arch Linux, CachyOS and later. Ubuntu 22.04 and RHEL 9 are
+   below the floor. Build the server on this host with
+   patches/host/build-virglrenderer.sh --install from https://github.com/VMLabDev/vmlab-win3d, or set
+   WIN3D_ALLOW_OLDER_GLIBC=1 to try anyway (unsupported).
+   exit 1
+RESULT REFUSED glibc floor (qemu check exit 1, virgl check exit 1)
+## with WIN3D_ALLOW_OLDER_GLIBC=1 (informational, unsupported):
+   ISA: the binary needs x86-64-v2; this CPU supports up to x86-64-v4
+   firmware: /usr/share/qemu/bios-256k.bin (the host's QEMU package; <prefix>/share/qemu links there)
+   run: QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+# container exit 0

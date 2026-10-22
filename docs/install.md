@@ -17,16 +17,17 @@ On the host:
   address, which 0.25 rejects, 0.26 added the host GPU's `qemu_binary` that
   NVIDIA needs, and 0.27 hides the host's other GPUs from the guest.
 - A host GPU whose Vulkan driver Venus works on: AMD with RADV (the
-  reference; on helios the iGPU at PCI address `0000:72:00.0`,
-  `/dev/dri/renderD129`), Intel with ANV, or an NVIDIA RTX 5090. A laptop
-  RTX 4060 failed outright
+  reference; on helios the iGPU at PCI address `0000:72:00.0`), Intel with
+  ANV, or an NVIDIA RTX 5090. A laptop RTX 4060 failed outright
   ([known limits](known-limits.md#host-gpu-support)).
 - **For an NVIDIA GPU, a patched QEMU named as `qemu_binary` on that GPU's
   host config block, and the vmlab render server as its `qemu_env`.** Stock
   QEMU 11.1.1 shows a black console for a Venus guest on NVIDIA. The release
   tarballs (`docs/release.md`, "Install the QEMU for NVIDIA hosts") run on
-  any x86-64 distribution with glibc 2.36 or newer; their `install.sh --check`
-  says whether this host is one. `docs/nvidia.md`, "Host setup", says how
+  any x86-64 distribution with glibc 2.36 or newer and need the
+  distribution's own QEMU package for the firmware in `/usr/share/qemu`
+  (the QEMU tarball's `install.sh` links `<prefix>/share/qemu` there);
+  their `install.sh --check` says whether this host is one. `docs/nvidia.md`, "Host setup", says how
   to build them instead (`patches/host/build-qemu.sh`) and where to point.
 - That GPU declared by name in the host config,
   `~/.config/vmlab/config.wcl`. Find its address with
@@ -36,7 +37,7 @@ On the host:
   ```wcl
   import <vmlab-host.wcl>
 
-  gpu "AMD1"    { address = "0000:72:00.0" }                  // AMD iGPU (RADV, renderD129)
+  gpu "AMD1"    { address = "0000:72:00.0" }                  // AMD iGPU (RADV)
   gpu "Nvidia1" {                                             // RTX 5090
     address     = "0000:01:00.0"
     default     = true

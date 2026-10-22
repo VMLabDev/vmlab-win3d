@@ -72,7 +72,8 @@ below are for vmlab 0.27, where none of that is needed.
    `gpu { mode = "vulkan" host_gpu = "Nvidia1" }`. The host config,
    `~/.config/vmlab/config.wcl`, declares
    `gpu "Nvidia1" { address = "0000:01:00.0" }`. vmlab then passes
-   `-display egl-headless,rendernode=/dev/dri/renderD128` and puts
+   `-display egl-headless,rendernode=<the render node of 0000:01:00.0>` (resolved
+   at run time from `/sys/class/drm/renderD*/device`) and puts
    `VK_LOADER_DRIVERS_SELECT=*nvidia*` in QEMU's environment. Leave out
    the GPU's `qemu_binary` to reproduce fault 2.
 3. Copy it into a lab directory and run `vmlab up` there.
@@ -311,8 +312,8 @@ both `Nvidia1` and `Nvidia2` one:
 ```wcl
 import <vmlab-host.wcl>
 
-gpu "AMD1"    { address = "0000:72:00.0" }                  // AMD iGPU (RADV, renderD129)
-gpu "Nvidia1" {                                             // RTX 5090 (renderD128)
+gpu "AMD1"    { address = "0000:72:00.0" }                  // AMD iGPU (RADV)
+gpu "Nvidia1" {                                             // RTX 5090
   address     = "0000:01:00.0"
   default     = true
   qemu_binary = "/home/wil/.local/opt/qemu-vmlab-egl/bin/qemu-system-x86_64"

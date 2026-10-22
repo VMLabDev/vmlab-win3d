@@ -1,6 +1,6 @@
 import <vmlab.wcl>
 
-// Windows 11 with Venus on the first RTX 5090 (host GPU Nvidia1, renderD128).
+// Windows 11 with Venus on the first RTX 5090 (host GPU Nvidia1, 0000:01:00.0).
 // Needs vmlab >= 0.27.0-alpha and a host config (~/.config/vmlab/config.wcl)
 // whose gpu "Nvidia1" names the RTX 5090's address and, as qemu_binary, a
 // QEMU with the egl-headless fix (patches/host/build-qemu.sh); stock QEMU shows a

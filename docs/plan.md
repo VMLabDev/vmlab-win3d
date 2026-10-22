@@ -22,7 +22,7 @@ acceleration. Decided by the user (D1, 2026-10-17): use the existing Yttrium dri
 
 ## Host assumptions
 
-- Venus works on the AMD iGPU (RADV, `renderD129`), not on the RTX 5090.
+- Venus works on the AMD iGPU (RADV, `0000:72:00.0`), not on the RTX 5090.
 - vmlab >= 0.24.0-alpha (handoff `20261017-142905`, answered 2026-10-17)
   gives a one-adapter `virtio-vga-gl,venus=true,blob=true` device on the
   named host GPU, with the Vulkan ICD filtered in QEMU's own environment, and

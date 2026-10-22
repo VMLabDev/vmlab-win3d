@@ -1,0 +1,82 @@
+# helios, 2026-10-22T15:27:53+10:00, 7.2.10-1-cachyos, CachyOS
+# tarball: tarballs/qemu-vmlab-egl-0.1.2-alpha-x86_64-linux.tar.zst sha256 6187f69861e51ff37dda4ddb48a9675c04720b0465ba90139078a47561789a68
+# (the published 0.1.2-alpha tarball with scripts/release/qemu-install.sh from work/romlink swapped in)
+# prefix: /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix  (~/.local/opt untouched)
+
+## 1. install.sh <prefix>, fresh prefix
+glibc: 2.44 (the binary needs 2.36 or newer)
+ldd: every shared library the binary needs is present and new enough
+bundled: libvirglrenderer.so.1 => /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/repack/qemu-vmlab-egl-0.1.2-alpha/bin/../lib/libvirglrenderer.so.1
+ISA: the binary needs x86-64-v2; this CPU supports up to x86-64-v4
+firmware: /usr/share/qemu/bios-256k.bin (the host's QEMU package; <prefix>/share/qemu links there)
+run: QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+installed: /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/bin/qemu-system-x86_64 and /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/lib/libvirglrenderer.so.1
+firmware: /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/share/qemu -> /usr/share/qemu
+QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+boot: q35 under TCG, QMP qmp_capabilities and quit, firmware from /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/share/qemu (no -L)
+
+Add this line to each NVIDIA GPU block in the vmlab host config,
+~/.config/vmlab/config.wcl (vmlab 0.26.0-alpha or later), together with the
+qemu_env line the render-server tarball's install.sh prints (this QEMU's
+bundled virglrenderer forks that server; the host's own server may speak
+another protocol version):
+
+  qemu_binary = "/home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/bin/qemu-system-x86_64"
+
+For example:
+
+  gpu "Nvidia1" {
+    address     = "0000:01:00.0"
+    qemu_binary = "/home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/bin/qemu-system-x86_64"
+    qemu_env    = { RENDER_SERVER_EXEC_PATH: "/home/<you>/.local/opt/virglrenderer-vmlab/libexec/virgl_render_server" }
+  }
+
+Then check it with: vmlab validate
+exit 0
+
+## ls -l <prefix>/share
+total 4
+drwxr-xr-x 1 wil wil 28 Oct 22 15:27 doc
+lrwxrwxrwx 1 wil wil 15 Oct 22 15:27 qemu -> /usr/share/qemu
+
+## 2. install again over a stale symlink (must replace it)
+lrwxrwxrwx 1 wil wil 12 Oct 22 15:27 /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/share/qemu -> /nonexistent
+firmware: /usr/share/qemu/bios-256k.bin (the host's QEMU package; <prefix>/share/qemu links there)
+installed: /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/bin/qemu-system-x86_64 and /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/lib/libvirglrenderer.so.1
+firmware: /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/share/qemu -> /usr/share/qemu
+boot: q35 under TCG, QMP qmp_capabilities and quit, firmware from /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/share/qemu (no -L)
+exit 0
+lrwxrwxrwx 1 wil wil 15 Oct 22 15:27 /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/share/qemu -> /usr/share/qemu
+
+## 3. install with a real, empty <prefix>/share/qemu directory (warning; the boot must then fail)
+firmware: /usr/share/qemu/bios-256k.bin (the host's QEMU package; <prefix>/share/qemu links there)
+warning: /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/share/qemu exists and is not a symlink; left as it is. QEMU loads
+its firmware from there when run without -L; it must hold what /usr/share/qemu does.
+installed: /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/bin/qemu-system-x86_64 and /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/lib/libvirglrenderer.so.1
+firmware: /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/share/qemu -> (a directory)
+QEMU emulator version 11.1.50 (vmlab d8a6048aae11)
+error: the installed QEMU did not boot a q35 machine under TCG (exit 1):
+  {"QMP": {"version": {"qemu": {"micro": 50, "minor": 1, "major": 11}, "package": "vmlab d8a6048aae11"}, "capabilities": ["oob"]}}
+  qemu: could not load PC BIOS 'bios-256k.bin'
+The command was: /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/bin/qemu-system-x86_64 -machine q35 -accel tcg -display none -nodefaults -S -qmp stdio
+with no -L, so the firmware came from /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/share/qemu.
+exit 1
+
+## 4. install once more (fresh link), then boot the installed binary by hand without -L
+firmware: /usr/share/qemu/bios-256k.bin (the host's QEMU package; <prefix>/share/qemu links there)
+firmware: /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/share/qemu -> /usr/share/qemu
+boot: q35 under TCG, QMP qmp_capabilities and quit, firmware from /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/share/qemu (no -L)
+exit 0
+{"QMP": {"version": {"qemu": {"micro": 50, "minor": 1, "major": 11}, "package": "vmlab d8a6048aae11"}, "capabilities": ["oob"]}}
+{"return": {}}
+{"timestamp": {"seconds": 1792646874, "microseconds": 55850}, "event": "SHUTDOWN", "data": {"guest": false, "reason": "host-qmp-quit"}}
+{"return": {}}
+exit 0
+
+## 5. control: the same boot with <prefix>/share/qemu removed fails, so the link is what the boot uses
+{"QMP": {"version": {"qemu": {"micro": 50, "minor": 1, "major": 11}, "package": "vmlab d8a6048aae11"}, "capabilities": ["oob"]}}
+qemu: could not load PC BIOS 'bios-256k.bin'
+exit 1
+## link restored:
+lrwxrwxrwx 1 wil wil 15 Oct 22 15:27 /home/wil/dev/vmlab-win3d-wt/romlink/.scratch/romlink/prefix/share/qemu -> /usr/share/qemu
+host-qmp-quit lines: 1

@@ -1,0 +1,5 @@
+0000:72:00.0 -> /dev/dri/renderD130
+0000:01:00.0 -> /dev/dri/renderD129
+0000:72:00.0 -> /dev/dri/renderD999
+no render node for PCI address 0000:ff:00.0 under /sys/class/drm
+exit 1

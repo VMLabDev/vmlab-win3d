@@ -10,10 +10,13 @@
 # the version the binary was built against (2.36, Debian 12; BUILDINFO), that
 # ldd finds every shared library at a new enough version, that the bundled
 # lib/libvirglrenderer.so.1 is the one the binary loads, that the CPU meets
-# the x86-64 ISA level the binary is marked as needing, and that --version
-# runs. It stops with the reason if not. Then copies bin/qemu-system-x86_64
-# and lib/ to <prefix>, the notes and licences to
-# <prefix>/share/doc/qemu-vmlab-egl, runs --version, and prints the
+# the x86-64 ISA level the binary is marked as needing, that the host's own
+# QEMU package provides the firmware in /usr/share/qemu (bios-256k.bin), and
+# that --version runs. It stops with the reason if not. Then copies
+# bin/qemu-system-x86_64 and lib/ to <prefix>, the notes and licences to
+# <prefix>/share/doc/qemu-vmlab-egl, links <prefix>/share/qemu to
+# /usr/share/qemu so the binary finds the firmware without -L, runs
+# --version, boots a q35 machine under TCG over QMP, and prints the
 # qemu_binary line for a GPU block in the vmlab host config. A QEMU that is
 # already running keeps its old binary until its VM restarts.
 #
@@ -23,9 +26,12 @@ set -euo pipefail
 HERE=$(cd "$(dirname "$0")" && pwd)
 BIN=$HERE/bin/qemu-system-x86_64
 LIB=$HERE/lib/libvirglrenderer.so.1
+# The firmware directory of the host's distribution QEMU package. QEMU searches
+# -L directories, then <bindir>/../share/qemu, never this path by itself.
+ROMS=/usr/share/qemu
 REPO_URL=https://github.com/VMLabDev/vmlab-win3d
 
-usage() { sed -n '3,21p' "$0" | sed 's/^# \{0,1\}//'; }
+usage() { sed -n '3,24p' "$0" | sed 's/^# \{0,1\}//'; }
 
 CHECK_ONLY=0
 case ${1:-} in
@@ -131,6 +137,24 @@ else
     echo "ISA: the binary needs $need; this CPU supports up to $have"
 fi
 
+# The firmware: bios-256k.bin, the option ROMs (efi-virtio.rom and the
+# others) and the keymaps. The tarball ships none of them; the host's
+# distribution QEMU package does, in /usr/share/qemu. The install links
+# <prefix>/share/qemu there, which is where QEMU looks without -L.
+if [ ! -f "$ROMS/bios-256k.bin" ]; then
+    {
+        echo "error: $ROMS/bios-256k.bin is missing. QEMU loads its firmware (bios-256k.bin,"
+        echo "the option ROMs and the keymaps) from the host's own QEMU package, which this"
+        echo "tarball does not ship. Install it, then run install.sh again:"
+        echo "  Debian, Ubuntu:   apt install qemu-system-x86"
+        echo "  Fedora, RHEL:     dnf install qemu-system-x86-core"
+        echo "  Arch, CachyOS:    pacman -S qemu-base    (or qemu-full)"
+        echo "  openSUSE:         zypper install qemu-x86"
+    } >&2
+    exit 1
+fi
+echo "firmware: $ROMS/bios-256k.bin (the host's QEMU package; <prefix>/share/qemu links there)"
+
 # Last, run it: this catches anything ldd and the ISA check do not.
 if ! ver=$(LC_ALL=C "$BIN" --version 2>&1); then
     {
@@ -152,11 +176,42 @@ cp "$BIN" "$PREFIX/bin/.qemu-system-x86_64.new"
 chmod 755 "$PREFIX/bin/.qemu-system-x86_64.new"
 mv -f "$PREFIX/bin/.qemu-system-x86_64.new" "$PREFIX/bin/qemu-system-x86_64"
 cp -r "$HERE/README.txt" "$HERE/BUILDINFO" "$HERE/licenses" "$PREFIX/share/doc/qemu-vmlab-egl/"
+# <prefix>/share/qemu -> /usr/share/qemu: QEMU looks for its firmware in
+# <bindir>/../share/qemu when no -L is given. Replace a symlink; leave a real
+# directory alone, since someone put it there.
+if [ -L "$PREFIX/share/qemu" ]; then
+    rm -f "$PREFIX/share/qemu"
+    ln -s "$ROMS" "$PREFIX/share/qemu"
+elif [ -e "$PREFIX/share/qemu" ]; then
+    echo "warning: $PREFIX/share/qemu exists and is not a symlink; left as it is. QEMU loads" >&2
+    echo "its firmware from there when run without -L; it must hold what $ROMS does." >&2
+else
+    ln -s "$ROMS" "$PREFIX/share/qemu"
+fi
 echo "installed: $PREFIX/bin/qemu-system-x86_64 and $PREFIX/lib/libvirglrenderer.so.1"
+echo "firmware: $PREFIX/share/qemu -> $(readlink "$PREFIX/share/qemu" 2>/dev/null || echo "(a directory)")"
 installed_lib=$(LC_ALL=C ldd "$PREFIX/bin/qemu-system-x86_64" | awk '$1 == "libvirglrenderer.so.1" { print $3 }')
 [ "$(readlink -f "${installed_lib:-/nonexistent}")" = "$(readlink -f "$PREFIX/lib/libvirglrenderer.so.1")" ] \
     || { echo "error: the installed binary resolves libvirglrenderer.so.1 to '${installed_lib:-nothing}', not $PREFIX/lib" >&2; exit 1; }
 "$PREFIX/bin/qemu-system-x86_64" --version | head -1
+
+# Boot the installed binary without -L: a q35 machine under TCG, stopped at
+# the first instruction, with QMP on stdin. This loads bios-256k.bin and the
+# option ROMs from <prefix>/share/qemu, so it fails where a VM would.
+qmp_in=$(printf '{"execute":"qmp_capabilities"}\n{"execute":"quit"}\n')
+qmp_out=$(printf '%s\n' "$qmp_in" | timeout 60 "$PREFIX/bin/qemu-system-x86_64" \
+    -machine q35 -accel tcg -display none -nodefaults -S -qmp stdio 2>&1) && qmp_rc=0 || qmp_rc=$?
+if [ "$qmp_rc" != 0 ] || ! printf '%s\n' "$qmp_out" | grep -q '"QMP"' \
+    || ! printf '%s\n' "$qmp_out" | grep -q 'host-qmp-quit'; then
+    {
+        echo "error: the installed QEMU did not boot a q35 machine under TCG (exit $qmp_rc):"
+        printf '%s\n' "$qmp_out" | sed 's/^/  /'
+        echo "The command was: $PREFIX/bin/qemu-system-x86_64 -machine q35 -accel tcg -display none -nodefaults -S -qmp stdio"
+        echo "with no -L, so the firmware came from $PREFIX/share/qemu."
+    } >&2
+    exit 1
+fi
+echo "boot: q35 under TCG, QMP qmp_capabilities and quit, firmware from $PREFIX/share/qemu (no -L)"
 
 cat <<EOF
 

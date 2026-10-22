@@ -1,0 +1,55 @@
+# debian:bookworm+noroms = debian@sha256:854dd8ab51d62866dbd8f5431d15ce77b12983a2a4a1e1fe43a2395dc7ef9f61
+# tarballs: qemu-vmlab-egl-0.1.2-alpha-x86_64-linux.tar.zst 6187f69861e51ff3..., virglrenderer-vmlab-0.1.2-alpha-x86_64-linux.tar.zst 03b1051cbfdbde34...
+# 2026-10-22T15:32:08+10:00 on helios, 7.2.10-1-cachyos; no firmware mounted1
+## Debian GNU/Linux 12 (bookworm)  glibc 2.36
+## packages: apt-get update -qq && apt-get install -y -qq --no-install-recommends zstd libpixman-1-0 libepoxy0 libgbm1 zlib1g libzstd1 libusb-1.0-0 && (apt-get install -y -qq --no-install-recommends libglib2.0-0t64 || apt-get install -y -qq --no-install-recommends libglib2.0-0)
+## installed runtime libraries:
+   libglib-2.0.so.0     /usr/lib/x86_64-linux-gnu/libglib-2.0.so.0.7400.6
+   libpixman-1.so.0     /usr/lib/x86_64-linux-gnu/libpixman-1.so.0.42.2
+   libepoxy.so.0        /usr/lib/x86_64-linux-gnu/libepoxy.so.0.0.0
+   libgbm.so.1          /usr/lib/x86_64-linux-gnu/libgbm.so.1.0.0
+   libz.so.1            /usr/lib/x86_64-linux-gnu/libz.so.1.2.13
+   libzstd.so.1         /usr/lib/x86_64-linux-gnu/libzstd.so.1.5.4
+   libusb-1.0.so.0      /usr/lib/x86_64-linux-gnu/libusb-1.0.so.0.3.0
+## the distribution's QEMU package, in its index (apt-cache show qemu-system-x86 | grep -E '^(Package|Version|Depends):' | head -3; apt-cache show qemu-system-data | grep -E '^(Package|Version):' | head -2):
+   Package: qemu-system-x86
+   Version: 1:7.2+dfsg-7+deb12u18+b3
+   Depends: libaio1 (>= 0.3.93), libbpf1 (>= 1:0.0.8), libc6 (>= 2.34), libcapstone4 (>= 4), libfdt1 (>= 1.6.1), libfuse3-3 (>= 3.2.3), libgcc-s1 (>= 3.4), libglib2.0-0 (>= 2.67.3), libgmp10 (>= 2:6.2.1+dfsg1), libgnutls30 (>= 3.7.5), libhogweed6, libibverbs1 (>= 28), libjpeg62-turbo (>= 1.3.1), libnettle8, libnuma1 (>= 2.0.11), libpixman-1-0 (>= 0.19.6), libpmem1 (>= 1.4), libpng16-16 (>= 1.6.2-1), librdmacm1 (>= 1.0.15), libsasl2-2 (>= 2.1.28+dfsg), libseccomp2 (>= 2.1.0), libslirp0 (>= 4.7.0), libudev1 (>= 183), liburing2 (>= 2.3), libvdeplug2 (>= 4.0.1), libzstd1 (>= 1.5.2), zlib1g (>= 1:1.2.0), qemu-system-common (= 1:7.2+dfsg-7+deb12u18+b3), qemu-system-data (>> 1:7.2+dfsg~), seabios, ipxe-qemu
+   Package: qemu-system-data
+   Version: 1:7.2+dfsg-7+deb12u18
+## /usr/share/qemu in this container: no bios-256k.bin (the +noroms row: nothing mounted)
+## qemu install.sh --check
+   glibc: 2.36 (the binary needs 2.36 or newer)
+   ldd: every shared library the binary needs is present and new enough
+   bundled: libvirglrenderer.so.1 => /tmp/x/qemu-vmlab-egl-0.1.2-alpha/bin/../lib/libvirglrenderer.so.1
+   ISA: the binary needs x86-64-v2; this CPU supports up to x86-64-v4
+   error: /usr/share/qemu/bios-256k.bin is missing. QEMU loads its firmware (bios-256k.bin,
+   the option ROMs and the keymaps) from the host's own QEMU package, which this
+   tarball does not ship. Install it, then run install.sh again:
+     Debian, Ubuntu:   apt install qemu-system-x86
+     Fedora, RHEL:     dnf install qemu-system-x86-core
+     Arch, CachyOS:    pacman -S qemu-base    (or qemu-full)
+     openSUSE:         zypper install qemu-x86
+   exit 1
+## virgl install.sh --check
+   glibc: 2.36 (the server needs 2.36 or newer)
+   host virglrenderer: none found (not used: the vmlab QEMU bundles its own 1.3.0, which this server pairs with)
+   ldd: every shared library the server needs is present and new enough
+   ISA: the server needs x86-64-v2; this CPU supports up to x86-64-v4
+   run: the server starts
+   exit 0
+## qemu install.sh /tmp/prefix/qemu must refuse the same way:
+   glibc: 2.36 (the binary needs 2.36 or newer)
+   ldd: every shared library the binary needs is present and new enough
+   bundled: libvirglrenderer.so.1 => /tmp/x/qemu-vmlab-egl-0.1.2-alpha/bin/../lib/libvirglrenderer.so.1
+   ISA: the binary needs x86-64-v2; this CPU supports up to x86-64-v4
+   error: /usr/share/qemu/bios-256k.bin is missing. QEMU loads its firmware (bios-256k.bin,
+   the option ROMs and the keymaps) from the host's own QEMU package, which this
+   tarball does not ship. Install it, then run install.sh again:
+     Debian, Ubuntu:   apt install qemu-system-x86
+     Fedora, RHEL:     dnf install qemu-system-x86-core
+     Arch, CachyOS:    pacman -S qemu-base    (or qemu-full)
+     openSUSE:         zypper install qemu-x86
+   exit 1
+RESULT REFUSED no firmware package (qemu check exit 1, install exit 1, virgl check exit 0)
+# container exit 0

@@ -32,9 +32,14 @@ command line uses: KVM and TCG, the egl-headless display (OpenGL), VNC,
 virtio-gpu Venus, the TPM emulator back end, USB host passthrough, vhost-user
 (virtiofs shares) and qcow2 with zlib and zstd clusters. There is no SDL,
 GTK, SPICE, audio, slirp, 9p, iSCSI, NFS, curl or ssh block driver, and no
-guest agent or qemu-img (vmlab uses the host's). No firmware or ROMs
-(share/qemu) either: vmlab passes -L with the data directory of the host's
-own QEMU, so the host also needs its distribution's QEMU package installed.
+guest agent or qemu-img (vmlab uses the host's). No firmware either:
+bios-256k.bin, the option ROMs (efi-virtio.rom and the others) and the
+keymaps come from the host's own QEMU package, in /usr/share/qemu. QEMU
+looks for them in the -L directories and then in <bindir>/../share/qemu,
+never in /usr/share/qemu by itself, so install.sh checks that the package is
+there and links <prefix>/share/qemu to /usr/share/qemu. vmlab also passes -L
+with the host QEMU's data directory; the link is for everything else that
+runs the binary.
 
 The bundled virglrenderer is why this QEMU does not use the host's
 libvirglrenderer: QEMU's library and the render server it forks talk a
@@ -73,6 +78,12 @@ stable for many years:
 the Vulkan loader and the GPU drivers, comes from the host on purpose: it
 must match the host's kernel driver.
 
+And the distribution's QEMU package, for the firmware in /usr/share/qemu
+(install.sh checks for /usr/share/qemu/bios-256k.bin):
+
+  Debian, Ubuntu     Fedora, RHEL           Arch, CachyOS            openSUSE
+  qemu-system-x86    qemu-system-x86-core   qemu-base (or qemu-full) qemu-x86
+
 The CPU needs x86-64-v2 (SSE4.2 and POPCNT, any x86-64 CPU since about
 2009). The binary is compiled with -march=x86-64-v2 -mtune=generic, and its
 ELF note says "x86 ISA needed: x86-64-baseline, x86-64-v2" (readelf -n).
@@ -81,9 +92,9 @@ QEMU uses AVX2 and AVX-512 only where the CPU has them, chosen at run time.
 install.sh checks all of this before it installs anything: the host's glibc
 against the floor, ldd for missing or too-old libraries, that the bundled
 libvirglrenderer is the one the binary loads, the CPU's ISA level against
-the binary's (from /lib64/ld-linux-x86-64.so.2 --help), and that --version
-runs. It names what is wrong if a check fails. To check a host without
-installing:
+the binary's (from /lib64/ld-linux-x86-64.so.2 --help), that
+/usr/share/qemu/bios-256k.bin exists, and that --version runs. It names what
+is wrong if a check fails. To check a host without installing:
 
   ./install.sh --check
 
@@ -103,8 +114,12 @@ You need vmlab 0.26.0-alpha or later, for the host config's qemu_binary.
   ./install.sh                  # into ~/.local/opt/qemu-vmlab-egl
   ./install.sh /some/prefix     # or anywhere else; no root needed
 
-install.sh copies bin/ and lib/ to the prefix and prints the line to add to
-every NVIDIA GPU block in ~/.config/vmlab/config.wcl, next to the render
+install.sh copies bin/ and lib/ to the prefix, links <prefix>/share/qemu to
+/usr/share/qemu (an existing symlink is replaced; a real directory is left
+with a warning), boots the installed binary once without -L (-machine q35
+-accel tcg -display none -nodefaults -S -qmp stdio, then quit over QMP) so
+a missing ROM fails the install rather than a VM, and prints the line to add
+to every NVIDIA GPU block in ~/.config/vmlab/config.wcl, next to the render
 server's qemu_env:
 
   gpu "Nvidia1" {
