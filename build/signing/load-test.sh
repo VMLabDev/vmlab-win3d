@@ -9,12 +9,36 @@
 # writes text evidence into <evidence-dir>, and destroys the lab at the end
 # unless --keep is given.
 #
-# The display is virtio-vga-gl (virgl) rendered on the AMD iGPU
-# (KMD_LOAD_RENDERNODE, default /dev/dri/renderD129; prior-art 8.1). The KMD
+# The display is virtio-vga-gl (virgl) rendered on the AMD iGPU (prior-art
+# 8.1). Its render node is resolved at run time from the GPU's PCI address
+# (KMD_LOAD_PCI_ADDRESS, default 0000:72:00.0) through
+# /sys/class/drm/renderD*/device, since the kernel numbers render nodes per
+# boot; KMD_LOAD_RENDERNODE=/dev/dri/renderDNNN overrides it. The KMD
 # refuses to start without the VIRGL feature (viogpu_adapter.cpp, AckFeature
 # VIRTIO_GPU_F_VIRGL), so on plain virtio-vga it binds but reports Code 43.
 # KMD_LOAD_DISPLAY=virtio-vga selects that plain device instead.
+#
+#   build/signing/load-test.sh --print-rendernode   only print the resolved node
 set -euo pipefail
+
+# The render node of the GPU at a PCI address, from sysfs.
+rendernode_of() {
+    local d
+    for d in /sys/class/drm/renderD*; do
+        [ -e "$d/device" ] || continue
+        if [ "$(basename "$(readlink -f "$d/device")")" = "$1" ]; then
+            echo "/dev/dri/$(basename "$d")"; return 0
+        fi
+    done
+    echo "no render node for PCI address $1 under /sys/class/drm" >&2; return 1
+}
+PCI_ADDRESS=${KMD_LOAD_PCI_ADDRESS:-0000:72:00.0}
+if [ -n "${KMD_LOAD_RENDERNODE:-}" ]; then
+    RENDERNODE=$KMD_LOAD_RENDERNODE
+else
+    RENDERNODE=$(rendernode_of "$PCI_ADDRESS")
+fi
+if [ "${1:-}" = --print-rendernode ]; then echo "$PCI_ADDRESS -> $RENDERNODE"; exit 0; fi
 
 HERE=$(cd "$(dirname "$0")" && pwd)
 REPO=$(cd "$HERE/../.." && pwd)
@@ -22,7 +46,6 @@ PKG=$(cd "$1" && pwd)
 mkdir -p "$2"; EVID=$(cd "$2" && pwd)
 KEEP=${3:-}
 DISPLAY_DEV=${KMD_LOAD_DISPLAY:-virtio-vga-gl}
-RENDERNODE=${KMD_LOAD_RENDERNODE:-/dev/dri/renderD129}
 LAB=win3d-kmd-build-load
 LABDIR=$REPO/.scratch/labs/$LAB
 VM=$LAB/win11

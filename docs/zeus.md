@@ -28,7 +28,7 @@ Newest first. The package rows name the commit in the bundle's
 | --- | --- |
 | Machine | Zeus, a laptop the user works on; i7-13700H (x86-64-v3, no AVX-512), 20 threads, 93 GiB |
 | OS | CachyOS (x86-64-v3 repositories), kernel 7.2.4-3-cachyos |
-| GPUs | Intel Iris Xe (Raptor Lake-P) `0000:00:02.0`, `renderD129`; NVIDIA RTX 4060 Max-Q / Laptop (AD107M) `0000:01:00.0`, `renderD128`, driver 615.71.09 (open kernel module), runtime D3 fine-grained (`DynamicPowerManagement=2`) |
+| GPUs | Intel Iris Xe (Raptor Lake-P) `0000:00:02.0`; NVIDIA RTX 4060 Max-Q / Laptop (AD107M) `0000:01:00.0`, driver 615.71.09 (open kernel module), runtime D3 fine-grained (`DynamicPowerManagement=2`) |
 | Host stack | QEMU 11.1.1, virglrenderer 1.3.0, Mesa 26.2.2 (`vulkan-intel`), the same as helios |
 | Venus QEMU on `Nvidia1` | 2026-10-19: VMLabDev/qemu `d8a6048aae` (upstream master + our egl-headless series, `patches/host/PINS`), built on Zeus, in `~/.local/opt/qemu-vmlab-egl` (`docs/evidence/zeus/qemu/`). 2026-10-17: QEMU 11.1.1 + `patches/host/qemu/0001` through `labs/zeus/vmlab-iso.sh` |
 | vmlab | 2026-10-19: 0.28.0-alpha, with the host config below. 2026-10-17: 0.24.0-alpha, no host config |
@@ -43,8 +43,8 @@ Zeus's host config, `~/.config/vmlab/config.wcl` (copy in
 import <vmlab-host.wcl>
 
 // Host GPUs on zeus. A lab's `gpu {}` names one with `host_gpu`, or takes the default.
-gpu "Intel1"  { address = "0000:00:02.0" }                  // Iris Xe RPL-P (i915/ANV, renderD129)
-gpu "Nvidia1" {                                             // RTX 4060 Laptop GPU (nvidia, renderD128)
+gpu "Intel1"  { address = "0000:00:02.0" }                  // Iris Xe RPL-P (i915/ANV)
+gpu "Nvidia1" {                                             // RTX 4060 Laptop GPU (nvidia)
   address     = "0000:01:00.0"
   default     = true
   // QEMU (upstream master + our egl-headless external-only dma-buf series)
@@ -109,8 +109,8 @@ address>" }`; each evidence directory keeps its copy as `lab-vmlab.wcl`.
 
 | File | What it is |
 | --- | --- |
-| `intel/vmlab.wcl` | `win3d-zeus-intel`: `gpu { mode = "vulkan" host_gpu = "Intel1" }` (`0000:00:02.0` in Zeus's host config), `secure_boot = false`, `agent_update = false`. vmlab passes `virtio-vga-gl,venus=true,blob=true,hostmem=4G`, `-display egl-headless,rendernode=/dev/dri/renderD129` and `VK_LOADER_DRIVERS_SELECT=*intel*` (`intel/*/qemu-argv-env.txt`) |
-| `nvidia/vmlab.wcl` | `win3d-zeus-nvidia`, the same with `host_gpu = "Nvidia1"` (`0000:01:00.0`, `renderD128`, `*nvidia*`). vmlab runs the host config's `qemu_binary` for it. Both Zeus labs have `nic { nat = true }` since 2026-10-19 |
+| `intel/vmlab.wcl` | `win3d-zeus-intel`: `gpu { mode = "vulkan" host_gpu = "Intel1" }` (`0000:00:02.0` in Zeus's host config), `secure_boot = false`, `agent_update = false`. vmlab passes `virtio-vga-gl,venus=true,blob=true,hostmem=4G`, `-display egl-headless,rendernode=<the render node of 0000:00:02.0, resolved at run time; renderD129 in intel/*/qemu-argv-env.txt>` and `VK_LOADER_DRIVERS_SELECT=*intel*` |
+| `nvidia/vmlab.wcl` | `win3d-zeus-nvidia`, the same with `host_gpu = "Nvidia1"` (`0000:01:00.0`, `*nvidia*`). vmlab runs the host config's `qemu_binary` for it. Both Zeus labs have `nic { nat = true }` since 2026-10-19 |
 | `amd/vmlab.wcl` | `win3d-zeus-amd`: `labs/probe/vmlab.wcl` with its own lab name (`host_gpu = "AMD1"`), for the regression run on helios |
 | `stage.sh` | Copies what a run needs from helios to `~/win3d-zeus/repo` on Zeus: `out/package`, `out/probes`, `tests/guest`, `tests/e2e` from `main`, `scripts/install-into-vm.sh`, `labs/zeus`, `patches/host`, and the uavtest build |
 | `run.sh` | `tests/e2e/run.sh` adapted for Zeus. It brings up a fresh lab, installs with `scripts/install-into-vm.sh` (the documented command), then runs vulkaninfo, the 10 probes with `vmlab vm screenshot` captures, dxdiag and uavtest. `tests/e2e/check.py` judges the result. It does not build: the package comes from helios. On `--gpu nvidia` it records the kernel's NVRM lines (`kernel-nvrm.txt`) and every runtime power state change of the GPU (`runtime-pm.txt`), and stops the run on an Xid 79 after saving `nvidia-smi` and the power state (`gpu-lost.txt`). `WIN3D_KEEPAWAKE=1` runs `keepawake/` for the whole run, `WIN3D_SMOKE=1` runs only vulkaninfo and the x64 D3D11 probe after the install, and `WIN3D_GUEST_ENV="NAME=VALUE ..."` sets machine-wide guest environment variables before the install |

@@ -43,7 +43,7 @@ flowchart TD
   KMD["viogpu3d.sys<br/>Yttrium WDDM 2.0 KMD"]
   DEV["virtio-vga-gl, venus=true, blob=true<br/>(QEMU 11.1.1)"]
   VRS["virgl_render_server<br/>(virglrenderer 1.3.0)"]
-  RADV["RADV (Mesa 26.2.2) on the AMD iGPU, renderD129"]
+  RADV["RADV (Mesa 26.2.2) on the AMD iGPU, 0000:72:00.0"]
 
   A9 --> D9 --> UMD
   A11 --> D11 --> UMD
@@ -208,7 +208,7 @@ them on vmlab 0.23, with `qemu_args`, before vmlab emitted them itself.
 | | |
 | --- | --- |
 | What | `/usr/lib/virgl_render_server` forks one `virgl-N-gpu_render` process per guest Venus context; each replays the commands on the host Vulkan driver |
-| Selected by | vmlab sets `VK_LOADER_DRIVERS_SELECT` in QEMU's environment from the kernel driver of the host GPU that `gpu.host_gpu` names (`*radeon*` for `AMD1`), so the render workers open only `renderD129`. `vulkan_icd` on that GPU's host config block sets `VK_DRIVER_FILES` instead. |
+| Selected by | vmlab sets `VK_LOADER_DRIVERS_SELECT` in QEMU's environment from the kernel driver of the host GPU that `gpu.host_gpu` names (`*radeon*` for `AMD1`), so the render workers open only that GPU's render node (resolved from its address at run time). `vulkan_icd` on that GPU's host config block sets `VK_DRIVER_FILES` instead. |
 | Upstream | virglrenderer 1.3.0 (Arch `1.3.0-2.1`), Mesa RADV 26.2.2 (Arch `vulkan-radeon 3:26.2.2-2`), not built here |
 
 ### Tested hosts

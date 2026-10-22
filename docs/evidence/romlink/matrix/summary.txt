@@ -1,0 +1,8 @@
+debian:bookworm        debian@sha256:854dd8ab51d62866dbd8f5431d15ce77b12983a2a4a1e1fe43a2395dc7ef9f61             PASS
+debian:trixie          debian@sha256:4c25275446ca371766b8b093c696782eabce06263fccacb8d5d813b3dc44b308             PASS
+ubuntu:24.04           ubuntu@sha256:68ee22004a9109b44973313b02ff7b1de250f1de0f5ecb628d73f579aaff33ac             PASS
+fedora:latest          fedora@sha256:43b29f65a41eb9c35e1cd5323e3bdf3b655c2357a9f4f1ff2f9c2798e5045d80             PASS
+archlinux:latest       archlinux@sha256:52dfbd5afb23a220d5ee92dafcb4c788d96c026ed04179890c23adef4c897fa0          PASS
+opensuse/tumbleweed    opensuse/tumbleweed@sha256:cbae3d25ca359a916e3dff8fd8913fe8943002baeb6f94b4ca4305e201edc43a PASS
+ubuntu:22.04           ubuntu@sha256:0a9887931b0e38af2e3487ed39e29436b0535c4f3f52e57745baaf79d1898956             REFUSED glibc floor (qemu check exit 1, virgl check exit 1)
+debian:bookworm+noroms debian@sha256:854dd8ab51d62866dbd8f5431d15ce77b12983a2a4a1e1fe43a2395dc7ef9f61             REFUSED no firmware package (qemu check exit 1, install exit 1, virgl check exit 0)

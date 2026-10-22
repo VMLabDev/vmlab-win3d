@@ -69,9 +69,9 @@ Helios's host config names three GPUs:
 ```wcl
 import <vmlab-host.wcl>
 
-gpu "AMD1"    { address = "0000:72:00.0" }                  // Ryzen 9 9950X iGPU (amdgpu, renderD129)
-gpu "Nvidia1" { address = "0000:01:00.0"  default = true }  // RTX 5090 (nvidia, renderD128)
-gpu "Nvidia2" { address = "0000:05:00.0" }                  // RTX 5090 (nvidia, renderD130)
+gpu "AMD1"    { address = "0000:72:00.0" }                  // Ryzen 9 9950X iGPU (amdgpu)
+gpu "Nvidia1" { address = "0000:01:00.0"  default = true }  // RTX 5090 (nvidia)
+gpu "Nvidia2" { address = "0000:05:00.0" }                  // RTX 5090 (nvidia)
 ```
 
 A lab without `host_gpu` takes the default, `Nvidia1`, an RTX 5090. Venus on
@@ -159,6 +159,15 @@ Render nodes and ICDs (`/sys/class/drm/renderD*/device`, `nvidia-smi`):
 | `renderD128` | 0000:01:00.0 | NVIDIA GeForce RTX 5090 (`/dev/nvidia0`) |
 | `renderD129` | 0000:72:00.0 | AMD Granite Ridge iGPU (RADV RAPHAEL_MENDOCINO) |
 | `renderD130` | 0000:05:00.0 | NVIDIA GeForce RTX 5090 (`/dev/nvidia1`) |
+
+> **Note (2026-10-22):** the render-node numbers are per boot. The kernel
+> numbers `renderD*` in the order the drivers bind, and after helios
+> rebooted on 2026-10-21 it was `renderD128` = `0000:05:00.0`, `renderD129`
+> = `0000:01:00.0`, `renderD130` = `0000:72:00.0`. The table above is what
+> this probe run saw. vmlab picks a GPU by its PCI address and resolves the
+> render node at run time, so nothing depends on these numbers; read
+> `/sys/class/drm/renderD*/device` for the current mapping, and name a GPU
+> by its host-config name and address.
 
 `/usr/share/vulkan/icd.d/` holds `nvidia_icd.json` and `radeon_icd.json`.
 

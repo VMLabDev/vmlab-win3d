@@ -23,8 +23,8 @@ Zeus runs vmlab 0.28.0-alpha (since 2026-10-19), and its host config,
 import <vmlab-host.wcl>
 
 // Host GPUs on zeus. A lab's `gpu {}` names one with `host_gpu`, or takes the default.
-gpu "Intel1"  { address = "0000:00:02.0" }                  // Iris Xe RPL-P (i915/ANV, renderD129)
-gpu "Nvidia1" {                                             // RTX 4060 Laptop GPU (nvidia, renderD128)
+gpu "Intel1"  { address = "0000:00:02.0" }                  // Iris Xe RPL-P (i915/ANV)
+gpu "Nvidia1" {                                             // RTX 4060 Laptop GPU (nvidia)
   address     = "0000:01:00.0"
   default     = true
   // QEMU (upstream master + our egl-headless external-only dma-buf series)

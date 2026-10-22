@@ -13,7 +13,7 @@ lab "win3d-host-probe" {
     // The template's windows-11 profile turns Secure Boot on; the test-signed
     // driver package needs it off (docs/decisions/0001-signing.md).
     secure_boot = false
-    // AMD1 is helios's AMD iGPU (0000:72:00.0, RADV, renderD129). Name it:
+    // AMD1 is helios's AMD iGPU (0000:72:00.0, RADV). Name it:
     // helios's default host GPU is an RTX 5090 (Nvidia1), where Venus does not
     // work with the stock QEMU (docs/known-limits.md).
     // The templates are Windows evaluation editions. They activate online,

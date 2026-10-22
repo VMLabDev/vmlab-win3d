@@ -115,10 +115,14 @@ out/release/<version>/
   `tests/e2e/run.sh --host-gpu <that GPU>` must pass 12 of 12.
 - Both host tarballs on other distributions:
   `docs/evidence/portable/matrix.sh out/release/<version>` runs each
-  tarball's `install.sh --check`, an install and a QMP boot under TCG in
-  throwaway containers of Debian 12 and 13, Ubuntu 24.04, Fedora, Arch and
-  openSUSE Tumbleweed with only the runtime packages installed, and expects
-  Ubuntu 22.04 to be refused. Every row but 22.04 must say `PASS`.
+  tarball's `install.sh --check`, an install and a QMP boot under TCG
+  without `-L` (the firmware through the `share/qemu` link) in throwaway
+  containers of Debian 12 and 13, Ubuntu 24.04, Fedora, Arch and openSUSE
+  Tumbleweed with only the runtime packages installed and the host's
+  `/usr/share/qemu` mounted in place of the distribution's QEMU package,
+  and expects Ubuntu 22.04 to be refused by the glibc floor and
+  `debian:bookworm+noroms` (no firmware mounted) to be refused with the
+  message that names the QEMU package. Every other row must say `PASS`.
 
 `docs/evidence/release/` has the record of these checks for each release.
 Publish the five files as the assets of a release tagged with the version,
@@ -202,7 +206,9 @@ scripts no longer do; `git show 6814c0c:patches/host/build-qemu.sh` is the
 last native version.
 
 Evidence: `docs/evidence/portable/` (`abi.txt`, `features.md`,
-`matrix.md`, `e2e-nvidia1/`, `release.txt`, `zeus.txt`).
+`matrix.md`, `e2e-nvidia1/`, `release.txt`, `zeus.txt`), and
+`docs/evidence/romlink/` for the firmware link (`matrix.md` without `-L`,
+`helios/`).
 
 ### CPU and library baseline of the QEMU binary
 
@@ -317,7 +323,10 @@ installer changes, and [`uninstall.md`](uninstall.md) how to remove it.
 
 Only hosts whose Venus labs use an NVIDIA GPU need this
 ([`nvidia.md`](nvidia.md)). You need vmlab 0.26.0-alpha or later, the
-distribution's own QEMU package, whose firmware vmlab passes with `-L`, a
+distribution's own QEMU package for the firmware in `/usr/share/qemu`
+(`qemu-system-x86` on Debian and Ubuntu, `qemu-system-x86-core` on Fedora
+and RHEL, `qemu-base` or `qemu-full` on Arch and CachyOS, `qemu-x86` on
+openSUSE; the tarball ships no `bios-256k.bin`, option ROMs or keymaps), a
 host with glibc 2.36 or newer and the runtime packages of "Supported hosts
 of the host assets" (above), and the render-server tarball (next section),
 which this QEMU's bundled virglrenderer pairs with.
@@ -325,7 +334,7 @@ which this QEMU's bundled virglrenderer pairs with.
 ```sh
 tar --zstd -xf qemu-vmlab-egl-<version>-x86_64-linux.tar.zst
 cd qemu-vmlab-egl-<version>
-./install.sh --check      # checks only: glibc floor, ldd, bundled library, CPU ISA level, --version
+./install.sh --check      # checks only: glibc floor, ldd, bundled library, CPU ISA level, firmware, --version
 ./install.sh              # installs into ~/.local/opt/qemu-vmlab-egl
 ```
 
@@ -343,14 +352,22 @@ the reason if it cannot:
   to the host's copy;
 - the CPU supports the x86-64 ISA level the binary needs (x86-64-v2), from
   the levels `/lib64/ld-linux-x86-64.so.2 --help` lists;
+- `/usr/share/qemu/bios-256k.bin` exists, from the distribution's QEMU
+  package; if not, it names the package for the distribution;
 - `qemu-system-x86_64 --version` runs.
 
 If a check fails, install the missing packages, or build QEMU for this
 host with `patches/host/build-qemu.sh`. Otherwise it copies the binary to
 `<prefix>/bin` and the bundled library to `<prefix>/lib`, checks that the
 installed binary resolves the library from there, puts the notes and
-licences in `<prefix>/share/doc/qemu-vmlab-egl`, runs `--version`, and
-prints the line to add to each NVIDIA GPU block in
+licences in `<prefix>/share/doc/qemu-vmlab-egl`, links `<prefix>/share/qemu`
+to `/usr/share/qemu` (QEMU searches `-L` directories, then
+`<bindir>/../share/qemu`, never `/usr/share/qemu` itself; an existing
+symlink is replaced, a real directory left alone with a warning), runs
+`--version`, boots the installed binary once without `-L` (`-machine q35
+-accel tcg -display none -nodefaults -S -qmp stdio`, answering
+`qmp_capabilities` and `quit`), which fails the install where the firmware
+would fail a VM, and prints the line to add to each NVIDIA GPU block in
 `~/.config/vmlab/config.wcl`, together with the render server's:
 
 ```wcl

@@ -100,7 +100,7 @@ off):
 
 | Item | Value |
 | --- | --- |
-| Host GPUs used for Venus | `AMD1`: AMD Granite Ridge iGPU, PCI `0000:72:00.0`, `/dev/dri/renderD129`, RADV. `Nvidia1`: RTX 5090, `0000:01:00.0`, `renderD128`. `Nvidia2`: RTX 5090, `0000:05:00.0`, `renderD130` |
+| Host GPUs used for Venus | `AMD1`: AMD Granite Ridge iGPU, PCI `0000:72:00.0`, RADV. `Nvidia1`: RTX 5090, `0000:01:00.0`. `Nvidia2`: RTX 5090, `0000:05:00.0`. vmlab resolves each GPU's render node from its address at run time (`/sys/class/drm/renderD*/device`; the numbers change between boots), and each run's "Host GPU:" line below records the node it had |
 | QEMU | AMD1: 11.1.1 (`qemu-full 11.1.1-1`) from `PATH`. Nvidia1 and Nvidia2: the host config's `qemu_binary`, `~/.local/opt/qemu-vmlab-egl`, QEMU 11.1.50 (VMLabDev/qemu `d8a6048aae11`, the commit `patches/host/PINS` pins) |
 | virglrenderer | 1.3.0 (`1.3.0-2.1`) |
 | Mesa / RADV | 26.2.2 (`mesa 3:26.2.2-2`, `vulkan-radeon 3:26.2.2-2`) |
