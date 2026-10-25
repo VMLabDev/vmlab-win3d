@@ -16,6 +16,11 @@
 #   0002  creates vkr's queue-sync fences without SYNC_FD export, which
 #         removes a 10 ms floor from every Venus ring fence on NVIDIA's
 #         driver (docs/n5.md). This is why NVIDIA hosts run this server.
+#   0003  drops the guest's VkExportMemoryAllocateInfo from an import of a
+#         resource: NVIDIA's driver (615.78) given an import and export info
+#         together allocates new memory instead of importing, which left
+#         every buffer Xwayland draws on Zink black in a SteamOS guest
+#         (VMLabDev/vmlab#171).
 #
 # WITH_WORKAROUND=1 also applies patches/host/virglrenderer/workaround/*.patch,
 # the host-side workaround for the NVIDIA image-usage refusal that

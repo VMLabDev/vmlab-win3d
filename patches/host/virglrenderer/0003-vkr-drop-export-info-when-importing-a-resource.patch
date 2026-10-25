@@ -1,0 +1,44 @@
+From: s6-gamescope-nvidia worker <ai@wiltaylor.dev>
+Subject: [PATCH] vkr: drop export info when importing a resource
+
+vkAllocateMemory with VkImportMemoryResourceInfoMESA becomes an import of
+the resource's fd (VkImportMemoryFdInfoKHR), but the guest's pNext chain is
+forwarded as is, so a VkExportMemoryAllocateInfo the guest chained reaches
+the driver beside the import. Zink chains both whenever it imports a
+dma-buf (zink_resource.c allocate_bo).
+
+NVIDIA's Linux driver (615.78.08, RTX 5090) returns VK_SUCCESS for that
+allocation but allocates new memory instead of importing: writes through
+the import never reach the shared buffer, and reads see zeros. RADV
+imports. It reproduces natively on the host without Venus. In a SteamOS
+guest every buffer Xwayland (glamor on Zink) imports is affected, so
+gamescope composited black frames (VMLabDev/vmlab#171).
+
+Imported memory never backs a blob (only memory vkr allocates does), so the
+export info has no use here. Drop it before calling the driver.
+---
+--- a/src/venus/vkr_device_memory.c
++++ b/src/venus/vkr_device_memory.c
+@@ -261,6 +261,22 @@
+    VkExportMemoryAllocateInfo *export_info =
+       vkr_find_struct(alloc_info->pNext, VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO);
+ 
++   /* An import of an existing resource is never exported from here: the guest
++    * already holds the resource, and only memory vkr allocated itself backs a
++    * blob. Drop the guest's export info so the driver sees a plain import.
++    * NVIDIA's Linux driver (615.78) given VkImportMemoryFdInfoKHR together with
++    * VkExportMemoryAllocateInfo returns VK_SUCCESS but allocates new memory
++    * instead of importing, so writes through the import never reach the shared
++    * buffer. Zink chains both when it imports a dma-buf, which left every
++    * Xwayland buffer gamescope composites black.
++    */
++   if (res_info && export_info) {
++      VkBaseInStructure *prev_of_export_info =
++         vkr_find_prev_struct(alloc_info, VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO);
++      prev_of_export_info->pNext = export_info->pNext;
++      export_info = NULL;
++   }
++
+    /* track if driver has requested export allocation */
+    const bool might_export = export_info && export_info->handleTypes;
+ 
