@@ -25,7 +25,8 @@ virglrenderer 1.3.0. No other GPU or driver version was tried. On
 `windows-11` passed 12 of 12 with it on `Nvidia1`, `Nvidia2` and `AMD1`
 (`docs/evidence/qemu-master/`). Since 2026-10-19 helios's host config also
 gives `Nvidia1` and `Nvidia2` the vmlab render server: virglrenderer 1.3.0's
-`virgl_render_server` with `patches/host/virglrenderer/0001` and `0002`.
+`virgl_render_server` with `patches/host/virglrenderer/0001` and `0002`
+(`0003` since 2026-10-26, [`nvidia.md`](nvidia.md#imports-that-carry-export-info)).
 QEMU keeps the host's own `libvirglrenderer` 1.3.0
 ([`nvidia.md`](nvidia.md#the-patched-render-server-on-the-gpus-profile)).
 `AMD1` keeps the stock server.

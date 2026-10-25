@@ -378,7 +378,7 @@ threads wait on as exportable SYNC_FD fences, and NVIDIA 610.57 wakes
 creates them plain.
 
 The server is virglrenderer 1.3.0's `virgl_render_server` with
-`patches/host/virglrenderer/0001` and `0002`. Only the server is replaced.
+`patches/host/virglrenderer/0001` to `0003`. Only the server is replaced.
 QEMU keeps the host's own `libvirglrenderer` 1.3.0, which forks the
 program named by `RENDER_SERVER_EXEC_PATH` instead of
 `/usr/lib/virgl_render_server`. Venus runs entirely in the server, and the
@@ -417,6 +417,32 @@ pairs as `qemu_env` on each machine.
 ([`n5.md`](n5.md#cause)), and the A/B in
 [`docs/evidence/hostvirgl/`](evidence/hostvirgl/README.md) found no
 difference on AMD.
+
+### Imports that carry export info
+
+`patches/host/virglrenderer/0003` (2026-10-26) fixes a third NVIDIA fault,
+found in a SteamOS guest whose game mode composited black
+(VMLabDev/vmlab#171). Given a `vkAllocateMemory` that has both
+`VkImportMemoryFdInfoKHR` (a dma-buf) and `VkExportMemoryAllocateInfo`,
+NVIDIA's driver (615.78.08) returns `VK_SUCCESS` but allocates new memory
+instead of importing. Writes through the import never reach the shared
+buffer, and reads see zeros. RADV imports. It needs no VM: the host test
+program [`host-tests/vkshare.c`](evidence/nvidia/host-tests/vkshare.c)
+exports a dma-buf image from one instance, imports it into another, and
+writes it back the other way. It passes on both GPUs and fails on NVIDIA
+only with `IMPORT_WITH_EXPORT=1`:
+
+```
+$ IMPORT_WITH_EXPORT=1 ./vkshare mod cross
+readback: px[0]=00000000 px[mid]=00000000 px[last]=00000000
+reverse readback: px[0]=ffff0000 px[last]=ffff0000 -> FAIL
+```
+
+Venus forwards the guest's whole `pNext` chain with the import, and Zink
+chains export info on every dma-buf it imports, so in the guest every buffer
+Xwayland draws on Zink was a private copy and reached gamescope black. vkr
+now drops the export info from an import before the driver sees it. Imported
+memory never backs a blob, so nothing needed it.
 
 ### One GPU per guest: the PCI-filter layer
 
