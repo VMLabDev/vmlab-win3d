@@ -3,7 +3,7 @@
 # probe can carry an app-local graphics DLL. Runs inside the build image.
 set -euo pipefail
 out=${1:?usage: check-imports.sh <out/probes>}
-allowed='^(kernel32|user32|gdi32|advapi32|d3d9|d3d11|d3d12|dxgi|opengl32|api-ms-win-crt-[a-z0-9-]+)\.dll$'
+allowed='^(kernel32|user32|gdi32|advapi32|d3d9|d3d11|d3d12|dxgi|opengl32|api-ms-win-core-synch-l1-2-0|api-ms-win-crt-[a-z0-9-]+)\.dll$'
 status=0
 for exe in "$out"/x64/*.exe "$out"/x86/*.exe; do
   while read -r dll; do

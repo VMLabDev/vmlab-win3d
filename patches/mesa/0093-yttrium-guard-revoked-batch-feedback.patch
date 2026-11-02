@@ -1,0 +1,206 @@
+Subject: [PATCH] yttrium: report device loss for revoked feedback mappings
+
+A timeout reset can revoke a blob CPU mapping while the Venus backend caches
+its address. Explorer faulted in wait_batch_feedback+0xdd at RVA 0x24b56d
+when an unguarded feedback read raced adapter recovery.
+
+Reuse the ring's checked dword accesses for feedback loads and stores. A
+mapping failure marks the backend failed, reports its existing reset callback,
+and returns device-lost or a rejected store. Preserve the original barriers
+and give device loss precedence over an earlier host-fence success.
+
+Keep native SEH on supported targets. The pinned MinGW x86 compiler cannot
+emit the production SEH filters; there, Windows checked copies access only
+the current process and report failure instead of raising an access violation.
+
+Focused production-code checks: probes/feedback-loss in vmlab-win3d.
+---
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h
+index d1759b6..38377d1 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h
+@@ -135,9 +135,9 @@ struct hash_table_u64;
+ #define YTTRIUM_VENUS_SEH_TRY __try
+ #define YTTRIUM_VENUS_SEH_EXCEPT(filter) __except (filter)
+ #else
+-#if defined(__GNUC__) || defined(__clang__)
++#if !defined(_WIN32) && (defined(__GNUC__) || defined(__clang__))
+ #warning "Yttrium Venus ring fault handling: native SEH is unavailable; guarded accesses will execute but faults cannot be recovered"
+-#else
++#elif !defined(_WIN32)
+ #pragma message("warning: Yttrium Venus ring fault handling: native SEH is unavailable; guarded accesses will execute but faults cannot be recovered")
+ #endif
+ #define YTTRIUM_VENUS_SEH_TRY if (1)
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_ring.h b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_ring.h
+index 8b04764..b3f7074 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_ring.h
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_ring.h
+@@ -73,6 +73,20 @@ bool
+ yttrium_venus_ring_probe(struct yttrium_venus *venus,
+                          const char *failure_reason);
+ 
++void
++yttrium_venus_mark_ring_failed(struct yttrium_venus *venus,
++                               const char *reason);
++
++bool
++yttrium_venus_ring_load_dword(const char *field,
++                              const volatile uint32_t *ptr,
++                              uint32_t *out);
++
++bool
++yttrium_venus_ring_store_dword(const char *field,
++                               volatile uint32_t *ptr,
++                               uint32_t value);
++
+ bool
+ yttrium_venus_ring_wait_for_seqno(struct yttrium_venus *venus,
+                                   const struct yttrium_venus_ring_dependency *dependency,
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_ring.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_ring.c
+index ac2fcea..ad13252 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_ring.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_ring.c
+@@ -178,7 +178,7 @@ yttrium_venus_from_ring(struct yttrium_venus_ring *ring)
+                  NULL;
+ }
+ 
+-static void ATTRIBUTE_NOINLINE
++void ATTRIBUTE_NOINLINE
+ yttrium_venus_mark_ring_failed(struct yttrium_venus *venus,
+                                const char *reason)
+ {
+@@ -229,7 +229,7 @@ yttrium_venus_ring_faulting_copy_bytes(void *dst,
+    memcpy(dst, src, size);
+ }
+ 
+-static bool
++bool ATTRIBUTE_NOINLINE
+ yttrium_venus_ring_load_dword(const char *field,
+                               const volatile uint32_t *ptr,
+                               uint32_t *out)
+@@ -243,6 +243,17 @@ yttrium_venus_ring_load_dword(const char *field,
+       return false;
+    }
+ 
++   /* The pinned MinGW x86 compiler cannot emit these SEH filters. Checked
++    * copies confined to this process preserve mapping fault containment. */
++#if defined(_WIN32) && !defined(YTTRIUM_VENUS_HAS_NATIVE_SEH)
++   SIZE_T copied = 0;
++   if (ReadProcessMemory(GetCurrentProcess(), (const void *)ptr, out,
++                          sizeof(*out), &copied) && copied == sizeof(*out))
++      return true;
++   YTTRIUM_WARN("yttrium: Venus ring %s pointer read failed ptr=%p error=%lu\n",
++                 field ? field : "<unknown>", (const void *)ptr, GetLastError());
++   return false;
++#else
+    YTTRIUM_VENUS_SEH_TRY {
+       *out = yttrium_venus_ring_faulting_load_dword(ptr);
+       return true;
+@@ -252,9 +263,10 @@ yttrium_venus_ring_load_dword(const char *field,
+                    field ? field : "<unknown>", (const void *)ptr);
+       return false;
+    }
++#endif
+ }
+ 
+-static bool
++bool ATTRIBUTE_NOINLINE
+ yttrium_venus_ring_store_dword(const char *field,
+                                volatile uint32_t *ptr,
+                                uint32_t value)
+@@ -265,6 +277,15 @@ yttrium_venus_ring_store_dword(const char *field,
+       return false;
+    }
+ 
++#if defined(_WIN32) && !defined(YTTRIUM_VENUS_HAS_NATIVE_SEH)
++   SIZE_T copied = 0;
++   if (WriteProcessMemory(GetCurrentProcess(), (void *)ptr, &value,
++                           sizeof(value), &copied) && copied == sizeof(value))
++      return true;
++   YTTRIUM_WARN("yttrium: Venus ring %s pointer write failed ptr=%p error=%lu\n",
++                 field ? field : "<unknown>", (const void *)ptr, GetLastError());
++   return false;
++#else
+    YTTRIUM_VENUS_SEH_TRY {
+       yttrium_venus_ring_faulting_store_dword(ptr, value);
+       return true;
+@@ -274,9 +295,10 @@ yttrium_venus_ring_store_dword(const char *field,
+                    field ? field : "<unknown>", (const void *)ptr);
+       return false;
+    }
++#endif
+ }
+ 
+-static bool
++static bool ATTRIBUTE_NOINLINE
+ yttrium_venus_ring_copy_bytes(const char *label,
+                               void *dst,
+                               const void *src,
+@@ -292,6 +314,16 @@ yttrium_venus_ring_copy_bytes(const char *label,
+       return false;
+    }
+ 
++#if defined(_WIN32) && !defined(YTTRIUM_VENUS_HAS_NATIVE_SEH)
++   SIZE_T copied = 0;
++   if (WriteProcessMemory(GetCurrentProcess(), dst, src, size, &copied) &&
++       copied == size)
++      return true;
++   YTTRIUM_WARN("yttrium: Venus ring copy failed label=%s dst=%p src=%p size=%llu error=%lu\n",
++                 label ? label : "<unknown>", dst, src,
++                 (unsigned long long)size, GetLastError());
++   return false;
++#else
+    YTTRIUM_VENUS_SEH_TRY {
+       yttrium_venus_ring_faulting_copy_bytes(dst, src, size);
+       return true;
+@@ -302,6 +334,7 @@ yttrium_venus_ring_copy_bytes(const char *label,
+                    (unsigned long long)size);
+       return false;
+    }
++#endif
+ }
+ 
+ static bool
+diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_batch.c b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_batch.c
+index b5c55a4..14d6582 100644
+--- a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_batch.c
++++ b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_batch.c
+@@ -2423,7 +2423,11 @@ yttrium_venus_batch_feedback_store(struct yttrium_venus *venus,
+        !yttrium_venus_ring_probe(venus, reason))
+       return false;
+ 
+-   *slot = (LONG)value;
++   if (!yttrium_venus_ring_store_dword("batch-feedback", (volatile uint32_t *)slot,
++                                       (uint32_t)value)) {
++      yttrium_venus_mark_ring_failed(venus, reason);
++      return false;
++   }
+    MemoryBarrier();
+    return true;
+ }
+@@ -2706,7 +2710,13 @@ yttrium_venus_batch_feedback_load(struct yttrium_venus *venus,
+       return VK_ERROR_DEVICE_LOST;
+ 
+    MemoryBarrier();
+-   return (VkResult)*slot;
++   uint32_t value;
++   if (!yttrium_venus_ring_load_dword("batch-feedback",
++                                      (const volatile uint32_t *)slot, &value)) {
++      yttrium_venus_mark_ring_failed(venus, "batch-feedback-load-fault");
++      return VK_ERROR_DEVICE_LOST;
++   }
++   return (VkResult)value;
+ }
+ 
+ static void
+@@ -2753,6 +2763,9 @@ yttrium_venus_wait_batch_feedback(struct yttrium_venus *venus,
+                                      venus->device_handle, fence);
+          const VkResult feedback_status_after_host_query =
+             yttrium_venus_batch_feedback_load(venus, slot);
++         if (host_fence_status == VK_ERROR_DEVICE_LOST ||
++             feedback_status_after_host_query == VK_ERROR_DEVICE_LOST)
++            return VK_ERROR_DEVICE_LOST;
+          if (host_fence_status == VK_SUCCESS ||
+              feedback_status_after_host_query == VK_SUCCESS)
+             return VK_SUCCESS;
+

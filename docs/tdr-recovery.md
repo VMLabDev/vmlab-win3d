@@ -76,6 +76,31 @@ waiting for worker exit or GPU idle. Removal of guest BAR aliases limits the
 guest-memory lifetime risk, but an explicit backend quiescence acknowledgement
 is still missing. Record that limitation separately from functional recovery.
 
+## Feedback mapping regression
+
+The initial recovery candidate exposed an Explorer access violation in
+`viogpu_d3d10.dll` at RVA `0x24b56d`. Matching packaged and unstripped code
+identifies an unguarded batch-feedback read in
+`yttrium_venus_wait_batch_feedback`. A reset can revoke the cached CPU mapping
+after the separate ring check succeeds.
+
+Mesa patch 0093 uses checked ring accesses for feedback reads and writes.
+Mapping failure marks the backend failed, invokes its existing reset callback,
+and returns `VK_ERROR_DEVICE_LOST` or a rejected store. A host-fence success
+cannot override feedback device loss. x64 uses native SEH; the pinned x86
+compiler cannot emit the production SEH filters, so x86 uses Windows checked
+copies confined to the current process. The native D3D11 x64/x86 checks verify
+healthy GPU-aperture access before and after TDR.
+
+`probes/feedback-loss/build.py` links the actual production feedback, ring,
+and reset-callback code using the materialized Mesa build's compiler and link
+commands. `tests/guest/Test-FeedbackLoss.ps1` runs its two architectures in
+Windows. Red requires two healthy controls and eight access-violation exits
+after feedback pages become inaccessible or unmapped. Green requires ten
+successful process exits; the eight mapping-loss cases must report device loss,
+backend failure, and exactly one reset callback. Both phases passed on Windows
+PowerShell `5.1.26100.9711`. These focused checks do not prove GPU quiescence.
+
 This document describes the test contract. A passing forced-TDR result must come
 from a guest run; compiling the executable or parsing the scripts does not prove
 recovery.
