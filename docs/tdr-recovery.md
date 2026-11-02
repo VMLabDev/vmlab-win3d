@@ -115,6 +115,24 @@ successful process exits; the eight mapping-loss cases must report device loss,
 backend failure, and exactly one reset callback. Both phases passed on Windows
 PowerShell `5.1.26100.9711`. These focused checks do not prove GPU quiescence.
 
+## Accepted native verification
+
+Package `0.1.3`, KMD `100.6.101.58104`, passed four fresh native first boots
+from template `26100.1742.10#win3d`, twice on NVIDIA and twice on AMD. All 24
+Vulkan and x64/x86 D3D11 rendering results passed exact RGB readback before
+and after forced TDR. Each run advanced both recovery counters from zero to
+one, returned successful reset/restart statuses, restored TdrTestMode, and
+continued without a bugcheck or OS reboot. Frozen fence snapshots were
+`5589/5589`, `5580/5580`, `5534/5534`, and `5734/5734`; pending preemption
+was zero. These drained snapshots do not identify the original unforced stall.
+
+A OneDrive access violation in `ucrtbase.dll`, exception `c0000005` at offset
+`ee3e7`, appeared after forced TDR in three runs. The owner explicitly excluded
+OneDrive from this task and stopped that investigation. It was deliberately
+not pursued and does not block acceptance. The acceptance bar is recovered
+Vulkan plus x64/x86 D3D11 readback with no bugcheck. Existing WER evidence is
+retained; no claim is made about the OneDrive fault's cause.
+
 This document describes the test contract. A passing forced-TDR result must come
 from a guest run; compiling the executable or parsing the scripts does not prove
 recovery.
