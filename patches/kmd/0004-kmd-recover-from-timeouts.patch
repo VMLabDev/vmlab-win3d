@@ -543,7 +543,7 @@ index bf6beda..bc44f55 100644
  
  #if defined(DBG)
 diff --git a/viogpu/viogpu3d/viogpu_adapter.cpp b/viogpu/viogpu3d/viogpu_adapter.cpp
-index 20fe40c..3d09c90 100644
+index 20fe40c..317e3a0 100644
 --- a/viogpu/viogpu3d/viogpu_adapter.cpp
 +++ b/viogpu/viogpu3d/viogpu_adapter.cpp
 @@ -169,6 +169,17 @@ VioGpuAdapter::VioGpuAdapter(_In_ DEVICE_OBJECT *pPhysicalDeviceObject)
@@ -639,7 +639,7 @@ index 20fe40c..3d09c90 100644
                  }
                  break;
              default:
-@@ -1324,6 +1352,34 @@ NTSTATUS VioGpuAdapter::Escape(_In_ CONST DXGKARG_ESCAPE *pEscape)
+@@ -1324,6 +1352,40 @@ NTSTATUS VioGpuAdapter::Escape(_In_ CONST DXGKARG_ESCAPE *pEscape)
  
      VIOGPU_ASSERT(pEscape != NULL);
  
@@ -665,6 +665,12 @@ index 20fe40c..3d09c90 100644
 +            return STATUS_INVALID_PARAMETER;
 +    KeWaitForSingleObject(&m_recoveryMutex, Executive, KernelMode, FALSE, NULL);
 +        *out = m_tdr;
++        if (!out->ResetCount)
++        {
++            out->LastSubmittedFence = InterlockedCompareExchange(&m_lastSubmittedFence[VIOGPU_RENDER_NODE][0], 0, 0);
++            out->LastCompletedFence = InterlockedCompareExchange(&m_lastNotifiedFence[VIOGPU_RENDER_NODE][0], 0, 0);
++            out->PendingPreemptionFence = InterlockedCompareExchange(&m_pendingPreemptionFence[VIOGPU_RENDER_NODE][0], 0, 0);
++        }
 +    KeReleaseMutex(&m_recoveryMutex, FALSE);
 +        return STATUS_SUCCESS;
 +    }
@@ -674,7 +680,7 @@ index 20fe40c..3d09c90 100644
      DbgPrint(TRACE_LEVEL_INFORMATION, ("<---> %s Flags = %d\n", __FUNCTION__, pEscape->Flags.Value));
      PAGED_CODE();
      PVIOGPU_ESCAPE pVioGpuEscape = (PVIOGPU_ESCAPE)pEscape->pPrivateDriverData;
-@@ -1342,6 +1398,11 @@ NTSTATUS VioGpuAdapter::Escape(_In_ CONST DXGKARG_ESCAPE *pEscape)
+@@ -1342,6 +1404,11 @@ NTSTATUS VioGpuAdapter::Escape(_In_ CONST DXGKARG_ESCAPE *pEscape)
          return STATUS_INVALID_BUFFER_SIZE;
      }
  
@@ -686,7 +692,7 @@ index 20fe40c..3d09c90 100644
      switch (pVioGpuEscape->Type)
      {
          case VIOGPU_QUERY_TIMELINE_SUBMIT:
-@@ -1927,6 +1988,7 @@ NTSTATUS VioGpuAdapter::PreemptCommand(_In_ CONST DXGKARG_PREEMPTCOMMAND *pPreem
+@@ -1927,6 +1994,7 @@ NTSTATUS VioGpuAdapter::PreemptCommand(_In_ CONST DXGKARG_PREEMPTCOMMAND *pPreem
      UINT nodeOrdinal = pPreemptCommand->NodeOrdinal;
      UINT engineOrdinal = pPreemptCommand->EngineOrdinal;
      UINT preemptionFenceId = pPreemptCommand->PreemptionFenceId;
@@ -694,7 +700,7 @@ index 20fe40c..3d09c90 100644
  
      if (nodeOrdinal >= kMaxTrackedNodes || engineOrdinal >= kMaxTrackedEngines)
      {
-@@ -2043,7 +2105,9 @@ void VioGpuAdapter::RecordDmaSubmittedForPreemption(UINT fenceId,
+@@ -2043,7 +2111,9 @@ void VioGpuAdapter::RecordDmaSubmittedForPreemption(UINT fenceId,
      }
  
      LONG outstanding = InterlockedIncrement(&m_preemptSubmittedOutstanding[nodeOrdinal][engineOrdinal]);
@@ -704,7 +710,7 @@ index 20fe40c..3d09c90 100644
      if (pendingFence != 0)
      {
          DbgPrint(TRACE_LEVEL_WARNING,
-@@ -2072,6 +2136,7 @@ void VioGpuAdapter::RecordDmaCompletionForPreemptionFromIsr(UINT fenceId,
+@@ -2072,6 +2142,7 @@ void VioGpuAdapter::RecordDmaCompletionForPreemptionFromIsr(UINT fenceId,
      }
  
      LONG outstanding = InterlockedDecrement(&m_preemptSubmittedOutstanding[nodeOrdinal][engineOrdinal]);
@@ -712,7 +718,7 @@ index 20fe40c..3d09c90 100644
      if (outstanding < 0)
      {
          DbgPrint(TRACE_LEVEL_WARNING,
-@@ -2227,6 +2292,95 @@ VOID VioGpuAdapter::ResetDevice(VOID)
+@@ -2227,6 +2298,95 @@ VOID VioGpuAdapter::ResetDevice(VOID)
      DbgPrint(TRACE_LEVEL_VERBOSE, ("<---> %s\n", __FUNCTION__));
  }
  
@@ -808,7 +814,7 @@ index 20fe40c..3d09c90 100644
  #pragma code_seg(pop) // End Non-Paged Code
  
  PAGED_CODE_SEG_BEGIN
-@@ -2475,7 +2629,8 @@ NTSTATUS VioGpuAdapter::VioGpuAdapterInit()
+@@ -2475,7 +2635,8 @@ NTSTATUS VioGpuAdapter::VioGpuAdapterInit()
          return status;
      }
  
@@ -818,7 +824,7 @@ index 20fe40c..3d09c90 100644
  
      m_u64HostFeatures = virtio_get_features(&m_VioDev);
      m_u64GuestFeatures = 0;
-@@ -2552,6 +2707,7 @@ NTSTATUS VioGpuAdapter::VioGpuAdapterInit()
+@@ -2552,6 +2713,7 @@ NTSTATUS VioGpuAdapter::VioGpuAdapterInit()
      if (status == STATUS_SUCCESS)
      {
          virtio_device_ready(&m_VioDev);
@@ -826,7 +832,7 @@ index 20fe40c..3d09c90 100644
          InterlockedExchange(&m_InterruptsClosing, 0);
          SetHardwareInit(TRUE);
      }
-@@ -2615,6 +2771,218 @@ void VioGpuAdapter::VioGpuAdapterClose()
+@@ -2615,6 +2777,220 @@ void VioGpuAdapter::VioGpuAdapterClose()
      DbgPrint(TRACE_LEVEL_FATAL, ("<--- %s\n", __FUNCTION__));
  }
  
@@ -983,7 +989,9 @@ index 20fe40c..3d09c90 100644
 +    Trace(6);
 +    CopyTrace(&m_timeoutTrace);
 +    m_tdr.RecoveryState = 1;
-+    m_tdr.LastSubmittedFence = m_tdr.LastCompletedFence = m_tdr.PendingPreemptionFence = 0;
++    m_tdr.LastSubmittedFence = m_lastSubmittedFence[VIOGPU_RENDER_NODE][0];
++    m_tdr.LastCompletedFence = m_lastNotifiedFence[VIOGPU_RENDER_NODE][0];
++    m_tdr.PendingPreemptionFence = m_pendingPreemptionFence[VIOGPU_RENDER_NODE][0];
 +    // Capture every engine before discarding its reset generation. Preserve
 +    // the first outstanding engine in the read-only recovery diagnostics.
 +    BOOLEAN captured = FALSE;
@@ -1045,7 +1053,7 @@ index 20fe40c..3d09c90 100644
  void VioGpuAdapter::SynchronizeInterruptsForClose(void)
  {
      PAGED_CODE();
-@@ -3068,18 +3436,17 @@ BOOLEAN VioGpuAdapter::InterruptRoutine(_In_ ULONG MessageNumber)
+@@ -3068,18 +3444,17 @@ BOOLEAN VioGpuAdapter::InterruptRoutine(_In_ ULONG MessageNumber)
      {
          UNREFERENCED_PARAMETER(MessageNumber);
          UCHAR isrstat = virtio_read_isr_status(&m_VioDev);
@@ -1074,7 +1082,7 @@ index 20fe40c..3d09c90 100644
      }
  
      if (serviced)
-@@ -3091,6 +3458,10 @@ BOOLEAN VioGpuAdapter::InterruptRoutine(_In_ ULONG MessageNumber)
+@@ -3091,6 +3466,10 @@ BOOLEAN VioGpuAdapter::InterruptRoutine(_In_ ULONG MessageNumber)
  
              while ((pvbuf = ctrlQueue.DequeueBufferFromIsr(&len)) != NULL)
              {
@@ -1085,7 +1093,7 @@ index 20fe40c..3d09c90 100644
                  if (pvbuf->complete_cb == VioGpuCommand::RunningCbDone && pvbuf->complete_ctx != NULL)
                  {
                      VioGpuCommand *cmd = reinterpret_cast<VioGpuCommand *>(pvbuf->complete_ctx);
-@@ -3106,6 +3477,7 @@ BOOLEAN VioGpuAdapter::InterruptRoutine(_In_ ULONG MessageNumber)
+@@ -3106,6 +3485,7 @@ BOOLEAN VioGpuAdapter::InterruptRoutine(_In_ ULONG MessageNumber)
                          // DMA and later engine retirements for the scheduler's
                          // existing timeout/reset path; never signal success.
                          cmd->Retirement.Failed = 1;

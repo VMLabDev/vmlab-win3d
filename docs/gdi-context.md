@@ -22,7 +22,7 @@ also requires initialized hardware so it cannot queue this command on a closed
 adapter.
 
 This fix first shipped in KMD `100.6.101.58101`, above the old package.
-The timeout-recovery candidate uses `100.6.101.58102`; see `tdr-recovery.md`.
+The timeout-recovery candidate uses `100.6.101.58103`; see `tdr-recovery.md`.
 Upstream licence headers are unchanged; `viogpu_device.cpp` remains MPL-2.0.
 No QEMU code is used.
 

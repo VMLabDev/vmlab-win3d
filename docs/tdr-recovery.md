@@ -55,8 +55,11 @@ fence, response, ISR status, and preemption fields. A timeout freezes its
 pre-reset ring; ordinary traffic after restart cannot overwrite that snapshot.
 Event values are 1 submit, 2 completion, 3 preempt, 4 ISR status, 5 response,
 6 reset start, 7 reset completion, 8 restart completion, and 9 power transition.
-The `VGTD` status also retains the last submitted/completed fence and pending
-preemption from the first outstanding engine at reset.
+The `VGTD` status retains the last submitted/completed fence and pending
+preemption from the first outstanding engine at reset. If every engine has
+drained, it retains the render engine's matching fence values. Before the first
+timeout it reports live render-engine values. These are OS DMA fences, distinct
+from Vulkan's user-mode synchronization and unfenced control requests.
 
 ## Backend prerequisite
 

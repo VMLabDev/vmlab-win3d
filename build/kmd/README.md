@@ -31,7 +31,7 @@ sources, kits and toolchain are mounted read-only. Each run deletes
 | Variable | Default | Effect |
 | --- | --- | --- |
 | `WIN3D_CACHE` | `.scratch/cache` | Download and unpack cache |
-| `KMD_DRIVER_VERSION` | `100.6.101.58102` | The PE version resource and the INF's `DriverVer` version. This timeout-recovery build ranks above the GDI-context build `58101`, upstream `58000`, and the prior art's r10 build `58001`. |
+| `KMD_DRIVER_VERSION` | `100.6.101.58103` | The PE version resource and the INF's `DriverVer` version. This build preserves drained-fence diagnostics above initial timeout recovery `58102`, GDI context creation `58101`, upstream `58000`, and the prior art's r10 build `58001`. |
 
 ## Outputs
 
