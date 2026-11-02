@@ -126,7 +126,7 @@ continued without a bugcheck or OS reboot. Frozen fence snapshots were
 `5589/5589`, `5580/5580`, `5534/5534`, and `5734/5734`; pending preemption
 was zero. These drained snapshots do not identify the original unforced stall.
 
-A OneDrive access violation in `ucrtbase.dll`, exception `c0000005` at offset
+A OneDrive access violation in `ucrtbase.dll`, exception `0xc0000005` at offset
 `ee3e7`, appeared after forced TDR in three runs. The owner explicitly excluded
 OneDrive from this task and stopped that investigation. It was deliberately
 not pursued and does not block acceptance. The acceptance bar is recovered
