@@ -18,8 +18,8 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 REPO=$(cd "$HERE/../.." && pwd)
 CACHE=${WIN3D_CACHE:-$REPO/.scratch/cache}
 OUT=$REPO/out/kmd
-# 58103 preserves drained-fence diagnostics above the initial recovery build (58102).
-DRIVER_VERSION=${KMD_DRIVER_VERSION:-100.6.101.58103}
+# 58104 identifies the package with native x86 UMD mapping-fault handling.
+DRIVER_VERSION=${KMD_DRIVER_VERSION:-100.6.101.58104}
 IMAGE=vmlab-win3d/kmd-build:1
 
 pin() { awk -v n="$1" '$1 == n { print $'"$2"' }' "$HERE/PINS"; }

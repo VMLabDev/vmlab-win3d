@@ -87,10 +87,20 @@ after the separate ring check succeeds.
 Mesa patch 0093 uses checked ring accesses for feedback reads and writes.
 Mapping failure marks the backend failed, invokes its existing reset callback,
 and returns `VK_ERROR_DEVICE_LOST` or a rejected store. A host-fence success
-cannot override feedback device loss. x64 uses native SEH; the pinned x86
-compiler cannot emit the production SEH filters, so x86 uses Windows checked
-copies confined to the current process. The native D3D11 x64/x86 checks verify
-healthy GPU-aperture access before and after TDR.
+cannot override feedback device loss. x64 uses compiler SEH. The pinned
+GNU-target x86 compiler cannot emit its SEH filters, so x86 registers a
+thread-scoped exception frame around the direct memory-access leaves. Its
+SafeSEH-listed handler accepts access/in-page faults during normal dispatch.
+A C setjmp boundary returns failure and restores the prior exception chain.
+Unrelated and unwind exceptions continue searching. No C++ objects are
+abandoned at this boundary.
+
+An intermediate checked-copy candidate passed private-page fault tests but
+failed native x86 D3D11 startup on both NVIDIA and AMD with
+`DXGI_ERROR_DEVICE_REMOVED`, before forced TDR. It is not an accepted package.
+The direct-access replacement must also pass live x64/x86 D3D11 readback
+before and after TDR; private-page checks alone do not establish GPU-aperture
+access.
 
 `probes/feedback-loss/build.py` links the actual production feedback, ring,
 and reset-callback code using the materialized Mesa build's compiler and link
