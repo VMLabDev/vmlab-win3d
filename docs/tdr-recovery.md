@@ -90,10 +90,14 @@ and returns `VK_ERROR_DEVICE_LOST` or a rejected store. A host-fence success
 cannot override feedback device loss. x64 uses compiler SEH. The pinned
 GNU-target x86 compiler cannot emit its SEH filters, so x86 registers a
 thread-scoped exception frame around the direct memory-access leaves. Its
-SafeSEH-listed handler accepts access/in-page faults during normal dispatch.
-A C setjmp boundary returns failure and restores the prior exception chain.
+handler accepts access/in-page faults during normal dispatch. A C setjmp
+boundary returns failure and restores the prior exception chain.
 Unrelated and unwind exceptions continue searching. No C++ objects are
 abandoned at this boundary.
+
+The x86 object emits a SafeSEH annotation, but the current MinGW DLL load
+configuration has no SafeSEH table. The native checks exercise Windows'
+default exception dispatch; they do not establish SafeSEH table enforcement.
 
 An intermediate checked-copy candidate passed private-page fault tests but
 failed native x86 D3D11 startup on both NVIDIA and AMD with

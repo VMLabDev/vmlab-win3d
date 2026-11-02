@@ -12,7 +12,7 @@ precedence over an earlier host-fence success.
 Keep compiler SEH where supported. The pinned GNU-target x86 compiler cannot
 emit its SEH filters, so use a thread-scoped x86 exception-registration record
 and a C setjmp boundary around the direct memory-access leaves. Register the
-handler in SafeSEH metadata and restore the prior exception chain after both
+handler's SafeSEH object annotation and restore the prior exception chain after both
 success and failure. Only access/in-page faults during normal dispatch are
 handled; unrelated and unwind exceptions continue searching.
 
