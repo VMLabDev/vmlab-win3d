@@ -1,0 +1,1520 @@
+diff --git a/viogpu/common/viogpu_queue.cpp b/viogpu/common/viogpu_queue.cpp
+index ead5cfd..090cfa9 100644
+--- a/viogpu/common/viogpu_queue.cpp
++++ b/viogpu/common/viogpu_queue.cpp
+@@ -80,6 +80,9 @@ typedef struct _CTRL_QUEUE_WAIT_CTX
+     KEVENT event;
+     NTSTATUS status;
+     volatile LONG refs;
++    volatile LONG completion_state;
++    ULONG timeout_ms;
++    CtrlQueue *queue;
+ } CTRL_QUEUE_WAIT_CTX, *PCTRL_QUEUE_WAIT_CTX;
+ 
+ static PCTRL_QUEUE_WAIT_CTX CtrlQueueAllocWaitCtx(void)
+@@ -149,18 +152,28 @@ static void CtrlQueueWaitCompleteCB(void *ctx_void)
+         }
+     }
+ 
+-    KeSetEvent(&ctx->event, IO_NO_INCREMENT, FALSE);
++    LONG previous = InterlockedCompareExchange(&ctx->completion_state, 1, 0);
++    if (previous == 2 && !ctx->vbuf->auto_release)
++    {
++        ctx->queue->ReleaseBuffer(ctx->vbuf);
++    }
++    else
++    {
++        KeSetEvent(&ctx->event, IO_NO_INCREMENT, FALSE);
++    }
+     CtrlQueueReleaseWaitCtx(ctx);
+ }
+ 
+-static NTSTATUS CtrlQueueWaitForCompletion(PCTRL_QUEUE_WAIT_CTX ctx)
++static NTSTATUS CtrlQueueWaitForCompletion(PCTRL_QUEUE_WAIT_CTX ctx, BOOLEAN *completed = NULL)
+ {
+     ULONG timeoutCount = 0;
++    if (completed)
++        *completed = TRUE;
+ 
+     for (;;)
+     {
+         LARGE_INTEGER timeout = {};
+-        timeout.QuadPart = Int32x32To64(VIOGPU_CTRL_WAIT_LOG_INTERVAL_MS, -10000);
++        timeout.QuadPart = Int32x32To64(ctx->timeout_ms ? ctx->timeout_ms : VIOGPU_CTRL_WAIT_LOG_INTERVAL_MS, -10000);
+ 
+         NTSTATUS status = KeWaitForSingleObject(&ctx->event,
+                                                 Executive,
+@@ -169,6 +182,15 @@ static NTSTATUS CtrlQueueWaitForCompletion(PCTRL_QUEUE_WAIT_CTX ctx)
+                                                 &timeout);
+         if (status == STATUS_TIMEOUT)
+         {
++            if (ctx->timeout_ms && InterlockedCompareExchange(&ctx->completion_state, 2, 0) == 0)
++            {
++                // Keep the descriptor, callback context and payload alive. Its
++                // later completion or reset cancellation reclaims the buffer.
++                if (completed)
++                    *completed = FALSE;
++                CtrlQueueReleaseWaitCtx(ctx);
++                return STATUS_IO_TIMEOUT;
++            }
+             timeoutCount++;
+             DbgPrint(TRACE_LEVEL_WARNING,
+                      ("%s ctrlq request still pending after %lu x %u ms vbuf=%p command_type=0x%x ctx_id=%u\n",
+@@ -205,16 +227,17 @@ static NTSTATUS CtrlQueueWaitForCompletion(PCTRL_QUEUE_WAIT_CTX ctx)
+ // Submit a control-queue buffer and wait for the host's response using a
+ // heap-allocated, reference-counted wait context.
+ //
+-// The five-second interval is diagnostic only. A timeout does not cancel a
+-// virtqueue descriptor, so the waiter logs and continues waiting for the same
+-// request rather than abandoning it or submitting a duplicate.
++// By default the five-second interval is diagnostic only. Bounded restore
++// waits retain descriptor ownership until completion or reset cancellation;
++// returning a timeout never releases memory still visible to the device.
+ //
+ //   STATUS_SUCCESS - host replied OK; the caller owns vbuf and must
+ //                    ReleaseBuffer() it after reading the response.
+ //   failure        - the queue rejected the buffer before submission or the
+-//                    host returned an error response; vbuf has been reclaimed.
++//                    host returned an error response, or a bounded wait expired;
++//                    the caller must not use or release vbuf.
+ //
+-NTSTATUS CtrlQueue::QueueSyncBuffer(PGPU_VBUFFER vbuf)
++NTSTATUS CtrlQueue::QueueSyncBuffer(PGPU_VBUFFER vbuf, ULONG timeoutMs, UINT expectedResponse)
+ {
+     PCTRL_QUEUE_WAIT_CTX wait_ctx = CtrlQueueAllocWaitCtx();
+     if (!wait_ctx)
+@@ -225,6 +248,9 @@ NTSTATUS CtrlQueue::QueueSyncBuffer(PGPU_VBUFFER vbuf)
+     }
+ 
+     CtrlQueueSetWaitBuffer(wait_ctx, vbuf);
++    wait_ctx->timeout_ms = timeoutMs;
++    wait_ctx->expected_response_type = expectedResponse;
++    wait_ctx->queue = this;
+     vbuf->complete_cb = CtrlQueueWaitCompleteCB;
+     vbuf->complete_ctx = wait_ctx;
+     vbuf->auto_release = false; // caller owns vbuf on success
+@@ -238,8 +264,9 @@ NTSTATUS CtrlQueue::QueueSyncBuffer(PGPU_VBUFFER vbuf)
+         return STATUS_UNSUCCESSFUL;
+     }
+ 
+-    NTSTATUS status = CtrlQueueWaitForCompletion(wait_ctx);
+-    if (!NT_SUCCESS(status))
++    BOOLEAN completed;
++    NTSTATUS status = CtrlQueueWaitForCompletion(wait_ctx, &completed);
++    if (!NT_SUCCESS(status) && completed)
+     {
+         // The host returned the descriptor with an error response. The caller
+         // will not inspect it, so reclaim the completed buffer here.
+@@ -248,12 +275,90 @@ NTSTATUS CtrlQueue::QueueSyncBuffer(PGPU_VBUFFER vbuf)
+     return status;
+ }
+ 
++NTSTATUS CtrlQueue::QueueRestoreBuffer(PGPU_VBUFFER vbuf)
++{
++    NTSTATUS status = QueueSyncBuffer(vbuf, VIOGPU_CTRL_WAIT_LOG_INTERVAL_MS, VIRTIO_GPU_RESP_OK_NODATA);
++    if (NT_SUCCESS(status))
++        ReleaseBuffer(vbuf);
++    return status;
++}
++
++NTSTATUS CtrlQueue::CreateCtxWait(UINT ctx_id, UINT context_init)
++{
++    PAGED_CODE();
++    PGPU_VBUFFER vbuf;
++    PGPU_CMD_CTX_CREATE cmd = (PGPU_CMD_CTX_CREATE)AllocCmd(&vbuf, sizeof(*cmd));
++    if (!cmd)
++        return STATUS_INSUFFICIENT_RESOURCES;
++    RtlZeroMemory(cmd, sizeof(*cmd));
++    cmd->hdr.type = VIRTIO_GPU_CMD_CTX_CREATE;
++    cmd->hdr.ctx_id = ctx_id;
++    cmd->context_init = context_init;
++    return QueueRestoreBuffer(vbuf);
++}
++
++NTSTATUS CtrlQueue::CreateResource3DWait(UINT res_id, VIOGPU_RESOURCE_OPTIONS *options)
++{
++    PAGED_CODE();
++    PGPU_VBUFFER vbuf;
++    PGPU_CMD_RES_CREATE_3D cmd = (PGPU_CMD_RES_CREATE_3D)AllocCmd(&vbuf, sizeof(*cmd));
++    if (!cmd)
++        return STATUS_INSUFFICIENT_RESOURCES;
++    RtlZeroMemory(cmd, sizeof(*cmd));
++    cmd->hdr.type = VIRTIO_GPU_CMD_RESOURCE_CREATE_3D;
++    cmd->res_id = res_id;
++    cmd->target = options->target;
++    cmd->format = options->format;
++    cmd->bind = options->bind;
++    cmd->width = options->width;
++    cmd->height = options->height;
++    cmd->depth = options->depth;
++    cmd->array_size = options->array_size;
++    cmd->last_level = options->last_level;
++    cmd->nr_samples = options->nr_samples;
++    return QueueRestoreBuffer(vbuf);
++}
++
++NTSTATUS CtrlQueue::AttachBackingWait(UINT res_id, PGPU_MEM_ENTRY ents, UINT nents)
++{
++    PAGED_CODE();
++    PGPU_VBUFFER vbuf;
++    PGPU_RES_ATTACH_BACKING cmd = (PGPU_RES_ATTACH_BACKING)AllocCmd(&vbuf, sizeof(*cmd));
++    if (!cmd)
++    {
++        delete[] ents;
++        return STATUS_INSUFFICIENT_RESOURCES;
++    }
++    RtlZeroMemory(cmd, sizeof(*cmd));
++    cmd->hdr.type = VIRTIO_GPU_CMD_RESOURCE_ATTACH_BACKING;
++    cmd->resource_id = res_id;
++    cmd->nr_entries = nents;
++    vbuf->data_buf = ents;
++    vbuf->data_size = sizeof(*ents) * nents;
++    return QueueRestoreBuffer(vbuf);
++}
++
++NTSTATUS CtrlQueue::AttachResourceToCtxWait(UINT ctx_id, UINT res_id)
++{
++    PAGED_CODE();
++    PGPU_VBUFFER vbuf;
++    PGPU_CMD_CTX_RESOURCE cmd = (PGPU_CMD_CTX_RESOURCE)AllocCmd(&vbuf, sizeof(*cmd));
++    if (!cmd)
++        return STATUS_INSUFFICIENT_RESOURCES;
++    RtlZeroMemory(cmd, sizeof(*cmd));
++    cmd->hdr.type = VIRTIO_GPU_CMD_CTX_ATTACH_RESOURCE;
++    cmd->hdr.ctx_id = ctx_id;
++    cmd->resource_id = res_id;
++    return QueueRestoreBuffer(vbuf);
++}
++
+ VioGpuQueue::VioGpuQueue()
+ {
+     m_pBuf = NULL;
+     m_Index = (UINT)-1;
+     m_pVIODevice = NULL;
+     m_pVirtQueue = NULL;
++    m_SubmissionsStopped = 0;
+     KeInitializeSpinLock(&m_SpinLock);
+ }
+ 
+@@ -279,10 +384,103 @@ BOOLEAN VioGpuQueue::Init(_In_ VirtIODevice *pVIODevice, _In_ struct virtqueue *
+     m_pVIODevice = pVIODevice;
+     m_pVirtQueue = pVirtQueue;
+     m_Index = index;
++    InterlockedExchange(&m_SubmissionsStopped, 0);
+     EnableInterrupt();
+     return TRUE;
+ }
+ 
++void VioGpuQueue::StopSubmissions(void)
++{
++    KIRQL savedIrql;
++    Lock(&savedIrql);
++    InterlockedExchange(&m_SubmissionsStopped, 1);
++    Unlock(savedIrql);
++}
++
++void VioGpuQueue::CancelBufferAfterReset(PGPU_VBUFFER buf)
++{
++    if (!buf)
++    {
++        return;
++    }
++
++    if (buf->resp_buf && buf->resp_size >= sizeof(GPU_CTRL_HDR))
++    {
++        RtlZeroMemory(buf->resp_buf, buf->resp_size);
++        reinterpret_cast<PGPU_CTRL_HDR>(buf->resp_buf)->type = VIRTIO_GPU_RESP_ERR_UNSPEC;
++    }
++
++    // A synchronous waiter may release its buffer as soon as its callback wakes
++    // it. Capture ownership first and leave caller-owned buffers untouched after
++    // invoking the callback.
++    bool autoRelease = buf->auto_release;
++    void (*completeCb)(void *) = buf->complete_cb;
++    void *completeCtx = buf->complete_ctx;
++    if (completeCb)
++    {
++        completeCb(completeCtx);
++    }
++    if (autoRelease)
++    {
++        ReleaseBuffer(buf);
++    }
++}
++
++void VioGpuQueue::CancelPendingAfterReset(void)
++{
++    ASSERT(m_SubmissionsStopped != 0);
++    LIST_ENTRY cancelled;
++    InitializeListHead(&cancelled);
++    PGPU_VBUFFER buf;
++    while (m_pVirtQueue &&
++           (buf = reinterpret_cast<PGPU_VBUFFER>(virtqueue_detach_unused_buf(m_pVirtQueue))) != NULL)
++    {
++        InsertTailList(&cancelled, &buf->ctrl_queue_entry);
++    }
++    while (!IsListEmpty(&cancelled))
++    {
++        buf = CONTAINING_RECORD(RemoveHeadList(&cancelled), GPU_VBUFFER, ctrl_queue_entry);
++        CancelBufferAfterReset(buf);
++    }
++}
++
++void CtrlQueue::StopSubmissions(void)
++{
++    PAGED_CODE();
++    VioGpuQueue::StopSubmissions();
++    KIRQL savedIrql;
++    KeAcquireSpinLock(&m_CtrlQueueSpinLock, &savedIrql);
++    BOOLEAN flushing = m_CtrlQueueFlushInProgress != 0;
++    KeReleaseSpinLock(&m_CtrlQueueSpinLock, savedIrql);
++    if (flushing)
++    {
++        KeWaitForSingleObject(&m_CtrlQueueFlushIdle, Executive, KernelMode, FALSE, NULL);
++    }
++}
++
++void CtrlQueue::CancelPendingAfterReset(void)
++{
++    ASSERT(m_SubmissionsStopped != 0);
++    ASSERT(m_CtrlQueueFlushInProgress == 0);
++    LIST_ENTRY cancelled;
++    InitializeListHead(&cancelled);
++    PLIST_ENTRY entry;
++    while ((entry = ExInterlockedRemoveHeadList(&m_CtrlQueueList, &m_CtrlQueueSpinLock)) != NULL)
++    {
++        InsertTailList(&cancelled, entry);
++    }
++
++    // Detach every descriptor before invoking callbacks: callbacks may release
++    // command objects shared by multiple buffers and re-enter queue methods.
++    VioGpuQueue::CancelPendingAfterReset();
++    while (!IsListEmpty(&cancelled))
++    {
++        PGPU_VBUFFER buf = CONTAINING_RECORD(RemoveHeadList(&cancelled), GPU_VBUFFER, ctrl_queue_entry);
++        CancelBufferAfterReset(buf);
++    }
++    InterlockedExchange(&m_CtrlQueueFlushRequested, 0);
++}
++
+ _IRQL_requires_max_(DISPATCH_LEVEL) _IRQL_saves_global_(OldIrql, Irql) _IRQL_raises_(DISPATCH_LEVEL) void VioGpuQueue::
+                                                                                                     Lock(KIRQL *Irql)
+ {
+@@ -1570,23 +1768,39 @@ UINT CtrlQueue::SubmitBuffer(PGPU_VBUFFER buf)
+ UINT CtrlQueue::Flush()
+ {
+     UINT ret = 0;
+-
+-    // A completion DPC must leave a request for the current flusher, even
+-    // when it cannot take ownership. It may have just returned descriptors
+-    // after SubmitBuffer observed a full virtqueue.
+-    InterlockedExchange(&m_CtrlQueueFlushRequested, 1);
+-    if (InterlockedCompareExchange(&m_CtrlQueueFlushInProgress, 1, 0) != 0)
++    KIRQL savedIrql;
++    KeAcquireSpinLock(&m_CtrlQueueSpinLock, &savedIrql);
++    if (m_SubmissionsStopped)
+     {
++        KeReleaseSpinLock(&m_CtrlQueueSpinLock, savedIrql);
+         return 0;
+     }
++    m_CtrlQueueFlushRequested = 1;
++    if (m_CtrlQueueFlushInProgress)
++    {
++        KeReleaseSpinLock(&m_CtrlQueueSpinLock, savedIrql);
++        return 0;
++    }
++    m_CtrlQueueFlushInProgress = 1;
++    KeClearEvent(&m_CtrlQueueFlushIdle);
++    KeReleaseSpinLock(&m_CtrlQueueSpinLock, savedIrql);
+ 
+     for (;;)
+     {
+-        InterlockedExchange(&m_CtrlQueueFlushRequested, 0);
++        KeAcquireSpinLock(&m_CtrlQueueSpinLock, &savedIrql);
++        m_CtrlQueueFlushRequested = 0;
++        KeReleaseSpinLock(&m_CtrlQueueSpinLock, savedIrql);
+ 
+-        PLIST_ENTRY entry;
+-        while ((entry = ExInterlockedRemoveHeadList(&m_CtrlQueueList, &m_CtrlQueueSpinLock)) != NULL)
++        for (;;)
+         {
++            KeAcquireSpinLock(&m_CtrlQueueSpinLock, &savedIrql);
++            if (m_SubmissionsStopped || IsListEmpty(&m_CtrlQueueList))
++            {
++                KeReleaseSpinLock(&m_CtrlQueueSpinLock, savedIrql);
++                break;
++            }
++            PLIST_ENTRY entry = RemoveHeadList(&m_CtrlQueueList);
++            KeReleaseSpinLock(&m_CtrlQueueSpinLock, savedIrql);
+             PGPU_VBUFFER queuedBuf = CONTAINING_RECORD(entry, GPU_VBUFFER, ctrl_queue_entry);
+ 
+             ret = SubmitBuffer(queuedBuf);
+@@ -1624,18 +1838,15 @@ UINT CtrlQueue::Flush()
+             break;
+         }
+ 
+-        InterlockedExchange(&m_CtrlQueueFlushInProgress, 0);
+-        // A producer or completion DPC may have requested another flush
+-        // while m_CtrlQueueFlushInProgress was still set.
+-        if (InterlockedCompareExchange(&m_CtrlQueueFlushRequested, 0, 0) == 0)
+-        {
+-            return ret;
+-        }
+-
+-        if (InterlockedCompareExchange(&m_CtrlQueueFlushInProgress, 1, 0) != 0)
++        KeAcquireSpinLock(&m_CtrlQueueSpinLock, &savedIrql);
++        if (m_SubmissionsStopped || !m_CtrlQueueFlushRequested)
+         {
++            m_CtrlQueueFlushInProgress = 0;
++            KeSetEvent(&m_CtrlQueueFlushIdle, IO_NO_INCREMENT, FALSE);
++            KeReleaseSpinLock(&m_CtrlQueueSpinLock, savedIrql);
+             return ret;
+         }
++        KeReleaseSpinLock(&m_CtrlQueueSpinLock, savedIrql);
+     }
+ }
+ 
+@@ -1651,8 +1862,20 @@ UINT CtrlQueue::QueueBuffer(PGPU_VBUFFER buf)
+         return (UINT)-1;
+     }
+ 
+-    ExInterlockedInsertTailList(&m_CtrlQueueList, &buf->ctrl_queue_entry, &m_CtrlQueueSpinLock);
+-    InterlockedExchange(&m_CtrlQueueFlushRequested, 1);
++    KIRQL savedIrql;
++    KeAcquireSpinLock(&m_CtrlQueueSpinLock, &savedIrql);
++    BOOLEAN stopped = m_SubmissionsStopped != 0;
++    if (!stopped)
++    {
++        InsertTailList(&m_CtrlQueueList, &buf->ctrl_queue_entry);
++        m_CtrlQueueFlushRequested = 1;
++    }
++    KeReleaseSpinLock(&m_CtrlQueueSpinLock, savedIrql);
++    if (stopped)
++    {
++        CancelBufferAfterReset(buf);
++        return 0;
++    }
+ 
+     // The buffer is now staged and owned by the queue. Flush() drains as much as
+     // the control virtqueue currently accepts; whatever it cannot submit right
+@@ -2231,6 +2454,12 @@ UINT CrsrQueue::QueueCursor(PGPU_VBUFFER buf)
+ 
+     ASSERT(outcnt);
+     Lock(&SavedIrql);
++    if (m_SubmissionsStopped)
++    {
++        Unlock(SavedIrql);
++        CancelBufferAfterReset(buf);
++        return 0;
++    }
+     ret = AddBuf(&sg[0], outcnt, 0, buf, NULL, 0);
+     Kick();
+     Unlock(SavedIrql);
+diff --git a/viogpu/common/viogpu_queue.h b/viogpu/common/viogpu_queue.h
+index 8c9f318..b149652 100644
+--- a/viogpu/common/viogpu_queue.h
++++ b/viogpu/common/viogpu_queue.h
+@@ -183,6 +183,10 @@ class VioGpuQueue
+     ~VioGpuQueue();
+     BOOLEAN Init(_In_ VirtIODevice *pVIODevice, _In_ struct virtqueue *pVirtQueue, _In_ UINT index);
+     void Close(void);
++    void StopSubmissions(void);
++    // The device must be reset and ISR/DPC access stopped before cancellation.
++    void CancelPendingAfterReset(void);
++    void CancelBufferAfterReset(PGPU_VBUFFER buf);
+     int AddBuf(_In_ struct VirtIOBufferDescriptor sg[],
+                _In_ UINT out_num,
+                _In_ UINT in_num,
+@@ -265,6 +269,7 @@ class VioGpuQueue
+ 
+   protected:
+     VioGpuBuf *m_pBuf;
++    volatile LONG m_SubmissionsStopped;
+ };
+ 
+ class CtrlQueue : public VioGpuQueue
+@@ -278,8 +283,11 @@ class CtrlQueue : public VioGpuQueue
+         m_CtrlQueueFlushInProgress = 0;
+         m_CtrlQueueFlushRequested = 0;
+         m_CtrlQueueFullRequeues = 0;
++        KeInitializeEvent(&m_CtrlQueueFlushIdle, NotificationEvent, TRUE);
+     };
+ 
++    void StopSubmissions(void);
++    void CancelPendingAfterReset(void);
+     PVOID AllocCmd(PGPU_VBUFFER *buf, int sz);
+     PVOID AllocCmdResp(PGPU_VBUFFER *buf, int cmd_sz, PVOID resp_buf, int resp_sz);
+ 
+@@ -294,6 +302,7 @@ class CtrlQueue : public VioGpuQueue
+ 
+     void CreateResource(UINT res_id, UINT format, UINT width, UINT height);
+     void CreateResource3D(UINT res_id, VIOGPU_RESOURCE_OPTIONS *options);
++    NTSTATUS CreateResource3DWait(UINT res_id, VIOGPU_RESOURCE_OPTIONS *options);
+ 
+     NTSTATUS CreateResourceBlob(UINT res_id,
+                                 ULONGLONG size,
+@@ -310,6 +319,7 @@ class CtrlQueue : public VioGpuQueue
+     void DestroyResource(UINT id);
+     void CtxResource(bool attach, UINT ctx_id, UINT res_id);
+     NTSTATUS CtxResourceWait(UINT ctx_id, UINT res_id);
++    NTSTATUS AttachResourceToCtxWait(UINT ctx_id, UINT res_id);
+ 
+     UINT SubmitCommand(void *cmdbuf,
+                        ULONG size,
+@@ -345,6 +355,7 @@ class CtrlQueue : public VioGpuQueue
+     void TransferToHost3D(UINT res_id, GPU_BOX *box);
+ 
+     void AttachBacking(UINT res_id, PGPU_MEM_ENTRY ents, UINT nents);
++    NTSTATUS AttachBackingWait(UINT res_id, PGPU_MEM_ENTRY ents, UINT nents);
+     void DetachBacking(UINT id);
+ 
+     BOOLEAN GetDisplayInfo(PGPU_VBUFFER buf, UINT id, PULONG xres, PULONG yres);
+@@ -355,6 +366,7 @@ class CtrlQueue : public VioGpuQueue
+     BOOLEAN AskCapset(PGPU_VBUFFER *buf, ULONG capset_id, ULONG capset_size, ULONG capset_version);
+ 
+     void CreateCtx(UINT ctx_id, UINT context_init);
++    NTSTATUS CreateCtxWait(UINT ctx_id, UINT context_init);
+     void DestroyCtx(UINT ctx_id);
+ 
+   private:
+@@ -365,16 +377,18 @@ class CtrlQueue : public VioGpuQueue
+                              BOOLEAN kickOnSuccess);
+     UINT SubmitBuffer(PGPU_VBUFFER buf);
+     UINT QueueBuffer(PGPU_VBUFFER buf);
+-    // Submit vbuf and wait for the host reply. Five-second waits are repeated
+-    // only to log stalled requests; a submitted request is never abandoned.
+-    // STATUS_SUCCESS => caller owns vbuf; failure => vbuf was reclaimed.
+-    NTSTATUS QueueSyncBuffer(PGPU_VBUFFER vbuf);
++    // timeoutMs == 0 repeats diagnostic waits. A bounded timeout transfers
++    // cleanup to the eventual completion or reset cancellation callback.
++    // STATUS_SUCCESS => caller owns vbuf; failure => caller must not use it.
++    NTSTATUS QueueSyncBuffer(PGPU_VBUFFER vbuf, ULONG timeoutMs = 0, UINT expectedResponse = 0);
++    NTSTATUS QueueRestoreBuffer(PGPU_VBUFFER vbuf);
+ 
+     volatile LONG m_FenceIdr;
+     LIST_ENTRY m_CtrlQueueList;
+     KSPIN_LOCK m_CtrlQueueSpinLock;
+     volatile LONG m_CtrlQueueFlushInProgress;
+     volatile LONG m_CtrlQueueFlushRequested;
++    KEVENT m_CtrlQueueFlushIdle;
+     // Count of transient "control vq full" re-stagings. Non-zero here means the
+     // queue is applying backpressure (packets staged, drained by a later Flush);
+     // it is NOT an error. Watch this to confirm how often the vq runs dry.
+diff --git a/viogpu/viogpu3d/driver.cpp b/viogpu/viogpu3d/driver.cpp
+index bf6beda..bc44f55 100644
+--- a/viogpu/viogpu3d/driver.cpp
++++ b/viogpu/viogpu3d/driver.cpp
+@@ -1441,10 +1441,7 @@ NTSTATUS
+ APIENTRY
+ VioGpu3DDdiRestartFromTimeout(_In_ CONST HANDLE hAdapter)
+ {
+-    UNREFERENCED_PARAMETER(hAdapter);
+-    DbgPrint(TRACE_LEVEL_ERROR, ("<---> %s UNSUPPORTED PREEMPTION FUNCTION\n", __FUNCTION__));
+-
+-    return STATUS_NOT_SUPPORTED;
++    return hAdapter ? static_cast<VioGpuAdapter *>(hAdapter)->RestartFromTimeout() : STATUS_INVALID_PARAMETER;
+ };
+ 
+ NTSTATUS
+@@ -1502,23 +1499,14 @@ NTSTATUS
+ APIENTRY
+ VioGpu3DDdiCollectDbgInfo(_In_ CONST HANDLE hAdapter, _In_ CONST DXGKARG_COLLECTDBGINFO *pCollectDbgInfo)
+ {
+-    UNREFERENCED_PARAMETER(hAdapter);
+-    UNREFERENCED_PARAMETER(pCollectDbgInfo);
+-
+-    DbgPrint(TRACE_LEVEL_ERROR, ("<---> %s UNSUPPORTED PREEMPTION FUNCTION\n", __FUNCTION__));
+-
+-    return STATUS_NOT_SUPPORTED;
++    return hAdapter ? static_cast<VioGpuAdapter *>(hAdapter)->CollectDbgInfo(pCollectDbgInfo) : STATUS_INVALID_PARAMETER;
+ };
+ 
+ NTSTATUS
+ APIENTRY
+ VioGpu3DDdiResetFromTimeout(_In_ CONST HANDLE hAdapter)
+ {
+-    UNREFERENCED_PARAMETER(hAdapter);
+-
+-    DbgPrint(TRACE_LEVEL_ERROR, ("<---> %s UNSUPPORTED PREEMPTION FUNCTION\n", __FUNCTION__));
+-
+-    return STATUS_NOT_SUPPORTED;
++    return hAdapter ? static_cast<VioGpuAdapter *>(hAdapter)->ResetFromTimeout() : STATUS_INVALID_PARAMETER;
+ };
+ 
+ #if defined(DBG)
+diff --git a/viogpu/viogpu3d/viogpu_adapter.cpp b/viogpu/viogpu3d/viogpu_adapter.cpp
+index 20fe40c..3d09c90 100644
+--- a/viogpu/viogpu3d/viogpu_adapter.cpp
++++ b/viogpu/viogpu3d/viogpu_adapter.cpp
+@@ -169,6 +169,17 @@ VioGpuAdapter::VioGpuAdapter(_In_ DEVICE_OBJECT *pPhysicalDeviceObject)
+     m_VsyncInterruptEnabled = 1;
+     KeInitializeSpinLock(&m_ctrlStageListLock);
+     InitializeListHead(&m_ctrlStageReadyList);
++    KeInitializeMutex(&m_recoveryMutex, 0);
++    KeInitializeMutex(&m_objectMutex, 0);
++    InitializeListHead(&m_devices);
++    InitializeListHead(&m_allocations);
++    InitializeListHead(&m_deviceAllocations);
++    InitializeListHead(&m_preparedCommands);
++    KeInitializeSpinLock(&m_preparedCommandLock);
++    m_tdr.Magic = 0x56475444;
++    m_tdr.Version = 1;
++    m_tdr.Size = sizeof(m_tdr);
++    RtlZeroMemory((void *)m_lastSubmittedFence, sizeof(m_lastSubmittedFence));
+ 
+     RtlZeroMemory(&m_VioDev, sizeof(m_VioDev));
+     m_Id = g_InstanceId++;
+@@ -485,6 +496,19 @@ NTSTATUS VioGpuAdapter::SetPowerState(_In_ ULONG HardwareUid,
+                                       _In_ POWER_ACTION ActionType)
+ {
+     PAGED_CODE();
++    // Runtime power DDIs are not serialized against TDR by dxgkrnl.
++    KeWaitForSingleObject(&m_recoveryMutex, Executive, KernelMode, FALSE, NULL);
++    NTSTATUS status = IsRecovering() ? STATUS_DEVICE_NOT_READY :
++        SetDevicePowerState(HardwareUid, DevicePowerState, ActionType);
++    KeReleaseMutex(&m_recoveryMutex, FALSE);
++    return status;
++}
++
++NTSTATUS VioGpuAdapter::SetDevicePowerState(ULONG HardwareUid,
++                                          DEVICE_POWER_STATE DevicePowerState,
++                                          POWER_ACTION ActionType)
++{
++    PAGED_CODE();
+ 
+     DbgPrint(TRACE_LEVEL_FATAL,
+              ("---> %s HardwareUid = 0x%x ActionType = %s DevicePowerState = %s AdapterPowerState = %s\n",
+@@ -496,6 +520,7 @@ NTSTATUS VioGpuAdapter::SetPowerState(_In_ ULONG HardwareUid,
+ 
+     if (HardwareUid == DISPLAY_ADAPTER_HW_ID)
+     {
++        Trace(9, 0, 0, 0, DevicePowerState);
+         NTSTATUS status = STATUS_SUCCESS;
+ 
+         if (DevicePowerState == PowerDeviceD0)
+@@ -528,18 +553,14 @@ NTSTATUS VioGpuAdapter::SetPowerState(_In_ ULONG HardwareUid,
+             case PowerDeviceUnspecified:
+             case PowerDeviceD0:
+                 {
+-                    status = VioGpuAdapterInit();
++                    if (IsHardwareInit())
++                        break;
++                    m_tdr.RecoveryState = 2;
++                    status = RestoreHostObjects();
+                     if (NT_SUCCESS(status))
+                     {
+-                        status = StartWorkThread();
+-                        if (NT_SUCCESS(status))
+-                        {
+-                            vidpn.StartVsyncTimer();
+-                        }
+-                        else
+-                        {
+-                            VioGpuAdapterClose();
+-                        }
++                        m_tdr.RecoveryState = 0;
++                        vidpn.StartVsyncTimer();
+                     }
+                 }
+                 break;
+@@ -547,10 +568,17 @@ NTSTATUS VioGpuAdapter::SetPowerState(_In_ ULONG HardwareUid,
+             case PowerDeviceD2:
+             case PowerDeviceD3:
+                 {
+-                    vidpn.StopVsyncTimer();
+-                    StopWorkThread();
+-                    vidpn.Powerdown();
+-                    VioGpuAdapterClose();
++                    if (!IsHardwareInit())
++                        break;
++                    m_tdr.RecoveryState = 1;
++                    InterlockedIncrement(&m_powerResetCount);
++                    status = QuiesceTransport();
++                    if (NT_SUCCESS(status))
++                    {
++                        m_preserveShmem = TRUE;
++                        InvalidateHostObjects();
++                        m_tdr.RecoveryState = 0;
++                    }
+                 }
+                 break;
+             default:
+@@ -1324,6 +1352,34 @@ NTSTATUS VioGpuAdapter::Escape(_In_ CONST DXGKARG_ESCAPE *pEscape)
+ 
+     VIOGPU_ASSERT(pEscape != NULL);
+ 
++    if (pEscape->pPrivateDriverData && pEscape->PrivateDriverDataSize >= sizeof(UINT32) &&
++        *(UINT32 *)pEscape->pPrivateDriverData == 0x56475458)
++    {
++        VIOGPU_TRACE *trace = static_cast<VIOGPU_TRACE *>(pEscape->pPrivateDriverData);
++        if (pEscape->PrivateDriverDataSize != sizeof(*trace) || trace->Version != 1 || trace->Size != sizeof(*trace))
++            return STATUS_INVALID_BUFFER_SIZE;
++        if (m_timeoutTrace.Magic == 0x56475458)
++            RtlCopyMemory(trace, &m_timeoutTrace, sizeof(*trace));
++        else
++            CopyTrace(trace);
++        return STATUS_SUCCESS;
++    }
++    if (pEscape->pPrivateDriverData && pEscape->PrivateDriverDataSize >= sizeof(UINT32) &&
++        *(UINT32 *)pEscape->pPrivateDriverData == 0x56475444)
++    {
++        if (pEscape->PrivateDriverDataSize != sizeof(m_tdr))
++            return STATUS_INVALID_BUFFER_SIZE;
++        VIOGPU_TDR_DIAGNOSTICS *out = static_cast<VIOGPU_TDR_DIAGNOSTICS *>(pEscape->pPrivateDriverData);
++        if (out->Version != 1 || out->Size != sizeof(m_tdr))
++            return STATUS_INVALID_PARAMETER;
++    KeWaitForSingleObject(&m_recoveryMutex, Executive, KernelMode, FALSE, NULL);
++        *out = m_tdr;
++    KeReleaseMutex(&m_recoveryMutex, FALSE);
++        return STATUS_SUCCESS;
++    }
++    if (IsRecovering())
++        return STATUS_DEVICE_REMOVED;
++
+     DbgPrint(TRACE_LEVEL_INFORMATION, ("<---> %s Flags = %d\n", __FUNCTION__, pEscape->Flags.Value));
+     PAGED_CODE();
+     PVIOGPU_ESCAPE pVioGpuEscape = (PVIOGPU_ESCAPE)pEscape->pPrivateDriverData;
+@@ -1342,6 +1398,11 @@ NTSTATUS VioGpuAdapter::Escape(_In_ CONST DXGKARG_ESCAPE *pEscape)
+         return STATUS_INVALID_BUFFER_SIZE;
+     }
+ 
++    VioGpuDevice *escapeDevice = reinterpret_cast<VioGpuDevice *>(pEscape->hDevice);
++    if (escapeDevice && escapeDevice->IsContextLost() &&
++        pVioGpuEscape->Type != VIOGPU_CTX_INIT && pVioGpuEscape->Type != VIOGPU_RES_UNMAP_BLOB)
++        return STATUS_DEVICE_REMOVED;
++
+     switch (pVioGpuEscape->Type)
+     {
+         case VIOGPU_QUERY_TIMELINE_SUBMIT:
+@@ -1927,6 +1988,7 @@ NTSTATUS VioGpuAdapter::PreemptCommand(_In_ CONST DXGKARG_PREEMPTCOMMAND *pPreem
+     UINT nodeOrdinal = pPreemptCommand->NodeOrdinal;
+     UINT engineOrdinal = pPreemptCommand->EngineOrdinal;
+     UINT preemptionFenceId = pPreemptCommand->PreemptionFenceId;
++    Trace(3, nodeOrdinal, engineOrdinal, 0, pPreemptCommand->Flags.Value, 0, 0, preemptionFenceId);
+ 
+     if (nodeOrdinal >= kMaxTrackedNodes || engineOrdinal >= kMaxTrackedEngines)
+     {
+@@ -2043,7 +2105,9 @@ void VioGpuAdapter::RecordDmaSubmittedForPreemption(UINT fenceId,
+     }
+ 
+     LONG outstanding = InterlockedIncrement(&m_preemptSubmittedOutstanding[nodeOrdinal][engineOrdinal]);
++    InterlockedExchange(&m_lastSubmittedFence[nodeOrdinal][engineOrdinal], fenceId);
+     LONG pendingFence = InterlockedCompareExchange(&m_pendingPreemptionFence[nodeOrdinal][engineOrdinal], 0, 0);
++    Trace(1, nodeOrdinal, engineOrdinal, ctxId, 0, fenceId, 0, pendingFence);
+     if (pendingFence != 0)
+     {
+         DbgPrint(TRACE_LEVEL_WARNING,
+@@ -2072,6 +2136,7 @@ void VioGpuAdapter::RecordDmaCompletionForPreemptionFromIsr(UINT fenceId,
+     }
+ 
+     LONG outstanding = InterlockedDecrement(&m_preemptSubmittedOutstanding[nodeOrdinal][engineOrdinal]);
++    Trace(2, nodeOrdinal, engineOrdinal, ctxId, 0, fenceId);
+     if (outstanding < 0)
+     {
+         DbgPrint(TRACE_LEVEL_WARNING,
+@@ -2227,6 +2292,95 @@ VOID VioGpuAdapter::ResetDevice(VOID)
+     DbgPrint(TRACE_LEVEL_VERBOSE, ("<---> %s\n", __FUNCTION__));
+ }
+ 
++void VioGpuAdapter::Trace(UINT event, UINT node, UINT engine, UINT context,
++                          UINT flags, UINT64 fence, UINT response, UINT pending)
++{
++    LONG64 sequence = InterlockedIncrement64(&m_traceSequence);
++    VIOGPU_TRACE_RECORD *record = &m_trace[(sequence - 1) % RTL_NUMBER_OF(m_trace)];
++    InterlockedExchange64(reinterpret_cast<volatile LONG64 *>(&record->Sequence), 0);
++    record->Tick = KeQueryInterruptTime();
++    record->Generation = m_transportGeneration;
++    record->Event = event;
++    record->Node = node;
++    record->Engine = engine;
++    record->Context = context;
++    record->Flags = flags;
++    record->Fence = fence;
++    record->Response = response;
++    record->PendingPreemption = pending;
++    InterlockedExchange64(reinterpret_cast<volatile LONG64 *>(&record->Sequence), sequence);
++}
++
++void VioGpuAdapter::CopyTrace(VIOGPU_TRACE *trace)
++{
++    trace->Magic = 0x56475458;
++    trace->Version = 1;
++    trace->Size = sizeof(*trace);
++    trace->Count = RTL_NUMBER_OF(m_trace);
++    trace->LastSequence = InterlockedCompareExchange64(&m_traceSequence, 0, 0);
++    for (UINT i = 0; i < RTL_NUMBER_OF(m_trace); ++i)
++    {
++        LONG64 before = InterlockedCompareExchange64(reinterpret_cast<volatile LONG64 *>(&m_trace[i].Sequence), 0, 0);
++        VIOGPU_TRACE_RECORD record = m_trace[i];
++        LONG64 after = InterlockedCompareExchange64(reinterpret_cast<volatile LONG64 *>(&m_trace[i].Sequence), 0, 0);
++        if (!before || before != after || record.Sequence != (UINT64)before)
++            RtlZeroMemory(&record, sizeof(record));
++        trace->Records[i] = record;
++    }
++}
++
++void VioGpuAdapter::RegisterPreparedCommand(VioGpuCommand *command)
++{
++    ExInterlockedInsertTailList(&m_preparedCommands, &command->m_preparedEntry, &m_preparedCommandLock);
++}
++
++void VioGpuAdapter::UnregisterPreparedCommand(VioGpuCommand *command)
++{
++    KIRQL oldIrql;
++    KeAcquireSpinLock(&m_preparedCommandLock, &oldIrql);
++    RemoveEntryList(&command->m_preparedEntry);
++    InitializeListHead(&command->m_preparedEntry);
++    KeReleaseSpinLock(&m_preparedCommandLock, oldIrql);
++}
++
++NTSTATUS VioGpuAdapter::CollectDbgInfo(CONST DXGKARG_COLLECTDBGINFO *info)
++{
++    // Fixed storage only: this timeout diagnostic runs at DISPATCH_LEVEL.
++    struct SNAPSHOT
++    {
++        VIOGPU_TDR_DIAGNOSTICS Recovery;
++        UINT32 Version, Size, Nodes, Engines;
++        LONG Submitted[kMaxTrackedNodes][kMaxTrackedEngines];
++        LONG Completed[kMaxTrackedNodes][kMaxTrackedEngines];
++        LONG Preemption[kMaxTrackedNodes][kMaxTrackedEngines];
++        LONG Outstanding[kMaxTrackedNodes][kMaxTrackedEngines];
++        LONG IntxCombined, BadTimelineResponse, Generation, PowerResets;
++    } snapshot = {};
++    if (!info || !info->pBuffer || info->BufferSize < sizeof(snapshot.Recovery))
++        return STATUS_BUFFER_TOO_SMALL;
++    snapshot.Recovery = m_tdr;
++    snapshot.Version = 1;
++    snapshot.Size = sizeof(snapshot);
++    snapshot.Nodes = kMaxTrackedNodes;
++    snapshot.Engines = kMaxTrackedEngines;
++    for (UINT node = 0; node < kMaxTrackedNodes; ++node)
++    {
++        for (UINT engine = 0; engine < kMaxTrackedEngines; ++engine)
++        {
++            snapshot.Submitted[node][engine] = InterlockedCompareExchange(&m_lastSubmittedFence[node][engine], 0, 0);
++            snapshot.Completed[node][engine] = InterlockedCompareExchange(&m_lastNotifiedFence[node][engine], 0, 0);
++            snapshot.Preemption[node][engine] = InterlockedCompareExchange(&m_pendingPreemptionFence[node][engine], 0, 0);
++            snapshot.Outstanding[node][engine] = InterlockedCompareExchange(&m_preemptSubmittedOutstanding[node][engine], 0, 0);
++        }
++    }
++    snapshot.IntxCombined = m_intxCombinedCount;
++    snapshot.BadTimelineResponse = m_badTimelineResponseCount;
++    snapshot.Generation = m_transportGeneration;
++    snapshot.PowerResets = m_powerResetCount;
++    RtlCopyMemory(info->pBuffer, &snapshot, min(info->BufferSize, sizeof(snapshot)));
++    return STATUS_SUCCESS;
++}
++
+ #pragma code_seg(pop) // End Non-Paged Code
+ 
+ PAGED_CODE_SEG_BEGIN
+@@ -2475,7 +2629,8 @@ NTSTATUS VioGpuAdapter::VioGpuAdapterInit()
+         return status;
+     }
+ 
+-    m_shmem_allocator.Init(m_VioDev.shmem_len);
++    if (!m_preserveShmem)
++        m_shmem_allocator.Init(m_VioDev.shmem_len);
+ 
+     m_u64HostFeatures = virtio_get_features(&m_VioDev);
+     m_u64GuestFeatures = 0;
+@@ -2552,6 +2707,7 @@ NTSTATUS VioGpuAdapter::VioGpuAdapterInit()
+     if (status == STATUS_SUCCESS)
+     {
+         virtio_device_ready(&m_VioDev);
++        InterlockedIncrement(&m_transportGeneration);
+         InterlockedExchange(&m_InterruptsClosing, 0);
+         SetHardwareInit(TRUE);
+     }
+@@ -2615,6 +2771,218 @@ void VioGpuAdapter::VioGpuAdapterClose()
+     DbgPrint(TRACE_LEVEL_FATAL, ("<--- %s\n", __FUNCTION__));
+ }
+ 
++void VioGpuAdapter::RegisterObject(LIST_ENTRY *entry, UINT kind)
++{
++    KeWaitForSingleObject(&m_objectMutex, Executive, KernelMode, FALSE, NULL);
++    InsertTailList(kind == 0 ? &m_devices : kind == 1 ? &m_allocations : &m_deviceAllocations, entry);
++    KeReleaseMutex(&m_objectMutex, FALSE);
++}
++
++void VioGpuAdapter::UnregisterObject(LIST_ENTRY *entry)
++{
++    KeWaitForSingleObject(&m_objectMutex, Executive, KernelMode, FALSE, NULL);
++    RemoveEntryList(entry);
++    InitializeListHead(entry);
++    KeReleaseMutex(&m_objectMutex, FALSE);
++}
++
++NTSTATUS VioGpuAdapter::QuiesceTransport()
++{
++    PAGED_CODE();
++    vidpn.StopVsyncTimer();
++    // Gate producers before synchronizing with the interrupt/DPC consumers.
++    // Do not join the config worker until reset cancellation wakes its wait.
++    ctrlQueue.StopSubmissions();
++    m_CursorQueue.StopSubmissions();
++    InterlockedExchange(&m_InterruptsClosing, 1);
++    SynchronizeInterruptsForClose();
++    ctrlQueue.DisableInterrupt();
++    m_CursorQueue.DisableInterrupt();
++    KeFlushQueuedDpcs();
++    virtio_device_reset(&m_VioDev);
++    if (virtio_get_status(&m_VioDev) != 0)
++        return STATUS_IO_TIMEOUT;
++    // Virtio reset acknowledgement ends device access to descriptor buffers
++    // and backing memory. Never release these before observing status zero.
++    SetHardwareInit(FALSE);
++    InterlockedExchange((PLONG)&m_PendingWorks, 0);
++    for (UINT node = 0; node < kMaxTrackedNodes; ++node)
++    {
++        for (UINT engine = 0; engine < kMaxTrackedEngines; ++engine)
++        {
++            VIOGPU_DMA_RETIREMENT_QUEUE *queue = &m_dmaRetirement[node][engine];
++            while (queue->Head)
++            {
++                VIOGPU_DMA_RETIREMENT *entry = queue->Head;
++                queue->Head = entry->Next;
++                entry->Next = NULL;
++                if (entry->Packet)
++                {
++                    PGPU_VBUFFER packet = static_cast<PGPU_VBUFFER>(entry->Packet);
++                    entry->Packet = NULL;
++                    CtrlStagePushFromIsr(packet, entry->Length);
++                }
++            }
++            queue->Tail = NULL;
++        }
++    }
++    // Detach every retirement list before any callback can free its command.
++    ctrlQueue.CancelPendingAfterReset();
++    m_CursorQueue.CancelPendingAfterReset();
++    PGPU_VBUFFER packet;
++    UINT length;
++    while (CtrlStagePopForDpc(&packet, &length))
++        ctrlQueue.CancelBufferAfterReset(packet);
++    LIST_ENTRY *prepared;
++    while ((prepared = ExInterlockedRemoveHeadList(&m_preparedCommands, &m_preparedCommandLock)) != NULL)
++    {
++        InitializeListHead(prepared);
++        CONTAINING_RECORD(prepared, VioGpuCommand, m_preparedEntry)->CancelBeforeRun();
++    }
++    StopWorkThread();
++    KeClearEvent(&m_ConfigUpdateEvent);
++    virtio_delete_queues(&m_VioDev);
++    ctrlQueue.Close();
++    m_CursorQueue.Close();
++    virtio_device_shutdown(&m_VioDev);
++    RtlZeroMemory((void *)m_lastNotifiedFence, sizeof(m_lastNotifiedFence));
++    RtlZeroMemory((void *)m_lastSubmittedFence, sizeof(m_lastSubmittedFence));
++    RtlZeroMemory((void *)m_preemptSubmittedOutstanding, sizeof(m_preemptSubmittedOutstanding));
++    RtlZeroMemory((void *)m_pendingPreemptionFence, sizeof(m_pendingPreemptionFence));
++    return STATUS_SUCCESS;
++}
++
++void VioGpuAdapter::InvalidateHostObjects()
++{
++    PAGED_CODE();
++    KeWaitForSingleObject(&m_objectMutex, Executive, KernelMode, FALSE, NULL);
++    for (LIST_ENTRY *entry = m_devices.Flink; entry != &m_devices; entry = entry->Flink)
++    {
++        VioGpuDevice *device = CONTAINING_RECORD(entry, VioGpuDevice, m_adapterEntry);
++        device->m_context_created = false;
++        device->m_context_lost = device->m_capset_id != 0;
++    }
++    for (LIST_ENTRY *entry = m_deviceAllocations.Flink; entry != &m_deviceAllocations; entry = entry->Flink)
++        CONTAINING_RECORD(entry, VioGpuDeviceAllocation, m_adapterEntry)->m_attached = false;
++    for (LIST_ENTRY *entry = m_allocations.Flink; entry != &m_allocations; entry = entry->Flink)
++        CONTAINING_RECORD(entry, VioGpuAllocation, m_adapterEntry)->InvalidateHostResource();
++    KeReleaseMutex(&m_objectMutex, FALSE);
++    vidpn.Powerdown();
++}
++
++NTSTATUS VioGpuAdapter::RestoreHostObjects()
++{
++    PAGED_CODE();
++    NTSTATUS status = VioGpuAdapterInit();
++    if (!NT_SUCCESS(status))
++        return status;
++    ctrlQueue.SetGpuBuf(&m_GpuBuf);
++    m_CursorQueue.SetGpuBuf(&m_GpuBuf);
++    KeWaitForSingleObject(&m_objectMutex, Executive, KernelMode, FALSE, NULL);
++    for (LIST_ENTRY *entry = m_devices.Flink; entry != &m_devices; entry = entry->Flink)
++    {
++        VioGpuDevice *device = CONTAINING_RECORD(entry, VioGpuDevice, m_adapterEntry);
++        // GDI contexts have no opaque UMD protocol state. A lost Vulkan or
++        // VirGL device must be recreated by its UMD, never replayed empty.
++        if (device->m_context_lost)
++            continue;
++        status = ctrlQueue.CreateCtxWait(device->m_id, device->m_capset_id);
++        if (!NT_SUCCESS(status))
++            break;
++        device->m_context_created = true;
++    }
++    for (LIST_ENTRY *entry = m_allocations.Flink; NT_SUCCESS(status) && entry != &m_allocations; entry = entry->Flink)
++        status = CONTAINING_RECORD(entry, VioGpuAllocation, m_adapterEntry)->RestoreHostResource();
++    for (LIST_ENTRY *entry = m_deviceAllocations.Flink; NT_SUCCESS(status) && entry != &m_deviceAllocations; entry = entry->Flink)
++    {
++        VioGpuDeviceAllocation *allocation = CONTAINING_RECORD(entry, VioGpuDeviceAllocation, m_adapterEntry);
++        if (allocation->m_pDevice->IsContextCreated() && allocation->m_pAllocation->IsValid() &&
++            (allocation->m_pAllocation->IsBlob() || !allocation->m_pDevice->IsVenusContext()))
++        {
++            status = ctrlQueue.AttachResourceToCtxWait(allocation->m_pDevice->GetId(), allocation->m_pAllocation->GetId());
++            allocation->m_attached = NT_SUCCESS(status);
++        }
++    }
++    KeReleaseMutex(&m_objectMutex, FALSE);
++    if (NT_SUCCESS(status))
++        status = StartWorkThread();
++    if (!NT_SUCCESS(status))
++    {
++        NTSTATUS resetStatus = QuiesceTransport();
++        if (!NT_SUCCESS(resetStatus))
++            return resetStatus;
++        InvalidateHostObjects();
++    }
++    return status;
++}
++
++NTSTATUS VioGpuAdapter::ResetFromTimeout()
++{
++    PAGED_CODE();
++    KeWaitForSingleObject(&m_recoveryMutex, Executive, KernelMode, FALSE, NULL);
++    ++m_tdr.ResetCount;
++    Trace(6);
++    CopyTrace(&m_timeoutTrace);
++    m_tdr.RecoveryState = 1;
++    m_tdr.LastSubmittedFence = m_tdr.LastCompletedFence = m_tdr.PendingPreemptionFence = 0;
++    // Capture every engine before discarding its reset generation. Preserve
++    // the first outstanding engine in the read-only recovery diagnostics.
++    BOOLEAN captured = FALSE;
++    InterlockedExchange(&m_InterruptsClosing, 1);
++    SynchronizeInterruptsForClose();
++    for (UINT node = 0; node < kMaxTrackedNodes; ++node)
++    {
++        for (UINT engine = 0; engine < kMaxTrackedEngines; ++engine)
++        {
++            UINT submitted = m_lastSubmittedFence[node][engine];
++            UINT completed = m_lastNotifiedFence[node][engine];
++            UINT pending = m_pendingPreemptionFence[node][engine];
++            if (!captured && (submitted != completed || pending))
++            {
++                m_tdr.LastSubmittedFence = submitted;
++                m_tdr.LastCompletedFence = completed;
++                m_tdr.PendingPreemptionFence = pending;
++                captured = TRUE;
++            }
++            if (submitted || completed || pending)
++                DbgPrint(TRACE_LEVEL_ERROR, ("TDR node=%u engine=%u submitted=%u completed=%u preemption=%u outstanding=%ld\n",
++                    node, engine, submitted, completed, pending, m_preemptSubmittedOutstanding[node][engine]));
++        }
++    }
++    NTSTATUS status = IsHardwareInit() ? QuiesceTransport() : STATUS_DEVICE_NOT_READY;
++    if (NT_SUCCESS(status))
++    {
++        m_preserveShmem = TRUE;
++        InvalidateHostObjects();
++    }
++    m_tdr.LastResetStatus = status;
++    Trace(7, 0, 0, 0, 0, 0, status);
++    KeReleaseMutex(&m_recoveryMutex, FALSE);
++    return status;
++}
++
++NTSTATUS VioGpuAdapter::RestartFromTimeout()
++{
++    PAGED_CODE();
++    KeWaitForSingleObject(&m_recoveryMutex, Executive, KernelMode, FALSE, NULL);
++    ++m_tdr.RestartCount;
++    NTSTATUS status = STATUS_DEVICE_NOT_READY;
++    if (m_tdr.RecoveryState == 1 && NT_SUCCESS((NTSTATUS)m_tdr.LastResetStatus))
++    {
++        m_tdr.RecoveryState = 2;
++        status = RestoreHostObjects();
++        if (NT_SUCCESS(status))
++        {
++            m_tdr.RecoveryState = 0;
++            vidpn.StartVsyncTimer();
++        }
++    }
++    m_tdr.LastRestartStatus = status;
++    Trace(8, 0, 0, 0, 0, 0, status);
++    KeReleaseMutex(&m_recoveryMutex, FALSE);
++    return status;
++}
++
+ void VioGpuAdapter::SynchronizeInterruptsForClose(void)
+ {
+     PAGED_CODE();
+@@ -3068,18 +3436,17 @@ BOOLEAN VioGpuAdapter::InterruptRoutine(_In_ ULONG MessageNumber)
+     {
+         UNREFERENCED_PARAMETER(MessageNumber);
+         UCHAR isrstat = virtio_read_isr_status(&m_VioDev);
++        Trace(4, 0, 0, 0, isrstat);
++        if ((isrstat & 3) == 3)
++            InterlockedIncrement(&m_intxCombinedCount);
+ 
+-        switch (isrstat)
+-        {
+-            case 1:
+-                intReason = (ISR_REASON_DISPLAY | ISR_REASON_CURSOR);
+-                break;
+-            case 3:
+-                intReason = ISR_REASON_CHANGE;
+-                break;
+-            default:
+-                serviced = FALSE;
+-        }
++        // ISR status is a bitmask, not an enum. A read acknowledges both
++        // bits, so status 3 must drain queues as well as refresh config.
++        if (isrstat & 1)
++            intReason |= ISR_REASON_DISPLAY | ISR_REASON_CURSOR;
++        if (isrstat & 2)
++            intReason |= ISR_REASON_CHANGE;
++        serviced = intReason != 0;
+     }
+ 
+     if (serviced)
+@@ -3091,6 +3458,10 @@ BOOLEAN VioGpuAdapter::InterruptRoutine(_In_ ULONG MessageNumber)
+ 
+             while ((pvbuf = ctrlQueue.DequeueBufferFromIsr(&len)) != NULL)
+             {
++                const PGPU_CTRL_HDR traceRequest = reinterpret_cast<PGPU_CTRL_HDR>(pvbuf->buf);
++                const PGPU_CTRL_HDR traceResponse = reinterpret_cast<PGPU_CTRL_HDR>(pvbuf->resp_buf);
++                Trace(5, 0, 0, traceRequest->ctx_id, traceRequest->flags,
++                      traceRequest->fence_id, traceResponse && len >= sizeof(*traceResponse) ? traceResponse->type : 0);
+                 if (pvbuf->complete_cb == VioGpuCommand::RunningCbDone && pvbuf->complete_ctx != NULL)
+                 {
+                     VioGpuCommand *cmd = reinterpret_cast<VioGpuCommand *>(pvbuf->complete_ctx);
+@@ -3106,6 +3477,7 @@ BOOLEAN VioGpuAdapter::InterruptRoutine(_In_ ULONG MessageNumber)
+                         // DMA and later engine retirements for the scheduler's
+                         // existing timeout/reset path; never signal success.
+                         cmd->Retirement.Failed = 1;
++                        InterlockedIncrement(&m_badTimelineResponseCount);
+                         DbgPrint(TRACE_LEVEL_ERROR,
+                                  ("%s GPU timeline response failed owner=viogpu3d fence=%u len=%u response=%#x; DMA retained for timeout/reset\n",
+                                   __FUNCTION__, cmd->GetSubmissionFenceId(), len,
+diff --git a/viogpu/viogpu3d/viogpu_adapter.h b/viogpu/viogpu3d/viogpu_adapter.h
+index 0bac394..1075c5f 100644
+--- a/viogpu/viogpu3d/viogpu_adapter.h
++++ b/viogpu/viogpu3d/viogpu_adapter.h
+@@ -61,6 +61,32 @@ struct CAPSET_INFO
+     ULONG id;
+ };
+ 
++// Read-only DRIVERPRIVATE escape. Fixed-width layout is shared with the TDR probe.
++struct VIOGPU_TDR_DIAGNOSTICS
++{
++    UINT32 Magic, Version, Size, Reserved;
++    UINT64 ResetCount, RestartCount;
++    UINT32 LastResetStatus, LastRestartStatus;
++    UINT64 LastSubmittedFence, LastCompletedFence, PendingPreemptionFence;
++    UINT32 RecoveryState, Reserved2;
++};
++static_assert(sizeof(VIOGPU_TDR_DIAGNOSTICS) == 72, "TDR diagnostics ABI");
++
++struct VIOGPU_TRACE_RECORD
++{
++    UINT64 Sequence, Tick;
++    UINT32 Generation, Event, Node, Engine, Context, Flags;
++    UINT64 Fence;
++    UINT32 Response, PendingPreemption;
++};
++struct VIOGPU_TRACE
++{
++    UINT32 Magic, Version, Size, Count;
++    UINT64 LastSequence;
++    VIOGPU_TRACE_RECORD Records[256];
++};
++static_assert(sizeof(VIOGPU_TRACE_RECORD) == 56 && sizeof(VIOGPU_TRACE) == 14360, "GPU trace ABI");
++
+ virtio_gpu_formats ColorFormat(UINT format);
+ 
+ class VioGpuAdapter : IVioGpuPCI, public IVioGpuQueueSync
+@@ -137,6 +163,21 @@ class VioGpuAdapter : IVioGpuPCI, public IVioGpuQueueSync
+     volatile LONG m_preemptionNotifyCount;
+     volatile LONG m_preemptionInvalidCount;
+     volatile LONG m_outOfOrderFenceDropCount;
++    volatile LONG m_lastSubmittedFence[kMaxTrackedNodes][kMaxTrackedEngines];
++    volatile LONG m_intxCombinedCount = 0;
++    volatile LONG m_badTimelineResponseCount = 0;
++    volatile LONG m_transportGeneration = 0;
++    volatile LONG m_powerResetCount = 0;
++    volatile LONG64 m_traceSequence = 0;
++    VIOGPU_TRACE_RECORD m_trace[256] = {};
++    VIOGPU_TRACE m_timeoutTrace = {};
++    KMUTEX m_recoveryMutex;
++    KMUTEX m_objectMutex;
++    LIST_ENTRY m_devices, m_allocations, m_deviceAllocations;
++    LIST_ENTRY m_preparedCommands;
++    KSPIN_LOCK m_preparedCommandLock;
++    VIOGPU_TDR_DIAGNOSTICS m_tdr = {};
++    BOOLEAN m_preserveShmem = FALSE;
+     CAPSET_INFO m_capsetInfos[VIRTIO_GPU_MAX_CAPSET_ID + 1];
+ 
+   public:
+@@ -234,6 +275,17 @@ class VioGpuAdapter : IVioGpuPCI, public IVioGpuQueueSync
+                                                  HANDLE ownerPid);
+     UINT GetLastNotifiedFence(UINT nodeOrdinal, UINT engineOrdinal);
+     BOOLEAN TrackDmaSubmission(VioGpuCommand *command);
++    NTSTATUS ResetFromTimeout();
++    NTSTATUS RestartFromTimeout();
++    NTSTATUS CollectDbgInfo(CONST DXGKARG_COLLECTDBGINFO *info);
++    void Trace(UINT event, UINT node = 0, UINT engine = 0, UINT context = 0,
++               UINT flags = 0, UINT64 fence = 0, UINT response = 0, UINT pending = 0);
++    void CopyTrace(VIOGPU_TRACE *trace);
++    BOOLEAN IsRecovering() const { return m_tdr.RecoveryState != 0; }
++    void RegisterObject(LIST_ENTRY *entry, UINT kind);
++    void UnregisterObject(LIST_ENTRY *entry);
++    void RegisterPreparedCommand(VioGpuCommand *command);
++    void UnregisterPreparedCommand(VioGpuCommand *command);
+ 
+     void SetVsyncInterruptEnabled(BOOLEAN enabled)
+     {
+@@ -297,6 +349,10 @@ class VioGpuAdapter : IVioGpuPCI, public IVioGpuQueueSync
+     NTSTATUS VirtIoDeviceInit(void);
+     BOOLEAN AckFeature(UINT64 Feature);
+     void SynchronizeInterruptsForClose(void);
++    NTSTATUS QuiesceTransport();
++    void InvalidateHostObjects();
++    NTSTATUS RestoreHostObjects();
++    NTSTATUS SetDevicePowerState(ULONG HardwareUid, DEVICE_POWER_STATE DevicePowerState, POWER_ACTION ActionType);
+ 
+     void static ThreadWork(_In_ PVOID Context);
+     NTSTATUS StartWorkThread(void);
+diff --git a/viogpu/viogpu3d/viogpu_allocation.cpp b/viogpu/viogpu3d/viogpu_allocation.cpp
+index 6bbfb49..e2417d4 100644
+--- a/viogpu/viogpu3d/viogpu_allocation.cpp
++++ b/viogpu/viogpu3d/viogpu_allocation.cpp
+@@ -60,7 +60,7 @@ void VioGpuAllocation::BlobCreateCompleteCB(void *ctx_void)
+     VioGpuAllocation *alloc = reinterpret_cast<VioGpuAllocation *>(ctx->owner);
+     PGPU_CTRL_HDR resp = ctx->vbuf ? (PGPU_CTRL_HDR)ctx->vbuf->resp_buf : NULL;
+     NTSTATUS status = STATUS_UNSUCCESSFUL;
+-    if (resp && resp->type < VIRTIO_GPU_RESP_ERR_UNSPEC) {
++    if (resp && resp->type == VIRTIO_GPU_RESP_OK_NODATA) {
+         status = STATUS_SUCCESS;
+     }
+ 
+@@ -133,10 +133,95 @@ VioGpuAllocation::VioGpuAllocation(VioGpuAdapter *adapter, VIOGPU_CREATE_ALLOCAT
+ 
+     KeInitializeEvent(&m_busyNotification, NotificationEvent, TRUE);
+     m_busy = 0;
++    m_adapter->RegisterObject(&m_adapterEntry, 1);
+ 
+     DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s res_id=%d\n", __FUNCTION__, m_Id));
+ }
+ 
++void VioGpuAllocation::InvalidateHostResource()
++{
++    PAGED_CODE();
++    // Called only after device reset, cancellation, and DPC drain. The OS
++    // allocation and its MDL remain alive until VidMm evicts/destroys them.
++    ExAcquireFastMutex(&m_blob_map_mutex);
++    LIST_ENTRY mappings;
++    InitializeListHead(&mappings);
++    while (!IsListEmpty(&m_blob_map_list))
++        InsertTailList(&mappings, RemoveHeadList(&m_blob_map_list));
++    ExReleaseFastMutex(&m_blob_map_mutex);
++    while (!IsListEmpty(&mappings))
++    {
++        BlobUserMapping *map = CONTAINING_RECORD(RemoveHeadList(&mappings), BlobUserMapping, ListEntry);
++        BOOLEAN attached = map->Process && map->Process != PsGetCurrentProcess();
++        if (attached)
++            KeAttachProcess(reinterpret_cast<PRKPROCESS>(map->Process));
++        NTSTATUS status = STATUS_SUCCESS;
++        if (map->UserVa)
++            status = m_adapter->GetDxgkInterface()->DxgkCbUnmapMemory(m_adapter->GetDxgkInterface()->DeviceHandle, map->UserVa);
++        if (attached)
++            KeDetachProcess();
++        if (!NT_SUCCESS(status))
++        {
++            // Keep the process reference and aperture reservation for final
++            // cleanup. Never recycle a range while a guest VA still maps it.
++            ExAcquireFastMutex(&m_blob_map_mutex);
++            InsertTailList(&m_blob_map_list, &map->ListEntry);
++            ExReleaseFastMutex(&m_blob_map_mutex);
++            DbgPrint(TRACE_LEVEL_ERROR, ("TDR blob unmap failed resource=%u pid=%p status=%#x\n", m_Id, map->ProcessId, status));
++            continue;
++        }
++        if (map->Process)
++            ObDereferenceObject(map->Process);
++        delete map;
++    }
++    ExAcquireFastMutex(&m_blob_map_mutex);
++    if (IsListEmpty(&m_blob_map_list))
++        m_blob_map_user_refs = 0;
++    if (m_blob_kernel_va)
++        MmUnmapIoSpace(m_blob_kernel_va, (SIZE_T)m_blob_kernel_map_size);
++    m_blob_kernel_va = NULL;
++    m_blob_kernel_map_size = 0;
++    m_blob_created = false;
++    m_blob_mapped = false;
++    m_blob_map_info = 0;
++    m_resource_created = 0;
++    m_blob_create_status = STATUS_DEVICE_REMOVED;
++    InterlockedExchange(&m_blob_create_state, 0);
++    KeSetEvent(&m_blob_create_complete_event, IO_NO_INCREMENT, FALSE);
++    // Blob IDs name objects inside the lost renderer context. Reimporting
++    // one into an empty context would fabricate surviving Vulkan state.
++    if (m_is_blob)
++        m_valid = false;
++    // Keep its aperture reservation until destruction; stale user mappings
++    // must never alias a newly allocated resource after reset.
++    ExReleaseFastMutex(&m_blob_map_mutex);
++}
++
++NTSTATUS VioGpuAllocation::RestoreHostResource()
++{
++    PAGED_CODE();
++    if (!m_valid || m_is_blob || m_resource_created)
++        return STATUS_SUCCESS;
++    NTSTATUS status = m_adapter->ctrlQueue.CreateResource3DWait(m_Id, &m_options);
++    if (!NT_SUCCESS(status))
++        return status;
++    m_resource_created = 1;
++    if (m_pMDL && m_pageCount)
++    {
++        GPU_MEM_ENTRY *entries = new (NonPagedPoolNx) GPU_MEM_ENTRY[m_pageCount];
++        if (!entries)
++            return STATUS_INSUFFICIENT_RESOURCES;
++        for (size_t i = 0; i < m_pageCount; ++i)
++        {
++            entries[i].addr = MmGetMdlPfnArray(m_pMDL)[m_pageOffset + i] * PAGE_SIZE;
++            entries[i].length = PAGE_SIZE;
++            entries[i].padding = 0;
++        }
++        status = m_adapter->ctrlQueue.AttachBackingWait(m_Id, entries, (UINT)m_pageCount);
++    }
++    return status;
++}
++
+ UINT VioGpuAllocation::GetStride(void) const
+ {
+     if (m_stride)
+@@ -170,6 +255,8 @@ NTSTATUS VioGpuAllocation::CreateBlobResource(UINT ctx_id,
+                                               void (*complete_cb)(void *),
+                                               void *complete_ctx)
+ {
++    if (!m_valid || m_adapter->IsRecovering())
++        return STATUS_DEVICE_REMOVED;
+     if (!ExAcquireRundownProtection(&m_blob_create_rundown))
+     {
+         return STATUS_DELETE_PENDING;
+@@ -287,6 +374,7 @@ VioGpuAllocation::~VioGpuAllocation(void)
+     DbgPrint(TRACE_LEVEL_INFORMATION, ("---> %s res_id=0x%x\n", __FUNCTION__, m_Id));
+ 
+     ASSERT(m_busy == 0);
++    m_adapter->UnregisterObject(&m_adapterEntry);
+     ExWaitForRundownProtectionRelease(&m_blob_create_rundown);
+ 
+     ExAcquireFastMutex(&m_blob_map_mutex);
+@@ -403,7 +491,10 @@ void VioGpuAllocation::AttachBacking(MDL *pMDL, size_t pageCount, size_t pageOff
+         ents[i].padding = 0;
+     }
+ 
+-    m_adapter->ctrlQueue.AttachBacking(m_Id, ents, (UINT)pageCount);
++    if (!m_adapter->IsHardwareInit())
++        delete[] ents;
++    else
++        m_adapter->ctrlQueue.AttachBacking(m_Id, ents, (UINT)pageCount);
+     DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s\n", __FUNCTION__));
+ }
+ 
+@@ -419,7 +510,8 @@ void VioGpuAllocation::DetachBacking()
+     m_pageOffset = 0;
+     ExReleaseFastMutex(&m_cpu_copy_mutex);
+ 
+-    m_adapter->ctrlQueue.DetachBacking(m_Id);
++    if (!m_adapter->IsRecovering() && m_resource_created)
++        m_adapter->ctrlQueue.DetachBacking(m_Id);
+     DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s\n", __FUNCTION__));
+ }
+ 
+diff --git a/viogpu/viogpu3d/viogpu_allocation.h b/viogpu/viogpu3d/viogpu_allocation.h
+index 4541e07..610567e 100644
+--- a/viogpu/viogpu3d/viogpu_allocation.h
++++ b/viogpu/viogpu3d/viogpu_allocation.h
+@@ -20,6 +20,8 @@ class VioGpuResource
+ 
+ class VioGpuAllocation
+ {
++    friend class VioGpuAdapter;
++    LIST_ENTRY m_adapterEntry;
+   public:
+     VioGpuAllocation(VioGpuAdapter *adapter, VIOGPU_CREATE_ALLOCATION_EXCHANGE *exchange);
+     ~VioGpuAllocation(void);
+@@ -128,6 +130,8 @@ class VioGpuAllocation
+     NTSTATUS EscapeResourceSetScanoutBlob(VIOGPU_RES_SET_SCANOUT_BLOB_REQ *resScanout);
+     NTSTATUS MapForCpuCopy(ULONG ctx_id, PVOID *map_va, ULONGLONG *map_size, BOOLEAN *io_mapping);
+     void UnmapForCpuCopy(PVOID map_va, ULONGLONG map_size, BOOLEAN io_mapping);
++    void InvalidateHostResource();
++    NTSTATUS RestoreHostResource();
+ 
+   private:
+     static void BlobCreateCompleteCB(void *ctx_void);
+diff --git a/viogpu/viogpu3d/viogpu_command.cpp b/viogpu/viogpu3d/viogpu_command.cpp
+index 3ed4ca3..ee9565f 100644
+--- a/viogpu/viogpu3d/viogpu_command.cpp
++++ b/viogpu/viogpu3d/viogpu_command.cpp
+@@ -174,10 +174,12 @@ VioGpuCommand::VioGpuCommand(VioGpuAdapter *adapter)
+ 
+     m_allocations = NULL;
+     m_allocationsLength = 0;
++    m_pAdapter->RegisterPreparedCommand(this);
+ };
+ 
+ VioGpuCommand::~VioGpuCommand()
+ {
++    m_pAdapter->UnregisterPreparedCommand(this);
+     // A command can be destroyed by a direct `delete` on an error/early-exit
+     // path (e.g. a failed Blt Present) without going through VioGpuCommandDone().
+     // If it was stashed in a DMA-buffer private-data slot, clear the slot so a
+@@ -1096,6 +1098,12 @@ NTSTATUS VioGpuCommand::AttachAllocations(DXGK_ALLOCATIONLIST *allocationList, U
+         return STATUS_INVALID_PARAMETER;
+     }
+ 
++    for (UINT i = 0; i < allocationListLength; ++i)
++    {
++        VioGpuDeviceAllocation *deviceAllocation = reinterpret_cast<VioGpuDeviceAllocation *>(allocationList[i].hDeviceSpecificAllocation);
++        if (deviceAllocation && !deviceAllocation->GetAllocation()->IsValid())
++            return STATUS_DEVICE_REMOVED;
++    }
+     m_allocations = new (NonPagedPoolNx) VioGpuAllocation *[allocationListLength];
+     if (!m_allocations)
+     {
+@@ -1284,6 +1292,10 @@ PAGED_CODE_SEG_END
+ NTSTATUS VioGpuCommander::SubmitCommand(const DXGKARG_SUBMITCOMMAND *pSubmitCommand)
+ {
+     VIOGPU_ASSERT(pSubmitCommand != NULL);
++    if (m_pAdapter->IsRecovering() || !m_pAdapter->IsHardwareInit())
++        return STATUS_DEVICE_NOT_READY;
++    if (pSubmitCommand->hContext && reinterpret_cast<VioGpuDevice *>(pSubmitCommand->hContext)->IsContextLost())
++        return STATUS_DEVICE_REMOVED;
+ 
+     // Tripwire for the pDmaBufferPrivateData handoff: it is sound only while each
+     // DMA buffer carries a single submission starting at offset 0. A non-zero
+@@ -1388,6 +1400,7 @@ NTSTATUS VioGpuCommander::SubmitCommand(const DXGKARG_SUBMITCOMMAND *pSubmitComm
+     }
+ 
+     cmd->PrepareSubmit(pSubmitCommand);
++    m_pAdapter->UnregisterPreparedCommand(cmd);
+     if (!m_pAdapter->TrackDmaSubmission(cmd))
+     {
+         DbgPrint(TRACE_LEVEL_ERROR, ("%s cannot track DMA retirement fence=%u\n", __FUNCTION__, cmd->GetSubmissionFenceId()));
+diff --git a/viogpu/viogpu3d/viogpu_command.h b/viogpu/viogpu3d/viogpu_command.h
+index f830883..b9ecb8c 100644
+--- a/viogpu/viogpu3d/viogpu_command.h
++++ b/viogpu/viogpu3d/viogpu_command.h
+@@ -17,6 +17,8 @@ class VioGpuCommander;
+ 
+ class VioGpuCommand
+ {
++    friend class VioGpuAdapter;
++    LIST_ENTRY m_preparedEntry;
+   public:
+     VioGpuCommand(VioGpuAdapter *adapter);
+     ~VioGpuCommand();
+diff --git a/viogpu/viogpu3d/viogpu_device.cpp b/viogpu/viogpu3d/viogpu_device.cpp
+index 2e3f4ca..5d00bfb 100644
+--- a/viogpu/viogpu3d/viogpu_device.cpp
++++ b/viogpu/viogpu3d/viogpu_device.cpp
+@@ -28,6 +28,7 @@ VioGpuDevice::VioGpuDevice(VioGpuAdapter *pAdapter)
+     // Init replaces it when a UMD requests another capset.
+     m_pAdapter->ctrlQueue.CreateCtx(m_id, 0);
+     m_context_created = true;
++    m_pAdapter->RegisterObject(&m_adapterEntry, 0);
+ }
+ 
+ VioGpuDevice::~VioGpuDevice()
+@@ -35,7 +36,8 @@ VioGpuDevice::~VioGpuDevice()
+     PAGED_CODE();
+     DbgPrint(TRACE_LEVEL_VERBOSE, ("<--> %s\n", __FUNCTION__));
+ 
+-    if (m_context_created)
++    m_pAdapter->UnregisterObject(&m_adapterEntry);
++    if (m_context_created && !m_pAdapter->IsRecovering())
+     {
+         m_pAdapter->ctrlQueue.DestroyCtx(m_id);
+         m_context_created = false;
+@@ -87,6 +89,7 @@ NTSTATUS VioGpuDevice::Init(VIOGPU_CTX_INIT_REQ *pOptions)
+     m_pAdapter->ctrlQueue.CreateCtx(m_id, context_init);
+     m_context_created = true;
+ 
++    m_context_lost = false;
+     return STATUS_SUCCESS;
+ }
+ 
+@@ -213,6 +216,8 @@ NTSTATUS VioGpuDevice::GenerateBltPresent(DXGKARG_PRESENT *pPresent, VioGpuAlloc
+ NTSTATUS VioGpuDevice::Present(_Inout_ DXGKARG_PRESENT *pPresent)
+ {
+     PAGED_CODE();
++    if (m_context_lost || m_pAdapter->IsRecovering())
++        return STATUS_DEVICE_REMOVED;
+ 
+     DXGK_ALLOCATIONLIST *dxgk_src =
+         pPresent->pAllocationList ? &pPresent->pAllocationList[DXGK_PRESENT_SOURCE_INDEX] : NULL;
+@@ -463,6 +468,8 @@ NTSTATUS VioGpuDevice::Present(_Inout_ DXGKARG_PRESENT *pPresent)
+ NTSTATUS VioGpuDevice::Render(DXGKARG_RENDER *pRender)
+ {
+     PAGED_CODE();
++    if (m_context_lost || m_pAdapter->IsRecovering())
++        return STATUS_DEVICE_REMOVED;
+ 
+     DbgPrint(TRACE_LEVEL_VERBOSE, ("<--- %s\n", __FUNCTION__));
+ 
+@@ -720,6 +727,7 @@ VioGpuDeviceAllocation::VioGpuDeviceAllocation(VioGpuDevice *device, VioGpuAlloc
+     m_pAllocation = allocation;
+     m_pDevice = device;
+     m_attached = false;
++    m_pDevice->m_pAdapter->RegisterObject(&m_adapterEntry, 2);
+ 
+     if (m_pAllocation->IsBlob() || !m_pDevice->IsVenusContext())
+     {
+@@ -734,7 +742,8 @@ VioGpuDeviceAllocation::~VioGpuDeviceAllocation()
+     DbgPrint(TRACE_LEVEL_VERBOSE,
+              ("<---> %s res_id=%d ctx_id=%d\n", __FUNCTION__, m_pAllocation->GetId(), m_pDevice->GetId()));
+ 
+-    if (m_attached)
++    m_pDevice->m_pAdapter->UnregisterObject(&m_adapterEntry);
++    if (m_attached && !m_pDevice->m_pAdapter->IsRecovering())
+     {
+         m_pDevice->GetCtrlQueue()->CtxResource(false, m_pDevice->GetId(), m_pAllocation->GetId());
+         m_attached = false;
+diff --git a/viogpu/viogpu3d/viogpu_device.h b/viogpu/viogpu3d/viogpu_device.h
+index ba8c6bf..00b0faf 100644
+--- a/viogpu/viogpu3d/viogpu_device.h
++++ b/viogpu/viogpu3d/viogpu_device.h
+@@ -18,6 +18,9 @@ class CtrlQueue;
+ // Class that represents DXGKRNL Context, often passed as hContext
+ class VioGpuDevice
+ {
++    friend class VioGpuAdapter;
++    friend class VioGpuDeviceAllocation;
++    LIST_ENTRY m_adapterEntry;
+   public:
+     VioGpuDevice(VioGpuAdapter *pAdapter);
+     ~VioGpuDevice();
+@@ -46,6 +49,7 @@ class VioGpuDevice
+     {
+         return m_context_created;
+     }
++    bool IsContextLost() const { return m_context_lost; }
+ 
+     CtrlQueue *GetCtrlQueue();
+     PEPROCESS GetOwnerProcess() const
+@@ -62,12 +66,15 @@ class VioGpuDevice
+     ULONG m_id;
+     ULONG m_capset_id;
+     bool m_context_created;
++    bool m_context_lost = false;
+     PEPROCESS m_owner_process;
+     HANDLE m_owner_pid;
+ };
+ 
+ class VioGpuDeviceAllocation
+ {
++    friend class VioGpuAdapter;
++    LIST_ENTRY m_adapterEntry;
+   public:
+     VioGpuDeviceAllocation(VioGpuDevice *device, VioGpuAllocation *allocation);
+     ~VioGpuDeviceAllocation();
+

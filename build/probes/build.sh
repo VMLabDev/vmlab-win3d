@@ -29,4 +29,10 @@ docker run --rm --user "$(id -u):$(id -g)" \
   -v "$repo:/src" -w /src/probes \
   "$image" bash -c 'make OUT=/src/out/probes BUILD=/src/out/probes/obj \
       VULKAN_HEADERS=/src/out/probes/deps/'"$(basename "$headers")"'/include "$@" &&
-    case " $* " in *" clean "*) ;; *) /src/build/probes/check-imports.sh /src/out/probes ;; esac' make "$@"
+    case " $* " in *" clean "*) ;; *)
+      for output in /src/out/probes /src/out/probes-extra; do
+        if compgen -G "$output/x64/*.exe" >/dev/null || compgen -G "$output/x86/*.exe" >/dev/null; then
+          /src/build/probes/check-imports.sh "$output"
+        fi
+      done
+      ;; esac' make "$@"

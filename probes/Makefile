@@ -34,6 +34,18 @@ HEADERS := common/probe.h common/font.h common/dxgi_util.h
 
 all: $(foreach a,$(ARCHES),$(foreach p,$(PROBES),$(OUT)/$(a)/$(p)_probe.exe))
 
+# Explicit test-only target, outside the render-probe directory searched by
+# Run-AllProbes.ps1. It simulates a guest OS timeout on virtio-gpu only.
+tdr: $(foreach a,$(ARCHES),$(OUT)-extra/$(a)/tdr_probe.exe)
+
+define tdr_rules
+$(OUT)-extra/$(1)/tdr_probe.exe: tdr/tdr_probe.c
+	@mkdir -p $$(dir $$@)
+	$(triple_$(1))-clang $(CFLAGS) -mconsole -static -s -Wl,--no-insert-timestamp -o $$@ $$< -ladvapi32
+endef
+
+$(foreach a,$(ARCHES),$(eval $(call tdr_rules,$(a))))
+
 $(BUILD)/gen/vulkan_shaders.h: vulkan/probe.vert vulkan/probe.frag
 	@mkdir -p $(dir $@)
 	glslangValidator -V --vn probe_vert_spv -o $(BUILD)/gen/vert.h vulkan/probe.vert
@@ -64,4 +76,4 @@ $(foreach a,$(ARCHES),$(foreach p,$(PROBES),$(eval $(call probe_rules,$(a),$(p))
 clean:
 	rm -rf $(BUILD) $(OUT)/deps $(foreach a,$(ARCHES),$(OUT)/$(a))
 
-.PHONY: all clean
+.PHONY: all clean tdr

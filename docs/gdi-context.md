@@ -21,7 +21,8 @@ Venus or another capset. The existing destructor releases it. Device creation
 also requires initialized hardware so it cannot queue this command on a closed
 adapter.
 
-The default KMD version is `100.6.101.58101`, which ranks above the old package.
+This fix first shipped in KMD `100.6.101.58101`, above the old package.
+The timeout-recovery candidate uses `100.6.101.58102`; see `tdr-recovery.md`.
 Upstream licence headers are unchanged; `viogpu_device.cpp` remains MPL-2.0.
 No QEMU code is used.
 
@@ -43,5 +44,5 @@ with both x64 and x86 Venus enumeration and no invalid-context warnings.
 The same strict check failed
 with driver `58100`. No owner's VM was updated or restarted.
 
-This covers guest reboot and device construction. Live D3/D0 power recovery
-was not changed or tested.
+This historical check covers guest reboot and device construction. Patch 0004
+also restores legacy contexts after D3/D0 and adapter timeout recovery.
