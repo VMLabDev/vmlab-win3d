@@ -1,0 +1,44 @@
+Subject: [PATCH] viogpu3d: create a legacy context before opening GDI allocations
+
+GDI devices can present without a user-mode driver issuing VIOGPU_CTX_INIT.
+Their allocations were never attached to a host context, yet the BLT path
+submitted a virgl RESOURCE_COPY_REGION on the device's allocated context ID.
+After reboot, vmlab-hv correctly rejected these transfers and submissions.
+
+Create the default legacy context when the kernel device is constructed.
+Allocation opens can then attach their resources before the first present.
+The existing Init path replaces this context when a UMD selects Venus or
+another capset, and the destructor releases it through the existing path.
+Device creation also requires initialized hardware, because it now queues
+the context creation immediately.
+
+The changed upstream file retains its MPL-2.0 licence.
+---
+diff --git a/viogpu/viogpu3d/viogpu_device.cpp b/viogpu/viogpu3d/viogpu_device.cpp
+--- a/viogpu/viogpu3d/viogpu_device.cpp
++++ b/viogpu/viogpu3d/viogpu_device.cpp
+@@ -23,7 +23,11 @@ VioGpuDevice::VioGpuDevice(VioGpuAdapter *pAdapter)
+     ObReferenceObject(m_owner_process);
+     m_id = pAdapter->ctxIdr.GetId();
+     m_capset_id = 0;
+-    m_context_created = false;
++    // GDI devices may present without a UMD context-init escape.
++    // Create their legacy context before allocations are opened.
++    // Init replaces it when a UMD requests another capset.
++    m_pAdapter->ctrlQueue.CreateCtx(m_id, 0);
++    m_context_created = true;
+ }
+ 
+ VioGpuDevice::~VioGpuDevice()
+diff --git a/viogpu/viogpu3d/driver.cpp b/viogpu/viogpu3d/driver.cpp
+--- a/viogpu/viogpu3d/driver.cpp
++++ b/viogpu/viogpu3d/driver.cpp
+@@ -973,7 +973,7 @@ VioGpu3DCreateDevice(_In_ CONST HANDLE hAdapter, _Inout_ DXGKARG_CREATEDEVICE *pCreateDevice)
+     DbgPrint(TRACE_LEVEL_VERBOSE, ("<---> %s\n", __FUNCTION__));
+ 
+     VioGpuAdapter *pAdapter = reinterpret_cast<VioGpuAdapter *>(hAdapter);
+-    if (!pAdapter->IsDriverActive())
++    if (!pAdapter->IsDriverActive() || !pAdapter->IsHardwareInit())
+     {
+         DbgPrint(TRACE_LEVEL_ERROR,
+                  ("<---> %s VioGpu (%p) is being called when not active!\n", __FUNCTION__, pAdapter));

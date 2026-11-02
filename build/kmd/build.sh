@@ -18,9 +18,9 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 REPO=$(cd "$HERE/../.." && pwd)
 CACHE=${WIN3D_CACHE:-$REPO/.scratch/cache}
 OUT=$REPO/out/kmd
-# 100.6.101.58000 is the upstream default; 58100 marks this repo's build so
-# it ranks above the upstream release and the codex r10 build (58001).
-DRIVER_VERSION=${KMD_DRIVER_VERSION:-100.6.101.58100}
+# 58101 includes GDI context creation and ranks above this repo's 58100 build,
+# the upstream release (58000), and the r10 build (58001).
+DRIVER_VERSION=${KMD_DRIVER_VERSION:-100.6.101.58101}
 IMAGE=vmlab-win3d/kmd-build:1
 
 pin() { awk -v n="$1" '$1 == n { print $'"$2"' }' "$HERE/PINS"; }
