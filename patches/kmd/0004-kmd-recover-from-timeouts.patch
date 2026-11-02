@@ -1,3 +1,12 @@
+Subject: [PATCH] viogpu3d: recover transport and device state after a timeout
+
+Quiesce interrupt and queue consumers before acknowledging reset, cancel old
+requests, preserve OS allocations through cleanup, and restore legacy state
+at restart. Handle combined INTx queue/configuration causes and apply the
+same context invalidation to D3/D0. Retain fences and a frozen timeout trace.
+
+Test contract and host quiescence prerequisite: docs/tdr-recovery.md.
+---
 diff --git a/viogpu/common/viogpu_queue.cpp b/viogpu/common/viogpu_queue.cpp
 index ead5cfd..090cfa9 100644
 --- a/viogpu/common/viogpu_queue.cpp

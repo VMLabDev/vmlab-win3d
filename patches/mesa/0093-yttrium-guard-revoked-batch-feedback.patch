@@ -14,6 +14,7 @@ emit the production SEH filters; there, Windows checked copies access only
 the current process and report failure instead of raising an access violation.
 
 Focused production-code checks: probes/feedback-loss in vmlab-win3d.
+Test contract: docs/tdr-recovery.md.
 ---
 diff --git a/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h b/src/gallium/winsys/yttrium/gdi/yttrium_venus2_private.h
 index d1759b6..38377d1 100644
