@@ -5,6 +5,26 @@ entry names its evidence. "Prior art" means `docs/prior-art.md`, a review of
 an earlier attempt whose findings were not repeated here unless this page
 says so.
 
+## Timeout recovery
+
+The unreleased `0.1.3` candidate implements adapter timeout reset and restart.
+It keeps Windows allocations alive, cancels pending transport requests, and
+restores legacy contexts after OS cleanup. Lost Vulkan and VirGL contexts must
+be recreated by their user-mode driver. See `tdr-recovery.md` for the test.
+
+Patch 0093 also handles revoked Venus feedback mappings. The initial candidate
+recovered the kernel but could crash Explorer on a stale feedback pointer.
+Native x64/x86 checks now convert the corresponding memory faults to device
+loss and a reset callback. The full TDR regression also rejects APPCRASH
+records whose fault module is a `viogpu` DLL.
+
+Recovery requires a conforming virtio reset acknowledgement. Native vmlab-hv
+currently logs renderer-reset errors and still clears device status. Its Venus
+proxy also sends context destruction asynchronously, without an explicit reply
+that proves renderer workers and native GPU operations have stopped. Guest
+memory aliases are removed separately. Successful forced recovery does not,
+by itself, establish that backend quiescence guarantee.
+
 ## Host
 
 ### Host GPU support

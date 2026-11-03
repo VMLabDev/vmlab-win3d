@@ -103,6 +103,7 @@ To build from source instead, see [Quick start](#quick-start).
 | [docs/host.md](docs/host.md) | What the host and vmlab need for Venus |
 | [docs/dxdiag.md](docs/dxdiag.md) | The DirectDraw HAL fix behind dxdiag's hardware acceleration |
 | [docs/gdi-context.md](docs/gdi-context.md) | GDI context creation and the guest reboot regression test |
+| [docs/tdr-recovery.md](docs/tdr-recovery.md) | Forced guest timeout, reset/restart telemetry, and hardware rendering checks |
 | [docs/d3d11-apps.md](docs/d3d11-apps.md) | The DirectX SDK D3D11 samples: UMD fixes and a DXUT bug |
 | [docs/nvidia.md](docs/nvidia.md) | Venus on the NVIDIA RTX 5090 |
 | [docs/zeus.md](docs/zeus.md) | Venus on an Intel Iris Xe and a laptop RTX 4060 |

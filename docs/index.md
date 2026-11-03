@@ -59,6 +59,7 @@ or Intel GPU as declared in the host config, `~/.config/vmlab/config.wcl`
 | Page | Read it to |
 | --- | --- |
 | [acceptance.md](acceptance.md) | See each Done item checked on fresh `windows-11` and `windows-10` labs, the stretch applications, and the index of every evidence directory |
+| [tdr-recovery.md](tdr-recovery.md) | Force a guest timeout and require reset/restart telemetry plus hardware pixel readback |
 | [dxdiag.md](dxdiag.md) | See why dxdiag reported DirectDraw "Not Available" and how `patches/mesa/0012` to `0014` fixed it |
 | [d3d11-apps.md](d3d11-apps.md) | See why two DirectX SDK D3D11 samples did not show, the UMD fixes `patches/mesa/0015` to `0017`, and the DXUT window bug |
 | [d3d12app.md](d3d12app.md) | See how Microsoft's D3D12 samples are built unmodified with clang-cl and xwin, how they ran on AMD1 and Nvidia1, and why ExecuteIndirect draws nothing |
