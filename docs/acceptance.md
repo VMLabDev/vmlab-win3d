@@ -664,6 +664,7 @@ changed since.
 
 | Directory | What it proves | vmlab | Package or commit | Status |
 | --- | --- | --- | --- | --- |
+| [`dedicated-vram/`](evidence/dedicated-vram/README.md) | Allocator capacity above 16 GiB and overflow rejection pass host sanitizer checks; the complete KMD builds | Not run | KMD 58104 with patch 0005, no package assembled | Dedicated-memory conversion and native acceptance pending |
 | [`acceptance/windows-11/`](evidence/acceptance/windows-11/) | Done items 1 and 2 on a fresh `windows-11` lab on AMD1: install, vulkaninfo, the D3D9, D3D11, D3D12, OpenGL and Vulkan probes on the console, dxdiag, 12 of 12; the stretch apps in `apps/` (Blender's kept capture black, see rc3) | 0.30.0-alpha, `host_gpu = "AMD1"` | 0.1.1-alpha-rc3, the bundle `scripts/release.sh` built at `ee9ce49`; rc2's run is in git history at `ee9ce49` | Current |
 | [`acceptance/windows-10/`](evidence/acceptance/windows-10/) | The same on a fresh `windows-10` lab on AMD1: 12 of 12; apps, Blender opaque | 0.28.0-alpha, `host_gpu = "AMD1"` | 0.1.1-alpha-rc2 (`0d3eb68`), run at `66809ce` | Current |
 | [`acceptance/windows-11-nvidia1/`](evidence/acceptance/windows-11-nvidia1/) | The same on the first RTX 5090 with Resizable BAR, driver 615.78, the 0.1.2-alpha QEMU and render server installed from their release tarballs: 12 of 12, one Venus device; every app renders, no Xid | 0.31.0-alpha, `host_gpu = "Nvidia1"` | 0.1.2-alpha (`45ec46c`), the release build; rc3's run is in git history at `45ec46c` | Current |

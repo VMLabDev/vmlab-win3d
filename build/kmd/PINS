@@ -17,3 +17,5 @@ debian              image docker.io/library/debian  sha256:2c037a04925515fdd6ea8
 #     base b99d951a (R/kmd-r10-copy-base.txt): 10-bit to 8-bit present-blit conversion.
 #   0002-kmd-cache-gdi-shadow-and-staging-surfaces.patch  sha256 e980108d32c23c1726046a40259d2f45dab7ec6400dc3080230c66485a510f81
 #     this repository (docs/present.md): maps the Blt present destination cached.
+#   0005-kmd-size-shmem-allocator-from-region.patch  sha256 071921bcc3e0fe5cfc5b25d0051d4821597e92a6bed0a2cc45228c783855ee7c
+#     this repository (docs/dedicated-vram.md): uses the capability length and rejects size-rounding overflow.

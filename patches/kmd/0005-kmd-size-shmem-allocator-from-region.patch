@@ -1,0 +1,46 @@
+Subject: [PATCH] viogpu3d: size the blob allocator from the shared-memory region
+
+Use the page-aligned capability length instead of silently limiting the blob
+mapping allocator to 16 GiB. Reject a request before rounding it when adding
+the page mask would overflow. Otherwise a near-UINT64_MAX request becomes
+zero bytes and succeeds without reserving any space.
+
+This does not change segment reporting or implement WDDM memory-segment
+paging. The prerequisites for that conversion are in docs/dedicated-vram.md.
+The changed upstream file retains its MPL-2.0 licence.
+---
+diff --git a/viogpu/viogpu3d/viogpu_shmem_allocator.cpp b/viogpu/viogpu3d/viogpu_shmem_allocator.cpp
+--- a/viogpu/viogpu3d/viogpu_shmem_allocator.cpp
++++ b/viogpu/viogpu3d/viogpu_shmem_allocator.cpp
+@@ -6,8 +6,6 @@
+ 
+ #include "viogpu_shmem_allocator.h"
+ 
+-static const ULONGLONG kMaxShmemSize = 16ull * 1024 * 1024 * 1024;
+-
+ VioGpuShmemAllocator::VioGpuShmemAllocator() : m_total(0), m_initialized(false)
+ {
+     KeInitializeSpinLock(&m_lock);
+@@ -77,12 +75,7 @@ void VioGpuShmemAllocator::Init(ULONGLONG size)
+ {
+     NT_ASSERT(KeGetCurrentIrql() <= DISPATCH_LEVEL);
+ 
+-    ULONGLONG clamped = size;
+-    if (clamped > kMaxShmemSize)
+-    {
+-        clamped = kMaxShmemSize;
+-    }
+-    clamped = AlignDown(clamped, PAGE_SIZE);
++    const ULONGLONG clamped = AlignDown(size, PAGE_SIZE);
+ 
+     Reset();
+ 
+@@ -206,7 +199,7 @@ bool VioGpuShmemAllocator::Allocate(ULONGLONG size, ULONGLONG alignment, ULONGLONG *offset)
+ {
+     NT_ASSERT(KeGetCurrentIrql() <= DISPATCH_LEVEL);
+ 
+-    if (!offset || size == 0)
++    if (!offset || size == 0 || size > ~0ull - (PAGE_SIZE - 1))
+     {
+         return false;
+     }

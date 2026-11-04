@@ -146,6 +146,7 @@ Debian packages are pinned by version in `Dockerfile`: `python3`, `xz-utils`,
 | --- | --- |
 | `0001-kmd-r10-copy.patch` | Converts R10G10B10A2 sources to 8-bit RGBA or BGRA in the KMD's CPU present blit, so 10-bit back buffers present correctly. It is a byte-identical copy of the prior art's `R/kmd-r10-copy.patch` on the same base (prior-art §2.2, `NW` F93). |
 | `0002-kmd-cache-gdi-shadow-and-staging-surfaces.patch` | Sets `Flags.Cached` on the GDI shadow and staging surfaces, the destination of every Blt present, so the KMD's CPU present copy does not write uncached memory. It took D3D9 windowed presents from 25–31 fps to the refresh rate on AMD hosts ([`docs/present.md`](../../docs/present.md)). |
+| `0005-kmd-size-shmem-allocator-from-region.patch` | Sizes the blob mapping allocator from the page-aligned shared-memory capability length and rejects page-rounding overflow. It does not change segment reporting. See `docs/dedicated-vram.md` and `tests/kmd/README.md`. |
 
 0001 has no mail header; 0002 has a short one, which `patch` skips. `PINS`
 records each patch's sha256 and origin.

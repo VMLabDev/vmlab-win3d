@@ -1,0 +1,9 @@
+FAIL capacity follows a 32 GiB region
+FAIL one allocation exceeds the old 16 GiB clamp
+PASS aggregate allocations cross 4 GiB and fill the region
+PASS full region rejects allocation
+PASS freed ranges coalesce across 4 GiB
+PASS region tail rounds down to a page
+FAIL page-rounding overflow rejects allocation
+PASS rejected overflow leaves capacity intact
+PASS sub-page region has no capacity
