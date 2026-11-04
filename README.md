@@ -1,3 +1,9 @@
+> **This repository is frozen.** As of 2026-11-05 vmlab-win3d lives in the vmlab monorepo
+> under [`guest/win3d/`](https://github.com/VMLabDev/vmlab/tree/main/guest/win3d), and new
+> releases are tagged `win3d-v*` there. This repository keeps the full history, including the
+> `docs/evidence` captures the monorepo import left out, and the existing release assets stay
+> downloadable. Open new issues and pull requests in vmlab.
+
 # vmlab-win3d
 
 A driver package for Windows guests running under vmlab. Install it once in
